@@ -1,0 +1,124 @@
+input[readonly]{
+	background-color: transparent !important;
+}
+.autocomplete-suggestions {
+	border: 1px solid #999;
+	background: #FFF; overflow: auto;
+}
+.autocomplete-suggestion {
+	padding: 5px 10px;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+}
+.autocomplete-selected {
+	background-color: #F0F0F0;
+}
+.autocomplete-suggestions strong {
+	font-weight: normal;
+	color: #3399FF;
+}
+.autocomplete-group {
+	padding: 5px 10px;
+}
+.autocomplete-group strong {
+	display: block;
+	border-bottom: 1px solid #000;
+}
+.autocomplete-no-suggestion {
+	padding: 5px 10px;
+}
+.custom-file-input ~ .custom-file-label::after {
+	content: "Выбрать";
+}
+.delete-coin {
+	color: #ccc;
+}
+.hiddden {
+	display: none;
+}
+.border-between > [class*='col-']:before {
+	background: #e3e3e3;
+	bottom: 0;
+	content: " ";
+	left: 0;
+	position: absolute;
+	width: 1px;
+	top: 0;
+}
+.border-between > [class*='col-']:first-child:before {
+	display: none;
+}
+.sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active, .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active {
+	background-color: orange;
+}
+.table thead,
+.table th {
+	text-align: center;
+}
+.container {
+	max-width: 100%;
+}
+
+.table-filter {
+	position: sticky;
+	top: 57px;
+	z-index: 1037;
+	background-color: #fff;
+}
+.table-sticky {
+	position: sticky;
+	z-index: 1036;
+	background-color: #fff;
+}
+.table-sticky thead {
+	position: sticky;
+	top: 142px;
+	z-index: 1038;
+	background-color: #fff;
+}
+
+.hidden {
+	display: none !important;
+}
+.table-data {
+	position: sticky;
+	z-index: 1036;
+	top: 130px;
+	background-color: #fff;
+}
+.table-data thead {
+	position: sticky;
+	z-index: 1037;
+	top: 130px;
+	background-color: #fff;
+}
+.table-no-filter, .table-no-filter thead {
+	top: 100px;
+}
+.fc-day-sat, .fc-day-sun {
+	background-color: #e7ffe7 !important;
+}
+.control-sidebar::before {
+	display: none;
+}
+.upcomming-event {
+	border-bottom: 1px solid #fff;
+	font-size: 11px;
+	color: #fff;
+	text-align: left;
+}
+.upcomming-event:hover {
+	background-color: #222;
+}
+.nps-event {
+	cursor: help;
+}
+/*
+.platform-data-table tr td {
+	position: relative;
+}
+.platform-data-table tr td:first-child {
+	z-index: 99999;
+	position: sticky;
+}*/
