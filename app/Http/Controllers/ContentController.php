@@ -20,26 +20,23 @@ class ContentController extends Controller
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 *
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
-	public function index($version, $type)
+	public function index($type)
 	{
 		return view('admin.content.index', [
-			'version' => $version,
 			'type' => $type,
 		]);
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function getListAjax($version, $type)
+	public function getListAjax($type)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -47,13 +44,12 @@ class ContentController extends Controller
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 		
 		$id = $this->request->id ?? 0;
 
 		$contents = Content::orderByDesc('id')
-			->where('version', $version)
 			->where('parent_id', $parentContent->id);
 		if ($this->request->search_content) {
 			$contents = $contents->where(function ($query) {
@@ -74,7 +70,6 @@ class ContentController extends Controller
 
 		$VIEW = view('admin.content.list', [
 			'contents' => $contents,
-			'version' => $version,
 			'type' => $type,
 		]);
 		
@@ -82,13 +77,12 @@ class ContentController extends Controller
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 * @param $id
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function edit($version, $type, $id)
+	public function edit($type, $id)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -96,21 +90,18 @@ class ContentController extends Controller
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 
-		$content = Content::where('version', $version)
-			->where('parent_id', $parentContent->id)
+		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
-		if (!$content) return response()->json(['status' => 'error', 'reason' => 'Материал не найден']);
+		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
 
-		$cities = City::where('version', $version)
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 
 		$VIEW = view('admin.content.modal.edit', [
 			'content' => $content,
-			'version' => $version,
 			'type' => $type,
 			'cities' => $cities,
 		]);
@@ -119,12 +110,11 @@ class ContentController extends Controller
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function add($version, $type)
+	public function add($type)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -132,15 +122,13 @@ class ContentController extends Controller
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 
-		$cities = City::where('version', $version)
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 
 		$VIEW = view('admin.content.modal.add', [
-			'version' => $version,
 			'type' => $type,
 			'cities' => $cities,
 		]);
@@ -149,35 +137,32 @@ class ContentController extends Controller
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 * @param $id
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function confirm($version, $type, $id)
+	public function confirm($type, $id)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
 
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 
-		$content = Content::where('version', $version)
-			->where('parent_id', $parentContent->id)
+		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
-		if (!$content) return response()->json(['status' => 'error', 'reason' => 'Материал не найден']);
+		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
 
 		$VIEW = view('admin.content.modal.delete', [
 			'content' => $content,
-			'version' => $version,
 			'type' => $type,
 		]);
 
@@ -185,12 +170,11 @@ class ContentController extends Controller
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function store($version, $type)
+	public function store($type)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -205,10 +189,10 @@ class ContentController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'title' => 'Заголовок',
-				'alias' => 'Алиас',
-				'published_at' => 'Дата публикации',
-				'photo_preview_file' => 'Фото-превью',
+				'title' => 'Title',
+				'alias' => 'Alias',
+				'published_at' => 'Publication date',
+				'photo_preview_file' => 'Photo preview',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -216,7 +200,7 @@ class ContentController extends Controller
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 		
 		$cityId = $this->request->city_id ?? 0;
@@ -226,9 +210,9 @@ class ContentController extends Controller
 
 		$data = [];
 		if($file = $this->request->file('photo_preview_file')) {
-			$isFileUploaded = $file->move(public_path('upload/content/' . $version . '/' . $type), $file->getClientOriginalName());
+			$isFileUploaded = $file->move(public_path('upload/content/' . $type), $file->getClientOriginalName());
 			if ($isFileUploaded) {
-				$data['photo_preview_file_path'] = $isFileUploaded ? 'content/' . $version . '/' . $type . '/' . $file->getClientOriginalName() : '';
+				$data['photo_preview_file_path'] = $isFileUploaded ? 'content/' . $type . '/' . $file->getClientOriginalName() : '';
 			}
 		}
 		
@@ -244,7 +228,6 @@ class ContentController extends Controller
 		$content->detail_text = $this->request->detail_text;
 		$content->parent_id = $parentContent->id;
 		$content->city_id = $cityId;
-		$content->version = $version;
 		$content->meta_title = $this->request->meta_title;
 		$content->meta_description = $this->request->meta_description;
 		$content->meta_title_en = $this->request->meta_title_en;
@@ -253,20 +236,19 @@ class ContentController extends Controller
 		$content->data_json = $data;
 		$content->published_at = $this->request->published_at;
 		if (!$content->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 * @param $id
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function update($version, $type, $id)
+	public function update($type, $id)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -274,14 +256,14 @@ class ContentController extends Controller
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 		
 		$cityId = $this->request->city_id ?? 0;
 
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
-		if (!$content) return response()->json(['status' => 'error', 'reason' => 'Материал не найден']);
+		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
 
 		$rules = [
 			'title' => ['required', 'min:3', 'max:250'],
@@ -292,10 +274,10 @@ class ContentController extends Controller
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'title' => 'Заголовок',
-				'alias' => 'Алиас',
-				'published_at' => 'Дата публикации',
-				'photo_preview_file' => 'Фото-превью',
+				'title' => 'Title',
+				'alias' => 'Alias',
+				'published_at' => 'Publication date',
+				'photo_preview_file' => 'Photo preview',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -303,9 +285,9 @@ class ContentController extends Controller
 		
 		$data = [];
 		if($file = $this->request->file('photo_preview_file')) {
-			$isFileUploaded = $file->move(public_path('upload/content/' . $version . '/' . $type), $file->getClientOriginalName());
+			$isFileUploaded = $file->move(public_path('upload/content/' . $type), $file->getClientOriginalName());
 			if ($isFileUploaded) {
-				$data['photo_preview_file_path'] = $isFileUploaded ? 'content/' . $version . '/' . $type . '/' . $file->getClientOriginalName() : '';
+				$data['photo_preview_file_path'] = $isFileUploaded ? 'content/' . $type . '/' . $file->getClientOriginalName() : '';
 			}
 		}
 		
@@ -320,7 +302,6 @@ class ContentController extends Controller
 		$content->detail_text = $this->request->detail_text;
 		$content->parent_id = $parentContent->id;
 		$content->city_id = $cityId;
-		$content->version = $version;
 		$content->meta_title = $this->request->meta_title;
 		$content->meta_description = $this->request->meta_description;
 		$content->meta_title_en = $this->request->meta_title_en;
@@ -331,65 +312,62 @@ class ContentController extends Controller
 		}
 		$content->published_at = $this->request->published_at;
 		if (!$content->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 * @param $id
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function delete($version, $type, $id)
+	public function delete($type, $id)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
 
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 
-		$content = Content::where('version', $version)
-			->where('parent_id', $parentContent->id)
+		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
-		if (!$content) return response()->json(['status' => 'error', 'reason' => 'Материал не найден']);
+		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
 
 		if (!$content->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
 	}
 
 	/**
-	 * @param $version
 	 * @param $type
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function imageUpload($version, $type) {
+	public function imageUpload($type) {
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 
 		$file = $this->request->file('file');
-		if (!$file->move(public_path('/upload/content/' . $version . '/' . $type . '/'), $file->getClientOriginalName())) {
-			return response()->json(['status' => 'error', 'reason' => 'Не удалось загрузить файл']);
+		if (!$file->move(public_path('/upload/content/' . $type . '/'), $file->getClientOriginalName())) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.не-удалось-загрузить-файл')]);
 		}
 
 		return response()->json([
-			'location' => url('/upload/content/' . $version . '/' . $type . '/' . $file->getClientOriginalName()),
+			'location' => url('/upload/content/' . $type . '/' . $file->getClientOriginalName()),
 		]);
 	}
 }

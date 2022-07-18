@@ -62,10 +62,12 @@ class Product extends Model
 	 */
 	protected $fillable = [
 		'name',
+		'public_name',
 		'alias',
 		'product_type_id',
 		'user_id',
 		'duration',
+		'is_active',
 		'data_json',
 	];
 
@@ -79,6 +81,7 @@ class Product extends Model
 		'updated_at' => 'datetime:Y-m-d H:i:s',
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
 		'data_json' => 'array',
+		'is_active' => 'boolean',
 	];
 	
 	public function productType()
@@ -104,7 +107,7 @@ class Product extends Model
 	 * @param null $contractorId
 	 * @return array
 	 */
-	public function format($cityId = 1, $contractorId = null)
+	/*public function format($cityId = 1, $contractorId = null)
 	{
 		$cityProduct = $this->cities()
 			->where('cities_products.is_active', true)
@@ -130,7 +133,7 @@ class Product extends Model
 			'tariff_type' => $this->productType ? $this->productType->format() : null,
 			'user' => $this->user ? $this->user->format() : null,
 		];
-	}
+	}*/
 	
 	/**
 	 * @param Contractor $contractor

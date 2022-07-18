@@ -1,4 +1,4 @@
 <input type="hidden" id="id" name="id" value="{{ $paymentMethod->id }}">
 <div class="form-group">
-	<label>Вы уверены, что хотите удалить способ оплаты {{ $paymentMethod->name }}?</label>
+	<label>Are you sure you want to delete the payment method {{ $paymentMethod->name }}?</label>
 </div>

@@ -5,7 +5,7 @@
 <input type="hidden" id="flight_simulator_id" name="flight_simulator_id">
 
 <div class="row">
-	<div class="col-4">
+	{{--<div class="col-4">
 		<div class="form-group">
 			<label for="location_id">Локация</label>
 			<select class="form-control" id="location_id" name="location_id">
@@ -21,34 +21,10 @@
 				@endforeach
 			</select>
 		</div>
-	</div>
+	</div>--}}
 	<div class="col-4">
 		<div class="form-group">
-			<label for="promo_id">Акция</label>
-			<select class="form-control" id="promo_id" name="promo_id">
-				<option value=""></option>
-				@foreach($promos ?? [] as $promo)
-					<option value="{{ $promo->id }}">{{ $promo->valueFormatted() }}</option>
-				@endforeach
-			</select>
-		</div>
-	</div>
-	<div class="col-4">
-		<div class="form-group">
-			<label for="promocode_id">Промокод</label>
-			<select class="form-control" id="promocode_id" name="promocode_id">
-				<option value=""></option>
-				@foreach($promocodes ?? [] as $promocode)
-					<option value="{{ $promocode->id }}">{{ $promocode->valueFormatted() }}</option>
-				@endforeach
-			</select>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-4">
-		<div class="form-group">
-			<label for="product_id">Продукт</label>
+			<label for="product_id">Product</label>
 			<select class="form-control js-product" id="product_id" name="product_id">
 				<option></option>
 				@foreach($products ?? [] as $productTypeName => $productId)
@@ -61,8 +37,38 @@
 			</select>
 		</div>
 	</div>
+	<div class="col-4">
+		<div class="form-group">
+			<label for="promo_id">Promo</label>
+			<select class="form-control" id="promo_id" name="promo_id">
+				<option value=""></option>
+				@foreach($promos ?? [] as $promo)
+					<option value="{{ $promo->id }}">{{ $promo->valueFormatted() }}</option>
+				@endforeach
+			</select>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="form-group">
+			<label for="certificate">Voucher</label>
+			<input type="text" class="form-control" id="certificate" name="certificate" placeholder="Voucher">
+		</div>
+	</div>
+	{{--<div class="col-4">
+		<div class="form-group">
+			<label for="promocode_id">Промокод</label>
+			<select class="form-control" id="promocode_id" name="promocode_id">
+				<option value=""></option>
+				@foreach($promocodes ?? [] as $promocode)
+					<option value="{{ $promocode->id }}">{{ $promocode->valueFormatted() }}</option>
+				@endforeach
+			</select>
+		</div>
+	</div>--}}
+</div>
+<div class="row">
 	<div class="col-5">
-		<label for="flight_date_at">Дата и время начала полета</label>
+		<label for="flight_date_at">Flight date and time</label>
 		<div class="row">
 			<div class="d-flex">
 				<div class="col-7">
@@ -77,27 +83,22 @@
 				<span class="js-event-stop-at"></span>
 			</div>
 		</div>
-	</div>	<div class="col-3">
-		<div class="form-group">
-			<label for="certificate">Сертификат</label>
-			<input type="text" class="form-control" id="certificate" name="certificate" placeholder="Номер">
-		</div>
 	</div>
 </div>
 <div class="row">
-	<div class="col-8">
-		<label for="comment">Комментарий</label>
+	<div class="col">
+		<label for="comment">Comment</label>
 		<textarea class="form-control" id="comment" name="comment" rows="2"></textarea>
 	</div>
-	<div class="col-4 text-right">
+	{{--<div class="col-4 text-right">
 		<div class="form-group mt-4">
 			<div class="custom-control custom-switch custom-control-inline">
 				<input type="checkbox" id="is_free" name="is_free" value="1" class="custom-control-input">
-				<label class="custom-control-label font-weight-normal" for="is_free">Бесплатно</label>
+				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
 			</div>
 			<div id="amount-text">
 				<h1 class="d-inline-block">0</h1> <i class="fas fa-ruble-sign" style="font-size: 25px;"></i>
 			</div>
 		</div>
-	</div>
+	</div>--}}
 </div>

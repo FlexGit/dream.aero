@@ -1,15 +1,15 @@
 @php
 	$title = '';
 	if ($type == app('\App\Models\Content')::NEWS_TYPE) {
-		$title = 'Новости';
+		$title = 'News';
 	} elseif($type == app('\App\Models\Content')::GALLERY_TYPE) {
-		$title = 'Галерея';
+		$title = 'Gallery';
 	} elseif($type == app('\App\Models\Content')::REVIEWS_TYPE) {
-		$title = 'Отзывы';
+		$title = 'Reviews';
 	} elseif($type == app('\App\Models\Content')::GUESTS_TYPE) {
-		$title = 'Гости';
+		$title = 'Guests';
 	} elseif($type == app('\App\Models\Content')::PAGES_TYPE) {
-		$title = 'Страницы';
+		$title = 'Pages';
 	}
 @endphp
 
@@ -24,7 +24,7 @@
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
 				<li class="breadcrumb-item active">{{ $title }}</li>
 			</ol>
 		</div>
@@ -40,23 +40,23 @@
 						<div class="d-sm-flex">
 							<div class="col">
 								<div class="form-group">
-									<label for="search_content">Поиск</label>
-									<input type="text" class="form-control" id="search_content" name="search_content" placeholder="@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Имя, Отзыв, Ответ @else Заголовок, Текст, Алиас @endif">
+									<label for="search_content">Search</label>
+									<input type="text" class="form-control" id="search_content" name="search_content" placeholder="@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name, Text @else Title, Text, Alias @endif">
 								</div>
 							</div>
 							<div class="form-group align-self-end ml-auto pl-2">
-								<a href="javascript:void(0)" data-toggle="modal" data-url="/site/{{ $version }}/{{ $type }}/add" data-action="/site/{{ $version }}/{{ $type }}" data-method="POST" data-type="content" data-title="Создание" class="btn btn-secondary btn-sm" title="Добавить">Добавить</a>
+								<a href="javascript:void(0)" data-toggle="modal" data-url="/site/{{ $type }}/add" data-action="/site/{{ $type }}" data-method="POST" data-type="content" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
 							</div>
 						</div>
 					</div>
 					<table id="contentTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
 						<tr>
-							<th class="text-center">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Имя @else Заголовок @endif</th>
-							<th class="text-center d-none d-lg-table-cell">Город</th>
+							<th class="text-center">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name @else Title @endif</th>
+							<th class="text-center d-none d-lg-table-cell">City</th>
 							@if($type != app('\App\Models\Content')::PAGES_TYPE)
-								<th class="text-center d-none d-xl-table-cell">Дата публикации</th>
-								<th class="text-center d-none d-xl-table-cell">Активность</th>
+								<th class="text-center d-none d-xl-table-cell">Publication Date</th>
+								<th class="text-center d-none d-xl-table-cell">Is active</th>
 							@endif
 							<th class="text-center d-none d-xl-table-cell"></th>
 						</tr>
@@ -73,7 +73,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -81,8 +81,8 @@
 				<form id="content">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -108,7 +108,7 @@
 					id = (loadMore && $tr.length) ? $tr.data('id') : 0;
 
 				$.ajax({
-					url: '/site/{{ $version }}/{{ $type }}/list/ajax',
+					url: '/site/{{ $type }}/list/ajax',
 					type: 'GET',
 					dataType: 'json',
 					data: {
@@ -130,7 +130,7 @@
 							$(window).data('ajaxready', true);
 						} else {
 							if (!id) {
-								$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+								$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 							}
 						}
 					}
@@ -150,7 +150,7 @@
 					$modalDialog = $('.modal').find('.modal-dialog');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -217,11 +217,11 @@
 
 						var msg = '';
 						if (formId === 'content') {
-							msg = 'Материал успешно ';
+							msg = 'Content successfully ';
 							if (method === 'POST') {
-								msg += 'добавлен';
+								msg += 'added';
 							} else if (method === 'PUT') {
-								msg += 'сохранен';
+								msg += 'saved';
 							}
 						}
 
@@ -266,7 +266,7 @@
 						formData.append('file', blobInfo.blob(), blobInfo.filename());
 						xhr.send(formData);
 					},
-					language: 'ru_RU',
+					/*language: 'ru_RU',*/
 					plugins: [
 						"advlist autolink lists link image charmap print preview anchor",
 						"searchreplace visualblocks code fullscreen",

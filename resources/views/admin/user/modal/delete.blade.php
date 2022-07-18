@@ -1,4 +1,4 @@
 <input type="hidden" id="id" name="id" value="{{ $user->id }}">
 <div class="form-group">
-	<label>Вы уверены, что хотите удалить пользователя {{ $user->lastname }} {{ $user->name }} {{ $user->middlename }}?</label>
+	<label>Are you sure you want to delete the user {{ $user->lastname }} {{ $user->name }}{{-- {{ $user->middlename }}--}}?</label>
 </div>

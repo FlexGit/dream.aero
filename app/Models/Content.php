@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $preview_text аннотация
  * @property string|null $detail_text контент
  * @property int $parent_id родитель
- * @property string $version версия
  * @property string|null $meta_title meta Title
  * @property string|null $meta_description meta Description
  * @property bool $is_active признак активности
@@ -43,7 +42,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Content wherePublishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Content whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Content whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Content whereVersion($value)
  * @method static \Illuminate\Database\Query\Builder|Content withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Content withoutTrashed()
  * @mixin \Eloquent
@@ -69,9 +67,6 @@ class Content extends Model
 	const GUESTS_TYPE = 'guests';
 	const PAGES_TYPE = 'pages';
 
-	const VERSION_RU = 'ru';
-	const VERSION_AERO = 'aero';
-	
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -87,7 +82,6 @@ class Content extends Model
 		'rating_value',
 		'rating_count',
 		'rating_ips',
-		'version',
 		'meta_title',
 		'meta_description',
 		'is_active',

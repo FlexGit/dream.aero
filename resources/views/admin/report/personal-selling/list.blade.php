@@ -4,7 +4,7 @@
 			<thead>
 			<tr>
 				<th>
-					Сумма всех оплаченных счетов
+					All paid invoices amount
 				</th>
 			</tr>
 			</thead>
@@ -22,10 +22,10 @@
 			<thead>
 				<tr>
 					<th>
-						Способ оплаты
+						Payment method
 					</th>
 					<th>
-						Сумма оплаченных счетов
+						Paid invoices amount
 					</th>
 				</tr>
 			</thead>
@@ -60,13 +60,13 @@
 						</tr>
 						@if(isset($billItems[$userItem['id']]))
 							<tr>
-								<td class="align-top text-center font-weight-bold">Номер счета</td>
-								<td class="align-top text-center font-weight-bold">Статус счета</td>
-								<td class="align-top text-center font-weight-bold">Сумма счета</td>
-								<td class="align-top text-center font-weight-bold">Дата оплаты счета</td>
-								<td class="align-top text-center font-weight-bold">Локация счета</td>
-								<td class="align-top text-center font-weight-bold">Номер сделки</td>
-								<td class="align-top text-center font-weight-bold">Статус сделки</td>
+								<td class="align-top text-center font-weight-bold">Invoice #</td>
+								<td class="align-top text-center font-weight-bold">Invoice status</td>
+								<td class="align-top text-center font-weight-bold">Invoice amount</td>
+								<td class="align-top text-center font-weight-bold">Invoice paydate</td>
+								<td class="align-top text-center font-weight-bold">Invoice location</td>
+								<td class="align-top text-center font-weight-bold">Deal #</td>
+								<td class="align-top text-center font-weight-bold">Deal status</td>
 							</tr>
 							@foreach($billItems[$userItem['id']] ?? [] as $billItem)
 								<tr>
@@ -94,13 +94,13 @@
 								</tr>
 							@endforeach
 							<tr class="bg-gradient-yellow">
-								<td class="align-top text-center font-weight-bold">Кол-во сделок</td>
-								<td class="align-top text-center font-weight-bold">Сумма сделок</td>
-								<td class="align-top text-center font-weight-bold">Кол-во счетов</td>
-								<td class="align-top text-center font-weight-bold">Сумма счетов</td>
-								<td class="align-top text-center font-weight-bold">Кол-во оплаченных счетов</td>
-								<td class="align-top text-center font-weight-bold">Сумма оплаченных счетов</td>
-								<td class="align-top text-center font-weight-bold">Кол-во смен</td>
+								<td class="align-top text-center font-weight-bold">Deal count</td>
+								<td class="align-top text-center font-weight-bold">Deal amount</td>
+								<td class="align-top text-center font-weight-bold">Invoice count</td>
+								<td class="align-top text-center font-weight-bold">Invoices amount</td>
+								<td class="align-top text-center font-weight-bold">Paid invoices count</td>
+								<td class="align-top text-center font-weight-bold">Paid invoices amount</td>
+								<td class="align-top text-center font-weight-bold">Shifts count</td>
 							</tr>
 							<tr>
 								<td class="align-top text-right">
@@ -128,7 +128,7 @@
 						@else
 							<tr>
 								<td colspan="7" class="align-middle text-center">
-									Ничего не найдено
+									Nothing found
 								</td>
 							</tr>
 						@endif

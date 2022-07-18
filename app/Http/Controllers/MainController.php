@@ -54,7 +54,6 @@ class MainController extends Controller
 		$reviewParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::REVIEWS_TYPE);
 		if ($reviewParentContent) {
 			$reviews = Content::where('is_active', true)
-				/*->where('version', Content::VERSION_RU)*/
 				->where('parent_id', $reviewParentContent->id)
 				->latest()
 				->limit(10)
@@ -392,7 +391,6 @@ class MainController extends Controller
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'lechenie-aerofobii');
 		
 		$productTypes = ProductType::where('is_active', true)
-			->where('version', $city->version)
 			->orderBy('name')
 			->get();
 		
@@ -487,7 +485,6 @@ class MainController extends Controller
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
 		$productTypes = ProductType::where('is_active', true)
-			->where('version', $city->version)
 			->orderBy('name')
 			->get();
 		
@@ -552,7 +549,6 @@ class MainController extends Controller
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias);
 
 		$cities = City::where('is_active', true)
-			->where('version', $city->version)
 			->get();
 
 		$VIEW = view('city.list', [
@@ -577,7 +573,6 @@ class MainController extends Controller
 		
 		$this->request->session()->put('cityId', $city->id);
 		$this->request->session()->put('cityAlias', $city->alias);
-		$this->request->session()->put('cityVersion', $city->version);
 		$this->request->session()->put('cityName', $city->name);
 		
 		return response()->json(['status' => 'success', 'cityAlias' => $city->alias]);

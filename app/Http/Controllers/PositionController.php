@@ -66,12 +66,12 @@ class PositionController extends Controller
 		}
 
 		$deal = $this->dealRepo->getById($dealId);
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user);
 		$products = $this->productTypeRepo->getActualProductList($user);
-		$promos = $this->promoRepo->getList($user, true, true, [Promo::MOB_REGISTRATION_SCORES_ALIAS]);
+		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		
 		$VIEW = view('admin.position.modal.certificate.add', [
@@ -80,6 +80,7 @@ class PositionController extends Controller
 			'products' => $products,
 			'promos' => $promos,
 			'promocodes' => $promocodes,
+			'city' => $user->city,
 		]);
 
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -97,12 +98,12 @@ class PositionController extends Controller
 		}
 		
 		$deal = $this->dealRepo->getById($dealId);
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user);
 		$products = $this->productTypeRepo->getActualProductList($user);
-		$promos = $this->promoRepo->getList($user, true, true, [Promo::MOB_REGISTRATION_SCORES_ALIAS]);
+		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		
 		$VIEW = view('admin.position.modal.booking.add', [
@@ -128,12 +129,12 @@ class PositionController extends Controller
 		}
 		
 		$deal = $this->dealRepo->getById($dealId);
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user);
 		$products = $this->productTypeRepo->getActualProductList($user, true, false, true);
-		$promos = $this->promoRepo->getList($user, true, true, [Promo::MOB_REGISTRATION_SCORES_ALIAS]);
+		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		
 		$VIEW = view('admin.position.modal.product.add', [
@@ -158,15 +159,15 @@ class PositionController extends Controller
 		}
 		
 		$position = $this->positionRepo->getById($id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user, false);
 		$products = $this->productTypeRepo->getActualProductList($user, false);
-		$promos = $this->promoRepo->getList($user, false, true, [Promo::MOB_REGISTRATION_SCORES_ALIAS]);
+		$promos = $this->promoRepo->getList($user, false, true);
 		$promocodes = $this->promocodeRepo->getList($user, false, false, $deal->contractor_id ?? 0);
 		
 		$VIEW = view('admin.position.modal.certificate.edit', [
@@ -191,15 +192,15 @@ class PositionController extends Controller
 		}
 
 		$position = $this->positionRepo->getById($id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user, false);
 		$products = $this->productTypeRepo->getActualProductList($user, false);
-		$promos = $this->promoRepo->getList($user, false, true, [Promo::MOB_REGISTRATION_SCORES_ALIAS]);
+		$promos = $this->promoRepo->getList($user, false, true);
 		$promocodes = $this->promocodeRepo->getList($user, false, false, $deal->contractor_id ?? 0);
 
 		$VIEW = view('admin.position.modal.booking.edit', [
@@ -224,15 +225,15 @@ class PositionController extends Controller
 		}
 		
 		$position = $this->positionRepo->getById($id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user, false);
 		$products = $this->productTypeRepo->getActualProductList($user, false, false, true);
-		$promos = $this->promoRepo->getList($user, false, true, [Promo::MOB_REGISTRATION_SCORES_ALIAS]);
+		$promos = $this->promoRepo->getList($user, false, true);
 		$promocodes = $this->promocodeRepo->getList($user, false, false, $deal->contractor_id ?? 0);
 
 		$VIEW = view('admin.position.modal.product.edit', [
@@ -283,42 +284,42 @@ class PositionController extends Controller
 		
 		$deal = Deal::find($dealId);
 		if (!$deal) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		}
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		$city = null;
 		if ($cityId) {
 			$city = City::find($cityId);
 			if (!$city) {
-				return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			}
 		}
 
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId ?: 1);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 		
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 
@@ -378,7 +379,7 @@ class PositionController extends Controller
 			
 			Log::debug('500 - Position Certificate Store: ' . $e->getMessage());
 			
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -402,10 +403,10 @@ class PositionController extends Controller
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'product_id' => 'Продукт',
-				'location_id' => 'Локация',
-				'flight_date_at' => 'Желаемая дата полета',
-				'flight_time_at' => 'Желаемая время полета',
+				'product_id' => 'Product',
+				'location_id' => 'Location',
+				'flight_date_at' => 'Desired flight date',
+				'flight_time_at' => 'Desired flight time',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -426,21 +427,21 @@ class PositionController extends Controller
 		$isIndefinitely = $this->request->is_indefinitely ?? 0;
 		
 		if (!$isValidFlightDate) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректная дата и время начала полета']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректная-дата-и-время-начала-полета')]);
 		}
 
 		$deal = $this->dealRepo->getById($dealId);
 		if (!$deal) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		}
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 
 		/*if (!$product->validateFlightDate($flightAt)) {
@@ -449,35 +450,35 @@ class PositionController extends Controller
 
 		$location = Location::find($locationId);
 		if (!$location) {
-			return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 		}
 
 		$city = $location->city;
 		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 
 		$simulator = FlightSimulator::find($simulatorId);
 		if (!$simulator) {
-			return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 		}
 
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
@@ -495,13 +496,13 @@ class PositionController extends Controller
 				$certificate = HelpFunctions::getEntityByUuid(Certificate::class, $certificateUuid);
 			}
 			if (!$certificate) {
-				return response()->json(['status' => 'error', 'reason' => 'Сертификат не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 			}
 			if ($certificate->wasUsed()) {
-				return response()->json(['status' => 'error', 'reason' => 'Сертификат уже был ранее использован']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-уже-был-ранее-использован')]);
 			}
 			if ($certificate->expire_at && Carbon::parse($certificate->expire_at)->lt($date) && !$isIndefinitely) {
-				return response()->json(['status' => 'error', 'reason' => 'Срок действия Сертификата истек']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.срок-действия-сертификата-истек')]);
 			}
 			$certificateId = $certificate->id;
 			$certificateProduct = $certificate->product;
@@ -560,7 +561,7 @@ class PositionController extends Controller
 
 			Log::debug('500 - Position Booking Store: ' . $e->getMessage());
 
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -582,8 +583,8 @@ class PositionController extends Controller
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'product_id' => 'Продукт',
-				'city_id' => 'Город',
+				'product_id' => 'Product',
+				'city_id' => 'City',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -599,39 +600,39 @@ class PositionController extends Controller
 		
 		$deal = Deal::find($dealId);
 		if (!$deal) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		}
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		$city = City::find($cityId);
 		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-в-городе-не-найден', ['city_name' => $city->name])]);
 		}
 		
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 
@@ -670,7 +671,7 @@ class PositionController extends Controller
 
 			Log::debug('500 - Position Product Store: ' . $e->getMessage());
 
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -687,17 +688,17 @@ class PositionController extends Controller
 		}
 
 		$position = DealPosition::find($id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$certificate = $position->certificate;
-		if (!$certificate) return response()->json(['status' => 'error', 'reason' => 'Сертификат не найден']);
+		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
 		$rules = [
 			'product_id' => 'required|numeric|min:0|not_in:0',
@@ -706,8 +707,8 @@ class PositionController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'product_id' => 'Продукт',
-				'city_id' => 'Город',
+				'product_id' => 'Product',
+				'city_id' => 'City',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -725,32 +726,32 @@ class PositionController extends Controller
 
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 
 		if ($cityId) {
 			$city = City::find($cityId);
 			if (!$city) {
-				return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			}
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId ?: 1);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-в-городе-не-найден', ['city_name' => $city->name])]);
 		}
 
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
@@ -800,7 +801,7 @@ class PositionController extends Controller
 			
 			Log::debug('500 - Position Certificate Update: ' . $e->getMessage());
 			
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -817,13 +818,13 @@ class PositionController extends Controller
 		}
 
 		$position = DealPosition::find($id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$rules = [
@@ -835,10 +836,10 @@ class PositionController extends Controller
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'product_id' => 'Продукт',
-				'location_id' => 'Локация',
-				'flight_date_at' => 'Желаемая дата полета',
-				'flight_time_at' => 'Желаемая время полета',
+				'product_id' => 'Product',
+				'location_id' => 'Location',
+				'flight_date_at' => 'Desired flight date',
+				'flight_time_at' => 'Desired flight time',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -855,12 +856,12 @@ class PositionController extends Controller
 		$isValidFlightDate = $this->request->is_valid_flight_date ?? 0;
 		
 		if (!$isValidFlightDate) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректная дата и время начала полета']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректная-дата-и-время-начала-полета')]);
 		}
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 
 		/*if (!$product->validateFlightDate($flightAt)) {
@@ -869,36 +870,36 @@ class PositionController extends Controller
 
 		$location = Location::find($locationId);
 		if (!$location) {
-			return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 		}
 
 		$city = $location->city;
 		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 
 		$simulator = FlightSimulator::find($simulatorId);
 		if (!$simulator) {
-			return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 		}
 
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-в-городе-не-найден', ['city_name' => $city->name])]);
 		}
 		
 		$data = is_array($position->data_json) ? $position->data_json : json_decode($position->data_json, true);
@@ -948,7 +949,7 @@ class PositionController extends Controller
 
 			Log::debug('500 - Position Booking Update: ' . $e->getMessage());
 
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -965,13 +966,13 @@ class PositionController extends Controller
 		}
 
 		$position = DealPosition::find($id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$rules = [
@@ -981,8 +982,8 @@ class PositionController extends Controller
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'product_id' => 'Продукт',
-				'city_id' => 'Город',
+				'product_id' => 'Product',
+				'city_id' => 'City',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -997,30 +998,30 @@ class PositionController extends Controller
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		$city = City::find($cityId);
 		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-в-городе-не-найден', ['city_name' => $city->name])]);
 		}
 		
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
@@ -1057,7 +1058,7 @@ class PositionController extends Controller
 
 			Log::debug('500 - Position Product Update: ' . $e->getMessage());
 
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -1075,13 +1076,13 @@ class PositionController extends Controller
 		}
 
 		$position = DealPosition::find($id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$certificateFilePath = ($position->is_certificate_purchase && $position->certificate && is_array($position->certificate->data_json) && array_key_exists('certificate_file_path', $position->certificate->data_json)) ? $position->certificate->data_json['certificate_file_path'] : '';
@@ -1102,7 +1103,7 @@ class PositionController extends Controller
 		}
 		
 		if (!$position->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		if ($certificateFilePath) {

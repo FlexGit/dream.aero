@@ -227,15 +227,18 @@ class Event extends Model
 		Event::created(function (Event $event) {
 			$event->uuid = $event->generateUuid();
 			if (!in_array($event->event_type, [Event::EVENT_TYPE_SHIFT_PILOT, Event::EVENT_TYPE_SHIFT_ADMIN])) {
-				$event->user_id = \Auth::user()->id;
+				$user = \Auth::user();
+				$event->user_id = $user ? $user->id : 0;
 			}
 			$event->save();
 			
-			$eventComment = new EventComment();
-			$eventComment->name = 'Added ' . $event->user->fioFormatted();
-			$eventComment->event_id = $event->id;
-			$eventComment->created_by = $event->user_id;
-			$eventComment->save();
+			if ($event->user) {
+				$eventComment = new EventComment();
+				$eventComment->name = 'Added ' . $event->user->fioFormatted();
+				$eventComment->event_id = $event->id;
+				$eventComment->created_by = $event->user_id;
+				$eventComment->save();
+			}
 		
 			if ($event->user && !in_array($event->event_type, [Event::EVENT_TYPE_SHIFT_PILOT, Event::EVENT_TYPE_SHIFT_ADMIN])) {
 				$deal = $event->deal;

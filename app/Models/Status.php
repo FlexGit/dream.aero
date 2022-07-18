@@ -53,10 +53,10 @@ class Status extends Model
 	const STATUS_TYPE_CERTIFICATE = 'certificate';
 	const STATUS_TYPE_BILL = 'bill';
 	const STATUS_TYPES = [
-		Status::STATUS_TYPE_CONTRACTOR => 'Contractor',
+		Status::STATUS_TYPE_CONTRACTOR => 'Client',
 		Status::STATUS_TYPE_DEAL => 'Deal',
-		Status::STATUS_TYPE_CERTIFICATE => 'Certificate',
-		Status::STATUS_TYPE_BILL => 'Bill',
+		Status::STATUS_TYPE_CERTIFICATE => 'Voucher',
+		Status::STATUS_TYPE_BILL => 'Invoice',
 	];
 	
 	/**

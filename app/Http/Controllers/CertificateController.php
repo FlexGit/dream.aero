@@ -7,8 +7,8 @@ use App\Models\Content;
 use App\Models\DealPosition;
 use App\Models\PaymentMethod;
 use App\Services\HelpFunctions;
+use Auth;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Validator;
@@ -37,96 +37,22 @@ class CertificateController extends Controller
 	/**
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
-	/*public function index()
-	{
-		$cities = City::orderBy('name')
-			->get();
-		
-		$productTypes = ProductType::orderBy('name')
-			->get();
-		
-		$statuses = Status::where('type', Status::STATUS_TYPE_CERTIFICATE)
-			->orderBy('sort')
-			->get();
-		
-		return view('admin.certificate.index', [
-			'cities' => $cities,
-			'productTypes' => $productTypes,
-			'statuses' => $statuses,
-		]);
-	}*/
-	
-	/**
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	/*public function getListAjax()
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-		
-		$id = $this->request->id ?? 0;
-		
-		$certificates = Certificate::with(['contractor', 'status', 'product', 'city'])
-			->orderBy('id', 'desc');
-		if ($id) {
-			$certificates = $certificates->where('id', '<', $id);
-		}
-		if ($this->request->filter_status_id) {
-			$certificates = $certificates->where('status_id', $this->request->filter_status_id);
-		}
-		if ($this->request->filter_city_id) {
-			$certificates = $certificates->where('city_id', $this->request->filter_city_id);
-		}
-		if ($this->request->filter_product_type_id) {
-			$certificates = $certificates->where(function ($query) {
-				$query->whereHas('product', function ($q) {
-					return $q->where('product_type_id', '=', $this->request->filter_product_type_id);
-				});
-			});
-		}
-		if ($this->request->search_doc) {
-			$certificates = $certificates->where(function ($query) {
-				$query->where('number', 'like', '%' . $this->request->search_doc . '%');
-			});
-		}
-		if ($this->request->search_contractor) {
-			$certificates = $certificates->whereHas('contractor', function ($query) {
-				return $query->where('name', 'like', '%' . $this->request->search_contractor . '%')
-					->orWhere('lastname', 'like', '%' . $this->request->search_contractor . '%')
-					->orWhere('email', 'like', '%' . $this->request->search_contractor . '%')
-					->orWhere('phone', 'like', '%' . $this->request->search_contractor . '%');
-			});
-		}
-		$certificates = $certificates->limit(10)->get();
-		
-		$VIEW = view('admin.certificate.list', ['certificates' => $certificates]);
-		
-		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
-	}*/
-	
 	public function index()
 	{
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			abort(404);
 		}
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'certificate');
+		$city = $user->city;
 		
-		if ($user->isSuperAdmin()) {
-			$cities = $this->cityRepo->getList($user);
-		} elseif ($user->isAdmin()) {
-			$userCity = $user->city;
-			$locations = $userCity ? $userCity->locations : new Collection([]);
-		}
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'certificate');
 		
 		return view('admin.certificate.index', [
 			'page' => $page,
-			'cities' => $user->isSuperAdmin() ? $cities : new Collection([]),
-			'locations' => $user->isAdmin() ? $locations : new Collection([]),
 			'user' => $user,
+			'city' => $city,
 		]);
 	}
 	
@@ -136,16 +62,16 @@ class CertificateController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 
 		if (!$user->isAdminOrHigher()) {
 			abort(404);
 		}
 		
+		$city = $user->city;
+		
 		$dateFromAt = $this->request->filter_date_from_at ?? '';
 		$dateToAt = $this->request->filter_date_to_at ?? '';
-		$cityId = ($this->request->filter_city_id != 'all') ? $this->request->filter_city_id : null;
-		$locationId = $this->request->filter_location_id ?? 0;
 		$filterPaymentType = $this->request->filter_payment_type ?? '';
 		$searchDoc = $this->request->search_doc ?? '';
 		$id = $this->request->id ?? 0;
@@ -156,23 +82,13 @@ class CertificateController extends Controller
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
 		
-		//\DB::connection()->enableQueryLog();
 		$certificates = Certificate::where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-			->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'));
+			->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+			->where('city_id', $city->id)
+			->latest();
 		if ($searchDoc) {
 			$certificates = $certificates->where('number', 'like', '%' . $searchDoc . '%');
 		}
-		if ($user->isSuperAdmin()) {
-			if (!is_null($cityId)) {
-				$certificates = $certificates->where('city_id', $cityId);
-			}
-		} else {
-			$userCityId = $user->city ? $user->city->id : 0;
-			$certificates = $certificates->whereIn('city_id', [$userCityId, 0]);
-		}
-		$certificates = $certificates->/*has('product')
-			->has('position')
-			->*/latest();
 		if ($id) {
 			$certificates = $certificates->where('id', '<', $id);
 		}
@@ -180,14 +96,12 @@ class CertificateController extends Controller
 			$certificates = $certificates->limit(20);
 		}
 		$certificates = $certificates->get();
-		//\Log::debug(\DB::getQueryLog());
 		
 		$certificateItems = [];
 		/** @var Certificate[] $certificates */
 		foreach ($certificates as $certificate) {
 			$position = $certificate->position;
 			$positionBill = $position ? $position->bill : null;
-			if ($locationId && $positionBill && $positionBill->location_id != $locationId) continue;
 			if ($filterPaymentType && $positionBill) {
 				if ($filterPaymentType == 'self_made' && $positionBill->user_id) continue;
 				elseif ($filterPaymentType == 'admin_made' && !$positionBill->user_id) continue;
@@ -197,45 +111,48 @@ class CertificateController extends Controller
 			$positionBillStatus = ($positionBill && $positionBill->status) ? $positionBill->status : null;
 			$positionBillPaymentMethod = ($positionBill && $positionBill->paymentMethod) ? $positionBill->paymentMethod : null;
 			$certificateProduct = $certificate->product;
-			$certificateCity = $certificate->city;
+			/*$certificateCity = $certificate->city;*/
 			$certificateStatus = $certificate->status ?? null;
+			/*$currency = $position ? $position->currency : null;*/
 			
 			$comment = ($position && isset($position->data_json['comment']) && $position->data_json['comment']) ? $position->data_json['comment'] : '';
-			$certificateWhom = ($position && isset($position->data_json['certificate_whom']) && $position->data_json['certificate_whom']) ? $position->data_json['certificate_whom'] : '';
+			/*$certificateWhom = ($position && isset($position->data_json['certificate_whom']) && $position->data_json['certificate_whom']) ? $position->data_json['certificate_whom'] : '';
 			$certificateWhomPhone = ($position && isset($position->data_json['certificate_whom_phone']) && $position->data_json['certificate_whom_phone']) ? $position->data_json['certificate_whom_phone'] : '';
-			$deliveryAddress = ($position && isset($position->data_json['delivery_address']) && $position->data_json['delivery_address']) ? $position->data_json['delivery_address'] : '';
+			$deliveryAddress = ($position && isset($position->data_json['delivery_address']) && $position->data_json['delivery_address']) ? $position->data_json['delivery_address'] : '';*/
 			
 			$oldData = '';
-			$oldData .= (isset($certificate->data_json['sell_date']) && $certificate->data_json['sell_date']) ? 'Дата продажи: ' . $certificate->data_json['sell_date'] : '';
-			$oldData .= (isset($certificate->data_json['duration']) && $certificate->data_json['duration']) ? ', длительность: ' . $certificate->data_json['duration'] : '';
-			$oldData .= (isset($certificate->data_json['amount']) && $certificate->data_json['amount']) ? ', стоимость: ' . $certificate->data_json['amount'] : '';
-			$oldData .= (isset($certificate->data_json['location']) && $certificate->data_json['location']) ? ', локация: ' . $certificate->data_json['location'] : '';
-			$oldData .= (isset($certificate->data_json['payment_method']) && $certificate->data_json['payment_method']) ? ', способ оплаты: ' . $certificate->data_json['payment_method'] : '';
-			$oldData .= (isset($certificate->data_json['status']) && $certificate->data_json['status']) ? ', статус: ' . $certificate->data_json['status'] : '';
-			$oldData .= (isset($certificate->data_json['comment']) && $certificate->data_json['comment']) ? ', комментарий: ' . $certificate->data_json['comment'] : '';
+			$oldData .= (isset($certificate->data_json['sell_date']) && $certificate->data_json['sell_date']) ? 'Date of sale: ' . $certificate->data_json['sell_date'] : '';
+			$oldData .= (isset($certificate->data_json['duration']) && $certificate->data_json['duration']) ? ', duration: ' . $certificate->data_json['duration'] : '';
+			$oldData .= (isset($certificate->data_json['amount']) && $certificate->data_json['amount']) ? ', amount: ' . $certificate->data_json['amount'] : '';
+			$oldData .= (isset($certificate->data_json['location']) && $certificate->data_json['location']) ? ', location: ' . $certificate->data_json['location'] : '';
+			$oldData .= (isset($certificate->data_json['payment_method']) && $certificate->data_json['payment_method']) ? ', payment method: ' . $certificate->data_json['payment_method'] : '';
+			$oldData .= (isset($certificate->data_json['status']) && $certificate->data_json['status']) ? ', status: ' . $certificate->data_json['status'] : '';
+			$oldData .= (isset($certificate->data_json['comment']) && $certificate->data_json['comment']) ? ', comment: ' . $certificate->data_json['comment'] : '';
 			
 			$certificateItems[$certificate->id] = [
 				'number' => $certificate->number,
 				'created_at' => $certificate->created_at,
-				'city_name' => $certificateCity ? $certificateCity->name : (isset($certificate->data_json['sell_date']) ? '' : 'Действует в любом городе'),
+				/*'city_name' => $certificateCity ? $certificateCity->name : (isset($certificate->data_json['sell_date']) ? '' : 'Any'),*/
 				'certificate_product_name' => $certificateProduct ? $certificateProduct->name : '',
 				'position_product_name' => $positionProduct ? $positionProduct->name : '',
 				'position_amount' => $position ? $position->amount : 0,
-				'comment' => $comment . ($oldData ? ' Данные из старой системы: ' . $oldData : ''),
-				'certificate_whom' => $certificateWhom,
+				'comment' => $comment . ($oldData ? ' Old CRM info: ' . $oldData : ''),
+				/*'certificate_whom' => $certificateWhom,
 				'certificate_whom_phone' => $certificateWhomPhone,
-				'delivery_address' => $deliveryAddress,
-				'expire_at' => $certificate->expire_at ? Carbon::parse($certificate->expire_at)->format('Y-m-d') : 'бессрочно',
+				'delivery_address' => $deliveryAddress,*/
+				'expire_at' => $certificate->expire_at ? Carbon::parse($certificate->expire_at)->format('Y-m-d') : 'termless',
 				'certificate_status_name' => $certificateStatus ? $certificateStatus->name : '',
 				'bill_number' => $positionBill ? $positionBill->number : '',
 				'bill_status_alias' => $positionBillStatus ? $positionBillStatus->alias : '',
 				'bill_status_name' => $positionBillStatus ? $positionBillStatus->name : '',
 				'bill_payment_method_name' => $positionBillPaymentMethod ? $positionBillPaymentMethod->name : '',
+				/*'currency_alias' => $currency ? $currency->alias : '',*/
 			];
 		}
 		
 		$data = [
 			'certificateItems' => $certificateItems,
+			'city' => $city,
 		];
 		
 		$reportFileName = '';
@@ -243,7 +160,7 @@ class CertificateController extends Controller
 			$reportFileName = 'certificate-' . $user->id . '-' . date('YmdHis') . '.xlsx';
 			$exportResult = Excel::store(new CertificateExport($data), 'report/' . $reportFileName);
 			if (!$exportResult) {
-				return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 			}
 		}
 		
@@ -263,7 +180,7 @@ class CertificateController extends Controller
 		}
 		
 		$certificate = Certificate::find($id);
-		if (!$certificate) return response()->json(['status' => 'error', 'reason' => 'Сертификат не найден']);
+		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
 		$cities = City::orderBy('name')
 			->get();
@@ -305,7 +222,7 @@ class CertificateController extends Controller
 	public function show($id)
 	{
 		$certificate = Certificate::find($id);
-		if (!$certificate) return response()->json(['status' => 'error', 'reason' => 'Сертификат не найден']);
+		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
 		$cities = City::orderBy('name')
 			->get();
@@ -389,11 +306,11 @@ class CertificateController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'product_id' => 'Продукт',
-				'city_id' => 'Город',
-				'location_id' => 'Локация',
-				'contractor_id' => 'Контрагент',
-				'payment_method_id' => 'Способ оплаты',
+				'product_id' => 'Product',
+				'city_id' => 'City',
+				'location_id' => 'Location',
+				'contractor_id' => 'Client',
+				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -412,7 +329,7 @@ class CertificateController extends Controller
 		$certificate->data_json = $data;
 		$certificate->expire_at = $this->request->expire_at;
 		if (!$certificate->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -429,7 +346,7 @@ class CertificateController extends Controller
 		}
 		
 		$certificate = Certificate::find($id);
-		if (!$certificate) return response()->json(['status' => 'error', 'reason' => 'Сертификат не найден']);
+		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
 		$rules = [
 			'status_id' => 'required|numeric|min:0|not_in:0',
@@ -437,7 +354,7 @@ class CertificateController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'status_id' => 'Статус',
+				'status_id' => 'Status',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -445,7 +362,7 @@ class CertificateController extends Controller
 		
 		$certificate->status_id = $this->request->status_id;
 		if (!$certificate->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -466,21 +383,21 @@ class CertificateController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'id' => 'Позиция',
-				'certificate_id' => 'Сертификат',
+				'id' => 'Deal item',
+				'certificate_id' => 'Voucher',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
 		$position = DealPosition::find($this->request->id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$contractor = $deal->contractor;
-		if (!$contractor) return response()->json(['status' => 'error', 'reason' => 'Контрагент не найден']);
+		if (!$contractor) return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
 		
 		$dealEmail = $deal->email ?? '';
 		$contractorEmail = $contractor->email ?? '';
@@ -489,13 +406,12 @@ class CertificateController extends Controller
 		}
 		
 		$certificate = Certificate::find($this->request->certificate_id);
-		if (!$certificate) return response()->json(['status' => 'error', 'reason' => 'Сертификат не найден']);
+		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
-		//dispatch(new \App\Jobs\SendCertificateEmail($certificate));
 		$job = new \App\Jobs\SendCertificateEmail($certificate);
 		$job->handle();
 		
-		return response()->json(['status' => 'success', 'message' => 'Задание на отправку Сертификата принято']);
+		return response()->json(['status' => 'success', 'message' => trans('main.success.задание-на-отправку-сертификата-принято')]);
 	}
 	
 	/**
@@ -530,13 +446,13 @@ class CertificateController extends Controller
 	 */
 	public function search() {
 		$q = $this->request->post('query');
-		if (!$q) return response()->json(['status' => 'error', 'reason' => 'Нет данных']);
+		if (!$q) return response()->json(['status' => 'error', 'reason' => trans('main.error.нет-данных')]);
 		
 		$user = \Auth::user();
 		
 		$certificates = Certificate::where('number', 'like', '%' . $q . '%')
 			->orderBy('number')
-			->limit(10)
+			->limit(env('LIST_LIMIT'))
 			->get();
 		
 		$suggestions = [];
@@ -550,14 +466,14 @@ class CertificateController extends Controller
 			}
 			
 			if (!$certificate->product_id) {
-				$certificateInfo = (isset($data['sell_date']) ? 'от ' . $data['sell_date'] : '') . ($certificate->expire_at ? ' до ' . $certificate->expire_at->format('d.m.Y') : ' - без срока') . (isset($data['duration']) ? ' на ' . $data['duration'] . ' мин' : '') . (isset($data['amount']) ? ' за ' . $data['amount'] . ' руб' : '') . (isset($data['payment_method']) ? ' (' . $data['payment_method'] . ')' : '') . (isset($data['location']) ? '. ' . $data['location'] : '') . (isset($data['status']) ? '. ' . $data['status'] : '') . ((isset($data['comment']) && $data['comment']) ? ', ' . $data['comment'] : '');
+				$certificateInfo = (isset($data['sell_date']) ? '' . $data['sell_date'] : '') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('d.m.Y') : ' - termless') . (isset($data['duration']) ? ' - ' . $data['duration'] . ' min' : '') . (isset($data['amount']) ? ' = ' . $data['amount'] . '$' : '') . (isset($data['payment_method']) ? ' (' . $data['payment_method'] . ')' : '') . (isset($data['location']) ? '. ' . $data['location'] : '') . (isset($data['status']) ? '. ' . $data['status'] : '') . ((isset($data['comment']) && $data['comment']) ? ', ' . $data['comment'] : '');
 			} else {
 				//$position = $certificate->position()->where('is_certificate_purchase', true)->first();
 				$product = $certificate->product;
 				$city = $certificate->city;
 				$status = $certificate->status;
 				
-				$certificateInfo = $certificate->created_at->format('d.m.Y') . ($certificate->expire_at ? ' до ' . $certificate->expire_at->format('d.m.Y') : ' - без срока') . (isset($dataPosition['certificate_whom']) ? ' (' . $dataPosition['certificate_whom'] : '') . (isset($dataPosition['certificate_whom_phone']) ? ', ' . $dataPosition['certificate_whom_phone'] : '') . ')' . ($product ? ' на ' . $product->duration . ' мин (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
+				$certificateInfo = $certificate->created_at->format('d.m.Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('d.m.Y') : ' - termless') . (isset($dataPosition['certificate_whom']) ? ' (' . $dataPosition['certificate_whom'] : '') . (isset($dataPosition['certificate_whom_phone']) ? ', ' . $dataPosition['certificate_whom_phone'] : '') . ')' . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
 			}
 			
 			$date = date('Y-m-d');

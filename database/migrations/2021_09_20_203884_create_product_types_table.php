@@ -22,6 +22,7 @@ class CreateProductTypesTable extends Migration
 			$table->string('version', 25)->default('ru')->index()->comment('версия');
 			$table->integer('sort')->default(0)->comment('сортировка');
 			$table->boolean('is_active')->default(true)->index()->comment('признак активности');
+			$table->integer('tax')->default(0)->comment('налог');
 			$table->text('data_json')->nullable()->comment('дополнительная информация');
             $table->timestamps();
 			$table->softDeletes();
@@ -32,6 +33,7 @@ class CreateProductTypesTable extends Migration
 				'name' => 'Regular',
 				'alias' => 'regular',
 				'is_tariff' => 1,
+				'tax' => 7,
 				'data' => [
 					'duration' => [30, 60, 90, 120, 180]
 				],
@@ -40,6 +42,7 @@ class CreateProductTypesTable extends Migration
 				'name' => 'Ultimate',
 				'alias' => 'ultimate',
 				'is_tariff' => 1,
+				'tax' => 7,
 				'data' => [
 					'duration' => [30, 60, 90, 120, 180]
 				],
@@ -48,6 +51,7 @@ class CreateProductTypesTable extends Migration
 				'name' => 'Сourses',
 				'alias' => 'courses',
 				'is_tariff' => 1,
+				'tax' => 7,
 				'data' => [
 					'duration' => [360, 540]
 				],
@@ -56,6 +60,7 @@ class CreateProductTypesTable extends Migration
 				'name' => 'Related products and services',
 				'alias' => 'services',
 				'is_tariff' => 0,
+				'tax' => 6,
 				'data' => [
 					'duration' => null
 				],
@@ -67,6 +72,7 @@ class CreateProductTypesTable extends Migration
 			$productType->name = $item['name'];
 			$productType->alias = $item['alias'];
 			$productType->is_tariff = (bool)$item['is_tariff'];
+			$productType->tax = $item['tax'];
 			$productType->data_json = $item['data'];
 			$productType->save();
 		}

@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string $name наименование
  * @property string $alias алиас
- * @property string|null $version версия сайта
  * @property string|null $timezone временная зона
  * @property int $sort сортировка
  * @property bool $is_active признак активности
@@ -43,7 +42,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|City whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|City whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|City whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|City whereVersion($value)
  * @method static \Illuminate\Database\Query\Builder|City withTrashed()
  * @method static \Illuminate\Database\Query\Builder|City withoutTrashed()
  * @mixin \Eloquent
@@ -68,13 +66,6 @@ class City extends Model
 		self::UAE_ALIAS,
 	];
 
-	const RU_VERSION = 'ru';
-	const EN_VERSION = 'en';
-	const VERSIONS = [
-		self::RU_VERSION,
-		self::EN_VERSION,
-	];
-	
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -83,7 +74,6 @@ class City extends Model
 	protected $fillable = [
 		'name',
 		'alias',
-		'version',
 		'timezone',
 		'email',
 		'phone',

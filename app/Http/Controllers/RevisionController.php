@@ -11,13 +11,13 @@ class RevisionController extends Controller
 	private $request;
 
 	const ENTITIES = [
-		'Contractor' => 'Контрагент',
-		'Deal' => 'Сделка',
-		'DealPosition' => 'Позиция сделки',
+		'Contractor' => 'Client',
+		'Deal' => 'Deal',
+		'DealPosition' => 'Item',
 		/*'Score' => 'Баллы',*/
-		'Bill' => 'Счет',
-		'Certificate' => 'Сертификат',
-		'Event' => 'Событие',
+		'Bill' => 'Invoice',
+		'Certificate' => 'Voucher',
+		'Event' => 'Event',
 		/*'City' => 'Город',
 		'Role' => 'Роль',
 		'FlightSimulator' => 'Авиатренажер',
@@ -66,7 +66,7 @@ class RevisionController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$id = $this->request->id ?? 0;

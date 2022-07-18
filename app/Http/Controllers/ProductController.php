@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductType;
 use App\Models\Product;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -24,17 +25,7 @@ class ProductController extends Controller
 	 */
 	public function index()
 	{
-		/*$productTypes = ProductType::where('is_active', true)
-			->orderBy('name')
-			->get();
-		
-		$cities = City::where('is_active', true)
-			->orderBy('name')
-			->get();*/
-
 		return view('admin.product.index', [
-			/*'productTypes' => $productTypes,
-			'cities' => $cities,*/
 		]);
 	}
 	
@@ -46,9 +37,11 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+		
+		$user = Auth::user();
 
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$products = Product::with(['productType'])
@@ -72,16 +65,18 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+		
+		$user = Auth::user();
 
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$product = Product::find($id);
-		if (!$product) return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		
 		$productTypes = ProductType::where('is_active', true)
-			->orderBy('name')
+			->orderBy('sort')
 			->get();
 
 		$pilots = User::where('role', User::ROLE_PILOT)
@@ -107,12 +102,18 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+		
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
+		}
 
 		$product = Product::find($id);
-		if (!$product) return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 
 		$productTypes = ProductType::where('is_active', true)
-			->orderBy('name')
+			->orderBy('sort')
 			->get();
 		
 		$VIEW = view('admin.product.modal.show', [
@@ -131,13 +132,15 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$productTypes = ProductType::where('is_active', true)
-			->orderBy('name')
+			->orderBy('sort')
 			->get();
 
 		$pilots = User::where('role', User::ROLE_PILOT)
@@ -162,13 +165,15 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$product = Product::find($id);
-		if (!$product) return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		
 		$VIEW = view('admin.product.modal.delete', [
 			'product' => $product,
@@ -185,13 +190,16 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
 			'name' => 'required|max:255|unique:products,name',
+			'public_name' => 'required|max:255|unique:products,public_name',
 			'alias' => 'required|max:255|unique:products,alias',
 			'product_type_id' => 'required|numeric|min:0|not_in:0',
 			'icon_file' => 'sometimes|image|max:512',
@@ -199,10 +207,11 @@ class ProductController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Наименование',
-				'alias' => 'Алиас',
-				'product_type_id' => 'Тип продукта',
-				'icon_file' => 'Иконка',
+				'name' => 'Name',
+				'public_name' => 'Public name',
+				'alias' => 'Alias',
+				'product_type_id' => 'Product type',
+				'icon_file' => 'Icon',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -215,10 +224,12 @@ class ProductController extends Controller
 
 		$product = new Product();
 		$product->name = $this->request->name;
+		$product->public_name = $this->request->public_name;
 		$product->alias = $this->request->alias;
 		$product->product_type_id = $this->request->product_type_id;
 		$product->user_id = $this->request->user_id ?? 0;
 		$product->duration = $this->request->duration ?? 0;
+		$product->is_active = $this->request->is_active;
 		$data = [];
 		$data['description'] = $this->request->description ?? null;
 		if ($isIconFileUploaded) {
@@ -226,7 +237,7 @@ class ProductController extends Controller
 		}
 		$product->data_json = $data;
 		if (!$product->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -241,16 +252,19 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$product = Product::find($id);
-		if (!$product) return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		
 		$rules = [
 			'name' => 'required|max:255|unique:products,name,' . $id,
+			'public_name' => 'required|max:255|unique:products,public_name,' . $id,
 			'alias' => 'required|max:255|unique:products,alias,' . $id,
 			'product_type_id' => 'required|numeric|min:0|not_in:0',
 			'icon_file' => 'sometimes|image|max:512',
@@ -258,10 +272,11 @@ class ProductController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Наименование',
-				'alias' => 'Алиас',
-				'product_type_id' => 'Тип продукта',
-				'icon_file' => 'Иконка',
+				'name' => 'Name',
+				'public_name' => 'Public name',
+				'alias' => 'Alias',
+				'product_type_id' => 'Product type',
+				'icon_file' => 'Icon',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -273,10 +288,12 @@ class ProductController extends Controller
 		}
 
 		$product->name = $this->request->name;
+		$product->public_name = $this->request->public_name;
 		$product->alias = $this->request->alias;
 		$product->product_type_id = $this->request->product_type_id;
 		$product->user_id = $this->request->user_id ?? 0;
 		$product->duration = $this->request->duration ?? 0;
+		$product->is_active = $this->request->is_active;
 		$data = $product->data_json;
 		$data['description'] = $this->request->description ?? null;
 		if ($isIconFileUploaded) {
@@ -284,7 +301,7 @@ class ProductController extends Controller
 		}
 		$product->data_json = $data;
 		if (!$product->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -299,16 +316,18 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$product = Product::find($id);
-		if (!$product) return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		
 		if (!$product->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -324,19 +343,21 @@ class ProductController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$product = Product::find($id);
-		if (!$product) return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 
 		$data = $product->data_json;
 		unset($data['icon_file_path']);
 		$product->data_json = $data;
 		if (!$product->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);

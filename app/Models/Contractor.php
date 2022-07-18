@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\HelpFunctions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -9,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use PHPUnit\TextUI\Help;
 use \Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -86,15 +88,15 @@ class Contractor extends Authenticatable
 		'phone' => 'Phone',
 		'email' => 'E-mail',
 		'password' => 'Password',
-		'city_id' => 'City',
-		'discount_id' => 'Discount',
-		'source' => 'Source',
-		'data_json' => 'Extra info',
+		/*'city_id' => 'City',*/
+		/*'discount_id' => 'Discount',*/
+		/*'source' => 'Source',*/
+		/*'data_json' => 'Extra info',*/
 		'is_active' => 'Is active',
 		'last_auth_at' => 'Last auth',
 		'user_id' => 'User',
-		'uuid' => 'Uuid',
-		'is_subscribed' => 'Subscribed',
+		/*'uuid' => 'Uuid',*/
+		/*'is_subscribed' => 'Subscribed',*/
 		'created_at' => 'Created',
 		'updated_at' => 'Updated',
 		'deleted_at' => 'Deleted',
@@ -106,21 +108,21 @@ class Contractor extends Authenticatable
 	const ADMIN_SOURCE = 'admin';
 	const CALENDAR_SOURCE = 'calendar';
 	const WEB_SOURCE = 'web';
-	const MOB_SOURCE = 'api';
+	/*const MOB_SOURCE = 'api';*/
 	const SOURCES = [
 		self::ADMIN_SOURCE => 'Admin',
 		self::CALENDAR_SOURCE => 'Calendar',
 		self::WEB_SOURCE => 'Web',
-		self::MOB_SOURCE => 'Mob',
+		/*self::MOB_SOURCE => 'Mob',*/
 	];
 
-	const REGISTRATION_SCORE = 500;
+	/*const REGISTRATION_SCORE = 500;*/
 
 	const ANONYM_EMAIL = 'anonym@dream.aero';
 	
 	protected $revisionForceDeleteEnabled = true;
 	protected $revisionCreationsEnabled = true;
-	protected $dontKeepRevisionOf = ['password', 'source', 'data_json', 'last_auth_at', 'uuid'];
+	protected $dontKeepRevisionOf = ['password', 'source', 'data_json', 'last_auth_at', 'uuid', 'city_id', 'is_subscribed'];
 	
 	/**
 	 * The attributes that are mass assignable.
@@ -135,7 +137,7 @@ class Contractor extends Authenticatable
 		'email',
 		'password',
 		'city_id',
-		'discount_id',
+		/*'discount_id',*/
 		'source',
 		'data_json',
 		'is_active',
@@ -191,14 +193,19 @@ class Contractor extends Authenticatable
 		return $this->hasOne(City::class, 'id', 'city_id');
 	}
 	
-	public function discount()
+	/*public function discount()
 	{
 		return $this->hasOne(Discount::class, 'id', 'discount_id');
-	}
+	}*/
 	
-	public function tokens()
+	/*public function tokens()
 	{
 		return $this->hasMany(Token::class, 'contractor_id', 'id');
+	}*/
+	
+	public function bills()
+	{
+		return $this->hasMany(Bill::class, 'contractor_id', 'id');
 	}
 	
 	public function user()
@@ -221,13 +228,13 @@ class Contractor extends Authenticatable
 			->withTimestamps();
 	}
 	
-	public function notifications()
+	/*public function notifications()
 	{
 		return $this->belongsToMany(Notification::class, 'notifications_contractors', 'contractor_id', 'notification_id')
 			->using(NotificationContractor::class)
 			->withPivot(['is_new'])
 			->withTimestamps();
-	}
+	}*/
 	
 	/**
 	 * @return string
@@ -238,7 +245,7 @@ class Contractor extends Authenticatable
 		return (string)\Webpatser\Uuid\Uuid::generate();
 	}
 	
-	public function format()
+	/*public function format()
 	{
 		$data = $this->data_json ? (is_array($this->data_json) ? $this->data_json : json_decode($this->data_json, true)) : [];
 
@@ -280,16 +287,15 @@ class Contractor extends Authenticatable
 			'status' => $status->name ?? null,
 			'flight_time' => (int)$contractorFlightTime,
 			'discount' => $status->discount ? $status->discount->valueFormatted() : '0%',
-			/*'is_new' => $this->password ? true : false,*/
 		];
-	}
+	}*/
 	
 	/**
 	 * @param $statuses
 	 * @param int $contractorFlightTime
 	 * @return mixed|null
 	 */
-	public function getStatus($statuses, $contractorFlightTime = 0)
+	/*public function getStatus($statuses, $contractorFlightTime = 0)
 	{
 		$flightTimes = [];
 		foreach ($statuses ?? [] as $status) {
@@ -325,16 +331,16 @@ class Contractor extends Authenticatable
 		}
 		
 		return null;
-	}
+	}*/
 	
 	/**
 	 * @return mixed
 	 */
-	public function getScore()
+	/*public function getScore()
 	{
 		return Score::where('contractor_id', $this->id)
 			->sum('score');
-	}
+	}*/
 	
 	/**
 	 * @return mixed
@@ -407,7 +413,7 @@ class Contractor extends Authenticatable
 	 */
 	public function fio()
 	{
-		return trim(($this->lastname ?? '') . ' ' . ($this->name ?? ''));
+		return trim(($this->name ?? '') . ' ' . ($this->lastname ?? ''));
 	}
 	
 	/**
@@ -416,6 +422,47 @@ class Contractor extends Authenticatable
 	public function phoneFormatted()
 	{
 		$phoneCleared = preg_replace( '/[^0-9]/', '', $this->phone);
-		return '+' . mb_substr($phoneCleared, 0, 1) . ' (' . mb_substr($phoneCleared, 1, 3) . ') ' . mb_substr($phoneCleared, 4, 3) . '-' . mb_substr($phoneCleared, 7, 2) . '-' . mb_substr($phoneCleared, 9, 2);
+		//return '+' . mb_substr($phoneCleared, 0, 1) . ' (' . mb_substr($phoneCleared, 1, 3) . ') ' . mb_substr($phoneCleared, 4, 3) . '-' . mb_substr($phoneCleared, 7, 2) . '-' . mb_substr($phoneCleared, 9, 2);
+		return '+' . $phoneCleared;
+	}
+	
+	/**
+	 * @return int
+	 */
+	public function paidBillsAmount()
+	{
+		$amount = 0;
+		foreach ($this->bills as $bill) {
+			if ($bill->status->alias != Bill::PAYED_STATUS) continue;
+			
+			$amount += $bill->amount;
+		}
+		
+		return $amount;
+	}
+	
+	/**
+	 * @return mixed|null
+	 */
+	public function discount()
+	{
+		$amount = $this->paidBillsAmount();
+		if ($amount >= 500 && $amount < 1000) {
+			return HelpFunctions::getEntityByAlias(Discount::class, Discount::DISCOUNT_5_ALIAS);
+		}
+
+		if ($amount >= 1000 && $amount < 1500) {
+			return HelpFunctions::getEntityByAlias(Discount::class, Discount::DISCOUNT_10_ALIAS);
+		}
+		
+		if ($amount >= 1500 && $amount < 2000) {
+			return HelpFunctions::getEntityByAlias(Discount::class, Discount::DISCOUNT_15_ALIAS);
+		}
+		
+		if ($amount >= 2000) {
+			return HelpFunctions::getEntityByAlias(Discount::class, Discount::DISCOUNT_20_ALIAS);
+		}
+		
+		return new Discount([]);
 	}
 }

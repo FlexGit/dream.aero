@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Способы оплаты
+				Payment methods
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Способы оплаты</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Payment methods</li>
 			</ol>
 		</div>
 	</div>
@@ -23,16 +23,16 @@
 				<div class="card-body">
 					<div class="table-filter d-sm-flex">
 						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/payment_method/add" data-action="/payment_method" data-method="POST" data-title="Добавление" class="btn btn-secondary btn-sm" title="Добавить">Добавить</a>
+							<a href="javascript:void(0)" data-toggle="modal" data-url="/payment_method/add" data-action="/payment_method" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Добавить">Add</a>
 						</div>
 					</div>
 					<table id="paymentMethodTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
 						<tr>
-							<th class="text-center">Наименование</th>
-							<th class="text-center d-none d-sm-table-cell">Алиас</th>
-							<th class="text-center d-none d-md-table-cell">Активность</th>
-							<th class="text-center">Действие</th>
+							<th class="text-center">Name</th>
+							<th class="text-center">Alias</th>
+							<th class="text-center">Is active</th>
+							<th class="text-center">Action</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -47,7 +47,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -55,8 +55,8 @@
 				<form id="paymentMethod">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -77,7 +77,7 @@
 			function getList() {
 				var $selector = $('#paymentMethodTable tbody');
 
-				$selector.html('<tr><td colspan="30" class="text-center">Загрузка данных...</td></tr>');
+				$selector.html('<tr><td colspan="30" class="text-center">Loading data...</td></tr>');
 
 				$.ajax({
 					url: "{{ route('paymentMethodList') }}",
@@ -92,7 +92,7 @@
 						if (result.html) {
 							$selector.html(result.html);
 						} else {
-							$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+							$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 						}
 					}
 				})
@@ -109,7 +109,7 @@
 					title = $(this).data('title');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -155,13 +155,13 @@
 							return;
 						}
 
-						var msg = 'Способ оплаты успешно ';
+						var msg = 'Payment method successfully ';
 						if (method === 'POST') {
-							msg += 'добавлен';
+							msg += 'added';
 						} else if (method === 'PUT') {
-							msg += 'сохранен';
+							msg += 'saved';
 						} else if (method === 'DELETE') {
-							msg += 'удален';
+							msg += 'deleted';
 						}
 
 						$('#modal').modal('hide');

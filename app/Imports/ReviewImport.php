@@ -40,12 +40,13 @@ class ReviewImport implements OnEachRow, WithProgressBar
 			$content->preview_text = trim($row[1]);
 			$content->detail_text = trim($row[2]);
 			$content->parent_id = $parentId;
-			$content->city_id = 0;
+			$content->city_id = 1;
 			$content->created_at = $row[3] ? gmdate('Y-m-d H:i:s', $row[3]) : Carbon::now();
 			$content->updated_at = $row[4] ? gmdate('Y-m-d H:i:s', $row[4]) : Carbon::now();
 			$content->published_at = $row[5] ? gmdate('Y-m-d H:i:s', $row[5]) : Carbon::now();
-			$content->meta_title = 'Отзыв от клиента ' . trim($row[0]) . ' от ' . Carbon::parse($content->created_at)->format('d.m.Y');
-			$content->meta_description = 'Отзыв от клиента ' . trim($row[0]) . ' от ' . Carbon::parse($content->created_at)->format('d.m.Y');
+			$content->is_active = $row[6];
+			$content->meta_title = 'Review from ' . trim($row[0]) . ' at ' . Carbon::parse($content->created_at)->format('m/d/Y');
+			$content->meta_description = 'Review from ' . trim($row[0]) . ' at ' . Carbon::parse($content->created_at)->format('m/d/Y');
 			$content->save();
 
 			\DB::commit();

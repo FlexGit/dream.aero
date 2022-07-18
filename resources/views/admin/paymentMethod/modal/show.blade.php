@@ -5,23 +5,23 @@
 			<td>{{ $paymentMethod->id }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Наименование</td>
+			<td>Name</td>
 			<td>{{ $paymentMethod->name }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Алиас</td>
+			<td>Alias</td>
 			<td>{{ $paymentMethod->alias }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Активность</td>
-			<td>{{ $paymentMethod->is_active ? 'Да' : 'Нет' }}</td>
+			<td>Is active</td>
+			<td>{{ $paymentMethod->is_active ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата создания</td>
+			<td>Create date</td>
 			<td>{{ $paymentMethod->created_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего изменения</td>
+			<td>Last edit date</td>
 			<td>{{ $paymentMethod->updated_at }}</td>
 		</tr>
 	</tbody>

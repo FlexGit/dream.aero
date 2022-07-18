@@ -256,7 +256,7 @@ return [
 		],
 		[
 			'key'         => 'certificate',
-			'text' 		  => 'Certificates',
+			'text' 		  => 'Vouchers',
 			'url'  		  => '/certificate',
 			'can'  		  => 'is_admin',
 			'icon' 		  => 'far fa-fw fa-file-alt',
@@ -307,7 +307,7 @@ return [
 					'icon'    => 'fas fa-fw fa-exclamation',
 				],
 				[
-					'text' => 'Discount variants',
+					'text' => 'Discount types',
 					'url'  => '/discount',
 					'icon' => 'fas fa-fw fa-percentage',
 					'can'  => 'is_superadmin',
@@ -319,7 +319,7 @@ return [
 			'icon'    => 'fas fa-fw fa-book',
 			'can'	  => 'is_superadmin',
 			'submenu' => [
-				[
+				/*[
 					'text' => 'Cities',
 					'url'  => '/city',
 					'icon' => 'far fa-fw fa-building',
@@ -342,7 +342,7 @@ return [
 					'url'  => '/flight_simulator',
 					'icon' => 'fas fa-fw fa-plane',
 					'can'  => 'is_superadmin',
-				],
+				],*/
 				[
 					'text' => 'Product types',
 					'url'  => '/product_type',
@@ -355,12 +355,12 @@ return [
 					'icon' => 'fas fa-fw fa-grip-horizontal',
 					'can'  => 'is_superadmin',
 				],
-				[
+				/*[
 					'text' => 'Statuses',
 					'url'  => '/status',
 					'icon' => 'fas fa-fw fa-project-diagram',
 					'can'  => 'is_superadmin',
-				],
+				],*/
 				[
 					'text' => 'Payment methods',
 					'url'  => '/payment_method',

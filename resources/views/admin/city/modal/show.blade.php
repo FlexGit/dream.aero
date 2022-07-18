@@ -25,10 +25,6 @@
 			<td>{{ $city->whatsapp }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Версия</td>
-			<td>{{ $city->version }}</td>
-		</tr>
-		<tr class="odd">
 			<td>Активность</td>
 			<td>{{ $city->is_active ? 'Да' : 'Нет' }}</td>
 		</tr>

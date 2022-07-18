@@ -65,8 +65,7 @@ class NotificationController extends Controller
 		$notification = Notification::find($id);
 		if (!$notification) return response()->json(['status' => 'error', 'reason' => 'Уведомление не найдено']);
 
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$VIEW = view('admin.notification.modal.edit', [
@@ -90,8 +89,7 @@ class NotificationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
 		}
 
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 
 		$VIEW = view('admin.notification.modal.add', [

@@ -11,14 +11,11 @@
 				{{ $certificateItem['certificate_product_name'] }}
 				@if($certificateItem['certificate_product_name'] != $certificateItem['position_product_name'])
 					<br>
-					Product in position changed to {{ $certificateItem['position_product_name'] }}
+					Product was changed to {{ $certificateItem['position_product_name'] }}
 				@endif
 			</td>
 			<td class="align-middle text-right">
-				{{ number_format($certificateItem['position_amount'], 0, '.', ' ') }}
-			</td>
-			<td class="align-middle text-center">
-				{{ $certificateItem['city_name'] }}
+				{{ number_format($certificateItem['position_amount'], 2, '.', ' ') }} {{--{{ $certificateItem['currency_alias'] }}--}}
 			</td>
 			<td class="align-middle text-center">
 				{{ $certificateItem['certificate_status_name'] }}
@@ -46,7 +43,7 @@
 				@endif
 			</td>
 			<td class="align-middle text-left">
-				@if($certificateItem['comment'] || $certificateItem['certificate_whom'] || $certificateItem['certificate_whom_phone'])
+				@if($certificateItem['comment'] /*|| $certificateItem['certificate_whom'] || $certificateItem['certificate_whom_phone']*/)
 					<div style="border: 1px solid;border-radius: 6px;padding: 4px 8px;background-color: #fff;">
 						@if($certificateItem['comment'])
 							<div title="Comment">
@@ -54,7 +51,7 @@
 								<span><i>{{ $certificateItem['comment'] }}</i></span>
 							</div>
 						@endif
-						@if($certificateItem['certificate_whom'])
+						{{--@if($certificateItem['certificate_whom'])
 							<div title="Who the Voucher is for (name)">
 								<i class="fas fa-user"></i>&nbsp;
 								<span><i>{{ $certificateItem['certificate_whom']}}</i></span>
@@ -71,7 +68,7 @@
 								<i class="fas fa-truck"></i>&nbsp;
 								<span><i>{{ $certificateItem['delivery_address'] }}</i></span>
 							</div>
-						@endif
+						@endif--}}
 					</div>
 				@endif
 			</td>

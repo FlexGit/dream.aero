@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\AeroflotBonusService;
 use App\Services\HelpFunctions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -85,8 +84,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property-read int|null $scores_count
  * @property string|null $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereUuid($value)
- * @property string|null $roistat номер визита Roistat
- * @method static \Illuminate\Database\Eloquent\Builder|Deal whereRoistat($value)
  */
 class Deal extends Model
 {
@@ -129,7 +126,6 @@ class Deal extends Model
 	const CALENDAR_SOURCE = 'calendar';
 	const WEB_SOURCE = 'web';
 	const MOB_SOURCE = 'api';
-	const ROISTAT_SOURCE = 'roistat';
 	const SOURCES = [
 		self::ADMIN_SOURCE => 'Admin',
 		self::CALENDAR_SOURCE => 'Calendar',
@@ -172,6 +168,9 @@ class Deal extends Model
 		'12.06.2024',
 		'04.11.2024',
 	];
+	
+	const AMUSEMENT_TAX = 7;
+	const SALES_TAX = 6;
 
 	protected $revisionForceDeleteEnabled = true;
 	protected $revisionCreationsEnabled = true;

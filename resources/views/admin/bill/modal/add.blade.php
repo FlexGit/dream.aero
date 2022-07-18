@@ -1,5 +1,5 @@
 <input type="hidden" id="deal_id" name="deal_id" value="{{ $deal->id }}">
-<input type="hidden" id="currency_id" name="currency_id" value="{{ ($deal->contractor && $deal->contractor->city && $deal->contractor->city->version == app('\App\Models\City')::EN_VERSION) ? 2 : 1 }}">
+<input type="hidden" id="currency_id" name="currency_id" value="1">
 
 <div class="row">
 	<div class="col">

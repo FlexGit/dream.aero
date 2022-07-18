@@ -1,10 +1,3 @@
-@php
-	$isDiscountBookingAllow = $isDiscountCertificatePurchaseAllow = 0;
-	$data = is_array($promo->data_json) ? $promo->data_json : json_decode($promo->data_json, true);
-	$isDiscountBookingAllow = array_key_exists('is_discount_booking_allow', $data) ? $data['is_discount_booking_allow'] : 0;
-	$isDiscountCertificatePurchaseAllow = array_key_exists('is_discount_certificate_purchase_allow', $data) ? $data['is_discount_certificate_purchase_allow'] : 0;
-@endphp
-
 <table class="table table-hover table-sm table-bordered table-striped">
 	<tbody>
 		<tr class="odd">
@@ -12,55 +5,47 @@
 			<td>{{ $promo->id }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Имя</td>
+			<td>Name</td>
 			<td>{{ $promo->name }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Алиас</td>
+			<td>Alias</td>
 			<td>{{ $promo->alias }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Скидка</td>
+			<td>Discount</td>
 			<td>{{ $promo->discount ? $promo->discount->valueFormatted() : '' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Скидка действует на бронирование</td>
-			<td>{{ $isDiscountBookingAllow ? 'Да' : 'Нет' }}</td>
-		</tr>
-		<tr class="odd">
-			<td>Скидка действует на покупку сертификата</td>
-			<td>{{ $isDiscountCertificatePurchaseAllow ? 'Да' : 'Нет' }}</td>
-		</tr>
-		<tr class="odd">
-			<td>Город</td>
+			<td>City</td>
 			<td>{{ $promo->city ? $promo->city->name : '' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Краткое описание</td>
+			<td>Brief description</td>
 			<td>{{ $promo->preview_text }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Подробное описание</td>
+			<td>Detailed description</td>
 			<td>{{ strip_tags($promo->detail_text) }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Для публикации</td>
-			<td>{{ $promo->is_published ? 'Да' : 'Нет' }}</td>
+			<td>For publication</td>
+			<td>{{ $promo->is_published ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Активность</td>
-			<td>{{ $promo->is_active ? 'Да' : 'Нет' }}</td>
+			<td>Is active</td>
+			<td>{{ $promo->is_active ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата начала активности</td>
+			<td>Activity start date</td>
 			<td>{{ $promo->active_from_at ? \Carbon\Carbon::parse($promo->active_from_at)->format('Y-m-d') : '' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата окончания активности</td>
+			<td>Activity end date</td>
 			<td>{{ $promo->active_to_at ? \Carbon\Carbon::parse($promo->active_to_at)->format('Y-m-d') : '' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Изображение</td>
+			<td>Image</td>
 			<td>
 				@if(isset($promo->data_json['image_file_path']) && $promo->data_json['image_file_path'])
 					<img src="/upload/{{ $promo->data_json['image_file_path'] }}" width="150" alt="">
@@ -68,11 +53,11 @@
 			</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата создания</td>
+			<td>Create date</td>
 			<td>{{ $promo->created_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего изменения</td>
+			<td>Last edit date</td>
 			<td>{{ $promo->updated_at }}</td>
 		</tr>
 	</tbody>

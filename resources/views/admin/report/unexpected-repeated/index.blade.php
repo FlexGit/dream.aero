@@ -4,14 +4,14 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Спонтанные / Повторные
+				Spontaneous / Repeated
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item"><a href="/report">Отчеты</a></li>
-				<li class="breadcrumb-item active">Спонтанные / Повторные</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item"><a href="/report">Reports</a></li>
+				<li class="breadcrumb-item active">Spontaneous / Repeated</li>
 			</ol>
 		</div>
 	</div>
@@ -24,19 +24,19 @@
 				<div class="card-body">
 					<div class="table-filter d-sm-flex mb-2">
 						<div class="form-group">
-							<label for="filter_date_from_at">Дата начала периода</label>
+							<label for="filter_date_from_at">Period start date</label>
 							<div>
 								<input type="date" class="form-control" id="filter_date_from_at" name="filter_date_from_at" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" style="width: 200px;">
 							</div>
 						</div>
 						<div class="form-group ml-3">
-							<label for="filter_date_to_at">Дата окончания периода</label>
+							<label for="filter_date_to_at">Period end date</label>
 							<div>
 								<input type="date" class="form-control" id="filter_date_to_at" name="filter_date_to_at" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
 							</div>
 						</div>
 						<div class="form-group ml-3" style="padding-top: 31px;">
-							<button type="button" id="show_btn" class="btn btn-secondary">Показать</button>
+							<button type="button" id="show_btn" class="btn btn-secondary">Show</button>
 							{{--<button type="button" id="export_btn" class="btn btn-light"><i class="far fa-file-excel"></i> Excel</button>--}}
 						</div>
 					</div>
@@ -84,7 +84,7 @@
 						if (result.html) {
 							$selector.html(result.html);
 						} else {
-							$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+							$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 						}
 
 						$btn.attr('disabled', false);

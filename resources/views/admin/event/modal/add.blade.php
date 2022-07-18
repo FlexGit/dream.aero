@@ -20,19 +20,19 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label>Дата и время начала полета</label>
+			<label>Flight start</label>
 			<div class="d-flex">
-				<input type="date" class="form-control" name="start_at_date" value="{{ $position->flight_at ? \Carbon\Carbon::parse($position->flight_at)->format('Y-m-d') : '' }}" placeholder="Дата начала полета">
-				<input type="time" class="form-control ml-2" name="start_at_time" value="{{ $position->flight_at ? \Carbon\Carbon::parse($position->flight_at)->format('H:i') : '' }}" placeholder="Время начала полета">
+				<input type="date" class="form-control" name="start_at_date" value="{{ $position->flight_at ? \Carbon\Carbon::parse($position->flight_at)->format('Y-m-d') : '' }}" placeholder="">
+				<input type="time" class="form-control ml-2" name="start_at_time" value="{{ $position->flight_at ? \Carbon\Carbon::parse($position->flight_at)->format('H:i') : '' }}" placeholder="">
 			</div>
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
-			<label for="extra_time">Доп. минуты</label>
+			<label for="extra_time">Extra time</label>
 			<select class="form-control" id="extra_time" name="extra_time">
 				<option value="0"></option>
-				<option value="15">15</option>
+				<option value="15">15 min</option>
 			</select>
 		</div>
 	</div>
@@ -40,19 +40,19 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="is_repeated_flight">Повторный полет</label>
+			<label for="is_repeated_flight">Repeated</label>
 			<select class="form-control" id="is_repeated_flight" name="is_repeated_flight">
-				<option value="0" selected>Нет</option>
-				<option value="1">Да</option>
+				<option value="0" selected>No</option>
+				<option value="1">Yes</option>
 			</select>
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
-			<label for="is_unexpected_flight">Спонтанный полет</label>
+			<label for="is_unexpected_flight">Spontaneous</label>
 			<select class="form-control" id="is_unexpected_flight" name="is_unexpected_flight">
-				<option value="0" selected>Нет</option>
-				<option value="1">Да</option>
+				<option value="0" selected>No</option>
+				<option value="1">Yes</option>
 			</select>
 		</div>
 	</div>

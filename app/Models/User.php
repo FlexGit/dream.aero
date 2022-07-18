@@ -60,8 +60,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereDataJson($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLastname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereMiddlename($value)
- * @property string $version
- * @method static \Illuminate\Database\Eloquent\Builder|User whereVersion($value)
  * @property \Illuminate\Support\Carbon|null $birthdate дата рождения
  * @property string|null $phone Телефон
  * @property string|null $position должность
@@ -98,7 +96,6 @@ class User extends Authenticatable
         'email',
         'password',
 		'role',
-		'version',
 		'city_id',
 		'location_id',
 		'phone',

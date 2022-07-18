@@ -1,14 +1,19 @@
 <input type="hidden" id="id" name="id">
+
 <div class="form-group">
-	<label for="name">Наименование</label>
-	<input type="text" class="form-control" id="name" name="name" placeholder="Наименование">
+	<label for="name">Name</label>
+	<input type="text" class="form-control" id="name" name="name" placeholder="Name">
 </div>
 <div class="form-group">
-	<label for="alias">Алиас</label>
-	<input type="text" class="form-control" id="alias" name="alias" placeholder="Алиас">
+	<label for="public_name">Public name</label>
+	<input type="text" class="form-control" id="public_name" name="public_name" placeholder="Public name">
 </div>
 <div class="form-group">
-	<label for="product_type_id">Тип продукта</label>
+	<label for="alias">Alias</label>
+	<input type="text" class="form-control" id="alias" name="alias" placeholder="Alias">
+</div>
+<div class="form-group">
+	<label for="product_type_id">Product type</label>
 	<select class="form-control" id="product_type_id" name="product_type_id">
 		<option></option>
 		@foreach($productTypes ?? [] as $productType)
@@ -17,12 +22,12 @@
 	</select>
 </div>
 <div class="form-group">
-	<label for="duration">Длительность, мин</label>
+	<label for="duration">Duration, min</label>
 	<select class="form-control" id="duration" name="duration">
 	</select>
 </div>
 <div class="form-group">
-	<label for="user_id">Пилот</label>
+	<label for="user_id">Pilot (for VIP product type)</label>
 	<select class="form-control" id="user_id" name="user_id">
 		@foreach($pilots ?? [] as $pilot)
 			<option></option>
@@ -31,13 +36,20 @@
 	</select>
 </div>
 <div class="form-group">
-	<label>Путь к файлу иконки</label>
+	<label>Icon file path</label>
 	<div class="custom-file">
 		<input type="file" class="custom-file-input" id="icon_file" name="icon_file">
-		<label class="custom-file-label" for="icon_file">Выбрать файл</label>
+		<label class="custom-file-label" for="icon_file">Choose a file</label>
 	</div>
 </div>
 <div class="form-group">
-	<label for="description">Описание</label>
+	<label for="description">Description</label>
 	<textarea class="form-control" id="description" name="description" rows="5"></textarea>
+</div>
+<div class="form-group">
+	<label for="is_active">Is active</label>
+	<select class="form-control form-control-sm" id="is_active" name="is_active">
+		<option value="1" selected>Yes</option>
+		<option value="0">No</option>
+	</select>
 </div>

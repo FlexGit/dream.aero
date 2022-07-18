@@ -40,14 +40,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|ProductType withTrashed()
  * @method static \Illuminate\Database\Query\Builder|ProductType withoutTrashed()
  * @mixin \Eloquent
- * @property string|null $version
- * @method static \Illuminate\Database\Eloquent\Builder|ProductType whereVersion($value)
  */
 class ProductType extends Model
 {
 	use HasFactory, SoftDeletes;
 	
     const DURATIONS = [
+    	15,
     	30,
 		60,
 		90,
@@ -64,13 +63,6 @@ class ProductType extends Model
 	const VIP_ALIAS = 'vip';
 	const SERVICES_ALIAS = 'services';
 
-	const RU_VERSION = 'ru';
-	const EN_VERSION = 'en';
-	const VERSIONS = [
-		self::RU_VERSION,
-		self::EN_VERSION,
-	];
-    
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -80,8 +72,9 @@ class ProductType extends Model
 		'name',
 		'alias',
 		'is_tariff',
-		'version',
+		'sort',
 		'is_active',
+		'tax',
 		'data_json'
 	];
 
@@ -109,7 +102,7 @@ class ProductType extends Model
 	/**
 	 * @return array
 	 */
-	public function format()
+	/*public function format()
 	{
 		$data = $this->data_json ?? [];
 		
@@ -119,5 +112,5 @@ class ProductType extends Model
 			'alias' => $this->alias,
 			'description' => array_key_exists('description', $data) ? $data['description'] : null,
 		];
-	}
+	}*/
 }

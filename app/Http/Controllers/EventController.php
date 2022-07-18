@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Bill;
 use App\Models\City;
 use App\Models\Content;
-use App\Models\Currency;
 use App\Models\Deal;
 use App\Models\DealPosition;
 use App\Models\Event;
@@ -18,6 +17,7 @@ use App\Models\ProductType;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\HelpFunctions;
+use Auth;
 use Carbon\Carbon;
 use Doctrine\DBAL\Events;
 use Illuminate\Database\Eloquent\Collection;
@@ -80,7 +80,6 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		$locations = Location::where('is_active', true)
-			->whereRelation('city', 'version', '=', $user->version)
 			->with('simulators')
 			->get();
 		$locationData = [];
@@ -111,7 +110,6 @@ class EventController extends Controller
 			$events = $events->where('flight_simulator_id', $simulatorId);
 		}
 		$events = $events
-			->whereRelation('city', 'version', '=', $user->version)
 			->with(['dealPosition', 'user'])
 			->get();
 
@@ -160,7 +158,7 @@ class EventController extends Controller
 						}
 						
 						// инфа о Сертификате
-						$title .= '. Сертификат: ' . $certificate->number . ' от ' . Carbon::parse($certificate->created_at)->format('d.m.Y') . ' за ' . ($amount ?? '-') . ' руб' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
+						$title .= '. Voucher: ' . $certificate->number . ' ' . Carbon::parse($certificate->created_at)->format('d.m.Y') . ' = ' . ($amount ?? '-') . '$' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
 					}
 					
 					if ($position) {
@@ -177,7 +175,7 @@ class EventController extends Controller
 					}
 					
 					// сумма Сделки
-					$title .= '. Сумма сделки ' . $deal->amount() . ' руб';
+					$title .= '. Deal amount ' . $deal->amount() . '$';
 					
 					// способы оплаты
 					if ($paymentMethodNames) {
@@ -186,23 +184,23 @@ class EventController extends Controller
 					
 					// инфа об акции
 					if (isset($promo)) {
-						$title .= '. Акция: ' . $promo->name . ' (' . ($promo->discount ? $promo->discount->valueFormatted() : '') . ')';
+						$title .= '. Promo: ' . $promo->name . ' (' . ($promo->discount ? $promo->discount->valueFormatted() : '') . ')';
 					}
 					// инфа о промокоде
 					if (isset($promocode)) {
-						$title .= '. Промокод: ' . $promocode->number . ' (' . ($promocode->discount ? $promocode->discount->valueFormatted() : '') . ')';
+						$title .= '. Promo code: ' . $promocode->number . ' (' . ($promocode->discount ? $promocode->discount->valueFormatted() : '') . ')';
 					}
 					// время работы платформы от админа
-					if ($event->simulator_up_at || $event->simulator_down_at) {
+					/*if ($event->simulator_up_at || $event->simulator_down_at) {
 						$title .= '. Платформа: ' . ($event->simulator_up_at ? Carbon::parse($event->simulator_up_at)->format('H:i') : '') . ' - ' . ($event->simulator_down_at ? Carbon::parse($event->simulator_down_at)->format('H:i') : '');
-					}
+					}*/
 					// спонтанный полет
 					if ($event->is_unexpected_flight) {
-						$title .= '. СП';
+						$title .= '. Spontaneous';
 					}
 					// повторный полет
 					if ($event->is_repeated_flight) {
-						$title .= '. ПП';
+						$title .= '. Repeated';
 					}
 					// описание
 					if ($event->description) {
@@ -210,7 +208,7 @@ class EventController extends Controller
 					}
 					// инфа о прикрепленном к событию документе
 					if (is_array($event->data_json) && array_key_exists('doc_file_path', $event->data_json) && $event->data_json['doc_file_path']) {
-						$title .= '. Прикреплен документ';
+						$title .= '. Document attached';
 					}
 					
 					$allDay = false;
@@ -277,7 +275,7 @@ class EventController extends Controller
 					'name' => $comment->name,
 					'user' => $userName,
 					'date' => $comment->updated_at->format('d.m.Y H:i'),
-					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'изменено' : 'создано',
+					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'edited' : 'created',
 				];
 			}
 			
@@ -316,11 +314,10 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$cities = City::where('version', $user->version)
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 
 		switch ($eventType) {
@@ -342,7 +339,7 @@ class EventController extends Controller
 			break;
 			default:
 				$position = DealPosition::find($positionId);
-				if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция сделки не найдена']);
+				if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 				
 				$VIEW = view('admin.event.modal.add', [
 					'position' => $position,
@@ -368,14 +365,13 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$event = Event::find($id);
-		if (!$event) return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
-		$cities = City::where('version', $user->version)
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$isShift = filter_var($isShift, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
@@ -393,7 +389,7 @@ class EventController extends Controller
 					'name' => $comment->name,
 					'user' => $userName,
 					'date' => $comment->updated_at->format('d.m.Y H:i'),
-					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'изменено' : 'создано',
+					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'edited' : 'created',
 				];
 			}
 			
@@ -411,7 +407,6 @@ class EventController extends Controller
 				->get();
 
 			$pilots = User::where('role', User::ROLE_PILOT)
-				->where('version', $user->version)
 				->orderBy('lastname')
 				->orderBy('name')
 				->get();
@@ -460,7 +455,7 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$eventType = $this->request->event_type ?? '';
@@ -472,7 +467,7 @@ class EventController extends Controller
 				];
 				$validator = Validator::make($this->request->all(), $rules)
 					->setAttributeNames([
-						'user_id' => 'Пользователь',
+						'user_id' => 'User',
 					]);
 				if (!$validator->passes()) {
 					return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -484,15 +479,15 @@ class EventController extends Controller
 				$simulatorId = $this->request->simulator_id ?? 0;
 				
 				if (!$locationId) {
-					return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 				}
 				
 				if (!$cityId) {
-					return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 				}
 				
 				if (!$simulatorId) {
-					return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 				}
 				
 				$shiftUser = 'shift_' . $this->request->shift_user;
@@ -500,7 +495,7 @@ class EventController extends Controller
 				$stopAt = $this->request->event_date . ' ' . $this->request->stop_at;
 				
 				if (Carbon::parse($startAt)->gte(Carbon::parse($stopAt))) {
-					return response()->json(['status' => 'error', 'reason' => 'Время окончания смены должно быть больше времени начала']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.время-окончания-смены-должно-быть-больше-времени-начала')]);
 				}
 				
 				//\DB::connection()->enableQueryLog();
@@ -513,7 +508,7 @@ class EventController extends Controller
 					->first();
 				//\Log::debug(\DB::getQueryLog());
 				if ($existingEvent) {
-					return response()->json(['status' => 'error', 'reason' => 'Пересечение со сменой ' . (($existingEvent->event_type == Event::EVENT_TYPE_SHIFT_ADMIN) ? 'администратора' : 'пилота') . ' ' . $existingEvent->user->fio()]);
+					return response()->json(['status' => 'error', 'reason' => 'Intersection with shift ' . $existingEvent->user->fio()]);
 				}
 			break;
 			default:
@@ -523,8 +518,8 @@ class EventController extends Controller
 				];
 				$validator = Validator::make($this->request->all(), $rules)
 					->setAttributeNames([
-						'start_at_date' => 'Дата начала полета',
-						'start_at_time' => 'Время начала полета',
+						'start_at_date' => 'Flight start date',
+						'start_at_time' => 'Flight start time',
 					]);
 				if (!$validator->passes()) {
 					return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -532,23 +527,23 @@ class EventController extends Controller
 				
 				$position = DealPosition::find($this->request->position_id);
 				if (!$position) {
-					return response()->json(['status' => 'error', 'reason' => 'Позиция сделки не найдена']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 				}
 				
 				if (!$product = $position->product) {
-					return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 				}
 				
 				if (!$location = $position->location) {
-					return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 				}
 				
 				if (!$city = $position->city) {
-					return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 				}
 				
 				if (!$simulator = $position->simulator) {
-					return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 				}
 				
 				$startAt = $this->request->start_at_date . ' ' . $this->request->start_at_time;
@@ -601,7 +596,7 @@ class EventController extends Controller
 					
 					$commentText = $this->request->comment ?? '';
 					if ($commentText) {
-						$user = \Auth::user();
+						$user = Auth::user();
 						
 						$event->comments()->create([
 							'name' => $commentText,
@@ -617,7 +612,7 @@ class EventController extends Controller
 			
 			\Log::debug('500 - Event Update: ' . $e->getMessage());
 			
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -634,10 +629,10 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$rules = [
@@ -650,18 +645,18 @@ class EventController extends Controller
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'start_at_date' => 'Дата начала полета',
-				'start_at_time' => 'Время начала полета',
-				'stop_at_date' => 'Дата окончания полета',
-				'stop_at_time' => 'Время окончания полета',
-				'doc_file' => 'Фото документа',
+				'start_at_date' => 'Flight start date',
+				'start_at_time' => 'Flight start time',
+				'stop_at_date' => 'Flight end date',
+				'stop_at_time' => 'Flight end time',
+				'doc_file' => 'Document photo',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 
 		$event = Event::find($id);
-		if (!$event) return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		$userId = $this->request->user_id ?? 0;
 		$pilotId = $this->request->pilot_id ?? 0;
@@ -674,21 +669,21 @@ class EventController extends Controller
 			case Event::EVENT_TYPE_DEAL:
 				$position = DealPosition::find($event->deal_position_id);
 				if (!$position) {
-				return response()->json(['status' => 'error', 'reason' => 'Позиция сделки не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 				}
 				
 				if (!$product = $position->product) {
-					return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 				}
 			break;
 			case Event::EVENT_TYPE_TEST_FLIGHT:
 				if (!$pilotId) {
-					return response()->json(['status' => 'error', 'reason' => 'Пилот обязательно для заполнения']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.пилот-обязательно-для-заполнения')]);
 				}
 			break;
 			case Event::EVENT_TYPE_USER_FLIGHT:
 				if (!$employeeId) {
-					return response()->json(['status' => 'error', 'reason' => 'Сотрудник обязательно для заполнения']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.сотрудник-обязательно-для-заполнения')]);
 				}
 			break;
 			case Event::EVENT_TYPE_SHIFT_ADMIN:
@@ -701,7 +696,7 @@ class EventController extends Controller
 				$startAt = Carbon::parse($event->start_at)->format('Y-m-d') . ' ' . $this->request->start_at_time;
 				$stopAt = Carbon::parse($event->stop_at)->format('Y-m-d') . ' ' . $this->request->stop_at_time;
 				if (Carbon::parse($startAt)->gte(Carbon::parse($stopAt))) {
-					return response()->json(['status' => 'error', 'reason' => 'Время окончания смены должно быть больше времени начала']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.время-окончания-смены-должно-быть-больше-времени-начала')]);
 				}
 			
 				//\DB::connection()->enableQueryLog();
@@ -714,22 +709,22 @@ class EventController extends Controller
 					->first();
 				//\Log::debug(\DB::getQueryLog());
 				if ($existingEvent) {
-					return response()->json(['status' => 'error', 'reason' => 'Пересечение со сменой ' . (($existingEvent->event_type == Event::EVENT_TYPE_SHIFT_ADMIN) ? 'администратора' : 'пилота') . ' ' . $existingEvent->user->fio()]);
+					return response()->json(['status' => 'error', 'reason' => 'Intersection with shift ' . $existingEvent->user->fio()]);
 				}
 			break;
 		}
 		
 		if ($this->request->source == Event::EVENT_SOURCE_DEAL && $position) {
 			if (!$location = $position->location) {
-				return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 			}
 			
 			if (!$city = $position->city) {
-				return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			}
 			
 			if (!$simulator = $position->simulator) {
-				return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 			}
 		}
 		
@@ -804,7 +799,7 @@ class EventController extends Controller
 						if ($commentId) {
 							$comment = $event->comments->find($commentId);
 							if (!$comment) {
-								return response()->json(['status' => 'error', 'reason' => 'Комментарий не найден']);
+								return response()->json(['status' => 'error', 'reason' => trans('main.error.комментарий-не-найден')]);
 							}
 							$comment->name = $commentText;
 							$comment->updated_by = $user->id ?? 0;
@@ -853,7 +848,7 @@ class EventController extends Controller
 
 			\Log::debug('500 - Event Update: ' . $e->getMessage());
 
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -873,27 +868,27 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$event = Event::find($id);
-		if (!$event) return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		switch ($event->event_type) {
 			case Event::EVENT_TYPE_DEAL:
 				$position = DealPosition::find($event->deal_position_id);
 				if (!$position) {
-					return response()->json(['status' => 'error', 'reason' => 'Позиция сделки не найдена']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 				}
 				
 				if (!$product = $position->product) {
-					return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 				}
 			break;
 			case Event::EVENT_TYPE_SHIFT_ADMIN:
 			case Event::EVENT_TYPE_SHIFT_PILOT:
 				if (!$event->user) {
-					return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
 				}
 				
 				$startAt = Carbon::parse($this->request->start_at)->format('Y-m-d') . ' ' . Carbon::parse($event->start_at)->format('H:i');
@@ -907,7 +902,7 @@ class EventController extends Controller
 					->where('id', '!=', $event->id)
 					->first();
 				if ($existingEvent) {
-					return response()->json(['status' => 'error', 'reason' => 'Пересечение со сменой ' . (($existingEvent->event_type == Event::EVENT_TYPE_SHIFT_ADMIN) ? 'администратора' : 'пилота') . ' ' . $existingEvent->user->fio()]);
+					return response()->json(['status' => 'error', 'reason' => 'Intersection with shift ' . $existingEvent->user->fio()]);
 				}
 			break;
 		}
@@ -964,7 +959,7 @@ class EventController extends Controller
 			
 			\Log::debug('500 - Event Update: ' . $e->getMessage());
 			
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -983,16 +978,16 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$event = Event::find($id);
-		if (!$event) return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		$flightInvitationFilePath = (is_array($event->data_json) && array_key_exists('flight_invitation_file_path', $event->data_json)) ? $event->data_json['flight_invitation_file_path'] : '';
 		
 		if (!$event->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		if ($flightInvitationFilePath) {
@@ -1016,20 +1011,20 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$event = Event::find($id);
-		if (!$event) return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		$comment = $event->comments->find($commentId);
-		if (!$comment) return response()->json(['status' => 'error', 'reason' => 'Комментарий не найден']);
+		if (!$comment) return response()->json(['status' => 'error', 'reason' => trans('main.error.комментарий-не-найден')]);
 		
 		if (!$comment->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'msg' => 'Комментарий успешно удален']);
+		return response()->json(['status' => 'success', 'msg' => trans('main.success.комментарий-успешно-удален.')]);
 	}
 	
 	/**
@@ -1045,11 +1040,11 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$event = Event::find($id);
-		if (!$event) return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		$data = $event->data_json;
 		if(is_array($data)
@@ -1058,13 +1053,13 @@ class EventController extends Controller
 			$data['doc_file_path'] = '';
 			$event->data_json = $data;
 			if (!$event->save()) {
-				return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 			}
 
-			return response()->json(['status' => 'success', 'msg' => 'Файл успешно удален']);
+			return response()->json(['status' => 'success', 'msg' => trans('main.success.файл-успешно-удален')]);
 		}
 		
-		return response()->json(['status' => 'error', 'reason' => 'Файл не найден']);
+		return response()->json(['status' => 'error', 'reason' => trans('main.error.файл-не-найден')]);
 	}
 	
 	/**
@@ -1079,25 +1074,25 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$eventId = $this->request->event_id ?? 0;
 		if (!$eventId) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректные параметры']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 		
 		$event = Event::find($eventId);
 		if (!$event) {
-			return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		}
 		
 		$event->is_notified = true;
 		if (!$event->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'msg' => 'Уведомление по событию успешно сохранено']);
+		return response()->json(['status' => 'success', 'msg' => trans('main.success.уведомление-по-событию-успешно-сохранено')]);
 	}
 	
 	/**
@@ -1112,7 +1107,7 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$rules = [
@@ -1122,22 +1117,22 @@ class EventController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'id' => 'Позиция',
-				'event_id' => 'Событие',
+				'id' => 'Deal item',
+				'event_id' => 'Event',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
 		$position = DealPosition::find($this->request->id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => 'Позиция не найдена']);
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		/** @var Deal $deal */
 		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		/** @var Bill $bill */
@@ -1158,13 +1153,13 @@ class EventController extends Controller
 		}*/
 		
 		$event = Event::find($this->request->event_id);
-		if (!$event) return response()->json(['status' => 'error', 'reason' => 'Событие не найдено']);
+		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		//dispatch(new \App\Jobs\SendFlightInvitationEmail($event));
 		$job = new \App\Jobs\SendFlightInvitationEmail($event);
 		$job->handle();
 		
-		return response()->json(['status' => 'success', 'message' => 'Задание на отправку Приглашения на полет принято']);
+		return response()->json(['status' => 'success', 'message' => trans('main.success.задание-на-отправку-приглашения-на-полет-принято')]);
 	}
 	
 	/**
@@ -1181,7 +1176,7 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		/*$flightInvitationFilePath = (is_array($event->data_json) && array_key_exists('flight_invitation_file_path', $event->data_json)) ? $event->data_json['flight_invitation_file_path'] : '';
@@ -1209,7 +1204,7 @@ class EventController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$event = HelpFunctions::getEntityByUuid(Event::class, $uuid);

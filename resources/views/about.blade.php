@@ -161,43 +161,6 @@
 							</tr>
 							</tbody>
 						</table>
-						{{--<div style="display: flex;justify-content: space-between;">
-							@foreach($flightSimulators as $flightSimulator)
-								<div>
-									<h4 style="font-size: 24px;margin-bottom: 40px;">@lang('main.o-trenazhere.авиатренажерный-центр') {{ $flightSimulator->name }}</h4>
-									<ul>
-									@foreach($flightSimulator->locations as $location)
-										--}}{{--@if ($location->city && $location->city->version != Request::get('cityVersion'))
-											@continue
-										@endif--}}{{--
-										<li>
-											<span style="font-size: 18px;">{{ $location->name }}</span>
-											@if ($location->data_json)
-												<div style="padding: 10px 25px;line-height: 1.7em;font-size: 14px;">
-													{!! $location->data_json['address'] !!}
-													<br>
-													<i class="fa fa-phone" aria-hidden="true"></i> <a href="tel:{{ $location->data_json['phone'] }}">{{ $location->data_json['phone'] }}</a>
-													<i class="fa fa-envelope-o" aria-hidden="true" style="margin-left: 10px;"></i> <a href="mailto:{{ $location->data_json['email'] }}">{{ $location->data_json['email'] }}</a>
-													@if($location->data_json['skype'])
-														<br>
-														<i class="fa fa-skype" aria-hidden="true"></i> <a href="skype:{{ $location->data_json['skype'] }}">{{ $location->data_json['skype'] }}</a>
-													@endif
-													<br>
-													<i class="fa fa-calendar-check-o" aria-hidden="true"></i> @lang('main.o-trenazhere.график-работы')
-													<br>
-													<div style="padding-left: 18px;">
-														{!! $location->data_json['working_hours'] !!}
-													</div>
-												</div>
-											@endif
-											<hr>
-										</li>
-									@endforeach
-								</ul>
-								</div>
-							@endforeach
-						</div>--}}
-
 						<h2>@lang('main.o-trenazhere.что-мы-предлагаем')</h2>
 
 						<div class="offer" style="background-image: url({{ asset('img/Blok_1.png') }});background-position: top; background-size: cover;">

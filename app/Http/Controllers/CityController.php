@@ -149,7 +149,6 @@ class CityController extends Controller
 			'alias' => 'required|min:2|max:3|unique:cities,alias',
 			'email' => 'required|email',
 			'phone' => 'required',
-			'version' => ['required'],
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
@@ -158,7 +157,6 @@ class CityController extends Controller
 				'alias' => 'Алиас',
 				'email' => 'E-mail',
 				'phone' => 'Телефон',
-				'version' => 'Версия',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -169,7 +167,6 @@ class CityController extends Controller
 		$city->alias = $this->request->alias;
 		$city->email = $this->request->email;
 		$city->phone = $this->request->phone;
-		$city->version = $this->request->version;
 		$city->is_active = $this->request->is_active;
 		if (!$city->save()) {
 			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
@@ -200,7 +197,6 @@ class CityController extends Controller
 			'alias' => 'required|min:2|max:3|unique:cities,alias,' . $id,
 			'email' => 'required|email',
 			'phone' => 'required',
-			'version' => ['required'],
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
@@ -209,7 +205,6 @@ class CityController extends Controller
 				'alias' => 'Алиас',
 				'email' => 'E-mail',
 				'phone' => 'Телефон',
-				'version' => 'Версия',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -219,7 +214,6 @@ class CityController extends Controller
 		$city->alias = $this->request->alias;
 		$city->email = $this->request->email;
 		$city->phone = $this->request->phone;
-		$city->version = $this->request->version;
 		$city->is_active = $this->request->is_active;
 		if (!$city->save()) {
 			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);

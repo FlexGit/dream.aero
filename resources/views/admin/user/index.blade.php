@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Пользователи
+				Users
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Пользователи</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Users</li>
 			</ol>
 		</div>
 	</div>
@@ -24,9 +24,9 @@
 					<div class="table-filter mb-2">
 						<div class="d-sm-flex">
 							<div class="form-group">
-								<label for="filter_city_id">Город</label>
+								<label for="filter_city_id">City</label>
 								<select class="form-control" id="filter_city_id" name="filter_city_id">
-									<option value="0">Все</option>
+									<option value="0">All</option>
 									@foreach($cities ?? [] as $city)
 										@if(!$city->is_active)
 											@continue
@@ -36,29 +36,29 @@
 								</select>
 							</div>
 							<div class="form-group ml-3">
-								<label for="filter_role">Роль</label>
+								<label for="filter_role">Role</label>
 								<select class="form-control" id="filter_role" name="filter_role">
-									<option value="0">Все</option>
+									<option value="0">All</option>
 									@foreach($roles ?? [] as $roleAlias => $roleName)
 										<option value="{{ $roleAlias }}">{{ $roleName }}</option>
 									@endforeach
 								</select>
 							</div>
 							<div class="form-group align-self-end ml-auto pl-2">
-								<a href="javascript:void(0)" data-toggle="modal" data-url="/user/add" data-action="/user" data-method="POST" data-title="Добавление" class="btn btn-secondary btn-sm" title="Добавить">Добавить</a>
+								<a href="javascript:void(0)" data-toggle="modal" data-url="/user/add" data-action="/user" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
 							</div>
 						</div>
 					</div>
 					<table id="userTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
 						<tr>
-							<th class="text-center">ФИО</th>
+							<th class="text-center">Full name</th>
 							<th class="text-center d-none d-sm-table-cell">E-mail</th>
-							<th class="text-center d-none d-md-table-cell">Роль</th>
-							<th class="text-center d-none d-lg-table-cell">Город</th>
-							<th class="text-center d-none d-xl-table-cell">Локация</th>
-							<th class="text-center d-none d-xl-table-cell">Активность</th>
-							<th class="text-center">Действие</th>
+							<th class="text-center d-none d-md-table-cell">Role</th>
+							<th class="text-center d-none d-lg-table-cell">City</th>
+							<th class="text-center d-none d-xl-table-cell">Location</th>
+							<th class="text-center d-none d-xl-table-cell">Is active</th>
+							<th class="text-center">Action</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -73,7 +73,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -81,8 +81,8 @@
 				<form id="user">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -130,7 +130,7 @@
 							$(window).data('ajaxready', true);
 						} else {
 							if (!id) {
-								$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+								$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 							}
 						}
 					}
@@ -148,7 +148,7 @@
 					title = $(this).data('title');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -208,13 +208,13 @@
 							return;
 						}
 
-						var msg = 'Пользователь успешно ';
+						var msg = 'User successfully ';
 						if (method === 'POST') {
-							msg += 'добавлен';
+							msg += 'added';
 						} else if (method === 'PUT') {
-							msg += 'сохранен';
+							msg += 'saved';
 						} else if (method === 'DELETE') {
-							msg += 'удален';
+							msg += 'deleted';
 						}
 
 						$('#modal').modal('hide');

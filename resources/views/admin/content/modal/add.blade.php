@@ -1,6 +1,6 @@
 <div class="form-group">
-	<label for="title">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Имя @else Заголовок @endif</label>
-	<input type="text" class="form-control" id="title" name="title" placeholder="@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Имя @else Заголовок @endif">
+	<label for="title">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name @else Title @endif</label>
+	<input type="text" class="form-control" id="title" name="title" placeholder="@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name @else Title @endif">
 </div>
 <div class="row">
 	@if(in_array($type, [app('\App\Models\Content')::REVIEWS_TYPE, app('\App\Models\Content')::PAGES_TYPE]))
@@ -8,11 +8,11 @@
 	@endif
 	<div class="col-4">
 		<div class="form-group">
-			<label for="alias">Алиас</label>
-			<input type="text" class="form-control" id="alias" name="alias" placeholder="Алиас">
+			<label for="alias">Alias</label>
+			<input type="text" class="form-control" id="alias" name="alias" placeholder="Alias">
 		</div>
 	</div>
-	<div class="col-3">
+	{{--<div class="col-3">
 		<div class="form-group">
 			<label for="city_id">Город</label>
 			<select class="form-control" id="city_id" name="city_id">
@@ -22,20 +22,20 @@
 				@endforeach
 			</select>
 		</div>
-	</div>
+	</div>--}}
 	@if($type != app('\App\Models\Content')::PAGES_TYPE)
 		<div class="col-3">
 			<div class="form-group">
-				<label for="published_at">Дата публикации</label>
-				<input type="date" class="form-control" id="published_at" name="published_at" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" placeholder="Дата публикации">
+				<label for="published_at">Publication date</label>
+				<input type="date" class="form-control" id="published_at" name="published_at" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" placeholder="Publication date">
 			</div>
 		</div>
 		<div class="col-2">
 			<div class="form-group">
-				<label for="is_active">Активность</label>
+				<label for="is_active">Is active</label>
 				<select class="form-control" id="is_active" name="is_active">
-					<option value="1" selected>Да</option>
-					<option value="0">Нет</option>
+					<option value="1" selected>Yes</option>
+					<option value="0">No</option>
 				</select>
 			</div>
 		</div>
@@ -43,19 +43,19 @@
 </div>
 @if($type != app('\App\Models\Content')::PAGES_TYPE)
 	<div class="form-group">
-		<label for="preview_text">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Отзыв @else Краткое описание @endif</label>
+		<label for="preview_text">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Reivew @else Description @endif</label>
 		<textarea class="form-control tinymce" id="preview_text" name="preview_text" @if($type == app('\App\Models\Content')::REVIEWS_TYPE) rows="5" @endif></textarea>
 	</div>
 	<div class="form-group">
-		<label for="detail_text">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Ответ @else Подробное описание @endif</label>
+		<label for="detail_text">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Response @else Detailed text @endif</label>
 		<textarea class="form-control tinymce" id="detail_text" name="detail_text"></textarea>
 	</div>
 	@if($type != app('\App\Models\Content')::REVIEWS_TYPE)
 		<div class="form-group">
-			<label for="photo_preview_file">Изображение</label>
+			<label for="photo_preview_file">Image</label>
 			<div class="custom-file">
 				<input type="file" class="custom-file-input" id="photo_preview_file" name="photo_preview_file">
-				<label class="custom-file-label" for="photo_preview_file">Выбрать файл</label>
+				<label class="custom-file-label" for="photo_preview_file">Choose a file</label>
 			</div>
 		</div>
 	@endif

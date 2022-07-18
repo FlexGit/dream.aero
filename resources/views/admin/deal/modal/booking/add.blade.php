@@ -78,7 +78,7 @@
 		<div class="form-group" style="margin-top: 40px;">
 			<div class="custom-control custom-switch custom-control">
 				<input type="checkbox" id="is_paid" name="is_paid" value="1" class="custom-control-input">
-				<label class="custom-control-label font-weight-normal" for="is_paid">Bill is paid</label>
+				<label class="custom-control-label font-weight-normal" for="is_paid">Invoice is paid</label>
 			</div>
 		</div>
 	</div>
@@ -98,7 +98,7 @@
 	</div>
 	<div class="col">
 		<div class="form-group">
-			<label for="phone">Phone number</label>
+			<label for="phone">Phone</label>
 			<input type="text" class="form-control" id="phone" name="phone" placeholder="+12345678901">
 		</div>
 	</div>
@@ -117,11 +117,11 @@
 </div>
 <div class="row">
 	{{--@if($user->isSuperAdmin())--}}
-	<div class="col">
+	{{--<div class="col">
 		<div class="form-group">
 			<label for="location_id">Location</label>
 			<select class="form-control" id="location_id" name="location_id">
-				<option value="0">---</option>
+				--}}{{--<option value="0">---</option>--}}{{--
 				@foreach($cities ?? [] as $city)
 					<optgroup label="{{ $city->name }}">
 						@foreach($city->locations ?? [] as $location)
@@ -133,7 +133,7 @@
 				@endforeach
 			</select>
 		</div>
-	</div>
+	</div>--}}
 	{{--@endif--}}
 	<div class="col">
 		<div class="form-group">
@@ -176,13 +176,13 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="certificate_number">Search by voucher number</label>
-			<input type="text" class="form-control" id="certificate_number" name="certificate_number" placeholder="Voucher number">
+			<label for="certificate_number">Search by Voucher #</label>
+			<input type="text" class="form-control" id="certificate_number" name="certificate_number" placeholder="Voucher #">
 			<div class="js-certificate-container hidden">
 				<span class="js-certificate"></span> <i class="fas fa-times js-certificate-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 				<div class="custom-control custom-switch custom-control js-is-indefinitely hidden">
 					<input type="checkbox" id="is_indefinitely" name="is_indefinitely" value="1" class="custom-control-input">
-					<label class="custom-control-label font-weight-normal" for="is_indefinitely">Ignore expiration limit</label>
+					<label class="custom-control-label font-weight-normal" for="is_indefinitely">Ignore validity</label>
 				</div>
 			</div>
 		</div>
@@ -191,7 +191,7 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="flight_date_at">Start date and time</label>
+			<label for="flight_date_at">Flight start</label>
 			<div class="d-flex">
 				<input type="date" class="form-control" id="flight_date_at" name="flight_date_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('Y-m-d') : '' }}">
 				<input type="time" class="form-control ml-2" id="flight_time_at" name="flight_time_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('H:i') : '' }}">
@@ -204,7 +204,7 @@
 	</div>
 	<div class="col js-duration hidden">
 		<div class="form-group">
-			<label for="flight_date_stop_at">End date and time</label>
+			<label for="flight_date_stop_at">Flight end</label>
 			<div class="d-flex">
 				<input type="date" class="form-control" id="flight_date_stop_at" name="flight_date_stop_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('Y-m-d') : '' }}">
 				<input type="time" class="form-control ml-2" id="flight_time_stop_at" name="flight_time_stop_at">
@@ -247,7 +247,7 @@
 			@if($source)
 				<div class="col">
 					<div class="form-group">
-						<label for="is_repeated_flight">Repeated</label>
+						<label for="is_repeated_flight">Repeated flight</label>
 						<select class="form-control" id="is_repeated_flight" name="is_repeated_flight">
 							<option value="0" selected>No</option>
 							<option value="1">Yes</option>
@@ -256,7 +256,7 @@
 				</div>
 				<div class="col">
 					<div class="form-group">
-						<label for="is_unexpected_flight">Spontaneous</label>
+						<label for="is_unexpected_flight">Spontaneous flight</label>
 						<select class="form-control" id="is_unexpected_flight" name="is_unexpected_flight">
 							<option value="0" selected>No</option>
 							<option value="1">Yes</option>
@@ -279,7 +279,8 @@
 				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
 			</div>
 			<div id="amount-text">
-				<h1 class="d-inline-block">0</h1> <i class="fas fa-ruble-sign" style="font-size: 25px;"></i>
+				<h1 class="d-inline-block">0</h1>
+				<i class="fas fa-dollar-sign" style="font-size: 25px;"></i>
 			</div>
 		</div>
 	</div>

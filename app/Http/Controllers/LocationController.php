@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FlightSimulator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Validator;
-
 use App\Models\Location;
 use App\Models\City;
 use App\Models\LegalEntity;
@@ -28,8 +25,7 @@ class LocationController extends Controller
 	 */
 	public function index()
 	{
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$legalEntities = LegalEntity::where('is_active', true)

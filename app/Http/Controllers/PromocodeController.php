@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\Discount;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Validator;
 use App\Models\Promocode;
 
@@ -26,12 +26,7 @@ class PromocodeController extends Controller
 	 */
 	public function index()
 	{
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
-			->get();
-
 		return view('admin.promocode.index', [
-			'cities' => $cities,
 		]);
 	}
 	
@@ -44,7 +39,11 @@ class PromocodeController extends Controller
 			abort(404);
 		}
 		
+		$user = Auth::user();
+		$city = $user->city;
+		
 		$promocodes = Promocode::whereNull('type')
+			->whereRelation('cities', 'city_id', '=', $city->id)
 			->orderBy('number')
 			->get();
 		
@@ -64,14 +63,13 @@ class PromocodeController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$promocode = Promocode::find($id);
-		if (!$promocode) return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+		if (!$promocode) return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 		
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$discounts = Discount::where('is_active', true)
@@ -101,11 +99,10 @@ class PromocodeController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$discounts = Discount::where('is_active', true)
@@ -132,7 +129,7 @@ class PromocodeController extends Controller
 		}
 
 		$promocode = Promocode::find($id);
-		if (!$promocode) return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+		if (!$promocode) return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 		
 		$VIEW = view('admin.promocode.modal.show', [
 			'promocode' => $promocode,
@@ -152,11 +149,11 @@ class PromocodeController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$promocode = Promocode::find($id);
-		if (!$promocode) return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+		if (!$promocode) return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 		
 		$VIEW = view('admin.promocode.modal.delete', [
 			'promocode' => $promocode,
@@ -173,9 +170,12 @@ class PromocodeController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+
+		$user = Auth::user();
+		$city = $user->city;
 		
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
@@ -183,9 +183,6 @@ class PromocodeController extends Controller
 				'required',
 				'max:255',
 				/*'unique:promocodes,number',*/
-			],
-			'city_id' => [
-				'required',
 			],
 			'discount_id' => [
 				'required',
@@ -197,9 +194,8 @@ class PromocodeController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'number' => 'Номер',
-				'city_id' => 'Город',
-				'discount_id' => 'Скидка',
+				'number' => 'Number',
+				'discount_id' => 'Discount',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -209,7 +205,7 @@ class PromocodeController extends Controller
 		
 		$promocode = new Promocode();
 		$promocode->number = $this->request->number;
-		$promocode->location_id = $this->request->location_id;
+		/*$promocode->location_id = $this->request->location_id;*/
 		$promocode->discount_id = $this->request->discount_id;
 		$promocode->is_active = $this->request->is_active;
 		if ($this->request->active_from_at_date) {
@@ -219,14 +215,14 @@ class PromocodeController extends Controller
 			$promocode->active_to_at = Carbon::parse($this->request->active_to_at_date . ' ' . $this->request->active_to_at_time)->format('Y-m-d H:i:s');
 		}
 		$data = $promocode->data_json;
-		$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;
-		$data['is_discount_certificate_purchase_allow'] = (bool)$this->request->is_discount_certificate_purchase_allow;
+		/*$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;*/
+		$data['is_discount_certificate_purchase_allow'] = /*(bool)$this->request->is_discount_certificate_purchase_allow*/true;
 		$promocode->data_json = $data;
 		if (!$promocode->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		$promocode->cities()->sync((array)$this->request->city_id);
+		$promocode->cities()->sync((array)$city->id);
 		
 		return response()->json(['status' => 'success']);
 	}
@@ -241,21 +237,21 @@ class PromocodeController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		$user = Auth::user();
+		$city = $user->city;
+
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$promocode = Promocode::find($id);
-		if (!$promocode) return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+		if (!$promocode) return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 		
 		$rules = [
 			'number' => [
 				'required',
 				'max:255',
 				/*'unique:promocodes,number,' . $id,*/
-			],
-			'city_id' => [
-				'required',
 			],
 			'discount_id' => [
 				'required',
@@ -267,9 +263,8 @@ class PromocodeController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'number' => 'Номер',
-				'city_id' => 'Город',
-				'discount_id' => 'Скидка',
+				'number' => 'Number',
+				'discount_id' => 'Discount',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -278,7 +273,7 @@ class PromocodeController extends Controller
 		//$data = [];
 		
 		$promocode->number = $this->request->number;
-		$promocode->location_id = $this->request->location_id;
+		/*$promocode->location_id = $this->request->location_id;*/
 		$promocode->discount_id = $this->request->discount_id;
 		$promocode->is_active = $this->request->is_active;
 		if ($this->request->active_from_at_date) {
@@ -288,14 +283,14 @@ class PromocodeController extends Controller
 			$promocode->active_to_at = Carbon::parse($this->request->active_to_at_date . ' ' . $this->request->active_to_at_time)->format('Y-m-d H:i:s');
 		}
 		$data = $promocode->data_json;
-		$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;
-		$data['is_discount_certificate_purchase_allow'] = (bool)$this->request->is_discount_certificate_purchase_allow;
+		/*$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;*/
+		$data['is_discount_certificate_purchase_allow'] = /*(bool)$this->request->is_discount_certificate_purchase_allow*/true;
 		$promocode->data_json = $data;
 		if (!$promocode->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		$promocode->cities()->sync((array)$this->request->city_id);
+		$promocode->cities()->sync((array)$city->id);
 
 		return response()->json(['status' => 'success']);
 	}
@@ -310,15 +305,17 @@ class PromocodeController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$promocode = Promocode::find($id);
-		if (!$promocode) return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+		if (!$promocode) return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 		
 		if (!$promocode->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);

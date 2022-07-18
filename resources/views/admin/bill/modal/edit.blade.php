@@ -1,5 +1,5 @@
 <input type="hidden" id="id" name="id" value="{{ $bill->id }}">
-<input type="hidden" id="currency_id" name="currency_id" value="{{ ($bill->contractor && $bill->contractor->city && $bill->contractor->city->version == app('\App\Models\City')::EN_VERSION) ? 2 : 1 }}">
+<input type="hidden" id="currency_id" name="currency_id" value="1">
 
 <div class="row">
 	<div class="col">
@@ -47,7 +47,7 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="position_id">Position</label>
+			<label for="position_id">Item</label>
 			<select class="form-control" id="position_id" name="position_id">
 				<option value=""></option>
 				@foreach($positions as $position)

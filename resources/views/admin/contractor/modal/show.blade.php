@@ -1,8 +1,8 @@
 <table id="contractorTable" class="table table-hover table-sm table-bordered table-striped">
 	<thead>
 	<tr>
-		<th>Атрибут</th>
-		<th>Значение</th>
+		<th>Attribute</th>
+		<th>Value</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -11,7 +11,7 @@
 			<td>{{ $contractor->id }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Наименование</td>
+			<td>Name</td>
 			<td>{{ $contractor->name }}</td>
 		</tr>
 		<tr class="odd">
@@ -19,31 +19,27 @@
 			<td>{{ $contractor->email }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Телефон</td>
+			<td>Phone</td>
 			<td>{{ $contractor->phone }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Город</td>
-			<td>{{ $contractor->city ? $contractor->city->name : '' }}</td>
-		</tr>
-		<tr class="odd">
 			<td>Скидка</td>
-			<td>{{ $contractor->discount ? $contractor->discount->valueFormatted() : '' }}</td>
+			<td>{{ $contractor->discount()->valueFormatted() }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Активность</td>
-			<td>{{ $contractor->is_active ? 'Да' : 'Нет' }}</td>
+			<td>Is active</td>
+			<td>{{ $contractor->is_active ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего входа</td>
+			<td>Last auth date</td>
 			<td>{{ $contractor->last_auth_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата создания</td>
+			<td>Create date</td>
 			<td>{{ $contractor->created_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего изменения</td>
+			<td>Last edit date</td>
 			<td>{{ $contractor->updated_at }}</td>
 		</tr>
 	</tbody>

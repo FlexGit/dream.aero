@@ -72,24 +72,24 @@ class DealController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
-
-		$locationCount = $user->city ? $user->city->locations->count() : 0;
+		
+		/*$locationCount = $user->city ? $user->city->locations->count() : 0;
 
 		if ($user->isSuperAdmin() || $locationCount > 1) {
-			$cities = City::where('version', $user->version)
-				->orderBy('name');
-			if (!$user->isSuperAdmin() && $user->city_id) {
+			$cities = City::orderBy('name');
+			if ($user->city_id) {
 				$cities = $cities->where('id', $user->city_id);
 			}
 			$cities = $cities->get();
 		} else {
 			$cities = [];
-		}
+		}*/
 		
 		
-		$productTypes = ProductType::orderBy('name')
+		$productTypes = ProductType::where('alias', '!=', 'services')
+			->orderBy('name')
 			->get();
 		
 		$statuses = Status::whereNotIn('type', [Status::STATUS_TYPE_CONTRACTOR])
@@ -113,10 +113,10 @@ class DealController extends Controller
 		
 		return view(	'admin.deal.index', [
 			'user' => $user,
-			'cities' => $cities,
+			/*'cities' => $cities,*/
 			'productTypes' => $productTypes,
 			'statusData' => $statusData,
-			'locationCount' => $locationCount,
+			/*'locationCount' => $locationCount,*/
 			'deal' => $deal ?? null,
 			'page' => $page,
 		]);
@@ -134,16 +134,15 @@ class DealController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
+		
+		$city = $user->city;
 		
 		$id = $this->request->id ?? 0;
 		
-		$deals = Deal::/*whereHas('contractor', function ($query) use ($user) {
-			$query->whereHas('city', function ($query) use ($user) {
-				$query->where('version', $user->version);
-			});
-		})->*/orderBy('id', 'desc');
+		$deals = Deal::where('city_id', $city->id)
+			->orderBy('id', 'desc');
 		if ($this->request->filter_status_id) {
 			$deals = $deals->where(function ($query) {
 				$query->whereIn('status_id', $this->request->filter_status_id)
@@ -178,16 +177,6 @@ class DealController extends Controller
 					return $query->has('promocode');
 				});
 			}
-			if (in_array('with_score', $this->request->filter_advanced)) {
-				$deals = $deals->whereHas('scores', function ($query) {
-					return $query->where('type', '=', Score::USED_TYPE);
-				});
-			}
-			if (in_array('with_miles', $this->request->filter_advanced)) {
-				$deals = $deals->whereHas('bills', function ($query) {
-					return $query->whereNotNull('aeroflot_transaction_type');
-				});
-			}
 		}
 		if ($this->request->search_doc) {
 			$deals = $deals->where(function ($query) {
@@ -215,24 +204,9 @@ class DealController extends Controller
 					});
 			});
 		}
-		/*if ($this->request->search_contractor) {
-			$deals = $deals->where(function ($query) {
-				$query->where('name', 'like', '%' . $this->request->search_contractor . '%')
-					->orWhere('email', 'like', '%' . $this->request->search_contractor . '%')
-					->orWhere('phone', 'like', '%' . $this->request->search_contractor . '%')
-					->orWhere('id', $this->request->search_contractor)
-					->orWhereHas('contractor', function ($query) {
-						return $query->where('name', 'like', '%' . $this->request->search_contractor . '%')
-							->orWhere('lastname', 'like', '%' . $this->request->search_contractor . '%')
-							->orWhere('email', 'like', '%' . $this->request->search_contractor . '%')
-							->orWhere('phone', 'like', '%' . $this->request->search_contractor . '%')
-							->orWhere('id', $this->request->search_contractor);
-					});
-			});
-		}*/
-		if (!$user->isSuperAdmin() && $user->city) {
+		/*if (!$user->isSuperAdmin() && $user->city) {
 			$deals = $deals->where('city_id', $user->city->id);
-		}
+		}*/
 		if ($id) {
 			$deals = $deals->where('id', '<', $id);
 		}
@@ -260,7 +234,7 @@ class DealController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$cities = $this->cityRepo->getList($user);
@@ -292,7 +266,7 @@ class DealController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$cities = $this->cityRepo->getList($user);
@@ -343,7 +317,7 @@ class DealController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$cities = $this->cityRepo->getList($user);
@@ -376,11 +350,11 @@ class DealController extends Controller
 		$user = \Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$deal = $this->dealRepo->getById($id);
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$statuses = $this->statusRepo->getList(Status::STATUS_TYPE_DEAL);
 		
@@ -406,7 +380,7 @@ class DealController extends Controller
 		
 		if ($user) {
 			if (!$user->isAdminOrHigher()) {
-				return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 			}
 		}
 		
@@ -439,10 +413,10 @@ class DealController extends Controller
 			
 			$validator = Validator::make($this->request->all(), $rules)
 				->setAttributeNames([
-					'name' => 'Имя',
+					'name' => 'Name',
 					'email' => 'E-mail',
-					'phone' => 'Телефон',
-					'product_id' => 'Продукт',
+					'phone' => 'Phone',
+					'product_id' => 'Product',
 					/*'city_id' => 'Город',*/
 				]);
 			if (!$validator->passes()) {
@@ -461,14 +435,6 @@ class DealController extends Controller
 		$deliveryAddress = $this->request->delivery_address ?? '';
 		$certificateExpireAt = $this->request->certificate_expire_at ?? null;
 		$amount = $this->request->amount ?? 0;
-		$hasAeroflotCard = $this->request->has_aeroflot_card ?? 0;
-		$cardNumber = $this->request->aeroflot_card_number ?? null;
-		$transactionType = $this->request->transaction_type ?? null;
-		if ($transactionType == AeroflotBonusService::TRANSACTION_TYPE_REGISTER_ORDER) {
-			$bonusAmount = $this->request->aeroflot_bonus_amount ?? 0;
-		} elseif ($transactionType == AeroflotBonusService::TRANSACTION_TYPE_AUTH_POINTS) {
-			$bonusAmount = floor($amount / AeroflotBonusService::ACCRUAL_MILES_RATE);
-		}
 		$contractorId = $this->request->contractor_id ?? 0;
 		$name = $this->request->name ?? '';
 		$email = $this->request->email ?? '';
@@ -476,45 +442,44 @@ class DealController extends Controller
 		$source = $this->request->source ?? '';
 		$isUnified = $this->request->is_unified ?? 0;
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
-		$roistatVisit = ($source == Deal::WEB_SOURCE) ? (array_key_exists('roistat_visit', $_COOKIE) ? $_COOKIE['roistat_visit'] : null) : ($this->request->roistat_visit ?? null);
 		$isPaid = (bool)$this->request->is_paid;
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		$city = null;
 		if ($cityId) {
 			$city = City::find($cityId);
 			if (!$city) {
-				return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			}
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId ?: 1);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 		
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
 		if ($promocodeUuid) {
 			$promocode = HelpFunctions::getEntityByUuid(Promocode::class, $promocodeUuid);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
@@ -522,29 +487,7 @@ class DealController extends Controller
 			$paymentMethod = PaymentMethod::where('is_active', true)
 				->find($paymentMethodId);
 			if (!$paymentMethod) {
-				return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
-			}
-		}
-		
-		// Аэрофлот Бонус
-		if ($hasAeroflotCard) {
-			if (!trim($cardNumber) || !$transactionType) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.проверьте-правильность-заполнения-полей-формы')]);
-			}
-			
-			switch ($transactionType) {
-				case AeroflotBonusService::TRANSACTION_TYPE_REGISTER_ORDER:
-					if (!trim($bonusAmount)) {
-						return response()->json(['status' => 'error', 'reason' => trans('main.error.проверьте-правильность-заполнения-полей-формы')]);
-					}
-					
-					// проверяем лимиты по карте и на бэке тоже
-					$cardInfoResult = AeroflotBonusService::getCardInfo($cardNumber, $product, $amount);
-					$minLimit = floor($amount / 100 * 10);
-					if ($bonusAmount > $cardInfoResult['max_limit'] && $bonusAmount < $minLimit) {
-						return response()->json(['status' => 'error', 'reason' => trans('main.error.проверьте-правильность-заполнения-полей-формы')]);
-					}
-				break;
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 			}
 		}
 		
@@ -565,13 +508,13 @@ class DealController extends Controller
 		if ($contractorId) {
 			$contractor = Contractor::find($contractorId);
 			if (!$contractor) {
-				return response()->json(['status' => 'error', 'reason' => 'Контрагент не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
 			}
 		} elseif ($contractorEmail = $this->request->email ?? '') {
 			$contractor = Contractor::whereRaw('LOWER(email) = (?)', [mb_strtolower($contractorEmail)])
 				->first();
-			if ($contractor && !in_array($source, [Contractor::WEB_SOURCE, Contractor::MOB_SOURCE])) {
-				return response()->json(['status' => 'error', 'reason' => 'Контрагент с таким E-mail уже существует']);
+			if ($contractor && !in_array($source, [Contractor::WEB_SOURCE])) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-с-таким-e-mail-уже-существует')]);
 			}
 		}
 		
@@ -608,7 +551,6 @@ class DealController extends Controller
 			$deal->email = $email;
 			$deal->source = $source ?: Deal::ADMIN_SOURCE;
 			$deal->user_id = $this->request->user()->id ?? 0;
-			$deal->roistat = $roistatVisit;
 			$deal->save();
 			
 			$position = new DealPosition();
@@ -633,17 +575,7 @@ class DealController extends Controller
 				$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 				$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
 				$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
-				
-				if ($this->request->user()) {
-					if ($this->request->user()->city && $this->request->user()->city->version == City::EN_VERSION) {
-						$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-					}
-					else {
-						$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-					}
-				} else {
-					$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-				}
+				$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 				
 				if ($source == Deal::WEB_SOURCE) {
 					$billLocation = $city->getLocationForBill($product);
@@ -652,7 +584,7 @@ class DealController extends Controller
 						
 						Log::debug('500 - Certificate Deal Create: Не найден номер счета платежной системы');
 						
-						return response()->json(['status' => 'error', 'reason' => 'Не найден номер счета платежной системы!']);
+						return response()->json(['status' => 'error', 'reason' => trans('main.error.не-найден-номер-счета-платежной-системы')]);
 					}
 					$billLocationId = $billLocation->id;
 				} else {
@@ -669,9 +601,6 @@ class DealController extends Controller
 				$bill->payed_at = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? Carbon::now()->format('Y-m-d H:i:s') : null;
 				$bill->amount = $amount;
 				$bill->currency_id = $currency->id ?? 0;
-				$bill->aeroflot_transaction_type = $transactionType;
-				$bill->aeroflot_card_number = $cardNumber;
-				$bill->aeroflot_bonus_amount = $bonusAmount ?? 0;
 				$bill->user_id = $this->request->user()->id ?? 0;
 				$bill->save();
 				
@@ -682,25 +611,6 @@ class DealController extends Controller
 				$deal->bills()->save($bill);
 			}
 
-			if ($transactionType) {
-				switch ($transactionType) {
-					case AeroflotBonusService::TRANSACTION_TYPE_REGISTER_ORDER:
-						$registerOrderResult = AeroflotBonusService::registerOrder($bill);
-						if ($registerOrderResult['status']['code'] != 0) {
-							\DB::rollback();
-							
-							\Log::debug('500 - Certificate Deal Create: ' . $registerOrderResult['status']['description']);
-							
-							return response()->json(['status' => 'error', 'reason' => 'Aeroflot Bonus: ' . $registerOrderResult['status']['description']]);
-						}
-						
-						\DB::commit();
-						
-						return response()->json(['status' => 'success', 'message' => 'Заявка успешно отправлена! Перенаправляем на страницу "Аэрофлот Бонус"...', 'payment_url' => $registerOrderResult['paymentUrl']]);
-					break;
-				}
-			}
-			
 			if ($promocodeId || $promocodeUuid) {
 				$promocode->contractors()->save($contractor);
 			}
@@ -711,12 +621,12 @@ class DealController extends Controller
 			
 			Log::debug('500 - Deal Certificate Store: ' . $e->getMessage());
 			
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		if (in_array($source, [Deal::WEB_SOURCE])) {
 			$paymentFormHtml = PayAnyWayService::generatePaymentForm($bill);
-			return response()->json(['status' => 'success', 'message' => 'Заявка успешно отправлена! Перенаправляем на страницу оплаты. Пожалуйста, подождите...', 'html' => $paymentFormHtml]);
+			return response()->json(['status' => 'success', 'message' => trans('main.success.заявка-успешно-отправлена-перенаправляем-на-страницу-оплаты'), 'html' => $paymentFormHtml]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -735,7 +645,7 @@ class DealController extends Controller
 		
 		if ($user) {
 			if (!$user->isAdminOrHigher()) {
-				return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 			}
 		}
 		
@@ -776,13 +686,13 @@ class DealController extends Controller
 					
 					$validator = Validator::make($this->request->all(), $rules)
 						->setAttributeNames([
-							'name' => 'Имя',
-							'email' => 'E-mail',
-							'phone' => 'Телефон',
-							'product_id' => 'Продукт',
-							'location_id' => 'Локация',
-							'flight_date_at' => 'Дата начала',
-							'flight_time_at' => 'Время начала',
+							'name' => trans('main.modal-booking.имя'),
+							'email' => trans('main.modal-booking.email'),
+							'phone' => trans('main.modal-booking.телефон'),
+							'product_id' => trans('main.modal-booking.выберите-продолжительность-полета'),
+							'location_id' => trans('main.modal-booking.локация'),
+							'flight_date_at' => 'Start date',
+							'flight_time_at' => 'Start time',
 						]);
 				break;
 				case Event::EVENT_TYPE_BREAK:
@@ -797,11 +707,11 @@ class DealController extends Controller
 					
 					$validator = Validator::make($this->request->all(), $rules)
 						->setAttributeNames([
-							'location_id' => 'Локация',
-							'flight_date_at' => 'Дата начала',
-							'flight_time_at' => 'Время начала',
-							'flight_date_stop_at' => 'Дата окончания',
-							'flight_time_stop_at' => 'Время окончания',
+							'location_id' => trans('main.modal-booking.локация'),
+							'flight_date_at' => 'Start date',
+							'flight_time_at' => 'Start time',
+							'flight_date_stop_at' => 'End date',
+							'flight_time_stop_at' => 'End time',
 						]);
 				break;
 				case Event::EVENT_TYPE_USER_FLIGHT:
@@ -816,12 +726,12 @@ class DealController extends Controller
 					
 					$validator = Validator::make($this->request->all(), $rules)
 						->setAttributeNames([
-							'location_id' => 'Локация',
-							'flight_date_at' => 'Дата начала',
-							'flight_time_at' => 'Время начала',
-							'flight_date_stop_at' => 'Дата окончания',
-							'flight_time_stop_at' => 'Время окончания',
-							'employee_id' => 'Сотрудник',
+							'location_id' => trans('main.modal-booking.локация'),
+							'flight_date_at' => 'Start date',
+							'flight_time_at' => 'Start time',
+							'flight_date_stop_at' => 'End date',
+							'flight_time_stop_at' => 'End time',
+							'employee_id' => 'Employee',
 						]);
 				break;
 				case Event::EVENT_TYPE_TEST_FLIGHT:
@@ -836,12 +746,12 @@ class DealController extends Controller
 					
 					$validator = Validator::make($this->request->all(), $rules)
 						->setAttributeNames([
-							'location_id' => 'Локация',
-							'flight_date_at' => 'Дата начала',
-							'flight_time_at' => 'Время начала',
-							'flight_date_stop_at' => 'Дата окончания',
-							'flight_time_stop_at' => 'Время окончания',
-							'pilot_id' => 'Пилот',
+							'location_id' => trans('main.modal-booking.локация'),
+							'flight_date_at' => 'Start date',
+							'flight_time_at' => 'Start time',
+							'flight_date_stop_at' => 'End date',
+							'flight_time_stop_at' => 'End time',
+							'pilot_id' => 'Pilot',
 						]);
 				break;
 			}
@@ -882,7 +792,6 @@ class DealController extends Controller
 		$isValidFlightDate = $this->request->is_valid_flight_date ?? 0;*/
 		$employeeId = $this->request->employee_id ?? 0;
 		$pilotId = $this->request->pilot_id ?? 0;
-		$roistatVisit = ($source == Deal::WEB_SOURCE) ? (array_key_exists('roistat_visit', $_COOKIE) ? $_COOKIE['roistat_visit'] : null) : ($this->request->roistat_visit ?? null);
 		$isPaid = (bool)$this->request->is_paid;
 		
 		/*if (!in_array($source, [Deal::WEB_SOURCE, Deal::MOB_SOURCE]) && in_array($eventType, Event::EVENT_TYPE_DEAL) && !$isValidFlightDate) {
@@ -892,16 +801,16 @@ class DealController extends Controller
 		if (in_array($eventType, [Event::EVENT_TYPE_DEAL])) {
 			$product = Product::find($productId);
 			if (!$product) {
-				return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 			}
 			if ($source != Deal::WEB_SOURCE && !$product->validateFlightDate($flightAt)) {
-				return response()->json(['status' => 'error', 'reason' => 'Для бронирования полета по тарифу Regular доступны только будние дни']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.для-бронирования-полета-по-тарифу-regular-доступны-только-будние-дни')]);
 			}
 		}
 		
 		$location = Location::find($locationId);
 		if (!$location) {
-			return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 		}
 		
 		if (!$cityId) {
@@ -910,39 +819,39 @@ class DealController extends Controller
 
 		$city = $this->cityRepo->getById($cityId);
 		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 		
 		if (in_array($eventType, [Event::EVENT_TYPE_DEAL])) {
 			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId);
 			if (!$cityProduct) {
-				return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			}
 		}
 		
 		$simulator = FlightSimulator::find($simulatorId);
 		if (!$simulator) {
-			return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 		}
 
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 		
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 
 		if ($promocodeUuid) {
 			$promocode = HelpFunctions::getEntityByUuid(Promocode::class, $promocodeUuid);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
@@ -950,7 +859,7 @@ class DealController extends Controller
 			$paymentMethod = PaymentMethod::where('is_active', true)
 				->find($paymentMethodId);
 			if (!$paymentMethod) {
-				return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 			}
 		}
 		
@@ -968,19 +877,19 @@ class DealController extends Controller
 				$certificate = HelpFunctions::getEntityByUuid(Certificate::class, $certificateUuid);
 			}
 			if (!$certificate) {
-				return response()->json(['status' => 'error', 'reason' => 'Сертификат не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 			}
 			if ($certificate->wasUsed()) {
-				return response()->json(['status' => 'error', 'reason' => 'Сертификат уже был ранее использован']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-уже-был-ранее-использован')]);
 			}
 			if (in_array($source, [Deal::WEB_SOURCE, Deal::MOB_SOURCE]) && !in_array($certificate->status_id, [$certificateStatus->id, 0])) {
-				return response()->json(['status' => 'error', 'reason' => 'Некорректный статус Сертификата']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.Incorrect Certificate Status')]);
 			}
 			if (!in_array($certificate->product_id, [$product->id, 0]) && in_array($source, [Deal::WEB_SOURCE, Deal::MOB_SOURCE])) {
-				return response()->json(['status' => 'error', 'reason' => 'Продукт по Сертификату не совпадает с выбранным']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-по-сертификату-не-совпадает-с-выбранным')]);
 			}
 			if ($certificate->expire_at && Carbon::parse($certificate->expire_at)->lt($date) && !$isIndefinitely) {
-				return response()->json(['status' => 'error', 'reason' => 'Срок действия Сертификата истек']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.срок-действия-сертификата-истек')]);
 			}
 			$certificateId = $certificate->id;
 			$certificateProduct = $certificate->product;
@@ -995,13 +904,13 @@ class DealController extends Controller
 		if ($contractorId) {
 			$contractor = Contractor::find($contractorId);
 			if (!$contractor) {
-				return response()->json(['status' => 'error', 'reason' => 'Контрагент не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
 			}
 		} elseif ($email) {
 			$contractor = Contractor::whereRaw('LOWER(email) = ?', [mb_strtolower($email)])
 				->first();
-			if ($contractor && !in_array($source, [Contractor::WEB_SOURCE, Contractor::MOB_SOURCE])) {
-				return response()->json(['status' => 'error', 'reason' => 'Контрагент с таким E-mail уже существует']);
+			if ($contractor && !in_array($source, [Contractor::WEB_SOURCE])) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-с-таким-e-mail-уже-существует')]);
 			}
 		}
 
@@ -1040,7 +949,6 @@ class DealController extends Controller
 					$deal->email = $email;
 					$deal->source = $source ?: Deal::ADMIN_SOURCE;
 					$deal->user_id = $this->request->user()->id ?? 0;
-					$deal->roistat = $roistatVisit;
 					$deal->save();
 					
 					$position = new DealPosition();
@@ -1066,12 +974,7 @@ class DealController extends Controller
 						$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 						$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
 						$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
-						
-						if ($city->version == City::EN_VERSION) {
-							$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-						} else {
-							$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-						}
+						$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 						
 						if ($source == Deal::WEB_SOURCE) {
 							$billLocationId = $location->id ?? 0;
@@ -1172,7 +1075,7 @@ class DealController extends Controller
 
 			Log::debug('500 - Deal Booking Store: ' . $e->getMessage());
 
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -1191,7 +1094,7 @@ class DealController extends Controller
 		
 		if ($user) {
 			if (!$user->isAdminOrHigher()) {
-				return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 			}
 		}
 		
@@ -1227,35 +1130,34 @@ class DealController extends Controller
 		$email = $this->request->email ?? '';
 		$phone = $this->request->phone ?? '';
 		$source = $this->request->source ?? '';
-		$roistatVisit = ($source == Deal::WEB_SOURCE) ? (array_key_exists('roistat_visit', $_COOKIE) ? $_COOKIE['roistat_visit'] : null) : ($this->request->roistat_visit ?? null);
 		$isPaid = (bool)$this->request->is_paid;
 		
 		$city = $this->cityRepo->getById($cityId);
 		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт в данном городе не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		if ($promoId) {
 			$promo = Promo::find($promoId);
 			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
 		}
 
 		if ($promocodeId) {
 			$promocode = Promocode::find($promocodeId);
 			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => 'Промокод не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
 		}
 		
@@ -1263,20 +1165,20 @@ class DealController extends Controller
 			$paymentMethod = PaymentMethod::where('is_active', true)
 				->find($paymentMethodId);
 			if (!$paymentMethod) {
-				return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 			}
 		}
 		
 		if ($contractorId) {
 			$contractor = Contractor::find($contractorId);
 			if (!$contractor) {
-				return response()->json(['status' => 'error', 'reason' => 'Контрагент не найден']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
 			}
 		} elseif ($email) {
 			$contractor = Contractor::whereRaw('LOWER(email) = ?', [mb_strtolower($email)])
 				->first();
-			if ($contractor && !in_array($source, [Contractor::WEB_SOURCE, Contractor::MOB_SOURCE])) {
-				return response()->json(['status' => 'error', 'reason' => 'Контрагент с таким E-mail уже существует']);
+			if ($contractor && !in_array($source, [Contractor::WEB_SOURCE])) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-с-таким-e-mail-уже-существует')]);
 			}
 		}
 		
@@ -1309,7 +1211,6 @@ class DealController extends Controller
 			$deal->email = $email;
 			$deal->user_id = $this->request->user()->id ?? 0;
 			$deal->source = $source ?: Deal::ADMIN_SOURCE;
-			$deal->roistat = $roistatVisit;
 			$deal->save();
 
 			$position = new DealPosition();
@@ -1335,12 +1236,7 @@ class DealController extends Controller
 				$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 				$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
 				$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
-				
-				if ($city->version == City::EN_VERSION) {
-					$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-				} else {
-					$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-				}
+				$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 				
 				if ($source == Deal::WEB_SOURCE) {
 					$billLocationId = /*$location ? $location->id : */0;
@@ -1379,7 +1275,7 @@ class DealController extends Controller
 
 			Log::debug('500 - Position Product Store: ' . $e->getMessage());
 
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -1399,15 +1295,15 @@ class DealController extends Controller
 		
 		if ($user) {
 			if (!$user->isAdminOrHigher()) {
-				return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 			}
 		}
 		
 		$deal = Deal::find($id);
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		if (!$deal->scores->empty() && $deal->status && in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-			return response()->json(['status' => 'error', 'reason' => 'Сделка недоступна для редактирования']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
 		$rules = [
@@ -1419,10 +1315,10 @@ class DealController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Имя',
+				'name' => 'Name',
 				'email' => 'E-mail',
-				'phone' => 'Телефон',
-				'status_id' => 'Статус',
+				'phone' => 'Phone',
+				'status_id' => 'Status',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -1434,7 +1330,6 @@ class DealController extends Controller
 		$name = $this->request->name ?? '';
 		$email = $this->request->email ?? '';
 		$phone = $this->request->phone ?? '';
-		//$roistatVisit = $this->request->roistat_visit ?? null;
 		
 		try {
 			\DB::beginTransaction();
@@ -1446,7 +1341,6 @@ class DealController extends Controller
 			if ($contractorId) {
 				$deal->contractor_id = $contractorId;
 			}
-			//$deal->roistat = $roistatVisit;
 			$deal->save();
 			
 			if ($contractorId) {
@@ -1485,7 +1379,7 @@ class DealController extends Controller
 			
 			Log::debug('500 - Deal Update: ' . $e->getMessage());
 			
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -1533,7 +1427,7 @@ class DealController extends Controller
 		
 		$product = Product::find($productId);
 		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 
 		if ($flightDate) {
@@ -1548,7 +1442,7 @@ class DealController extends Controller
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId);
 		if (!$cityProduct || !$cityProduct->pivot) {
-			return response()->json(['status' => 'error', 'reason' => 'Не задана базовая стоимость продукта']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.не-задана-базовая-стоимость-продукта')]);
 		}
 		
 		// базовая стоимость продукта
@@ -1621,9 +1515,6 @@ class DealController extends Controller
 		$deal->phone = $phone;
 		$deal->email = $email;
 		$deal->source = $source ?? '';
-		if ($source == Deal::ROISTAT_SOURCE) {
-			$deal->roistat = $visit;
-		}
 		$deal->data_json = $dataJson;
 		if (!$deal->save()) {
 			return response()->json([

@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Цены
+				Prices
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Цены</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Prices</li>
 			</ol>
 		</div>
 	</div>
@@ -21,7 +21,7 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<div class="table-filter mb-2">
+					{{--<div class="table-filter mb-2">
 						<div class="d-sm-flex">
 							<div class="form-group">
 								<label for="filter_city_id">Город</label>
@@ -33,7 +33,7 @@
 								</select>
 							</div>
 						</div>
-					</div>
+					</div>--}}
 					<table id="pricingTable" class="table table-sm table-bordered">
 						<tbody>
 						</tbody>
@@ -47,7 +47,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -55,8 +55,8 @@
 				<form id="pricing">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -77,7 +77,7 @@
 			function getList() {
 				var $selector = $('#pricingTable tbody');
 
-				$selector.html('<tr><td colspan="30" class="text-center">Загрузка данных...</td></tr>');
+				$selector.html('<tr><td colspan="30" class="text-center">Loading data...</td></tr>');
 
 				$.ajax({
 					url: '{{ route('pricingList') }}',
@@ -95,7 +95,7 @@
 						if (result.html) {
 							$selector.html(result.html);
 						} else {
-							$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+							$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 						}
 					}
 				})
@@ -112,7 +112,7 @@
 					title = $(this).data('title');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -173,13 +173,13 @@
 							return;
 						}
 
-						var msg = 'Запись успешно ';
+						var msg = 'Price successfully ';
 						if (method === 'POST') {
-							msg += 'добавлена';
+							msg += 'added';
 						} else if (method === 'PUT') {
-							msg += 'сохранена';
+							msg += 'saved';
 						} else if (method === 'DELETE') {
-							msg += 'удалена';
+							msg += 'deleted';
 						}
 
 						$('#modal').modal('hide');
@@ -194,7 +194,7 @@
 			});
 
 			$(document).on('click', '.js-certificate-template-delete', function(e) {
-				if (!confirm('Вы уверены?')) {
+				if (!confirm('Are you sure?')) {
 					return false;
 				}
 
@@ -211,7 +211,7 @@
 						}
 
 						$div.hide();
-						toastr.success('Файл успешно удален');
+						toastr.success('File successfully deleted');
 					}
 				});
 			});

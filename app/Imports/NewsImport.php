@@ -30,7 +30,7 @@ class NewsImport implements OnEachRow, WithProgressBar
 		try {
 			\DB::beginTransaction();
 
-			$cityId = 0;
+			$cityId = 1;
 
 			$parent = HelpFunctions::getEntityByAlias(Content::class, 'news');
 			$parentId = $parent ? $parent->id : 0;
@@ -38,13 +38,13 @@ class NewsImport implements OnEachRow, WithProgressBar
 			$content = new Content();
 			$content->title = trim($row[0]);
 			$content->alias = trim($row[2]);
-			$content->preview_text = trim($row[3]);
-			$content->detail_text = trim($row[4]);
+			$content->preview_text = trim($row[1]);
+			$content->detail_text = trim($row[3]);
 			$content->parent_id = $parentId;
 			$content->city_id = $cityId;
-			$content->created_at = $row[5] ? Carbon::createFromTimestamp($row[5])->format('Y-m-d H:i:s') : Carbon::now();
-			$content->updated_at = $row[6] ? Carbon::createFromTimestamp($row[6])->format('Y-m-d H:i:s') : Carbon::now();
-			$content->published_at = $row[7] ? Carbon::createFromTimestamp($row[7])->format('Y-m-d H:i:s') : Carbon::now();
+			$content->created_at = $row[4] ? Carbon::createFromTimestamp($row[4])->format('Y-m-d H:i:s') : Carbon::now();
+			$content->updated_at = $row[5] ? Carbon::createFromTimestamp($row[5])->format('Y-m-d H:i:s') : Carbon::now();
+			$content->published_at = $row[6] ? Carbon::createFromTimestamp($row[6])->format('Y-m-d H:i:s') : Carbon::now();
 			$content->meta_title = trim($row[0]);
 			$content->meta_description = trim($row[1]);
 			$content->save();

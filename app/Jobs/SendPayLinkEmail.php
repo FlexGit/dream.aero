@@ -44,8 +44,6 @@ class SendPayLinkEmail extends Job implements ShouldQueue {
 		
 		$messageData = [
 			'name' => $name,
-			//'payLink' => (($city->version == City::EN_VERSION) ? url('//' . env('DOMAIN_EN')) : url('//' . env('DOMAIN_RU'))) . '/payment/' . $this->bill->uuid,
-			//'payLink' => 'https://dream-aero.ru/payment/' . $this->bill->uuid,
 			'city' => $city ?? null,
 			'bill' => $this->bill,
 		];

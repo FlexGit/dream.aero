@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Контрагенты
+				Clients
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Контрагенты</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Clients</li>
 			</ol>
 		</div>
 	</div>
@@ -23,38 +23,32 @@
 				<div class="card-body">
 					<div class="table-filter mb-2">
 						<div class="d-sm-flex">
-							{{--@if(!\Auth::user()->city)--}}
-								<div class="form-group">
-									<label for="filter_city_id">Город</label>
-									<select class="form-control" id="filter_city_id" name="filter_city_id">
-										<option value="0">Все</option>
-										@foreach($cities ?? [] as $city)
-											@if(!$city->is_active)
-												@continue
-											@endif
-											<option value="{{ $city->id }}">{{ $city->name }}</option>
-										@endforeach
-									</select>
-								</div>
-							{{--@endif--}}
 							<div class="col-6">
-								<div class="form-group ml-2">
-									<label for="search_contractor">Контрагент</label>
-									<input type="text" class="form-control" id="search_contractor" name="search_contractor" placeholder="ФИО, E-mail, Телефон">
+								<div class="form-group">
+									<label for="search_contractor">Search</label>
+									<input type="text" class="form-control" id="search_contractor" name="search_contractor" placeholder="Full name, E-mail, Phone">
 								</div>
 							</div>
 							<div class="form-group align-self-end ml-auto pl-2">
-								<a href="javascript:void(0)" data-toggle="modal" data-url="/contractor/add" data-action="/contractor" data-method="POST" data-type="contractor" data-title="Новый контрагент" class="btn btn-secondary btn-sm" title="Добавить контрагента">Добавить контрагента</a>
+								<a href="javascript:void(0)" data-toggle="modal" data-url="/contractor/add" data-action="/contractor" data-method="POST" data-type="contractor" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
 							</div>
 						</div>
 					</div>
 					<table id="contractorTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
 						<tr>
-							<th class="text-center">Контрагент</th>
-							<th class="text-center text-nowrap d-none d-sm-table-cell">Детали</th>
-							{{--<th class="text-center d-none d-xl-table-cell">Баланс</th>--}}
-							<th class="text-center d-none d-md-table-cell">Активность</th>
+							<th class="text-center">Name</th>
+							<th class="text-center">Last name</th>
+							<th class="text-center">E-mail</th>
+							<th class="text-center">Phone</th>
+							<th class="text-center">Birthdate</th>
+							<th class="text-center">Discount</th>
+							<th class="text-center">Flight time</th>
+							<th class="text-center">Is active</th>
+							{{--<th class="text-center">Last auth</th>--}}
+							<th class="text-center">Create date</th>
+							<th class="text-center">Last edit date</th>
+							<th class="text-center">Action</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -69,7 +63,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -77,8 +71,8 @@
 				<form id="contractor">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -88,13 +82,13 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">
+	{{--<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">--}}
 	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
 @stop
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
-	<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>
+	{{--<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>--}}
 	<script src="{{ asset('js/admin/common.js') }}"></script>
 	<script>
 		$(function() {
@@ -133,7 +127,7 @@
 							$(window).data('ajaxready', true);
 						} else {
 							if (!id) {
-								$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+								$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 							}
 						}
 					}
@@ -153,7 +147,7 @@
 					$modalDialog = $('.modal').find('.modal-dialog');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -206,18 +200,18 @@
 
 						var msg = '';
 						if (formId === 'score') {
-							msg = 'Время полета успешно ';
+							msg = 'Flight time successfully ';
 							if (method === 'POST') {
-								msg += 'добавлено';
+								msg += 'added';
 							} else if (method === 'PUT') {
-								msg += 'сохранено';
+								msg += 'saved';
 							}
 						} else if (formId === 'contractor') {
-							msg = 'Контрагент успешно ';
+							msg = 'Client successfully ';
 							if (method === 'POST') {
-								msg += 'добавлен';
+								msg += 'added';
 							} else if (method === 'PUT') {
-								msg += 'сохранен';
+								msg += 'saved';
 							}
 						}
 

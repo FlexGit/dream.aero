@@ -68,14 +68,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereDealPositionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereLocationId($value)
  * @property \Illuminate\Support\Carbon|null $success_payment_sent_at дата и время отправки уведомления об успешной оплате
- * @property string|null $aeroflot_transaction_type
- * @property string|null $aeroflot_transaction_order_id
- * @property string|null $aeroflot_card_number
- * @property int $aeroflot_bonus_amount
- * @property string|null $aeroflot_status
- * @property string|null $aeroflot_state
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\AeroflotBonusLog[] $aeroflotBonusLog
- * @property-read int|null $aeroflot_bonus_log_count
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereAeroflotBonusAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereAeroflotCardNumber($value)
@@ -100,6 +92,7 @@ class Bill extends Model
 		'status_id' => 'Bill status',
 		'amount' => 'Amount',
 		'currency_id' => 'Currency',
+		'city_id' => 'City',
 		'location_id' => 'Location',
 		'uuid' => 'Uuid',
 		'data_json' => 'Extra info',
@@ -146,6 +139,7 @@ class Bill extends Model
 		'status_id',
 		'amount',
 		'currency_id',
+		'city_id',
 		'location_id',
 		'uuid',
 		'payed_at',
@@ -264,6 +258,11 @@ class Bill extends Model
 		return $this->hasOne(Currency::class, 'id', 'currency_id');
 	}
 	
+	public function city()
+	{
+		return $this->belongsTo(City::class);
+	}
+
 	public function location()
 	{
 		return $this->belongsTo(Location::class);

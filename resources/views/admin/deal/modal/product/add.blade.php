@@ -27,7 +27,7 @@
 		<div class="form-group" style="margin-top: 40px;">
 			<div class="custom-control custom-switch custom-control">
 				<input type="checkbox" id="is_paid" name="is_paid" value="1" class="custom-control-input">
-				<label class="custom-control-label font-weight-normal" for="is_paid">Bill is paid</label>
+				<label class="custom-control-label font-weight-normal" for="is_paid">Invoice is paid</label>
 			</div>
 		</div>
 	</div>

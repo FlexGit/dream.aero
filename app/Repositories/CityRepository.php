@@ -32,10 +32,6 @@ class CityRepository {
 	public function getList(User $user, $onlyActive = true)
 	{
 		$cities = $this->model->orderBy('name')
-			->where('version', $user->version)
-			->orderByRaw("FIELD(alias, 'msk') DESC")
-			->orderByRaw("FIELD(alias, 'spb') DESC")
-			->orderBy('name')
 			->get();
 		if (!$user->isSuperAdmin() && $user->city) {
 			$cities = $cities->where('id', $user->city_id);

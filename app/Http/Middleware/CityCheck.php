@@ -23,7 +23,6 @@ class CityCheck
 				
 				$request->session()->put('cityId', $city->id);
 				$request->session()->put('cityAlias', $city->alias);
-				$request->session()->put('cityVersion', $city->version);
 				$request->session()->put('cityName', $cityName);
 				
 				//\Log::debug($request->session()->get('cityAlias') . ' - ' . $request->segment(1) . ' - ' . $request->segment(2));

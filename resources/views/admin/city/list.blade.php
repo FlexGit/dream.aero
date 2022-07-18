@@ -6,7 +6,6 @@
 	<td class="text-center d-none d-sm-table-cell">{{ $city->alias }}</td>
 	<td class="text-center d-none d-md-table-cell">{{ $city->email }}</td>
 	<td class="text-center d-none d-lg-table-cell">{{ $city->phone }}</td>
-	<td class="text-center d-none d-xl-table-cell">{{ $city->version }}</td>
 	<td class="text-center d-none d-xl-table-cell">{{ $city->is_active ? 'Да' : 'Нет' }}</td>
 	<td class="text-center">
 		<a href="javascript:void(0)" data-toggle="modal" data-url="/city/{{ $city->id }}/edit" data-action="/city/{{ $city->id }}" data-method="PUT" data-title="Редактирование">

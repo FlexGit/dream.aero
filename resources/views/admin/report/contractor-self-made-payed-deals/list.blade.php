@@ -1,10 +1,10 @@
 <table class="table table-sm table-bordered table-striped table-hover table-data">
 	<thead>
 		<tr>
-			<th class="align-middle" style="text-align: center;vertical-align: middle;">Город</th>
-			<th class="align-middle" style="text-align: center;vertical-align: middle;">Локация</th>
-			<th class="align-middle" style="text-align: center;vertical-align: middle;">Кол-во</th>
-			<th class="align-middle" style="text-align: center;vertical-align: middle;">Сумма</th>
+			<th class="align-middle" style="text-align: center;vertical-align: middle;">City</th>
+			<th class="align-middle" style="text-align: center;vertical-align: middle;">Location</th>
+			<th class="align-middle" style="text-align: center;vertical-align: middle;">Count</th>
+			<th class="align-middle" style="text-align: center;vertical-align: middle;">Amount</th>
 		</tr>
 	</thead>
 	<tbody>

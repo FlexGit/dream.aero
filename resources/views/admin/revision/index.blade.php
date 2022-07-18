@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Лог операций
+				Operation log
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Лог операций</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Operation log</li>
 			</ol>
 		</div>
 	</div>
@@ -23,30 +23,30 @@
 				<div class="card-body">
 					<div class="table-filter d-sm-flex mb-2">
 						<div class="form-group">
-							<label for="filter_entity_alias">Сущность</label>
+							<label for="filter_entity_alias">Entity</label>
 							<select class="form-control" id="filter_entity_alias" name="filter_entity_alias">
-								<option value="0">Выберите</option>
+								<option value="0">Choose</option>
 								@foreach($entities ?? [] as $entityAlias => $entityName)
 									<option value="{{ $entityAlias }}" @if($entity && $entity == $entityAlias) selected @endif>{{ $entityName }}</option>
 								@endforeach
 							</select>
 						</div>
 						<div class="form-group pl-2">
-							<label for="search_contractor">Объект</label>
-							<input type="text" class="form-control" id="search_object" name="search_object" @if($objectId) value="{{ $objectId }}" @endif placeholder="Объект">
+							<label for="search_contractor">Object</label>
+							<input type="text" class="form-control" id="search_object" name="search_object" @if($objectId) value="{{ $objectId }}" @endif placeholder="Object">
 						</div>
 					</div>
 					<table id="revisionTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
 						<tr class="text-center">
-							<th class="align-middle">Сущность</th>
-							<th class="align-middle d-none d-sm-table-cell">Объект</th>
-							<th class="align-middle d-none d-md-table-cell">Связанный объект</th>
-							<th class="align-middle d-none d-md-table-cell">Атрибут</th>
-							<th class="align-middle d-none d-md-table-cell">Было</th>
-							<th class="align-middle d-none d-md-table-cell">Стало</th>
-							<th class="align-middle d-none d-md-table-cell">Пользователь</th>
-							<th class="align-middle d-none d-xl-table-cell">Когда</th>
+							<th class="align-middle">Entity</th>
+							<th class="align-middle d-none d-sm-table-cell">Object</th>
+							<th class="align-middle d-none d-md-table-cell">Linked object</th>
+							<th class="align-middle d-none d-md-table-cell">Attribute</th>
+							<th class="align-middle d-none d-md-table-cell">Was</th>
+							<th class="align-middle d-none d-md-table-cell">No</th>
+							<th class="align-middle d-none d-md-table-cell">User</th>
+							<th class="align-middle d-none d-xl-table-cell">Date</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -98,7 +98,7 @@
 							$(window).data('ajaxready', true);
 						} else {
 							if (!id) {
-								$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+								$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 							}
 						}
 					}

@@ -2,16 +2,16 @@
 	<thead>
 		<tr>
 			<th>
-				Город
+				City
 			</th>
 			<th>
-				Локация / Тренажер
+				Location{{-- / Simulator--}}
 			</th>
 			<th>
-				Спонтанные
+				Spontaneous
 			</th>
 			<th>
-				Повторные
+				Repeated
 			</th>
 		</tr>
 	</thead>
@@ -20,11 +20,11 @@
 		@foreach($city->locations as $location)
 			@foreach($location->simulators as $simulator)
 				<tr>
-					<td class="align-middle">
+					<td class="align-middle text-center">
 						{{ $location->city ? $location->city->name : '' }}
 					</td>
-					<td class="align-middle">
-						{{ $location->name }} {{ $simulator->name }}
+					<td class="align-middle text-center">
+						{{ $location->name }} {{--{{ $simulator->name }}--}}
 					</td>
 					<td class="align-middle text-right">
 						{{ isset($eventItems[$location->id][$simulator->id]['is_unexpected_flight']) ? $eventItems[$location->id][$simulator->id]['is_unexpected_flight'] : 0 }}

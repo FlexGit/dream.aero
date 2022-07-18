@@ -1,15 +1,14 @@
 <table id="certificateTable" class="table table-hover table-sm table-bordered table-striped table-data">
 	<thead>
 	<tr>
-		<th class="ext-center align-middle">Numbr</th>
-		<th class="align-middle">Creating date</th>
+		<th class="ext-center align-middle">Voucher #</th>
+		<th class="align-middle">Voucher date</th>
 		<th class="align-middle">Product</th>
-		<th class="align-middle">Amount</th>
-		<th class="align-middle">City</th>
-		<th class="align-middle">Status</th>
-		<th class="align-middle">Validity</th>
-		<th class="align-middle">Bill number</th>
-		<th class="align-middle">Bill status</th>
+		<th class="align-middle">Amount, {{ ($city->alias == 'uae') ? 'AED' : 'USD' }}</th>
+		<th class="align-middle">Voucher status</th>
+		<th class="align-middle">Voucher validity</th>
+		<th class="align-middle">Invoice #</th>
+		<th class="align-middle">Invoice status</th>
 		<th class="align-middle">Payment method</th>
 		<th class="align-middle">Comment</th>
 	</tr>
@@ -28,14 +27,11 @@
 					{{ $certificateItem['certificate_product_name'] }}
 					@if($certificateItem['certificate_product_name'] != $certificateItem['position_product_name'])
 						<br>
-						Product in position changed to {{ $certificateItem['position_product_name'] }}
+						Product was changed to {{ $certificateItem['position_product_name'] }}
 					@endif
 				</td>
 				<td class="align-middle text-right">
-					{{ number_format($certificateItem['position_amount'], 0, '.', ' ') }}
-				</td>
-				<td class="align-middle text-center">
-					{{ $certificateItem['city_name'] }}
+					{{ number_format($certificateItem['position_amount'], 2, '.', ' ') }}
 				</td>
 				<td class="align-middle text-center">
 					{{ $certificateItem['certificate_status_name'] }}
@@ -63,7 +59,7 @@
 					@endif
 				</td>
 				<td class="align-middle text-left">
-					@if($certificateItem['comment'] || $certificateItem['certificate_whom'] || $certificateItem['certificate_whom_phone'])
+					@if($certificateItem['comment'] /*|| $certificateItem['certificate_whom'] || $certificateItem['certificate_whom_phone']*/)
 						<div style="border: 1px solid;border-radius: 6px;padding: 4px 8px;background-color: #fff;">
 							@if($certificateItem['comment'])
 								<div>
@@ -71,7 +67,7 @@
 									<span><i>{{ $certificateItem['comment'] }}</i></span>
 								</div>
 							@endif
-							@if($certificateItem['certificate_whom'])
+							{{--@if($certificateItem['certificate_whom'])
 								<div>
 									<i class="fas fa-user"></i>&nbsp;
 									<span><i>{{ $certificateItem['certificate_whom']}}</i></span>
@@ -88,7 +84,7 @@
 									<i class="fas fa-truck"></i>&nbsp;
 									<span><i>{{ $certificateItem['delivery_address'] }}</i></span>
 								</div>
-							@endif
+							@endif--}}
 						</div>
 					@endif
 				</td>

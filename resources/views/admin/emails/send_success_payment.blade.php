@@ -1,17 +1,14 @@
-<p>Оплата по Счету {{ $bill->number ?? '' }} на сумму {{ $bill->amount }} руб.</p>
-<p>Сделка: {{ $deal->number ?? '' }}</p>
-@if($position)
+<p>Payment by Invoice # {{ $bill->number ?? '' }}. Invoice amount {{ $bill->amount }} USD.</p>
+<p>Deal #: {{ $deal->number ?? '' }}</p>
+{{--@if($position)
 	<p>Позиция: {{ $position->number }}</p>
-@endif
+@endif--}}
 @if($certificate)
-	<p>Сертификат: {{ $certificate->number }}</p>
+	<p>Voucher #: {{ $certificate->number }}</p>
 @endif
-<p>Контрагент: {{ $contractor->fio() }} (e-mail: {{ $contractor->email }}, тел.: {{ $contractor->phone }})</p>
+<p>Client: {{ $contractor->fio() }} (E-mail: {{ $contractor->email }}, Phone #: {{ $contractor->phone }})</p>
 @if($location)
-	<p>Локация: {{ $location->name }}</p>
-@endif
-@if($event)
-	<p>Событие на полет: {{ $event->getInterval() }}</p>
+	<p>Location: {{ $location->name }}</p>
 @endif
 <br>
-<p><small>Письмо отправлено автоматически</small></p>
+<p><small>Email sent automatically</small></p>

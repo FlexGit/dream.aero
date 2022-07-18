@@ -5,26 +5,26 @@
 			<td>{{ $user->id }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Фамилия</td>
+			<td>Surname</td>
 			<td>{{ $user->lastname }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Имя</td>
+			<td>Name</td>
 			<td>{{ $user->name }}</td>
 		</tr>
-		<tr class="odd">
+		{{--<tr class="odd">
 			<td>Отчество</td>
 			<td>{{ $user->middlename }}</td>
 		</tr>
 		<tr class="odd">
 			<td>Дата рождения</td>
 			<td>{{ \Carbon\Carbon::parse($user->birthdate)->format('d.m.Y') }}</td>
-		</tr>
+		</tr>--}}
 		<tr class="odd">
 			<td>E-mail</td>
 			<td>{{ $user->email }}</td>
 		</tr>
-		<tr class="odd">
+		{{--<tr class="odd">
 			<td>Телефон</td>
 			<td>{{ $user->phone }}</td>
 		</tr>
@@ -39,33 +39,29 @@
 		<tr class="odd">
 			<td>Офиц. трудоустройство</td>
 			<td>{{ $user->is_official ? 'Да' : 'Нет' }}</td>
-		</tr>
+		</tr>--}}
 		<tr class="odd">
-			<td>Роль</td>
+			<td>Role</td>
 			<td>{{ isset($roles[$user->role]) ? $roles[$user->role] : '' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Версия</td>
-			<td>{{ $user->version }}</td>
+			<td>City</td>
+			<td>{{ $user->city ? $user->city->name : 'Any' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Город</td>
-			<td>{{ $user->city ? $user->city->name : 'Любой' }}</td>
+			<td>Location</td>
+			<td>{{ $user->location ? $user->location->name : 'Any' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Локация</td>
-			<td>{{ $user->location ? $user->location->name : 'Любая' }}</td>
+			<td>Is active</td>
+			<td>{{ $user->enable ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Активность</td>
-			<td>{{ $user->enable ? 'Да' : 'Нет' }}</td>
-		</tr>
-		<tr class="odd">
-			<td>Дата создания</td>
+			<td>Create date</td>
 			<td>{{ $user->created_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего изменения</td>
+			<td>Last edit date</td>
 			<td>{{ $user->updated_at }}</td>
 		</tr>
 	</tbody>

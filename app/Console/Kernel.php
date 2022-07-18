@@ -13,13 +13,8 @@ class Kernel extends ConsoleKernel
 	 * @var array
 	 */
 	protected $commands = [
-		Commands\LoadPlatformData::class,
 		Commands\SendCertificateEmail::class,
 		Commands\SendFlightInvitationEmail::class,
-		Commands\AddContractorScore::class,
-		Commands\SendPromocodeAfterFlightEmail::class,
-		Commands\Roistat\RoistatAddDeals::class,
-		Commands\RunAeroflotAccrual::class,
 	];
 
 	/**
@@ -30,14 +25,6 @@ class Kernel extends ConsoleKernel
 	 */
 	protected function schedule(Schedule $schedule)
 	{
-		// загрузка данных платформы из письма
-		$filePath = storage_path('logs/commands/platform_data.log');
-		$schedule->command('platform_data:load')
-			->hourly()
-			->runInBackground()
-			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));
-
 		// запуск демона для обработки задач из очереди
 		$filePath = storage_path('logs/queue_worker.log');
 		$schedule->command('queue:work --daemon')
@@ -66,54 +53,6 @@ class Kernel extends ConsoleKernel
 		$filePath = storage_path('logs/commands/flight_invitation_email.log');
 		$schedule->command('flight_invitation_email:send')
 			->everyFiveMinutes()
-			->runInBackground()
-			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));
-		
-		// отправка контрагенту промокода на полет на другом типе тренажера
-		$filePath = storage_path('logs/commands/promocode_send.log');
-		$schedule->command('promocode_email:send')
-			->hourly()
-			->runInBackground()
-			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));
-
-		// начисление баллов после полета
-		$filePath = storage_path('logs/commands/scoring.log');
-		$schedule->command('score:add')
-			->hourly()
-			->runInBackground()
-			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));
-		
-		// проставление пилота после полета
-		/*$filePath = storage_path('logs/commands/pilot_set.log');
-		$schedule->command('pilot:set')
-			->everyFiveMinutes()
-			->runInBackground()
-			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));*/
-		
-		// получение информации о списании баллов Аэрофлот Бонус
-		/*$filePath = storage_path('logs/commands/aeroflot_order_info.log');
-		$schedule->command('aeroflot_order_info:get')
-			->everyMinute()
-			->runInBackground()
-			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));*/
-
-		// Загрузка Сделок в Roistat
-		$filePath = storage_path('logs/commands/roistat.log');
-		$schedule->command('roistat:add_deals')
-			->hourly()
-			->runInBackground()
-			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));
-		
-		// Начисление миль Аэрофлот Бонус
-		$filePath = storage_path('logs/commands/aeroflot_accrual.log');
-		$schedule->command('aeroflot_accrual:run')
-			->hourly()
 			->runInBackground()
 			->appendOutputTo($filePath)
 			->emailOutputOnFailure(env('DEV_EMAIL'));

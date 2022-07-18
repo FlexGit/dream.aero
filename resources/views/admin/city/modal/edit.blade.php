@@ -20,14 +20,6 @@
 	<input type="text" class="form-control" id="whatsapp" name="whatsapp" value="{{ $city->whatsapp }}" placeholder="Whatsapp">
 </div>
 <div class="form-group">
-	<label for="version">Версия</label>
-	<select class="form-control" id="version" name="version">
-		@foreach(app('\App\Models\City')::VERSIONS ?? [] as $version)
-			<option value="{{ $version }}" @if($city->version == $version) selected @endif>{{ $version }}</option>
-		@endforeach
-	</select>
-</div>
-<div class="form-group">
 	<label for="is_active">Активность</label>
 	<select class="form-control" id="is_active" name="is_active">
 		<option value="1" @if($city->is_active) selected @endif>Да</option>

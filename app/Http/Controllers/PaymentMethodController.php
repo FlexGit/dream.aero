@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Validator;
 use App\Models\PaymentMethod;
 
@@ -54,11 +53,11 @@ class PaymentMethodController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$paymentMethod = PaymentMethod::find($id);
-		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
+		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 		
 		$VIEW = view('admin.paymentMethod.modal.edit', [
 			'paymentMethod' => $paymentMethod,
@@ -77,7 +76,7 @@ class PaymentMethodController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$VIEW = view('admin.paymentMethod.modal.add', [
@@ -97,7 +96,7 @@ class PaymentMethodController extends Controller
 		}
 		
 		$paymentMethod = PaymentMethod::find($id);
-		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
+		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 		
 		$VIEW = view('admin.paymentMethod.modal.show', [
 			'paymentMethod' => $paymentMethod,
@@ -117,11 +116,11 @@ class PaymentMethodController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$paymentMethod = PaymentMethod::find($id);
-		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
+		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 		
 		$VIEW = view('admin.paymentMethod.modal.delete', [
 			'paymentMethod' => $paymentMethod,
@@ -140,7 +139,7 @@ class PaymentMethodController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
@@ -150,8 +149,8 @@ class PaymentMethodController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Наименование',
-				'alias' => 'Алиас',
+				'name' => 'Name',
+				'alias' => 'Alias',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -162,7 +161,7 @@ class PaymentMethodController extends Controller
 		$paymentMethod->alias = $this->request->alias;
 		$paymentMethod->is_active = $this->request->is_active;
 		if (!$paymentMethod->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -179,11 +178,11 @@ class PaymentMethodController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$paymentMethod = PaymentMethod::find($id);
-		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
+		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 
 		$rules = [
 			'name' => ['required', 'max:255', 'unique:payment_methods,name,' . $id],
@@ -192,8 +191,8 @@ class PaymentMethodController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Наименование',
-				'alias' => 'Алиас',
+				'name' => 'Name',
+				'alias' => 'Alias',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -203,7 +202,7 @@ class PaymentMethodController extends Controller
 		$paymentMethod->alias = $this->request->alias;
 		$paymentMethod->is_active = $this->request->is_active;
 		if (!$paymentMethod->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -220,14 +219,14 @@ class PaymentMethodController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$paymentMethod = PaymentMethod::find($id);
-		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => 'Способ оплаты не найден']);
+		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
 		
 		if (!$paymentMethod->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);

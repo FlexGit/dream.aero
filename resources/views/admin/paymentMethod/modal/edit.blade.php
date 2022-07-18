@@ -1,16 +1,16 @@
 <input type="hidden" id="id" name="id" value="{{ $paymentMethod->id }}">
 <div class="form-group">
-	<label for="name">Наименование</label>
-	<input type="text" class="form-control" id="name" name="name" value="{{ $paymentMethod->name }}" placeholder="Наименование">
+	<label for="name">Name</label>
+	<input type="text" class="form-control" id="name" name="name" value="{{ $paymentMethod->name }}" placeholder="Name">
 </div>
 <div class="form-group">
-	<label for="alias">Алиас</label>
-	<input type="text" class="form-control" id="alias" name="alias" value="{{ $paymentMethod->alias }}" placeholder="Алиас">
+	<label for="alias">Alias</label>
+	<input type="text" class="form-control" id="alias" name="alias" value="{{ $paymentMethod->alias }}" placeholder="Alias">
 </div>
 <div class="form-group">
-	<label for="is_active">Активность</label>
+	<label for="is_active">Is active</label>
 	<select class="form-control" id="is_active" name="is_active">
-		<option value="1" @if($paymentMethod->is_active) selected @endif>Да</option>
-		<option value="0" @if(!$paymentMethod->is_active) selected @endif>Нет</option>
+		<option value="1" @if($paymentMethod->is_active) selected @endif>Yes</option>
+		<option value="0" @if(!$paymentMethod->is_active) selected @endif>No</option>
 	</select>
 </div>

@@ -59,19 +59,18 @@ class PromoController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$promo = Promo::find($id);
-		if (!$promo) return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 
 		$discounts = Discount::where('is_active', true)
 			->orderBy('is_fixed')
 			->orderBy('value')
 			->get();
 
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$VIEW = view('admin.promo.modal.edit', [
@@ -93,7 +92,7 @@ class PromoController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$discounts = Discount::where('is_active', true)
@@ -101,8 +100,7 @@ class PromoController extends Controller
 			->orderBy('value')
 			->get();
 
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 
 		$VIEW = view('admin.promo.modal.add', [
@@ -124,7 +122,7 @@ class PromoController extends Controller
 		}
 
 		$promo = Promo::find($id);
-		if (!$promo) return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 
 		$VIEW = view('admin.promo.modal.show', [
 			'promo' => $promo,
@@ -144,11 +142,11 @@ class PromoController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$promo = Promo::find($id);
-		if (!$promo) return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 		
 		$VIEW = view('admin.promo.modal.delete', [
 			'promo' => $promo,
@@ -167,20 +165,20 @@ class PromoController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
 			'name' => ['required', 'max:255'],
 			'alias' => ['required', 'max:255'],
-			'image_file' => 'sometimes|image|max:512',
+			'image_file' => 'sometimes|image|max:5120',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Имя',
-				'alias' => 'Алиас',
-				'image_file' => 'Изображение',
+				'name' => 'Name',
+				'alias' => 'Alias',
+				'image_file' => 'Image',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -216,7 +214,7 @@ class PromoController extends Controller
 		}
 		$promo->data_json = $data;
 		if (!$promo->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -233,11 +231,11 @@ class PromoController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$promo = Promo::find($id);
-		if (!$promo) return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 
 		$rules = [
 			'name' => ['required', 'max:255'],
@@ -289,7 +287,7 @@ class PromoController extends Controller
 		}
 		$promo->data_json = $data;
 		if (!$promo->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -306,11 +304,11 @@ class PromoController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$promo = Promo::find($id);
-		if (!$promo) return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 
 		// удаляем файл изображения
 		if ($promo->data_json && isset($promo->data_json['image_file_path']) && is_file(public_path('upload/' . $promo->data_json['image_file_path']))) {
@@ -318,7 +316,7 @@ class PromoController extends Controller
 		}
 
 		if (!$promo->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -336,11 +334,11 @@ class PromoController extends Controller
 		}
 
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$promo = Promo::find($id);
-		if (!$promo) return response()->json(['status' => 'error', 'reason' => 'Акция не найдена']);
+		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 
 		// удаляем файл изображения
 		if ($promo->data_json && isset($promo->data_json['image_file_path']) && is_file(public_path('upload/' . $promo->data_json['image_file_path']))) {
@@ -351,7 +349,7 @@ class PromoController extends Controller
 		unset($data['image_file_path']);
 		$promo->data_json = $data;
 		if (!$promo->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		return response()->json(['status' => 'success']);
@@ -363,7 +361,7 @@ class PromoController extends Controller
 	public function imageUpload() {
 		$file = $this->request->file('file');
 		if (!$file->move(public_path('/upload/promo/'), $file->getClientOriginalName())) {
-			return response()->json(['status' => 'error', 'reason' => 'Не удалось загрузить файл']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.не-удалось-загрузить-файл')]);
 		}
 		
 		return response()->json([

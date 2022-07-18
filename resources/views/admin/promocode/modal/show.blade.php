@@ -5,10 +5,10 @@
 			<td>{{ $promocode->id }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Номер</td>
+			<td>Number</td>
 			<td>{{ $promocode->number }}</td>
 		</tr>
-		<tr class="odd">
+		{{--<tr class="odd">
 			<td>Город</td>
 			<td>
 				@foreach($promocode->cities ?? [] as $city)
@@ -19,33 +19,33 @@
 		<tr class="odd">
 			<td>Локация</td>
 			<td>{{ $promocode->location ? $promocode->location->name : '-' }}</td>
-		</tr>
-		<tr class="odd">
-			<td>Контрагент</td>
+		</tr>--}}
+		{{--<tr class="odd">
+			<td>Client</td>
 			<td>{{ $promocode->contractor ? $promocode->contractor->fio() : '-' }}</td>
-		</tr>
+		</tr>--}}
 		<tr class="odd">
-			<td>Скидка</td>
+			<td>Discount</td>
 			<td>{{ $promocode->discount ? $promocode->discount->valueFormatted() : '-' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Активность</td>
-			<td>{{ $promocode->is_active ? 'Да' : 'Нет' }}</td>
+			<td>Is active</td>
+			<td>{{ $promocode->is_active ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата начала активности</td>
+			<td>Activity start date</td>
 			<td>{{ $promocode->active_from_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата окончания активности</td>
+			<td>Activity end date</td>
 			<td>{{ $promocode->active_to_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата создания</td>
+			<td>Create date</td>
 			<td>{{ $promocode->created_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего изменения</td>
+			<td>Last edit date</td>
 			<td>{{ $promocode->updated_at }}</td>
 		</tr>
 	</tbody>

@@ -24,9 +24,9 @@
 					<div class="table-filter d-sm-flex mb-2">
 						<div class="form-group">
 							<div>
-								<label for="search_doc">Voucher</label>
+								<label for="search_doc">Search</label>
 							</div>
-							<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="Number">
+							<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="Voucher #">
 						</div>
 						<div class="form-group ml-3">
 							<label for="filter_date_from_at">Creating date</label>
@@ -40,33 +40,6 @@
 								</div>
 							</div>
 						</div>
-						@if($user->isSuperAdmin())
-							<div class="form-group ml-3">
-								<label for="filter_city_id">City</label>
-								<div>
-									<select class="form-control" id="filter_city_id" name="filter_city_id">
-										<option value="all"></option>
-										{{--<option value="0">Действует в любом городе</option>--}}
-										@foreach($cities ?? [] as $city)
-											<option value="{{ $city->id }}">{{ $city->name }}</option>
-										@endforeach
-									</select>
-								</div>
-							</div>
-						@endif
-						@if($user->isAdmin() && $locations->count() > 1)
-							<div class="form-group ml-3">
-								<label for="filter_location_id">Bill location</label>
-								<div>
-									<select class="form-control" id="filter_location_id" name="filter_location_id">
-										<option value="0"></option>
-										@foreach($locations as $location)
-											<option value="{{ $location->id }}">{{ $location->name }}</option>
-										@endforeach
-									</select>
-								</div>
-							</div>
-						@endif
 						<div class="form-group ml-3">
 							<label for="filter_payment_type">Payment type</label>
 							<div>
@@ -85,15 +58,14 @@
 					<table id="certificateTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
 						<tr>
-							<th class="ext-center align-middle">Number</th>
-							<th class="align-middle">Creating date</th>
+							<th class="ext-center align-middle">Voucher #</th>
+							<th class="align-middle">Voucher date</th>
 							<th class="align-middle">Product</th>
-							<th class="align-middle">Amount</th>
-							<th class="align-middle">City</th>
-							<th class="align-middle">Status</th>
-							<th class="align-middle">Validity</th>
-							<th class="align-middle">Bill number</th>
-							<th class="align-middle">Bill status</th>
+							<th class="align-middle">Amount, {{ ($city->alias == 'uae') ? 'AED' : 'USD' }}</th>
+							<th class="align-middle">Voucher status</th>
+							<th class="align-middle">Voucher validity</th>
+							<th class="align-middle">Invoice #</th>
+							<th class="align-middle">Invoice status</th>
 							<th class="align-middle">Payment method</th>
 							<th class="align-middle">Comment</th>
 						</tr>

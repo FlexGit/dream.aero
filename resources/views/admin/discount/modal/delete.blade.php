@@ -1,4 +1,4 @@
 <input type="hidden" id="id" name="id" value="{{ $discount->id }}">
 <div class="form-group">
-	<label>Вы уверены, что хотите удалить вариант скидки {{ $discount->valueFormatted() }}?</label>
+	<label>Are you sure you want to delete the discount type {{ $discount->valueFormatted() }}?</label>
 </div>

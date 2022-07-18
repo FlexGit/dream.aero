@@ -25,8 +25,7 @@ class UserController extends Controller
 	 */
 	public function index()
 	{
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$roles = User::ROLES;
@@ -81,16 +80,15 @@ class UserController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
+		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
 		
 		$roles = User::ROLES;
 		
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$locations = Location::orderBy('name')
@@ -116,13 +114,12 @@ class UserController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$roles = User::ROLES;
 		
-		$cities = City::orderBy('version', 'desc')
-			->orderBy('name')
+		$cities = City::orderBy('name')
 			->get();
 		
 		$locations = Location::orderBy('name')
@@ -148,7 +145,7 @@ class UserController extends Controller
 		}
 		
 		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
+		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
 		
 		$roles = User::ROLES;
 
@@ -171,11 +168,11 @@ class UserController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
+		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
 		
 		$VIEW = view('admin.user.modal.delete', [
 			'user' => $user,
@@ -194,7 +191,7 @@ class UserController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
@@ -222,7 +219,7 @@ class UserController extends Controller
 			$user = User::where('email', $email)
 				->first();
 			if ($user) {
-				return response()->json(['status' => 'error', 'reason' => 'Пользователь с таким E-mail уже существует']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-с-таким-e-mail-уже-существует')]);
 			}
 		}
 		
@@ -241,7 +238,6 @@ class UserController extends Controller
 		$user->birthdate = $this->request->birthdate ? Carbon::parse($this->request->birthdate)->format('Y-m-d') : null;
 		$user->phone = $this->request->phone ?? null;
 		$user->position = $this->request->position ?? null;
-		$user->version = $this->request->version;
 		$user->city_id = $this->request->city_id ?? 0;
 		$user->location_id = $this->request->location_id ?? 0;
 		$user->is_reserved = (bool)$this->request->is_reserved;
@@ -253,7 +249,7 @@ class UserController extends Controller
 		}
 		$user->data_json = $data;
 		if (!$user->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -270,11 +266,11 @@ class UserController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
+		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
 
 		$rules = [
 			'lastname' => ['required', 'max:255'],
@@ -301,7 +297,7 @@ class UserController extends Controller
 			$emailUser = User::where('email', $email)
 				->first();
 			if ($emailUser && $emailUser->id != $id) {
-				return response()->json(['status' => 'error', 'reason' => 'Пользователь с таким E-mail уже существует']);
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-с-таким-e-mail-уже-существует')]);
 			}
 		}
 
@@ -318,7 +314,6 @@ class UserController extends Controller
 		$user->birthdate = $this->request->birthdate ? Carbon::parse($this->request->birthdate)->format('Y-m-d') : null;
 		$user->phone = $this->request->phone ?? null;
 		$user->position = $this->request->position ?? null;
-		$user->version = $this->request->version;
 		$user->city_id = $this->request->city_id ?? 0;
 		$user->location_id = $this->request->location_id ?? 0;
 		$user->is_reserved = (bool)$this->request->is_reserved;
@@ -330,7 +325,7 @@ class UserController extends Controller
 		}
 		$user->data_json = $data;
 		if (!$user->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -343,11 +338,11 @@ class UserController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
+		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
 		
 		return response()->json(['status' => 'success']);
 	}
@@ -363,18 +358,18 @@ class UserController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
+		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
 
 		if (in_array($user->id, [1])) {
-			return response()->json(['status' => 'error', 'reason' => 'Запрещено удаление данного пользователя']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.запрещено-удаление-данного-пользователя')]);
 		}
 		
 		if (!$user->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);

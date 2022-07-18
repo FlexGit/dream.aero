@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Промокоды
+				Promocodes
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Промокоды</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Promocodes</li>
 			</ol>
 		</div>
 	</div>
@@ -23,21 +23,21 @@
 				<div class="card-body">
 					<div class="table-filter d-sm-flex">
 						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/promocode/add" data-action="/promocode" data-method="POST" data-title="Добавление" class="btn btn-secondary btn-sm" title="Добавить">Добавить</a>
+							<a href="javascript:void(0)" data-toggle="modal" data-url="/promocode/add" data-action="/promocode" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
 						</div>
 					</div>
 					<table id="promocodeTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
 							<tr>
-								<th class="text-center">Номер</th>
-								<th class="text-center">Город</th>
-								<th class="text-center">Локация</th>
+								<th class="text-center">Number</th>
+								{{--<th class="text-center">Город</th>
+								<th class="text-center">Локация</th>--}}
 								{{--<th class="text-center d-none d-sm-table-cell">Контрагент</th>--}}
-								<th class="text-center d-none d-md-table-cell">Скидка</th>
-								<th class="text-center d-none d-md-table-cell">Активность</th>
-								<th class="text-center d-none d-xl-table-cell">Дата начала активности</th>
-								<th class="text-center d-none d-xl-table-cell">Дата окончания активности</th>
-								<th class="text-center">Действие</th>
+								<th class="text-center d-none d-md-table-cell">Discount</th>
+								<th class="text-center d-none d-md-table-cell">Is active</th>
+								<th class="text-center d-none d-xl-table-cell">Activity start date</th>
+								<th class="text-center d-none d-xl-table-cell">Activity end date</th>
+								<th class="text-center">Action</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -52,7 +52,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -60,8 +60,8 @@
 				<form id="promocode">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -71,20 +71,20 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">
+	{{--<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">--}}
 	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
 @stop
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
-	<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>
+	{{--<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>--}}
 	<script src="{{ asset('js/admin/common.js') }}"></script>
 	<script>
 		$(function() {
 			function getList() {
 				var $selector = $('#promocodeTable tbody');
 
-				$selector.html('<tr><td colspan="30" class="text-center">Загрузка данных...</td></tr>');
+				$selector.html('<tr><td colspan="30" class="text-center">Loading data...</td></tr>');
 
 				$.ajax({
 					url: "{{ route('promocodeList') }}",
@@ -99,7 +99,7 @@
 						if (result.html) {
 							$selector.html(result.html);
 						} else {
-							$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+							$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 						}
 					}
 				})
@@ -116,7 +116,7 @@
 					title = $(this).data('title');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -162,13 +162,13 @@
 							return;
 						}
 
-						var msg = 'Промокод успешно ';
+						var msg = 'Promo code successfully ';
 						if (method === 'POST') {
-							msg += 'добавлен';
+							msg += 'added';
 						} else if (method === 'PUT') {
-							msg += 'сохранен';
+							msg += 'saved';
 						} else if (method === 'DELETE') {
-							msg += 'удален';
+							msg += 'deleted';
 						}
 
 						$('#modal').modal('hide');
@@ -178,7 +178,7 @@
 				});
 			});
 
-			$(document).on('show.bs.modal', '#modal', function() {
+			/*$(document).on('show.bs.modal', '#modal', function() {
 				$('#city_id').multiselect({
 					includeSelectAllOption: true,
 					selectAllText: 'Все города',
@@ -201,7 +201,7 @@
 						}
 					},
 				});
-			});
+			});*/
 		});
 	</script>
 @stop

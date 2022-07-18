@@ -58,11 +58,11 @@ class DiscountController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$discount = Discount::find($id);
-		if (!$discount) return response()->json(['status' => 'error', 'reason' => 'Скидка не найдена']);
+		if (!$discount) return response()->json(['status' => 'error', 'reason' => trans('main.error.скидка-не-найдена')]);
 
 		$currencies = Currency::get();
 
@@ -84,7 +84,7 @@ class DiscountController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$currencies = Currency::get();
@@ -107,11 +107,11 @@ class DiscountController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$discount = Discount::find($id);
-		if (!$discount) return response()->json(['status' => 'error', 'reason' => 'Скидка не найдена']);
+		if (!$discount) return response()->json(['status' => 'error', 'reason' => trans('main.error.скидка-не-найдена')]);
 		
 		$VIEW = view('admin.discount.modal.delete', [
 			'discount' => $discount,
@@ -130,7 +130,7 @@ class DiscountController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
@@ -148,7 +148,7 @@ class DiscountController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'value' => 'Значение'
+				'value' => 'Value'
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -165,7 +165,7 @@ class DiscountController extends Controller
 		$discount->currency_id = ($this->request->is_fixed && $currency) ? $currency->id : 0;
 		$discount->is_active = $this->request->is_active;
 		if (!$discount->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success', 'id' => $discount->id]);
@@ -182,11 +182,11 @@ class DiscountController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$discount = Discount::find($id);
-		if (!$discount) return response()->json(['status' => 'error', 'reason' => 'Скидка не найдена']);
+		if (!$discount) return response()->json(['status' => 'error', 'reason' => trans('main.error.скидка-не-найдена')]);
 		
 		$rules = [
 			'value' => [
@@ -204,7 +204,7 @@ class DiscountController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'value' => 'Значение'
+				'value' => 'Value'
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -220,7 +220,7 @@ class DiscountController extends Controller
 		$discount->currency_id = ($this->request->is_fixed && $currency) ? $currency->id : 0;
 		$discount->is_active = $this->request->is_active;
 		if (!$discount->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success', 'id' => $discount->id]);
@@ -237,14 +237,14 @@ class DiscountController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$discount = Discount::find($id);
-		if (!$discount) return response()->json(['status' => 'error', 'reason' => 'Скидка не найдена']);
+		if (!$discount) return response()->json(['status' => 'error', 'reason' => trans('main.error.скидка-не-найдена')]);
 		
 		if (!$discount->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success', 'id' => $discount->id]);

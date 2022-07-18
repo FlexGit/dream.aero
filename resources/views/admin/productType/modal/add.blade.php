@@ -1,29 +1,21 @@
 <input type="hidden" id="id" name="id">
 <div class="form-group">
-	<label for="name">Наименование</label>
-	<input type="text" class="form-control" id="name" name="name" placeholder="Наименование">
+	<label for="name">Name</label>
+	<input type="text" class="form-control" id="name" name="name" placeholder="Name">
 </div>
 <div class="form-group">
-	<label for="alias">Алиас</label>
-	<input type="text" class="form-control" id="alias" name="alias" placeholder="Алиас">
+	<label for="alias">Alias</label>
+	<input type="text" class="form-control" id="alias" name="alias" placeholder="Alias">
 </div>
 <div class="form-group">
-	<label for="is_tariff">Тариф</label>
+	<label for="is_tariff">Is tariff</label>
 	<select class="form-control" id="is_tariff" name="is_tariff">
-		<option value="1" selected>Да</option>
-		<option value="0">Нет</option>
-	</select>
-</div>
-<div class="form-group">
-	<label for="version">Версия</label>
-	<select class="form-control" id="version" name="version">
-		@foreach(app('\App\Models\ProductType')::VERSIONS ?? [] as $version)
-			<option value="{{ $version }}">{{ $version }}</option>
-		@endforeach
+		<option value="1" selected>Yes</option>
+		<option value="0">No</option>
 	</select>
 </div>
 <div class="form-group js-duration-container">
-	<label for="duration">Длительность</label>
+	<label for="duration">Duration</label>
 	<select class="form-control" id="duration" name="duration[]" multiple="multiple">
 		@foreach($durations ?? [] as $duration)
 			<option value="{{ $duration }}">{{ $duration }}</option>
@@ -31,9 +23,13 @@
 	</select>
 </div>
 <div class="form-group">
-	<label for="is_active">Активность</label>
+	<label for="tax">Tax, %</label>
+	<input type="text" class="form-control" id="tax" name="tax" placeholder="Tax">
+</div>
+<div class="form-group">
+	<label for="is_active">Is active</label>
 	<select class="form-control" id="is_active" name="is_active">
-		<option value="1" selected>Да</option>
-		<option value="0">Нет</option>
+		<option value="1" selected>Yes</option>
+		<option value="0">No</option>
 	</select>
 </div>

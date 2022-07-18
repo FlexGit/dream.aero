@@ -68,7 +68,7 @@
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Событие</h5>
+					<h5 class="modal-title" id="modalLabel">Event</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -77,8 +77,8 @@
 					<div class="modal-body"></div>
 					<div class="modal-footer">
 						{{--<button type="button" class="btn btn-default js-reset mr-5">Сбросить</button>--}}
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -90,8 +90,8 @@
 	<div class="d-flex justify-content-between m-2">
 		<div class="form-group mb-0">
 			<select class="form-control" id="calendar-view-type">
-				<option value="timeGridDay">День</option>
-				<option value="timeGridWeek">Неделя</option>
+				<option value="timeGridDay">Day</option>
+				<option value="timeGridWeek">Week</option>
 			</select>
 		</div>
 		<div>
@@ -106,14 +106,14 @@
 	<div class="mt-2 mb-2 ml-3 mr-3">
 		<div class="text-center mb-2">
 			<a href="javascript: void(0)" class="js-upcomming-events">
-				<span class="mr-2">Полеты на завтра</span><i class="fas fa-angle-down"></i>
+				<span class="mr-2">Tomorrow flights</span><i class="fas fa-angle-down"></i>
 			</a>
 			<div class="js-upcomming-events-container mt-2 hidden">
 				@if(!$upcomingEvents->isEmpty())
 					@foreach($upcomingEvents as $upcomingEvent)
 						<div class="upcomming-event pt-1 pb-1" data-location-id="{{ $upcomingEvent->location_id }}" data-simulator-id="{{ $upcomingEvent->flight_simulator_id }}">
 							<div class="text-right">
-								<span>{{ $upcomingEvent->start_at->format('d.m.Y') }} {{ $upcomingEvent->start_at->format('H:i') }} - {{ $upcomingEvent->stop_at->format('H:i') }}</span><i class="js-event-notified fas fa-times ml-2 hidden" data-event-id="{{ $upcomingEvent->id }}" style="color: red;cursor: pointer;" title="Удалить"></i>
+								<span>{{ $upcomingEvent->start_at->format('Y-m-d') }} {{ $upcomingEvent->start_at->format('g:i A') }} - {{ $upcomingEvent->stop_at->format('g:i A') }}</span><i class="js-event-notified fas fa-times ml-2 hidden" data-event-id="{{ $upcomingEvent->id }}" style="color: red;cursor: pointer;" title="Delete"></i>
 							</div>
 							<div>
 								<span>{{ $upcomingEvent->deal->name ?? '' }} {{ $upcomingEvent->deal->phone ?? '' }}</span>
@@ -124,14 +124,14 @@
 						</div>
 					@endforeach
 				@else
-					<span style="font-size: 14px;color: #fff;">Ничего не найдено</span>
+					<span style="font-size: 14px;color: #fff;">Nothing found</span>
 				@endif
 			</div>
 		</div>
 	</div>
 	<div class="mt-2 mb-2 ml-3 mr-3">
 		<div class="text-center mb-2">
-			Календари
+			Calendars
 		</div>
 		<div>
 			@foreach($cities ?? [] as $city)
@@ -201,77 +201,6 @@
 			});
 
 			$('.modal>.modal-dialog>.modal-content>.modal-header').css('cursor', 'move');
-
-			/*var placeholderElement = $('<div style="background-color: #eee;width: 400px;height: 100%;"></div>');
-
-			$('.calendars-container').sortable({
-				/!*placeholder: "ui-state-highlight",*!/
-				cursor: 'move',
-				axis: 'x',
-				handle: '.calendar-title',
-				revert: true,
-				zIndex: 10,
-				containment: '.calendars-container',
-				start: function(event, ui) {
-					console.log(ui.item[0].offsetWidth);
-					placeholderElement.insertBefore(ui.item[0]);
-
-					// Explicitly set the height and width to preserve
-					// flex calculations
-					placeholderElement.width(ui.item[0].offsetWidth);
-					placeholderElement.height(ui.item[0].offsetHeight);
-				},
-				stop: function() {
-					placeholderElement.remove();
-				},
-			});*/
-
-			/*var lastPlace;
-
-			$(".calendar-container").draggable({
-				cursor: 'pointer',
-				handle: '.calendar-title',
-				revert: true,
-				zIndex: 10,
-				snap: ".calendar-container",
-				snapMode: "outer",
-				snapTolerance: 30,
-				containment: '.calendars-container',
-				axis: 'x',
-				start: function (event, ui) {
-					lastPlace = $(this).parent();
-				}
-			});
-
-			$(".calendars-container").droppable({
-				accept: ".calendar-container",
-				tolerance: "pointer",
-				drop: function (event, ui) {
-					var dropped = ui.draggable;
-					var droppedOn = this;
-
-					//var $newPosX = ui.offset.left - $(this).offset().left;
-					//var $newPosY = ui.offset.top - $(this).offset().top;
-
-					//console.log(ui.offset.left + ' - ' + $(this).offset().left);
-
-					/!*var el = document.elementsFromPoint(event.pageX, event.pageY);
-					console.log($(el).data());
-
-					if ($(droppedOn).children().length > 0) {
-						$(droppedOn).children().detach().prependTo($(lastPlace));
-					}
-
-					$(dropped).detach().css({
-						top: 0,
-						left: 0
-					}).prependTo($(droppedOn));*!/
-
-					//localStorage.setItem('control-sidebar', 'collapsed');
-				}
-			});*/
-
-			/*var timeZone = $('#time_zone').val();*/
 
 			var $calendarViewType = $('#calendar-view-type'),
 				calendarViewType = localStorage.getItem($calendarViewType.attr('id'));
@@ -370,7 +299,7 @@
 								'method': method,
 								'event_type': type,
 								'source': 'calendar',
-								'flight_at': moment($(info.date)[0])/*.utc()*/.format('YYYY-MM-DD HH:mm'),
+								'flight_at': moment($(info.date)[0])/*.utc()*/.format('YYYY-MM-DD hh:mm A'),
 								'city_id': cityId,
 								'location_id': locationId,
 								'simulator_id': simulatorId,
@@ -384,7 +313,7 @@
 
 								$('#modal form').attr('action', action).attr('method', method);
 
-								$('#modal .modal-title').text(info.allDay ? 'New shift ' + moment(info.dateStr).format('YYYY-MM-DD') : 'New event ' + moment(info.dateStr).format('YYYY-MM-DD HH:mm'));
+								$('#modal .modal-title').text(info.allDay ? 'Create shift ' + moment(info.dateStr).format('YYYY-MM-DD') : 'Create event ' + moment(info.dateStr).format('YYYY-MM-DD hh:mm A'));
 								$('#modal .modal-body').html(result.html);
 								$('#modal').modal('show');
 							}
@@ -443,7 +372,7 @@
 									$submit.addClass('hidden');
 								}
 								//$('#modal .modal-title').text((allDay ? 'Смена' : 'Событие') + ' "' + title + '"');
-								$('#modal .modal-title').text('Событие "' + title + '"');
+								$('#modal .modal-title').text('Event "' + title + '"');
 								$('#modal .modal-body').html(result.html);
 								$('#modal').modal('show');
 							}
@@ -474,8 +403,8 @@
 							dataType: 'json',
 							data: {
 								'source': 'calendar',
-								'start_at': moment(start).utc().format('YYYY-MM-DD HH:mm'),
-								'stop_at': moment(end).utc().format('YYYY-MM-DD HH:mm'),
+								'start_at': moment(start).utc().format('YYYY-MM-DD hh:mm A'),
+								'stop_at': moment(end).utc().format('YYYY-MM-DD hh:mm A'),
 							},
 							success: function (result) {
 								if (result.status !== 'success') {
@@ -509,8 +438,8 @@
 							dataType: 'json',
 							data: {
 								'source': 'calendar',
-								'start_at': moment(start).utc().format('YYYY-MM-DD HH:mm'),
-								'stop_at': moment(end).utc().format('YYYY-MM-DD HH:mm'),
+								'start_at': moment(start).utc().format('YYYY-MM-DD hh:mm A'),
+								'stop_at': moment(end).utc().format('YYYY-MM-DD hh:mm A'),
 							},
 							success: function (result) {
 								if (result.status !== 'success') {
@@ -532,7 +461,7 @@
 
 						var content = '<div class="fc-event-main">' +
 							'<div class="fc-event-main-frame" data-toggle="modal" data-id="' + id + '" data-title="' + title + '">' +
-							(!allDay ? '<div class="fc-event-time">' + moment(start).utc().format('H:mm') + ' - ' + moment(end).utc().format('H:mm') + '<div class="fc-icons">' + (notificationType ? '<i class="material-icons" title="Уведомлен">' + notificationType + '</i>' : '') + (comments.length ? '<i class="material-icons" title="Комментарий">bookmark_border</i>' : '') + '</div></div>' : '') +
+							(!allDay ? '<div class="fc-event-time">' + moment(start).utc().format('H:mm') + ' - ' + moment(end).utc().format('H:mm') + '<div class="fc-icons">' + (notificationType ? '<i class="material-icons" title="Notified">' + notificationType + '</i>' : '') + (comments.length ? '<i class="material-icons" title="Comment">bookmark_border</i>' : '') + '</div></div>' : '') +
 							'<div class="fc-event-title-container">' +
 							'<div class="fc-event-title fc-sticky">' + title + '</div>' +
 							'</div>' +
@@ -643,7 +572,7 @@
 						});
 
 						$('#modal').modal('hide');
-						toastr.success('Событие успешно ' + ((method === 'POST') ? 'создано' : 'сохранено'));
+						toastr.success('Event successful ' + ((method === 'POST') ? 'created' : 'saved'));
 					}
 				});
 			});
@@ -663,7 +592,7 @@
 						minChars: 1,
 						width: 'flex',
 						showNoSuggestionNotice: true,
-						noSuggestionNotice: 'Ничего не найдено',
+						noSuggestionNotice: 'Nothing found',
 						type: 'POST',
 						dataType: 'json',
 						onSelect: function (suggestion) {
@@ -689,7 +618,7 @@
 								calcProductAmount();
 							}
 							$('#contractor_search').attr('disabled', true);
-							$('.js-contractor').text('Привязан контрагент: ' + suggestion.data.name + ' ' + suggestion.data.lastname).closest('.js-contractor-container').removeClass('hidden');
+							$('.js-contractor').text('Linked client: ' + suggestion.data.name + ' ' + suggestion.data.lastname).closest('.js-contractor-container').removeClass('hidden');
 						}
 					});
 
@@ -698,7 +627,7 @@
 						minChars: 3,
 						width: 'flex',
 						showNoSuggestionNotice: true,
-						noSuggestionNotice: 'Ничего не найдено',
+						noSuggestionNotice: 'Nothing found',
 						type: 'POST',
 						dataType: 'json',
 						onSelect: function (suggestion) {
@@ -707,7 +636,7 @@
 							}
 							calcProductAmount();
 							$('#certificate_number').attr('disabled', true);
-							$('.js-certificate').text('Привязан сертификат: ' + suggestion.data.number).closest('.js-certificate-container').removeClass('hidden');
+							$('.js-certificate').text('Linked voucher: ' + suggestion.data.number).closest('.js-certificate-container').removeClass('hidden');
 							if (suggestion.data.is_overdue) {
 								$('.js-is-indefinitely').removeClass('hidden');
 							}
@@ -761,15 +690,15 @@
 					duration = $product.find(':selected').data('duration');
 
 				if (($product.val() > 0) && duration && $flightDate.val().length && $flightTime.val().length) {
-					var flightStartAt = moment(new Date($flightDate.val() + 'T' + $flightTime.val()), 'DD.MM.YYYY HH:mm'),
+					var flightStartAt = moment(new Date($flightDate.val() + 'T' + $flightTime.val()), 'YYYY-MM-DD hh:mm A'),
 						flightStopAt = flightStartAt.add(duration, 'm');
 
 					if (!flightStopAt.isAfter($flightDate.val(), 'day')) {
 						$isValidFlightDate.val(1);
-						$eventStopElement.text('Окончание полета: ' + flightStopAt.format('DD.MM.YYYY HH:mm'));
+						$eventStopElement.text('Flight end: ' + flightStopAt.format('YYYY-MM-DD hh:mm A'));
 					} else {
 						$isValidFlightDate.val(0);
-						$eventStopElement.text('Некорректное начало полета');
+						$eventStopElement.text('Incorrect flight start');
 					}
 				} else {
 					$isValidFlightDate.val(0);
@@ -816,7 +745,7 @@
 					simulatorId = $calendarContainer.data('simulator-id');
 
 				var listEvent = calendar.getEvents();
-				if(confirm('Вы уверены, что хотите удалить "' + title + '" ?')) {
+				if(confirm('Are you sure you want to delete "' + title + '" ?')) {
 					$.ajax({
 						url: '/event/' + id,
 						type: 'DELETE',
@@ -836,7 +765,7 @@
 							//calendarArr[locationId][simulatorId].gotoDate(e.date);
 							calendarArr[locationId][simulatorId].refetchEvents();
 
-							toastr.success('Событие успешно удалено');
+							toastr.success('Event successful deleted');
 						}
 					});
 				}
@@ -954,11 +883,11 @@
 			});
 
 			$(document).on('click', '.js-calendar-prev', function() {
-				var dt = moment($datepicker.data('date'), 'DD.MM.YYYY'),
+				var dt = moment($datepicker.data('date'), 'YYYY-MM-DD'),
 					days = ($('#calendar-view-type').val() === 'timeGridWeek') ? 7 : 1,
 					dtNew = dt.subtract(days, 'd');
 
-				$datepicker.data('date', dtNew.format('DD.MM.YYYY'));
+				$datepicker.data('date', dtNew.format('YYYY-MM-DD'));
 				$datepicker.datepicker('update', dtNew.toDate());
 
 				calendarArr.forEach(function (element, locationId) {
@@ -971,11 +900,11 @@
 			});
 
 			$(document).on('click', '.js-calendar-next', function() {
-				var dt = moment($datepicker.data('date'), 'DD.MM.YYYY'),
+				var dt = moment($datepicker.data('date'), 'YYYY-MM-DD'),
 					days = ($('#calendar-view-type').val() === 'timeGridWeek') ? 7 : 1,
 					dtNew = dt.add(days, 'd');
 
-				$datepicker.data('date', dtNew.format('DD.MM.YYYY'));
+				$datepicker.data('date', dtNew.format('YYYY-MM-DD'));
 				$datepicker.datepicker('update', dtNew.toDate());
 
 				calendarArr.forEach(function (element, locationId) {
@@ -990,7 +919,7 @@
 			$(document).on('click', '.js-calendar-today', function() {
 				var dt = moment();
 
-				$datepicker.data('date', dt.format('DD.MM.YYYY'));
+				$datepicker.data('date', dt.format('YYYY-MM-DD'));
 				$datepicker.datepicker('update', dt.toDate());
 
 				calendarArr.forEach(function (element, locationId) {

@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Города
+				Cities
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Города</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Cities</li>
 			</ol>
 		</div>
 	</div>
@@ -23,19 +23,18 @@
 				<div class="card-body">
 					<div class="table-filter d-sm-flex">
 						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/city/add" data-action="/city" data-method="POST" data-title="Добавление" class="btn btn-secondary btn-sm" title="Добавить запись">Добавить</a>
+							<a href="javascript:void(0)" data-toggle="modal" data-url="/city/add" data-action="/city" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
 						</div>
 					</div>
 					<table id="cityTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
 							<tr>
-								<th class="text-center">Наименование</th>
-								<th class="text-center d-none d-sm-table-cell">Алиас</th>
+								<th class="text-center">Name</th>
+								<th class="text-center d-none d-sm-table-cell">Alias</th>
 								<th class="text-center d-none d-md-table-cell">E-mail</th>
-								<th class="text-center d-none d-lg-table-cell">Телефон</th>
-								<th class="text-center d-none d-xl-table-cell">Версия</th>
-								<th class="text-center d-none d-xl-table-cell">Активность</th>
-								<th class="text-center">Действие</th>
+								<th class="text-center d-none d-lg-table-cell">Phone</th>
+								<th class="text-center d-none d-xl-table-cell">Is active</th>
+								<th class="text-center">Action</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -50,7 +49,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -58,8 +57,8 @@
 				<form id="city">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -80,7 +79,7 @@
 			function getList() {
 				var $selector = $('#cityTable tbody');
 
-				$selector.html('<tr><td colspan="30" class="text-center">Загрузка данных...</td></tr>');
+				$selector.html('<tr><td colspan="30" class="text-center">Loading data...</td></tr>');
 
 				$.ajax({
 					url: "{{ route('cityList') }}",
@@ -95,7 +94,7 @@
 						if (result.html) {
 							$selector.html(result.html);
 						} else {
-							$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+							$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 						}
 					}
 				})
@@ -112,7 +111,7 @@
 					title = $(this).data('title');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -158,13 +157,13 @@
 							return;
 						}
 
-						var msg = 'Город успешно ';
+						var msg = 'City successful ';
 						if (method === 'POST') {
-							msg += 'добавлен';
+							msg += 'added';
 						} else if (method === 'PUT') {
-							msg += 'сохранен';
+							msg += 'saved';
 						} else if (method === 'DELETE') {
-							msg += 'удален';
+							msg += 'deleted';
 						}
 
 						$('#modal').modal('hide');

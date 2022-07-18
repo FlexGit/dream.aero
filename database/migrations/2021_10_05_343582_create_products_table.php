@@ -20,10 +20,12 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('наименование продукта');
+			$table->string('public_name')->comment('публичное наименование продукта');
 			$table->string('alias')->comment('алиас');
 			$table->integer('product_type_id')->default(0)->index()->comment('тип продукта');
 			$table->integer('user_id')->default(0)->index()->comment('пилот');
 			$table->integer('duration')->comment('длительность полёта, мин.');
+			$table->boolean('is_active')->default(true)->index()->comment('признак активности');
 			$table->text('data_json')->nullable()->comment('дополнительная информация');
             $table->timestamps();
 			$table->softDeletes();

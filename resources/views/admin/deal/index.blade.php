@@ -23,7 +23,7 @@
 				<div class="card-body">
 					<div class="table-filter mb-2">
 						<div class="d-sm-flex">
-							<div class="form-group" style="width: 270px;">
+							<div class="form-group" style="width: 350px;">
 								<div>
 									<label for="search_doc">Search</label>
 								</div>
@@ -43,7 +43,7 @@
 									@endforeach
 								</select>
 							</div>
-								@if($cities)
+							{{--@if($cities)
 								<div class="form-group ml-2">
 									<div>
 										<label for="filter_location_id">Location</label>
@@ -60,14 +60,14 @@
 										@endforeach
 									</select>
 								</div>
-							@endif
+							@endif--}}
 							<div class="form-group ml-2 text-nowrap">
 								<div>
 									<label for="filter_product_id">Product</label>
 								</div>
 								<select class="form-control" id="filter_product_id" name="filter_product_id[]" multiple="multiple">
 									@foreach($productTypes ?? [] as $productType)
-										<optgroup label="{{ $productType->name }}">
+										<optgroup label="{{ mb_strtoupper($productType->name) }}">
 											@foreach($productType->products ?? [] as $product)
 												<option value="{{ $product->id }}" data-product_type_id="{{ $product->product_type_id }}">{{ $product->name }}</option>
 											@endforeach
@@ -89,9 +89,9 @@
 									<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Create deal">Create deal</a>
 
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="z-index: 9999;">
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="New voucher purchase deal" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="New booking deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="New good / service deal" class="btn btn-secondary btn-sm dropdown-item">Good / service</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="Create voucher purchase deal" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="Create booking deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create good / service deal" class="btn btn-secondary btn-sm dropdown-item">Good / service purchase</a>
 									</div>
 								</div>
 							</div>
@@ -102,12 +102,12 @@
 						<tr>
 							<th class="text-center">Client</th>
 							<th class="text-center d-none d-sm-table-cell">Deal</th>
-							<th class="text-center d-none d-xl-table-cell">Bills</th>
+							<th class="text-center d-none d-xl-table-cell">Invoices</th>
 							<th class="d-none d-xl-table-cell">
 								<div class="d-sm-flex justify-content-between">
 									<div></div>
 									<div>
-										Positions
+										Items
 									</div>
 									<div>
 										<a href="javascript:void(0)" class="js-reload" title="Deal list refresh">
@@ -129,7 +129,7 @@
 	<div class="load_more"></div>
 
 	<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" data-backdrop="static">
-		<div class="modal-dialog modal-xl">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalLabel">Edit</h5>
@@ -290,7 +290,7 @@
 								msg += 'saved';
 							}
 						} else if (formId === 'position') {
-							msg = 'Position was successful ';
+							msg = 'Item was successful ';
 							if (method === 'POST') {
 								msg += 'created';
 							} else if (method === 'PUT') {
@@ -299,7 +299,7 @@
 								msg += 'deleted';
 							}
 						} else if (formId === 'bill') {
-							msg = 'Bill was successful ';
+							msg = 'Invoice was successful ';
 							if (method === 'POST') {
 								msg += 'created';
 							} else if (method === 'PUT') {
@@ -556,7 +556,7 @@
 			});
 
 			$(document).on('click', '.js-remove-bill', function() {
-				if (!confirm('Are you sure you want to delete the bill?')) return;
+				if (!confirm('Are you sure you want to delete the Invoice?')) return;
 
 				$.ajax({
 					url: '/bill/' + $(this).data('id'),
@@ -575,14 +575,14 @@
 
 			$('#filter_status_id, #filter_location_id, #filter_product_id, #filter_advanced').multiselect({
 				includeSelectAllOption: true,
-				selectAllText: 'Всe',
+				selectAllText: 'All',
 				buttonWidth: '200px',
 				selectAllValue: 0,
 				buttonTextAlignment: 'left',
 				maxHeight: 300,
 				buttonText: function (options, select) {
 					if (options.length === 0) {
-						return 'Все';
+						return 'All';
 					} else {
 						var labels = [];
 						options.each(function () {
@@ -604,7 +604,7 @@
 
 
 			$(document).on('click', '.js-send-pay-link', function(e) {
-				if (!confirm('Are you sure you want to send the bill payment link?')) return;
+				if (!confirm('Are you sure you want to send the Invoice paylink?')) return;
 
 				var $payLink = $(this);
 
@@ -621,13 +621,13 @@
 							return;
 						}
 
-						$payLink.attr('title', 'Payment link sent ' + result.link_sent_at);
+						$payLink.attr('title', 'Paylink sent ' + result.link_sent_at);
 						$i = $payLink.find('i');
 						$i.addClass('fa-envelope-open');
 						if ($i.hasClass('fa-envelope')) {
 							$i.removeClass('fa-envelope');
 						}
-						toastr.success('Payment link sent successfully');
+						toastr.success('Paylink sent successfully');
 					}
 				});
 			});
