@@ -315,11 +315,11 @@ return [
 			],
 		],
 		[
-			'text'    => 'Directories',
+			'text'    => 'Lists',
 			'icon'    => 'fas fa-fw fa-book',
 			'can'	  => 'is_superadmin',
 			'submenu' => [
-				/*[
+				[
 					'text' => 'Cities',
 					'url'  => '/city',
 					'icon' => 'far fa-fw fa-building',
@@ -331,7 +331,7 @@ return [
 					'icon' => 'fas fa-fw fa-map-marker-alt',
 					'can'  => 'is_superadmin',
 				],
-				[
+				/*[
 					'text' => 'Legal entities',
 					'url'  => '/legal_entity',
 					'icon' => 'far fa-fw fa-id-card',
@@ -409,46 +409,40 @@ return [
             ],
         ],
 		[
-			'text'    => 'Sites',
-			'icon'    => 'fas fa-sitemap',
+			'text'    => 'Content',
+			'icon'    => 'far fa-fw fa-file-image',
 			'can'	  => 'is_superadmin',
 			'submenu' => [
 				[
-					'text' => 'dream.aero',
-					'url'  => '#',
-					'submenu' => [
-						[
-							'text' => 'News',
-							'url'  => '/site/ru/news',
-							'icon' => '',
-							'can'  => 'is_superadmin',
-						],
-						[
-							'text' => 'Gallery',
-							'url'  => '/site/ru/gallery',
-							'icon' => '',
-							'can'  => 'is_superadmin',
-						],
-						[
-							'text' => 'Reviews',
-							'url'  => '/site/ru/reviews',
-							'icon' => '',
-							'can'  => 'is_superadmin',
-						],
-						[
-							'text' => 'Pages',
-							'url'  => '/site/ru/pages',
-							'icon' => '',
-							'can'  => 'is_superadmin',
-						],
-						/*[
-							'text' => 'Промобоксы',
-							'url'  => '/site/ru/promobox',
-							'icon' => '',
-							'can'  => 'is_superadmin',
-						],*/
-					],
+					'text' => 'News',
+					'url'  => '/site/news',
+					'icon' => '',
+					'can'  => 'is_superadmin',
 				],
+				[
+					'text' => 'Gallery',
+					'url'  => '/site/gallery',
+					'icon' => '',
+					'can'  => 'is_superadmin',
+				],
+				[
+					'text' => 'Reviews',
+					'url'  => '/site/reviews',
+					'icon' => '',
+					'can'  => 'is_superadmin',
+				],
+				[
+					'text' => 'Pages',
+					'url'  => '/site/pages',
+					'icon' => '',
+					'can'  => 'is_superadmin',
+				],
+				/*[
+					'text' => 'Промобоксы',
+					'url'  => '/site/promobox',
+					'icon' => '',
+					'can'  => 'is_superadmin',
+				],*/
 			],
 		],
         /*['header' => 'labels'],

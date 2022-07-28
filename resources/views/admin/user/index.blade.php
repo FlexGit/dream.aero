@@ -23,7 +23,7 @@
 				<div class="card-body">
 					<div class="table-filter mb-2">
 						<div class="d-sm-flex">
-							<div class="form-group">
+							{{--<div class="form-group">
 								<label for="filter_city_id">City</label>
 								<select class="form-control" id="filter_city_id" name="filter_city_id">
 									<option value="0">All</option>
@@ -34,7 +34,7 @@
 										<option value="{{ $city->id }}">{{ $city->name }}</option>
 									@endforeach
 								</select>
-							</div>
+							</div>--}}
 							<div class="form-group ml-3">
 								<label for="filter_role">Role</label>
 								<select class="form-control" id="filter_role" name="filter_role">
@@ -55,7 +55,7 @@
 							<th class="text-center">Full name</th>
 							<th class="text-center d-none d-sm-table-cell">E-mail</th>
 							<th class="text-center d-none d-md-table-cell">Role</th>
-							<th class="text-center d-none d-lg-table-cell">City</th>
+							{{--<th class="text-center d-none d-lg-table-cell">City</th>--}}
 							<th class="text-center d-none d-xl-table-cell">Location</th>
 							<th class="text-center d-none d-xl-table-cell">Is active</th>
 							<th class="text-center">Action</th>
@@ -111,7 +111,7 @@
 					type: 'GET',
 					dataType: 'json',
 					data: {
-						"city_id": $('#filter_city_id').val(),
+						/*"city_id": $('#filter_city_id').val(),*/
 						"role": $('#filter_role').val(),
 						"id": id
 					},
@@ -224,23 +224,23 @@
 				});
 			});
 
-			$(document).on('change', '#filter_city_id, #filter_role', function(e) {
+			$(document).on('change', '#filter_role', function(e) {
 				getList(false);
 			});
 
-			$(document).on('change', '#city_id', function() {
+			/*$(document).on('change', '#city_id', function() {
 				$('#location_id').val('');
 				getLocation($(this).val());
-			});
+			});*/
 
-			$(document).on('show.bs.modal', '#modal', function(e) {
+			/*$(document).on('show.bs.modal', '#modal', function(e) {
 				getLocation($('#city_id').val());
 			});
 
 			function getLocation(cityId) {
 				$('#location_id option').hide();
 				$('#location_id option[data-city_id="' + cityId + '"]').show();
-			}
+			}*/
 
 			$.fn.isInViewport = function () {
 				let elementTop = $(this).offset().top;

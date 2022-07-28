@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\City;
 use App\Models\Content;
 use App\Services\HelpFunctions;
+use Auth;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -179,12 +180,15 @@ class ContentController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+		
+		$user = Auth::user();
+		$city = $user->city;
 
 		$rules = [
 			'title' => ['required', 'min:3', 'max:250'],
-			'alias' => ['required', 'min:3', 'max:250', 'regex:/([A-Za-z0-9\-]+)/', 'unique:contents'],
+			'alias' => ['required', 'min:3', 'max:250', 'regex:/([A-Za-z0-9\-]+)/'],
 			'published_at' => ['date'],
-			'photo_preview_file' => ['sometimes', 'image', 'max:5120', 'mimes:webp,png,jpg,jpeg'],
+			'photo_preview_file' => ['sometimes', 'image', 'max:20480', 'mimes:webp,png,jpg,jpeg'],
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
@@ -227,11 +231,9 @@ class ContentController extends Controller
 		$content->preview_text = $this->request->preview_text;
 		$content->detail_text = $this->request->detail_text;
 		$content->parent_id = $parentContent->id;
-		$content->city_id = $cityId;
+		$content->city_id = $city->id;
 		$content->meta_title = $this->request->meta_title;
 		$content->meta_description = $this->request->meta_description;
-		$content->meta_title_en = $this->request->meta_title_en;
-		$content->meta_description_en = $this->request->meta_description_en;
 		$content->is_active = (bool)$this->request->is_active;
 		$content->data_json = $data;
 		$content->published_at = $this->request->published_at;
@@ -253,23 +255,24 @@ class ContentController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
+		
+		$user = Auth::user();
+		$city = $user->city;
+		
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 		
-		$cityId = $this->request->city_id ?? 0;
-
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
 		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
 
 		$rules = [
 			'title' => ['required', 'min:3', 'max:250'],
-			'alias' => ['required', 'min:3', 'max:250', 'regex:/([A-Za-z0-9\-]+)/', 'unique:contents,alias,' . $id],
+			'alias' => ['required', 'min:3', 'max:250', 'regex:/([A-Za-z0-9\-]+)/'],
 			'published_at' => ['date'],
-			'photo_preview_file' => ['sometimes', 'image', 'max:5120', 'mimes:webp,png,jpg,jpeg'],
+			'photo_preview_file' => ['sometimes', 'image', 'max:20480', 'mimes:webp,png,jpg,jpeg'],
 		];
 
 		$validator = Validator::make($this->request->all(), $rules)
@@ -301,11 +304,9 @@ class ContentController extends Controller
 		$content->preview_text = $this->request->preview_text;
 		$content->detail_text = $this->request->detail_text;
 		$content->parent_id = $parentContent->id;
-		$content->city_id = $cityId;
+		$content->city_id = $city->id;
 		$content->meta_title = $this->request->meta_title;
 		$content->meta_description = $this->request->meta_description;
-		$content->meta_title_en = $this->request->meta_title_en;
-		$content->meta_description_en = $this->request->meta_description_en;
 		$content->is_active = (bool)$this->request->is_active;
 		if ($data) {
 			$content->data_json = $data;

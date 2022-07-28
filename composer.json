@@ -7,11 +7,13 @@
     "require": {
         "php": "^7.3|^8.0",
         "ext-json": "*",
+        "authorizenet/authorizenet": "^2.0",
         "barryvdh/laravel-ide-helper": "^2.10",
         "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.7",
         "jeroennoten/laravel-adminlte": "^3.7",
+        "laravel-validation-rules/credit-card": "^1.7",
         "laravel/breeze": "^1.6",
         "laravel/framework": "^8.62",
         "laravel/sanctum": "^2.11",

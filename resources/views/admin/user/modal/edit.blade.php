@@ -3,33 +3,17 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="name">Surname</label>
-			<input type="text" class="form-control" id="lastname" name="lastname" value="{{ $user->lastname }}" placeholder="Surname">
+			<label for="name">Lastname</label>
+			<input type="text" class="form-control" id="lastname" name="lastname" value="{{ $user->lastname }}" placeholder="Lastname">
 		</div>
 		<div class="form-group">
 			<label for="name">Name</label>
 			<input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}" placeholder="Name">
 		</div>
-		{{--<div class="form-group">
-			<label for="middlename">Отчество</label>
-			<input type="text" class="form-control" id="middlename" name="middlename" value="{{ $user->middlename }}" placeholder="Отчество">
-		</div>--}}
 		<div class="form-group">
 			<label for="email">E-mail</label>
 			<input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" placeholder="E-mail">
 		</div>
-		{{--<div class="form-group">
-			<label for="phone">Телефон</label>
-			<input type="text" class="form-control" id="phone" name="phone" value="{{ $user->phone }}" placeholder="Телефон">
-		</div>
-		<div class="form-group">
-			<label for="birthdate">Дата рождения</label>
-			<input type="date" class="form-control" id="birthdate" name="birthdate" value="{{ $user->birthdate ? \Carbon\Carbon::parse($user->birthdate)->format('Y-m-d') : '' }}" placeholder="Дата рождения">
-		</div>
-		<div class="form-group">
-			<label for="position">Должность</label>
-			<input type="text" class="form-control" id="position" name="position" value="{{ $user->position }}" placeholder="Должность">
-		</div>--}}
 	</div>
 	<div class="col">
 		<div class="form-group">
@@ -40,7 +24,7 @@
 				@endforeach
 			</select>
 		</div>
-		<div class="form-group">
+		{{--<div class="form-group">
 			<label for="city_id">City</label>
 			<select class="form-control" id="city_id" name="city_id">
 				<option></option>
@@ -57,20 +41,6 @@
 					<option value="{{ $location->id }}" data-city_id="{{ $location->city_id }}" @if($location->id == $user->location_id) selected @endif>{{ $location->name }}</option>
 				@endforeach
 			</select>
-		</div>
-		{{--<div class="form-group">
-			<label for="is_reserved">Резервный сотрудник</label>
-			<select class="form-control" id="is_reserved" name="is_reserved">
-				<option value="1" @if($user->is_reserved) selected @endif>Да</option>
-				<option value="0" @if(!$user->is_reserved) selected @endif>Нет</option>
-			</select>
-		</div>
-		<div class="form-group">
-			<label for="is_official">Офиц. трудоустройство</label>
-			<select class="form-control" id="is_official" name="is_official">
-				<option value="1" @if($user->is_official) selected @endif>Да</option>
-				<option value="0" @if(!$user->is_official) selected @endif>Нет</option>
-			</select>
 		</div>--}}
 		<div class="form-group">
 			<label for="enable">Is active</label>
@@ -81,13 +51,3 @@
 		</div>
 	</div>
 </div>
-{{--<div class="form-group">
-	<label>Путь к файлу фото</label>
-	<div class="custom-file">
-		<input type="file" class="custom-file-input" id="photo_file" name="photo_file">
-		<label class="custom-file-label" for="photo_file">Выбрать файл</label>
-	</div>
-	@if($user->data_json && array_key_exists('photo_file_path', $user->data_json) && $user->data_json['photo_file_path'])
-		<img src="/upload/{{ $user->data_json['photo_file_path'] }}" width="150" alt="">
-	@endif
-</div>--}}

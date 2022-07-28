@@ -6,55 +6,48 @@
 @section('description', $page->meta_description)
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url(Request::get('cityAlias') ?? '/') }}">@lang('main.home.title')</a> <span>@lang('main.rules.title')</span></div>
+	<div class="breadcrumbs container"><a href="{{ url(Request::get('cityAlias') ?? '/') }}">@lang('main.home.title')</a> <span>Rules for using the simulator</span></div>
 
 	<article class="article">
 		<div class="container">
-			<h1 class="article-title">@lang('main.rules.title')</h1>
+			<h1 class="article-title">RULES FOR USING THE SIMULATOR</h1>
 			<div class="article-content">
 				<div class="row">
 					<div class="item">
-						<p>ОГРАНИЧЕНИЯ И&nbsp;ПРАВИЛА ПОВЕДЕНИЯ ДЛЯ ПОСЕТИТЕЛЕЙ АВИАТРЕНАЖЕРА:</p>
 						<ul>
-							<li><strong>Дети до 8 лет не допускаются к полёту, дети 8 — 12 лет допускаются только в сопровождении взрослых.&nbsp;</strong>Администратор&nbsp;может Вас&nbsp;попросить предоставить документ, подтверждающий возраст ребенка.</li>
-							<li>Не допускаются лица в алкогольном или наркотическом опьянении.&nbsp;</li>
-							<li>Максимальное допустимое количество человек в кокпите — 4 человека (3 посетителя и инструктор Dream Aero), общий вес не должен превышать 300 кг.</li>
-							<li><strong>Беременные женщины к полёту не допускаются.</strong></li>
-							<li>Во время полёта необходимо соблюдать правила безопасности, выполнять указания пилота-инструктора.</li>
-							<li>Все личные вещи должны быть надежно закреплены во время полёта, во избежание их самопроизвольного перемещения по кабине</li>
-							<li>Одновременно на подъёмном трапе может находиться 1 взрослый человек.</li>
+							<li>Children over the age of 6 may fly the Simulator only if accompanied by a parent or legal guardian. Read all of the rules to your child The Instructor may ask you to provide a document confirming the age of the child.</li>
+							<li>The Instructor has the right to deny admission to any person who appears intoxicated or under the influence of narcotics, or whose medication which may cause them discomfort during the simulation.</li>
+							<li>Maximum of 4 persons are allowed to the cockpit (3 visitors and a Dream Aero Instructor). The total weight of all persons during operation cannot exceed 650 pounds.</li>
+							<li>Pregnant women, and persons with a heart condition, neck or back problems, who are subject to motion sickness, or who may have other health problems that may make them vulnerable to injury, must disclose their condition, and are not permitted to enter the Simulator.</li>
+							<li>During the flight simulation, all participants must: (1) observe these and all other safety rules provided (2) use the safety equipment provided (seat belt/harness); and (3) follow all of the instructions of the Instructor. Failure to follow these rules and/or instructions will result in the termination of the simulation and no refund will provided.</li>
+							<li>All personal belongings must be securely fastened during the flight simulation in order to avoid their self-movement inside the cockpit.</li>
+							<li>Only one (l) adult at a time may be on the drawing bridge.</li>
 						</ul>
-						<p>&nbsp;</p>
-						<p>Запрещается:</p>
+						<p><strong>It is prohibited:</strong></p>
 						<ul>
-							<li>Нахождение посторонних лиц в кокпите без пилота-инструктора.</li>
-							<li>Брать с собой посторонние предметы, продукты питания и животных.</li>
-							<li>Нахождение посторонних лиц ближе, чем за 2 метра до основания платформы.</li>
-							<li>Применение физических усилий к системе управления тренажёра, рычагам, кнопкам, переключателям, кранам.</li>
-							<li>Покидание кокпита любыми другими способами, кроме спускания по трапу (это правило не распространяется на чрезвычайные ситуации).</li>
+							<li>For unauthorized persons to stay in the cockpit without an Instructor present.</li>
+							<li>To bring food and animals into the Simulator.</li>
+							<li>For unauthorized persons to stand within 6 feet of the base of the simulator platform.</li>
+							<li>To use physical force to the control system of the Simulator, including its levers, buttons, switches, taps.</li>
+							<li>To enter or exit the Simulator cockpit in any other way except using the drawing bridge (this rule does not apply to emergency situations). Persons violating this rule will be barred from the flight simulation and will forfeit the ticket price.</li>
 						</ul>
-						<p>&nbsp;</p>
-						<p><strong>Лица, грубо нарушающие правила, отстраняются от полёта, стоимость билета не возвращается!<br></strong></p>
-						<p>&nbsp;</p>
-						<p></p><div id="youtuber"><iframe src="https://www.youtube.com/embed/yb8kIswkrx4?rel=0&amp;autoplay=1&amp;mute=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen="" class="youvideo"></iframe></div>
-						<p></p>
-						<p><strong>Условия бронирования полета:<br></strong></p>
-						<p><strong>&nbsp;</strong></p>
-						<p>-&nbsp; Внесение предоплаты&nbsp; гарантирует предоставление выбранного времени на полет на авиатренажере Dream Aero&nbsp; в обязательном порядке. Предварительная запись без внесения предоплаты не гарантирует предоставление выбранного времени полета.</p>
-						<p>- Внесение предоплаты за полет на авиатренажере Dream Aero возможно только после уточнения наличия свободного времени. Для этого необходимо связаться с нашим администратором&nbsp; любым&nbsp; удобным способом, указанном на сайте&nbsp;<a style="display: inline;" href="/how-to-pay">dream-aero.ru</a></p>
-						<p>- Для &nbsp;внесения предоплаты доступны следующие способы: банковский перевод, &nbsp;наличные, банковская карта.</p>
-						<p>- Отменить либо перенести полет на другой день/время, Заказчик может не позднее чем за сутки.</p>
-						<p>- В случае переноса/отмены полета менее чем за сутки, сумма предоплаты Заказчику не возвращается.</p>
-						<p>- Скидка 20% «В День Рождения» действует в течение семи дней, в День Рождения, а также 3 дня до и 3 дня после. При себе необходимо иметь паспорт или любой другой документ, удостоверяющий личность. Для детей &nbsp;– &nbsp;свидетельство о рождении. &nbsp;В случае переноса полета на другой день, к которому невозможно применить данную акцию, скидка не распространяется. Необходимо будет внести доплату в размере предоставленной скидки. Скидка не действует на покупку Сертификата.</p>
-						<p><a name="personal"></a></p>
-						<p>- В случае отмены или изменения времени полета &nbsp;Заказчика по вине компании Dream Aero, Исполнитель обязуется провести полет в полном объеме без уменьшения времени.</p>
-						<p>- При бронировании полета в обязательном порядке ознакомиться&nbsp;<a style="display: inline;" href="{{ url('oferta-dreamaero') }}" target="_blank" rel="noopener noreferrer">с публичной офертой</a>&nbsp;авиатренажера Dream Aero.</p>
-						<p>- Заказчику необходимо предъявить сертификат, подтверждающий полет &nbsp;при &nbsp;посещении авиатренажера Dream Aero.</p>
-						<p>- Использовать сертификат допускается только один раз. Запрещается разделять полет по одному сертификату на несколько посещений (не распространяется на курс пилота).</p>
-						<p><strong>&nbsp;</strong></p>
-						<p><strong>&nbsp;</strong></p>
-						<p>Полный текст <a style="display: inline;" href="{{ url('oferta-dreamaero') }}" target="_blank" rel="noopener noreferrer">публичной оферты</a></p>
-						<p>Также Вы можете ознакомиться с доступными <a style="display: inline;" href="{{ url('how-to-pay') }}" target="_blank" rel="noopener noreferrer">способами оплаты</a></p>
+						<p><strong>Birthday 20% Discount Terms and Conditions:</strong></p>
+						<p><strong>Flight Purchases:</strong></p>
+						<ul>
+							<li>When you purchase a flight with a Birthday discount, you have to book an appointment at the time of the purchase. The appointment date can be either on the birthday or three days before or after the birthday.</li>
+							<li>Proof of ID to verify the birthday is required at payment or prior to the flight. Failure to present ID will result in the full cost of the flight being charged and therefore you will reimburse to us the 20% discount</li>
+							<li>If you reschedule the flight for a date that is either three days earlier or after your birthday then you will have to reimburse us the 20% discount</li>
+							<li>If you purchase the “Regular" flight that is valid only on weekdays and you want to reschedule your flight to a weekend or holiday, then you have to pay the fare difference</li>
+							<li>You can purchase and book the flight at any time period before your birthday</li>
+							<li>The appointment cannot be booked without prior payment.</li>
+						</ul>
+						<p><strong>Gift Certificate Purchases:</strong></p>
+						<ul>
+							<li>You can purchase a Gift Certificate with the 20% Birthday Discount either on your birthday or 3 days before or 3 days after your birthday. Proof of ID should be presented upon purchase</li>
+							<li>Failure to provide proof of ID will result in forfeiting the 20% discount</li>
+							<li>The number of Gift Certificates that can be purchased is unlimited</li>
+						</ul>
+						<p><strong>All our offers are not valid in conjunction with other promotions or discounts</strong></p>
 					</div>
 				</div>
 			</div>

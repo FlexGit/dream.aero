@@ -11,6 +11,7 @@ use App\Models\Deal;
 use App\Models\Status;
 use App\Services\HelpFunctions;
 use App\Services\AuthorizeNetService;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -115,12 +116,15 @@ class BillController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+		
+		$user = Auth::user();
+		$city = $user->city;
 
 		$rules = [
 			'deal_id' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 			'status_id' => 'required|numeric|min:0|not_in:0',
-			'amount' => 'required|numeric|min:0|not_in:0',
+			'amount' => 'required|numeric|min:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
@@ -141,7 +145,11 @@ class BillController extends Controller
 
 		$deal = Deal::find($this->request->deal_id);
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
-
+		
+		$position = DealPosition::where('deal_id', $this->request->deal_id)
+			->first();
+		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
+		
 		if (!$deal->contractor) return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
@@ -178,9 +186,25 @@ class BillController extends Controller
 			$bill->location_id = /*$location->id*/$this->request->user()->location_id ?? 0;
 			$bill->payment_method_id = $paymentMethodId;
 			$bill->status_id = $this->request->status_id ?? 0;
-			$bill->amount = $this->request->amount ?? 0;
+			$bill->total_amount = $this->request->amount ?? 0;
 			$bill->currency_id = $this->request->currency_id ?? 0;
 			$bill->user_id = $this->request->user()->id;
+			if ($status->alias == Bill::PAYED_STATUS) {
+				$bill->payed_at = Carbon::now()->format('Y-m-d H:i:s');
+				
+				// при выставлении даты оплаты генерим и дату окончания срока действия сертификата,
+				// если это счет на позицию покупки сертификата
+				$certificate = $position ? $position->certificate : null;
+				$product = $certificate->product;
+				$cityProduct = $product ? $product->cities()->where('cities_products.is_active', true)->find($city->id) : null;
+				$dataJson = ($cityProduct && $cityProduct->pivot) ? json_decode($cityProduct->pivot->data_json, true) : [];
+				
+				$certificatePeriod = ($cityProduct && $position->is_certificate_purchase && array_key_exists('certificate_period', $dataJson)) ? $dataJson['certificate_period'] : 6;
+				if ($certificate) {
+					$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
+					$certificate->save();
+				}
+			}
 			$bill->save();
 			
 			$deal->bills()->save($bill);
@@ -211,11 +235,12 @@ class BillController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+		
+		$user = Auth::user();
+		$city = $user->city;
 
 		$bill = Bill::find($id);
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
-		
-		$user = \Auth::user();
 		
 		$billStatus = $bill->status;
 		if ($billStatus && $billStatus->alias == Bill::CANCELED_STATUS && !$user->isSuperAdmin()) {
@@ -236,7 +261,7 @@ class BillController extends Controller
 		$rules = [
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 			'status_id' => 'required|numeric|min:0|not_in:0',
-			'amount' => 'required|numeric|min:0|not_in:0',
+			'amount' => 'required|numeric|min:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
@@ -270,17 +295,20 @@ class BillController extends Controller
 		$bill->deal_position_id = $position->id ?? 0;
 		$bill->payment_method_id = $paymentMethodId;
 		$bill->status_id = $this->request->status_id ?? 0;
-		$bill->amount = $amount;
+		$bill->total_amount = $amount;
 		$bill->currency_id = $this->request->currency_id ?? 0;
 		if ($status->alias == Bill::PAYED_STATUS && !$bill->payed_at) {
 			$bill->payed_at = Carbon::now()->format('Y-m-d H:i:s');
-
+			
 			// при выставлении даты оплаты генерим и дату окончания срока действия сертификата,
 			// если это счет на позицию покупки сертификата
 			$position = $bill->position;
 			$certificate = $position ? $position->certificate : null;
 			$product = $certificate ? $certificate->product : null;
-			$certificatePeriod = ($product && $position->is_certificate_purchase && array_key_exists('certificate_period', $product->data_json)) ? $product->data_json['certificate_period'] : 6;
+			$cityProduct = $product ? $product->cities()->where('cities_products.is_active', true)->find($city->id) : null;
+			$dataJson = ($cityProduct && $cityProduct->pivot) ? json_decode($cityProduct->pivot->data_json, true) : [];
+			
+			$certificatePeriod = ($cityProduct && $position->is_certificate_purchase && array_key_exists('certificate_period', $dataJson)) ? $dataJson['certificate_period'] : 6;
 			if ($certificate) {
 				$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 				$certificate->save();

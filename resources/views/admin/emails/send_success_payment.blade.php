@@ -1,4 +1,4 @@
-<p>Payment by Invoice # {{ $bill->number ?? '' }}. Invoice amount {{ $bill->amount }} USD.</p>
+<p>Payment by Invoice # {{ $bill->number ?? '' }}. Invoice amount {{ $bill->amount }} {{ $bill->currency->name }}.</p>
 <p>Deal #: {{ $deal->number ?? '' }}</p>
 {{--@if($position)
 	<p>Позиция: {{ $position->number }}</p>

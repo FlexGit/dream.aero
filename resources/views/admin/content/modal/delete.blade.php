@@ -1,4 +1,4 @@
 <input type="hidden" id="id" name="id" value="{{ $content->id }}">
 <div class="form-group">
-	<label>Вы уверены, что хотите удалить материал {{ $content->title }}?</label>
+	<label>Are you sure you want to delete the content {{ $content->title }}?</label>
 </div>

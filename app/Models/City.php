@@ -51,6 +51,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|City wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|City wherePayAccountNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|City whereNameEn($value)
+ * @property int $currency_id
+ * @property string $version версия
+ * @property-read \App\Models\Currency|null $currency
+ * @method static \Illuminate\Database\Eloquent\Builder|City whereCurrencyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|City whereVersion($value)
  */
 class City extends Model
 {
@@ -114,7 +119,12 @@ class City extends Model
 			->using(CityPromocode::class)
 			->withTimestamps();
 	}
-
+	
+	public function currency()
+	{
+		return $this->hasOne(Currency::class, 'id', 'currency_id');
+	}
+	
 	/**
 	 * @return array
 	 */
@@ -129,7 +139,7 @@ class City extends Model
 	public function phoneFormatted()
 	{
 		$phoneCleared = preg_replace( '/[^0-9]/', '', $this->phone);
-		return '+' . mb_substr($phoneCleared, 0, 1) . ' (' . mb_substr($phoneCleared, 1, 3) . ') ' . mb_substr($phoneCleared, 4, 3) . '-' . mb_substr($phoneCleared, 7, 2) . '-' . mb_substr($phoneCleared, 9, 2);
+		return '+' . mb_substr($phoneCleared, 0, 1) . ' ' . mb_substr($phoneCleared, 1, 3) . ' ' . mb_substr($phoneCleared, 4, 3) . ' ' . mb_substr($phoneCleared, 7, 2) . ' ' . mb_substr($phoneCleared, 9, 2);
 	}
 
 	/**
@@ -142,7 +152,7 @@ class City extends Model
 	{
 		$locations = $this->locations()
 			->where('is_active', true)
-			->whereNotNull('pay_account_number')
+			/*->whereNotNull('pay_account_number')*/
 			->orderby('id')
 			->get();
 		if ($locations->isEmpty()) return null;

@@ -208,12 +208,9 @@
 			$calendarViewType.val(calendarViewType);
 
 			var date = new Date();
-			var d = date.getDate(),
-				m = date.getMonth(),
-				y = date.getFullYear();
-
 			var calendars = document.getElementsByClassName('calendar');
 			var calendarArr = [];
+
 			for (let calendarEl of calendars) {
 				var timezone = $(calendarEl).data('timezone') ? $(calendarEl).data('timezone') : 'Europe/Moscow';
 
@@ -221,7 +218,7 @@
 					//aspectRatio: 0.8,
 					stickyHeaderDates: true,
 					initialView: calendarViewType,
-					locale: 'ru',
+					locale: 'en',
 					editable: true,
 					selectable: true,
 					//height: '100%',
@@ -538,7 +535,11 @@
 					$docFile = $('#doc_file');
 
 				var formData = new FormData($(this)[0]);
+				console.log(formData);
+
 				if ($docFile.val()) {
+					console.log($docFile.val());
+					console.log($docFile.prop('files')[0]);
 					formData.append('doc_file', $docFile.prop('files')[0]);
 				}
 
@@ -776,7 +777,7 @@
 
 			// contol sidebar datepicker
 			$datepicker.datepicker({
-				language: 'ru',
+				language: 'en',
 				todayHighlight: true,
 				daysOfWeekHighlighted: [0,6],
 				beforeShowDay: function(date) {

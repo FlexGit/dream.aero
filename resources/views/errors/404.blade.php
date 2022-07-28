@@ -6,7 +6,7 @@
 @section('description', trans('main.404.страница-не-найдена'))
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url($city->alias ?? '/') }}">@lang('main.home.title')</a> <span>@lang('main.404.title')</span></div>
+	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main.home.title')</a> <span>@lang('main.404.title')</span></div>
 
 	<article class="article">
 		<div class="container">

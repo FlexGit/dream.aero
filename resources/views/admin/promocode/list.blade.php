@@ -17,7 +17,7 @@
 	<td class="text-center">
 		<a href="javascript:void(0)" data-toggle="modal" data-url="/promocode/{{ $promocode->id }}/edit" data-action="/promocode/{{ $promocode->id }}" data-method="PUT" data-title="Edit">
 			<i class="fa fa-edit" aria-hidden="true"></i>
-		</a>&nbsp;&nbsp;&nbsp;
+		</a>
 		<a href="javascript:void(0)" data-toggle="modal" data-target="#modal" data-url="/promocode/{{ $promocode->id }}/delete" data-action="/promocode/{{ $promocode->id }}" data-method="DELETE" data-title="Delete">
 			<i class="fa fa-trash" aria-hidden="true"></i>
 		</a>

@@ -17,14 +17,9 @@
 		</div>
 
 		<div class="container conthide">
-			<div class="mainpart">
-				<img src="{{ asset('img/logo-rusmain.webp') }}" alt="" width="100%" height="100%">
-				<p class="rossya-label">@lang('main.home.официальный-партнер')</p>
-			</div>
-			<h1 class="wow fadeInDown" data-wow-duration="2s" data-wow-delay="0.3s" data-wow-iteration="1">@lang('main.home.испытай-себя-в-роли-пилота-авиалайнера')</h1>
-			<span class="wow fadeInDown" data-wow-duration="2s" data-wow-delay="0.9s" data-wow-iteration="1"></span>
-			<a href="{{ url('#popup') }}" class="fly {{ App::isLocale('en') ? 'fly_en' : '' }} button-pipaluk button-pipaluk-orange wow zoomIn popup-with-form form_open" data-modal="booking" data-wow-delay="1.3s" data-wow-duration="2s" data-wow-iteration="1"><i>@lang('main.home.забронировать')</i></a>
-			<a href="{{ url('#popup') }}" class="give button-pipaluk button-pipaluk-orange wow zoomIn popup-with-form form_open {{ App::isLocale('en') ? 'give_en' : '' }}" data-modal="certificate" data-wow-delay="1.3s" data-wow-duration="2s" data-wow-iteration="1"><i>@lang('main.home.подарить-полет')</i></a>
+			<h1 class="wow fadeInDown animated" data-wow-duration="2s" data-wow-delay="0.3s" data-wow-iteration="1">TEST YOURSELF IN THE COCKPIT</h1>
+			<span class="wow fadeInDown" data-wow-duration="2s" data-wow-delay="0.9s" data-wow-iteration="1">Welcome to the Boeing 737 NG* Flight Simulator of the famous Boeing airliner!</span>
+			<a href="{{ url('#popup') }}" class="give button-pipaluk button-pipaluk-orange wow zoomIn popup-with-form form_open" data-modal="certificate" data-wow-delay="1.3s" data-wow-duration="2s" data-wow-iteration="1"><i>Buy Now</i></a>
 		</div>
 		<div class="scroll-down">
 			<a class="scrollTo" href="#about">
@@ -35,19 +30,11 @@
 
 	<div class="about" id="about">
 		<div class="container">
-			<h2 class="block-title">FULL FLIGHT SIMULATOR</h2>
+			<h2 class="block-title">BOEING 737 NG* FLIGHT SIMULATOR</h2>
 			<div class="text-block">
 				<p>
-					@lang('main.home.рады-представить-вам-тренажеры-описание')
-					<a href="{{ url('o-trenazhere') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main.home.подробнее')</i></a>
-				</p>
-				<p style="margin: 15px;">
-					<a style="display: inline;" href="https://www.rossiya-airlines.com" target="_blank">
-						<img src="{{ asset('img/logo-white.webp') }}" alt="" width="172" height="auto">
-					</a>
-				</p>
-				<p class="rossya-white-label">
-					@lang('main.home.в-партнерстве-с-авиакомпанией-россия')
+					We are pleased to introduce Full Motion flight simulators of the famous passenger airliner in the US. Designed as a real plane cockpit, this simulator is analogous to the simulators used for training real-life pilots. Test the pilot in you!
+					<a href="{{ url($cityAlias . '/about-simulator') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main.home.подробнее')</i></a>
 				</p>
 			</div>
 		</div>
@@ -60,32 +47,32 @@
 		<div class="container">
 			<h3>@lang('main.home.что-вы-получите')</h3>
 			<ul class="row">
-				<li class="col-md-3 col-sm-6">
-					<a href="{{ url('nezabyivaemyie-emoczii') }}">
+				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
+					<a href="{{ url($cityAlias . '/impressions') }}">
 						<img src="{{ asset('img/airplane-shape.webp') }}" alt="" width="56" height="auto">
-						<span>@lang('main.home.незабываемые-эмоции-и-впечатления')</span>
+						<span>An unforgettable experience</span>
 					</a>
 				</li>
-				<li class="col-md-3 col-sm-6">
-					<a href="{{ url('professionalnaya-pomoshh') }}">
+				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
+					<a href="{{ url($cityAlias . '/prof-assistance') }}">
 						<img src="{{ asset('img/pilot-hat.webp') }}" alt="" width="66" height="auto">
-						<span>@lang('main.home.профессиональная-помощь-пилота')</span>
+						<span>The guidance of a pilot instructor</span>
 					</a>
 				</li>
-				<li class="col-md-3 col-sm-6">
-					<a href="{{ url('pogruzhenie-v-mir-aviaczii') }}">
+				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
+					<a href="{{ url($cityAlias . '/the-world-of-aviation') }}">
 						<img src="{{ asset('img/pilot.webp') }}" alt="" width="61" height="auto">
-						<span>@lang('main.home.погружение-в-мир-авиации')</span>
+						<span>Immersion in the world of aviation</span>
 					</a>
 				</li>
-				<li class="col-md-3 col-sm-6">
-					<a href="{{ url('lechenie-aerofobii') }}">
+				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
+					<a href="{{ url($cityAlias . '/treating-aerophobia') }}">
 						<img src="{{ asset('img/cloud.webp') }}" alt="" width="61" height="auto">
-						<span>@lang('main.home.лечение-аэрофобии')</span>
+						<span>Treating aerophobia</span>
 					</a>
 				</li>
 			</ul>
-			<a href="{{ url('#popup') }}" class="obtain-button button-pipaluk button-pipaluk-orange popup-with-form form_open" data-modal="booking"><i>@lang('main.home.забронировать-полет')</i></a>
+			<a href="{{ url('#popup') }}" class="obtain-button button-pipaluk button-pipaluk-orange popup-with-form form_open" data-modal="booking"><i>Buy Now</i></a>
 		</div>
 	</div>
 
@@ -141,47 +128,30 @@
 			<div class="text">
 				<p>
 					@lang('main.home.команда-может-предложить-любой-вариант-полёта')
-					<a href="{{ url('podarit-polet') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main.home.подробнее2')</i></a>
+					<a href="{{ url($cityAlias . '/flight-options') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main.home.подробнее2')</i></a>
 				</p>
 			</div>
 			<div class="item-left" id="varsL">
-				<img src="{{ asset('img/img1.webp') }}" alt="" width="100%" height="auto">
-				<span>@lang('main.home.посади-самолет-среди-австрийских-гор-инсбрука')</span>
+				<img src="{{ asset('img/NIK_dreamaero.jpg') }}" alt="" width="100%" height="auto">
+				<span>Land your airplane between the famous Austrian Alps ridges in the city of Innsbruck</span>
 			</div>
 			<div class="item-right" id="varsR">
 				<div class="i-item">
-					<img src="{{ asset('img/img2.webp') }}" alt="" width="100%" height="auto">
-					<span>@lang('main.home.насладись-живописными-пейзажами-лазурного-берега')</span>
+					<img src="{{ asset('img/mainimg.jpg') }}" alt="" width="100%" height="auto">
+					<span>Enjoy picturesque views of Cote d'Azur in Cannes, Nice, and Monaco</span>
 				</div>
 				<div class="i-item">
-					<img src="{{ asset('img/syyyx.webp') }}" alt="" width="100%" height="auto">
-					<span>@lang('main.home.соверши-вираж-вокруг-самого-высокого-небоскреба-в-мире')</span>
+					<img src="{{ asset('img/img2.jpg') }}" alt="" width="100%" height="auto">
+					<span>Make a circle around the tallest building in the world - Burj Khalifa in Dubai</span>
 				</div>
 				<div class="i-item">
-					<img src="{{ asset('img/img3.webp') }}" alt="" width="100%" height="auto">
-					<span>@lang('main.home.выбери-любой-маршрут-и-получи-удовольствие-от-полета')</span>
+					<img src="{{ asset('img/img3.jpg') }}" alt="" width="100%" height="auto">
+					<span>Choose any route and enjoy your flight</span>
 				</div>
 				<div class="i-item">
 					<img src="{{ asset('img/img4.webp') }}" alt="" width="100%" height="auto">
-					<span>@lang('main.home.пролети-над-величественными-небоскребами')</span>
+					<span>Fly over the majestic skyscrapers of New York at night</span>
 				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="team">
-		<div class="container">
-			<h2 class="block-title">@lang('main.home.наша-команда')</h2>
-			<div class="owl-carousel">
-				@foreach($users as $user)
-					@if(!$user->data_json || !array_key_exists('photo_file_path', $user->data_json) || !$user->data_json['photo_file_path'])
-						@continue
-					@endif
-					<div>
-						<div class="img" style="background-image: url('/upload/{{ $user->data_json['photo_file_path'] }}');"></div>
-						<p>{{ trans('main.home.role.' . $user->role) }} <b>{{ $user['name'] }}</b></p>
-					</div>
-				@endforeach
 			</div>
 		</div>
 	</div>
@@ -194,12 +164,18 @@
 					<div class="text">
 						<ul style="color: #fff;">
 							<li>
-								<p>@lang('main.home.акция-день-рождения')</p>
+								<p>Weekdays happy hours from 12 PM to 2 PM get 15 minutes additional for free. Ready! Steady! Fly!</p>
 							</li>
 							<li>
-								<p>@lang('main.home.дополнительные-минуты-бесплатно')</p>
+								<p>Get a 20% discount if you visit us on your birthday, 3 days before or 3 days after your birthday. ID proof is required.</p>
+							</li>
+							<li>
+								<p>Get 25% discount when purchasing 4 or more Gift Certificates.</p>
 							</li>
 						</ul>
+						<p>
+							<a style="margin: 0; padding: 0;" href="{{ url($cityAlias . '/rules') }}" target="_blank" rel="noopener">*Terms and Conditions apply</a>
+						</p>
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -229,8 +205,8 @@
 							</div>
 							<div class="col-md-4">
 								<div class="reviews-author wow">
-									<span class="reviews-name">{{ $review->title }}{{ $review->city ? ' | ' . $review->city->name : '' }}</span>
-									<span class="reviews-sent">@lang('main.home.отправлено') {{ $review->created_at->format('d.m.Y') }}</span>
+									<span class="reviews-name">{{ $review->title }}</span>
+									<span class="reviews-sent">sent: {{ $review->created_at->format('m-d-Y') }}</span>
 									<button type="button" class="reviews-prev"></button>
 									<button type="button" class="reviews-next"></button>
 								</div>
@@ -242,18 +218,21 @@
 			<div class="col-md-8">
 			</div>
 			<div class="col-md-4">
-				<a href="javascript: void(0)" class="button button-pipaluk button-pipaluk-orange popup-with-form" data-popup-type="review"><i>@lang('main.home.оставить-отзыв')</i></a>
-				<a class="button main-all-review button-pipaluk button-pipaluk-orange" href="{{ url('reviews') }}"><i>@lang('main.home.показать-все-отзывы')</i></a>
+				<a href="javascript: void(0)" class="button button-pipaluk button-pipaluk-orange popup-with-form" data-popup-type="review"><i>SUBMIT YOUR COMMENT</i></a>
+				<a class="button main-all-review button-pipaluk button-pipaluk-orange" href="{{ url($cityAlias . '/reviews') }}"><i>@lang('main.home.показать-все-отзывы')</i></a>
 			</div>
 		</div>
 	</div>
 
 	@include('forms.question')
+
+	<p>&nbsp;&nbsp;&nbsp;*Not a 100% copy of a Boeing certified flight simulator</p>
 @endsection
 
 @push('css')
 	<link rel="stylesheet" href="{{ asset('css/owl.carousel.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/card.css') }}">
 	<style>
 		.fly_en, .give_en {
 			width: 320px !important;
@@ -264,10 +243,7 @@
 @push('scripts')
 	<script src="{{ asset('js/owl.carousel.js') }}"></script>
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.card.js') }}"></script>
 	<script src="{{ asset('js/mainonly.js?' . time()) }}"></script>
 	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
-	<script>
-		$(function() {
-		});
-	</script>
 @endpush

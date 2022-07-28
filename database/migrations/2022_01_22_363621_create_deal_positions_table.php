@@ -20,7 +20,9 @@ class CreateDealPositionsTable extends Migration
 			$table->integer('product_id')->default(0)->index()->comment('продукт');
 			$table->integer('certificate_id')->default(0)->index()->comment('сертификат');
 			$table->integer('duration')->default(0)->comment('продолжительность полета');
-			$table->integer('amount')->default(0)->comment('стоимость');
+			$table->float('amount')->default(0)->comment('стоимость');
+			$table->float('tax')->default(0)->comment('ставка налога');
+			$table->float('total_amount')->default(0)->comment('итоговая стоимость');
 			$table->integer('currency_id')->default(0)->index()->comment('валюта');
 			$table->integer('city_id')->default(0)->index()->comment('город, в котором будет осуществлен полет');
 			$table->integer('location_id')->default(0)->index()->comment('локация, на которой будет осуществлен полет');

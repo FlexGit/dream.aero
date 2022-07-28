@@ -83,6 +83,10 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property string|null $certificate_sent_at последняя дата отправки сертификата на e-mail
  * @method static \Illuminate\Database\Eloquent\Builder|DealPosition whereCertificateSentAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|DealPosition whereInviteSentAt($value)
+ * @property float $tax
+ * @property float $total_amount
+ * @method static \Illuminate\Database\Eloquent\Builder|DealPosition whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DealPosition whereTotalAmount($value)
  */
 class DealPosition extends Model
 {
@@ -95,6 +99,8 @@ class DealPosition extends Model
 		'certificate_id' => 'Certificate',
 		'duration' => 'Duration',
 		'amount' => 'Amount',
+		'tax' => 'Tax',
+		'total_amount' => 'Total amount',
 		'currency_id' => 'Currency',
 		'city_id' => 'City',
 		'location_id' => 'Location',
@@ -139,6 +145,8 @@ class DealPosition extends Model
 		'certificate_id',
 		'duration',
 		'amount',
+		'tax',
+		'total_amount',
 		'currency_id',
 		'city_id',
 		'location_id',

@@ -1,7 +1,6 @@
 @foreach ($deals as $deal)
 	@php
 		$balance = $deal->balance();
-		$scoreAmount = $deal->scoreAmount();
 	@endphp
 
 	<tr class="odd" data-id="{{ $deal->id }}" @if($deal->status && $deal->status->alias == app('\App\Models\Deal')::CREATED_STATUS) style="background-color: #e6d8d8;" @endif>
@@ -37,13 +36,8 @@
 					@if($deal->contractor && $deal->contractor->city)
 						<i class="fas fa-dollar-sign"></i>
 					@endif
-					{{ number_format($deal->amount(), 0, '.', ' ') }}
+					{{ number_format($deal->amount(), 2, '.', ' ') }}
 				</div>
-				@if($scoreAmount)
-					<div class="d-inline-block" title="Paid with points">
-						<i class="far fa-star"></i> {{ number_format($scoreAmount, 0, '.', ' ') }}
-					</div>
-				@endif
 				@foreach($deal->positions as $position)
 					@if($position->promocode)
 						<div class="d-inline-block" title="Promocode">
@@ -58,9 +52,9 @@
 				@endforeach
 				<div class="d-inline-block mt-1" title="Total">
 					@if($balance < 0)
-						<span class="pl-2 pr-2" style="background-color: #ffbdba;">{{ number_format($balance, 0, '.', ' ') }}</span>
+						<span class="pl-2 pr-2" style="background-color: #ffbdba;">{{ number_format($balance, 2, '.', ' ') }}</span>
 					@elseif($balance > 0)
-						<span class="pl-2 pr-2" style="background-color: #e9ffc9;">+{{ number_format($balance, 0, '.', ' ') }}</span>
+						<span class="pl-2 pr-2" style="background-color: #e9ffc9;">+{{ number_format($balance, 2, '.', ' ') }}</span>
 					@else
 						<span class="pl-2 pr-2" style="background-color: #e9ffc9;">paid</span>
 					@endif
@@ -87,6 +81,7 @@
 		<td class="text-center align-top d-none d-xl-table-cell small">
 			@foreach($deal->bills ?? [] as $bill)
 				@php
+					if ($bill->total_amount <= 0) continue;
 					$billPosition = $bill->position;
 				@endphp
 				<div class="mb-3">
@@ -110,7 +105,7 @@
 						@if($bill->currency)
 							<i class="fas fa-dollar-sign"></i>
 						@endif
-						{{ number_format($bill->amount, 0, '.', ' ') }}
+						{{ number_format($bill->total_amount, 2, '.', ' ') }}
 						@if($bill->paymentMethod)
 							[{{ $bill->paymentMethod->name }}]
 							@if ($bill->paymentMethod->alias == app('\App\Models\PaymentMethod')::ONLINE_ALIAS && $bill->status && $bill->status->alias == app('\App\Models\Bill')::NOT_PAYED_STATUS)
@@ -121,68 +116,16 @@
 								@endif
 							@endif
 						@endif
-						{{--@if($user->isSuperadmin() && $bill->status && $bill->status->alias == app('\App\Models\Bill')::PAYED_STATUS)
-							&nbsp;&nbsp;<a href="javascript:void(0)" data-toggle="modal" data-url="/bill/{{ $bill->id }}/miles/accrual" data-action="/bill/miles/accrual" data-method="POST" data-type="aeroflot" data-title="Аэрофлот Бонус" title="Аэрофлот Бонус"><i class="fas fa-globe"></i></a>
-						@endif--}}
 					</div>
 					@if ($bill->status)
 						<div class="p-0 pl-2 pr-2" style="background-color: {{ array_key_exists('color', $bill->status->data_json ?? []) ? $bill->status->data_json['color'] : 'none' }};">
 							<span title="Bill status">{{ $bill->status->name }}</span>
-						</div>
-						<div class="text-nowrap" style="line-height: 0.9em;" title="Payment date">
-							{{ $bill->payed_at ? $bill->payed_at->format('Y-m-d H:i') : '' }}
+							<span title="Payment date">{{ $bill->payed_at ? '[' . $bill->payed_at->format('Y-m-d H:i') . ']' : '' }}</span>
 						</div>
 					@endif
-					{{--@if($bill->aeroflot_transaction_type)
-						<div class="mt-2" style="border: 1px solid;border-radius: 6px;padding: 4px 8px;background-color: #fff;">
-							@if($bill->aeroflot_transaction_type == app('\App\Services\AeroflotBonusService')::TRANSACTION_TYPE_REGISTER_ORDER)
-								Заявка на списание миль на сумму {{ number_format($bill->aeroflot_bonus_amount, 0, '.', ' ') }} руб
-								<div>
-									@if($bill->aeroflot_status != 0)
-										<i class="fas fa-exclamation-triangle text-danger"></i> ошибка
-									@else
-										@if($bill->aeroflot_state == app('\App\Services\AeroflotBonusService')::PAYED_STATE)
-											<i class="fas fa-check text-success"></i> мили списаны
-										@elseif($bill->aeroflot_state == app('\App\Services\AeroflotBonusService')::CANCEL_STATE)
-											<i class="fas fa-exclamation-triangle text-danger"></i> отклонена
-										@else
-											<i class="fas fa-exclamation-triangle text-warning"></i> не оформлена
-										@endif
-									@endif
-								</div>
-							@elseif($bill->aeroflot_transaction_type == app('\App\Services\AeroflotBonusService')::TRANSACTION_TYPE_AUTH_POINTS)
-								Заявка на начисление {{ $bill->aeroflot_bonus_amount ?? '' }} миль
-								<div>
-									@if($bill->aeroflot_status != 0)
-										<i class="fas fa-exclamation-triangle text-danger"></i> отклонена
-									@else
-										@if($bill->aeroflot_state == app('\App\Services\AeroflotBonusService')::PAYED_STATE)
-											<i class="fas fa-check text-success"></i> мили начислены
-										@else
-											<i class="fas fa-exclamation-triangle text-warning"></i>
-											@if($bill->payed_at)
-												дата начисления
-												@if($billPosition)
-													@if($billPosition->is_certificate_purchase)
-														{{ \Carbon\Carbon::parse($bill->payed_at)->addDays(app('\App\Services\AeroflotBonusService')::CERTIFICATE_PURCHASE_ACCRUAL_AFTER_DAYS)->format('Y-m-d') }}
-													@else
-														{{ \Carbon\Carbon::parse($bill->payed_at)->addDays(app('\App\Services\AeroflotBonusService')::BOOKING_ACCRUAL_AFTER_DAYS)->format('Y-m-d') }}
-													@endif
-												@endif
-											@else
-												ожидание оплаты Счета
-											@endif
-										@endif
-									@endif
-								</div>
-							@endif
-						</div>
-					@endif--}}
 				</div>
 			@endforeach
-			{{--@if($balance < 0)--}}
-				<a href="javascript:void(0)" data-toggle="modal" data-url="/bill/{{ $deal->id }}/add" data-action="/bill" data-method="POST" data-title="Create Invoice" data-type="bill" title="Create Invoice" class="btn btn-info btn-sm">Create Invoice</a>
-			{{--@endif--}}
+			<a href="javascript:void(0)" data-toggle="modal" data-url="/bill/{{ $deal->id }}/add" data-action="/bill" data-method="POST" data-title="Create Invoice" data-type="bill" title="Create Invoice" class="btn btn-info btn-sm">Create Invoice</a>
 		</td>
 		<td class="align-top text-center d-none d-md-table-cell">
 			<table class="table table-sm table-bordered table-striped mb-0">
@@ -203,56 +146,56 @@
 						<td class="small">
 							<div>
 								@if($position->is_certificate_purchase)
-									<div class="{{--font-weight-bold --}}d-inline-block">
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit voucher purchase item {{ $position->number }}">
+									<div class="font-weight-bold d-inline-block">
+										{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit voucher purchase item {{ $position->number }}">--}}
 											Voucher purchase
-										</a>
+										{{--</a>--}}
 									</div>
 									{{--<div class="d-inline-block">
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit voucher purchase item {{ $position->number }}">{{ $position->number }}</a>
 									</div>--}}
-									<div class="d-inline-block ml-2">
+									{{--<div class="d-inline-block ml-2">
 										<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-									</div>
+									</div>--}}
 								@else
 									@if($position->location)
 										@if($position->certificate)
-											<div class="{{--font-weight-bold --}}d-inline-block">
-												<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking by voucher item {{ $position->number }}">
+											<div class="font-weight-bold d-inline-block">
+												{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking by voucher item {{ $position->number }}">--}}
 													Booking by voucher
-												</a>
+												{{--</a>--}}
 											</div>
 											{{--<div class="d-inline-block">
 												<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking by voucher item {{ $position->number }}">{{ $position->number }}</a>
 											</div>--}}
-											<div class="d-inline-block ml-2">
+											{{--<div class="d-inline-block ml-2">
 												<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-											</div>
+											</div>--}}
 										@else
-											<div class="{{--font-weight-bold --}}d-inline-block">
-												<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking {{ $position->number }}">
+											<div class="font-weight-bold d-inline-block">
+												{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking {{ $position->number }}">--}}
 													Booking
-												</a>
+												{{--</a>--}}
 											</div>
 											{{--<div class="d-inline-block">
 												<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking {{ $position->number }}">{{ $position->number }}</a>
 											</div>--}}
-											<div class="d-inline-block ml-2">
+											{{--<div class="d-inline-block ml-2">
 												<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-											</div>
+											</div>--}}
 										@endif
 									@else
-										<div class="{{--font-weight-bold --}}d-inline-block">
-											<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit good / service item {{ $position->number }}">
-												good / service purchase
-											</a>
+										<div class="font-weight-bold d-inline-block">
+											{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit good / service item {{ $position->number }}">--}}
+												Good / service purchase
+											{{--</a>--}}
 										</div>
 										{{--<div class="d-inline-block">
 											<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit good / service item {{ $position->number }}">{{ $position->number }}</a>
 										</div>--}}
-										<div class="d-inline-block ml-2">
+										{{--<div class="d-inline-block ml-2">
 											<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-										</div>
+										</div>--}}
 									@endif
 								@endif
 							</div>
@@ -279,16 +222,20 @@
 							@endif
 							@if($position->certificate)
 								<div class="text-nowrap">
-									@if($position->certificate->product_id)
+									@if($position->certificate->product_id && $position->is_certificate_purchase && $deal->balance() >= 0)
 										<a href="{{ route('getCertificate', ['uuid' => $position->certificate->uuid]) }}" class="mr-2">
 											<i class="far fa-file-alt" title="Voucher file"></i>
 										</a>
 									@endif
-									<a href="javascript:void(0)" class="font-weight-bold" style="font-size: 16px;" data-toggle="modal" data-url="/certificate/{{ $position->certificate->id }}/edit" data-action="/certificate/{{ $position->certificate->id }}" data-method="PUT" data-title="Edit voucher" data-type="certificate" title="Edit voucher">
+									@if($position->is_certificate_purchase)
+										<a href="javascript:void(0)" class="font-weight-bold" data-toggle="modal" data-url="/certificate/{{ $position->certificate->id }}/edit" data-action="/certificate/{{ $position->certificate->id }}" data-method="PUT" data-title="Edit voucher" data-type="certificate" title="Edit voucher">
+									@endif
 										{{ $position->certificate->number ?: 'no number' }}
-									</a>
-									@if($position->certificate->product_id)
-										@if($position->is_certificate_purchase && $position->certificate->sent_at)
+									@if($position->is_certificate_purchase)
+										</a>
+									@endif
+									@if($position->certificate->product_id && $position->is_certificate_purchase && $deal->balance() >= 0)
+										@if($position->certificate->sent_at)
 											<a href="javascript:void(0)" class="js-send-certificate-link ml-2" data-id="{{ $position->id }}" data-certificate_id="{{ $position->certificate->id }}" title="Voucher sent {{ $position->certificate->sent_at }}"><i class="far fa-envelope-open"></i></a>
 										@else
 											<a href="javascript:void(0)" class="js-send-certificate-link ml-2" data-id="{{ $position->id }}" data-certificate_id="{{ $position->certificate->id }}" title="Voucher not sent yet"><i class="far fa-envelope"></i></a>
@@ -340,7 +287,9 @@
 						</td>
 						<td class="small">
 							<div>
-								{{ $position->product ? $position->product->name : '' }}
+								<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit voucher purchase item">
+									<b>{{ $position->product ? $position->product->name : 'no name' }}</b>
+								</a>
 							</div>
 							@if($position->promo)
 								<div title="Promo">
@@ -352,15 +301,26 @@
 									<i class="fas fa-tag"></i> {{ $position->promocode->number }}
 								</div>
 							@endif
-							<div title="Product amount">
-								@if($position->currency)
-									@if($position->currency->alias == app('\App\Models\Currency')::USD_ALIAS)
-										<i class="fas fa-dollar-sign"></i>
-									@else
-										<i class="fas fa-ruble-sign"></i>
-									@endif
+							<div class="text-right text-nowrap" title="Amount">
+								<span>Amount: </span>
+								@if($position->currency && $position->currency->alias == app('\App\Models\Currency')::USD_ALIAS)
+									<i class="fas fa-dollar-sign"></i>
 								@endif
-								{{ $position->amount ? number_format($position->amount, 0, '.', ' ') : 0 }}
+								{{ $position->amount ? number_format($position->amount, 2, '.', ' ') : 0 }}
+							</div>
+							<div class="text-right text-nowrap" title="Vat">
+								<span>Vat: </span>
+								@if($position->currency && $position->currency->alias == app('\App\Models\Currency')::USD_ALIAS)
+									<i class="fas fa-dollar-sign"></i>
+								@endif
+								{{ $position->tax ? number_format($position->tax, 2, '.', ' ') : 0 }}
+							</div>
+							<div class="text-right text-nowrap" title="Total amount">
+								<span>Total amount: </span>
+								@if($position->currency && $position->currency->alias == app('\App\Models\Currency')::USD_ALIAS)
+									<i class="fas fa-dollar-sign"></i>
+								@endif
+								{{ $position->total_amount ? number_format($position->total_amount, 2, '.', ' ') : 0 }}
 							</div>
 						</td>
 						<td class="text-center small" nowrap>
@@ -369,14 +329,11 @@
 									<i class="far fa-calendar-alt"></i>
 									{{ \Carbon\Carbon::parse($position->event->start_at)->format('Y-m-d') }}
 									{{ \Carbon\Carbon::parse($position->event->start_at)->format('H:i') }} - {{ \Carbon\Carbon::parse($position->event->stop_at)->addMinutes($position->event->extra_time)->format('H:i') }}
-									{{--@if($deal->event->extra_time)
-										(+ {{ $deal->event->extra_time }} min)
-									@endif--}}
 								</div>
 								<div class="d-inline-block ml-2">
 									<a href="javascript:void(0)" class="js-remove-event" data-id="{{ $position->event->id }}" title="Delete event"><i class="fas fa-times" style="color: #aaa;"></i></a>
 								</div>
-								@if($position->event->location)
+								{{--@if($position->event->location)
 									<div title="Flight location">
 										<i class="fas fa-map-marker-alt"></i> {{ $position->event->location->name }}
 									</div>
@@ -385,16 +342,16 @@
 									<div title="Flight simulator">
 										<i class="fas fa-plane"></i> {{ $position->event->simulator->name }}
 									</div>
-								@endif
+								@endif--}}
 								@if($position->event->event_type == app('\App\Models\Event')::EVENT_TYPE_TEST_FLIGHT)
 									<div><span class="font-weight-bold">Test flight</span></div>
 								@endif
 								<div>
-									@if ($position->event->uuid)
+									{{--@if ($position->event->uuid)
 										<a href="{{ route('getFlightInvitation', ['uuid' => $position->event->uuid ]) }}">
 											<i class="far fa-file-alt" title="Download flight invitation"></i>
 										</a>
-									@endif
+									@endif--}}
 									@if($position->event->flight_invitation_sent_at)
 										<a href="javascript:void(0)" class="js-send-flight-invitation-link ml-2" data-id="{{ $position->id }}" data-event_id="{{ $position->event->id }}" title="Flight invitation sent {{ $position->event->flight_invitation_sent_at }}"><i class="far fa-envelope-open"></i></a>
 									@else
@@ -439,17 +396,17 @@
 					</tr>
 				@endforeach
 			</table>
-			{{--<div class="text-right small mt-1 mb-1" style="line-height: 0.9em;">
+			<div class="text-right small mt-1 mb-1" style="line-height: 0.9em;">
 				<div class="btn-group dropleft">
 					<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink-{{ $deal->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Add item">Add item</a>
 
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink-{{ $deal->id }}" style="z-index: 9999;">
-						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/add/{{ $deal->id }}" data-action="/deal_position/certificate" data-method="POST" data-type="position" data-title="Create voucher purchase item {{ $deal->number }}" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
-						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/add/{{ $deal->id }}" data-action="/deal_position/booking" data-method="POST" data-type="position" data-title="Create booking item {{ $deal->number }}" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
-						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/add/{{ $deal->id }}" data-action="/deal_position/product" data-method="POST" data-type="position" data-title="Create good / service item {{ $deal->number }}" class="btn btn-secondary btn-sm dropdown-item">Good / service</a>
+						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/add/{{ $deal->id }}" data-action="/deal_position/certificate" data-method="POST" data-type="position" data-title="Add voucher purchase item" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
+						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/add/{{ $deal->id }}" data-action="/deal_position/booking" data-method="POST" data-type="position" data-title="Add booking item" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
+						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/add/{{ $deal->id }}" data-action="/deal_position/product" data-method="POST" data-type="position" data-title="Add good / service item" class="btn btn-secondary btn-sm dropdown-item">Good / service</a>
 					</div>
 				</div>
-			</div>--}}
+			</div>
 		</td>
 	</tr>
 @endforeach

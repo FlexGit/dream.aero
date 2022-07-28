@@ -44,34 +44,6 @@
 	.popup-description {
 		margin-top: 0;
 	}
-	/*.col-md-6 {
-		padding-left: 0;
-		padding-right: 0;
-	}*/
-	.consent-container {
-		margin-top: 20px;
-	}
-	.promocode_container {
-		margin-top: 20px;
-		margin-left: 18px;
-		margin-right: 18px;
-	}
-	.aeroflot_container {
-		margin-top: 10px;
-		margin-left: 18px;
-		margin-right: 18px;
-	}
-	.aeroflot-buttons-container {
-		margin-top: 20px;
-		text-align: center;
-	}
-	.aeroflot-card-verified {
-		background-color: rgb(170, 221, 199);
-	}
-	#bonus_info input {
-		border: 0;
-		margin-bottom: 24px;
-	}
 	.cont {
 		margin-bottom: 7px;
 		padding-top: 3px;

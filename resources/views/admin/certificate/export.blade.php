@@ -4,7 +4,9 @@
 		<th class="ext-center align-middle">Voucher #</th>
 		<th class="align-middle">Voucher date</th>
 		<th class="align-middle">Product</th>
-		<th class="align-middle">Amount, {{ ($city->alias == 'uae') ? 'AED' : 'USD' }}</th>
+		<th class="align-middle">Amount</th>
+		<th class="align-middle">Vat</th>
+		<th class="align-middle">Total amount</th>
 		<th class="align-middle">Voucher status</th>
 		<th class="align-middle">Voucher validity</th>
 		<th class="align-middle">Invoice #</th>
@@ -32,6 +34,12 @@
 				</td>
 				<td class="align-middle text-right">
 					{{ number_format($certificateItem['position_amount'], 2, '.', ' ') }}
+				</td>
+				<td class="align-middle text-right">
+					{{ number_format($certificateItem['position_tax'], 2, '.', ' ') }}
+				</td>
+				<td class="align-middle text-right">
+					{{ number_format($certificateItem['position_total_amount'], 2, '.', ' ') }}
 				</td>
 				<td class="align-middle text-center">
 					{{ $certificateItem['certificate_status_name'] }}

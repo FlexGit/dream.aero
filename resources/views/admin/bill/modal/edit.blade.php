@@ -40,12 +40,12 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="amount">Amount</label>
-			<input type="number" class="form-control" id="amount" name="amount" value="{{ $bill->amount }}" placeholder="Amount">
+			<input type="number" class="form-control" id="amount" name="amount" value="{{ $bill->total_amount }}" placeholder="Amount">
 		</div>
 	</div>
 </div>
 <div class="row">
-	<div class="col">
+	{{--<div class="col">
 		<div class="form-group">
 			<label for="position_id">Item</label>
 			<select class="form-control" id="position_id" name="position_id">
@@ -55,7 +55,7 @@
 				@endforeach
 			</select>
 		</div>
-	</div>
+	</div>--}}
 	<div class="col">
 		@if ($bill->paymentMethod)
 			@if ($bill->paymentMethod->alias == app('\App\Models\PaymentMethod')::ONLINE_ALIAS)
@@ -78,6 +78,23 @@
 					@endif
 				</div>
 			@endif
+		@endif
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		@if(isset($bill->data_json['payment']))
+			<div>
+				<label>Payment details</label>
+			</div>
+			<div>
+				@foreach($bill->data_json['payment'] ?? [] as $key => $value)
+					@if($loop->index != 0)
+						|
+					@endif
+					{{ $key . ': ' . $value }}
+				@endforeach
+			</div>
 		@endif
 	</div>
 </div>

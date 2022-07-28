@@ -84,6 +84,8 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property-read int|null $scores_count
  * @property string|null $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereUuid($value)
+ * @property string|null $roistat номер визита Roistat
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereRoistat($value)
  */
 class Deal extends Model
 {
@@ -273,10 +275,10 @@ class Deal extends Model
 		return $this->hasOne(City::class, 'id', 'city_id');
 	}
 
-	public function scores()
+	/*public function scores()
 	{
 		return $this->hasMany(Score::class, 'deal_id', 'id');
-	}
+	}*/
 
 	/**
 	 * @return string
@@ -307,7 +309,7 @@ class Deal extends Model
 		foreach ($this->positions ?? [] as $position) {
 			if ($position->certificate && $position->certificate->status && in_array($position->certificate->status->alias, [Certificate::CANCELED_STATUS, Certificate::RETURNED_STATUS])) continue;
 			
-			$amount += $position->amount;
+			$amount += $position->total_amount;
 		}
 		
 		return $amount;
@@ -316,7 +318,7 @@ class Deal extends Model
 	/**
 	 * @return float|int
 	 */
-	public function scoreAmount()
+	/*public function scoreAmount()
 	{
 		$scoreAmount = 0;
 		if ($this->scores) {
@@ -328,7 +330,7 @@ class Deal extends Model
 		}
 		
 		return $scoreAmount;
-	}
+	}*/
 	
 	/**
 	 * @return int
@@ -341,7 +343,8 @@ class Deal extends Model
 			if (!$status) continue;
 			if ($bill->status->alias != Bill::PAYED_STATUS) continue;
 
-			$amount += $bill->amount;
+			//\Log::debug($bill->number . ' - ' . $bill->total_amount);
+			$amount += $bill->total_amount;
 		}
 
 		return $amount;
@@ -352,6 +355,7 @@ class Deal extends Model
 	 */
 	public function balance()
 	{
+		//\Log::debug($this->billPayedAmount() . ' - ' . $this->amount());
 		return $this->billPayedAmount() - $this->amount();
 	}
 	

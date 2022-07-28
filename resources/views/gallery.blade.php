@@ -17,43 +17,27 @@
 						<div class="item">
 							<div class="blockgallery">
 								<div class="descr">
-									<p>@lang('main.galereya.intro-text')</p>
+									<p>
+										Here are some photos taken during actual sessions on the Dream Aero flight simulator. See the emotions of entry-level pilots in a real aircraft cockpit. Real flight controls and a full motion simulation provide for a vivid visual representation of what it’s really like to fly a passenger aircraft.
+									</p>
 								</div>
 								<div class="filtr">
 									<form class="ajax-form" data-ajax="galereya/">
 										<button class="ajax-reset">@lang('main.galereya.all')</button>
 										<div class="two-filtr">
-											<a href="{{ url('#ourguestes') }}" class="obtain-button button-pipaluk button-pipaluk-orange" style="color: white; margin: 0;">
-												<i>@lang('main.galereya.our-guests')</i>
-											</a>
 											<div class="first-filtr">
 												<input id="photo_type" name="gallery_type" value="photo" type="radio">
 												<label for="photo_type">
-													<span>@lang('main.galereya.photo')</span>
+													<span>PHOTOS</span>
 												</label>
 											</div>
 											<div class="second-filtr">
 												<input id="video_type" name="gallery_type" value="video" type="radio">
 												<label for="video_type">
-													<span>@lang('main.galereya.video')</span>
+													<span>VIDEOS</span>
 												</label>
 											</div>
 										</div>
-										{{--<br>
-										<div id="opt-filter">
-											<input id="filtertype0" name="filtertype" value="0" checked="" type="radio">
-											<label for="filtertype0" class="button  button-pipaluk-orange active">
-												<span>Все</span>
-											</label>
-											<input id="filtertype1" name="filtertype" value="1" type="radio">
-											<label for="filtertype1" class="button button-pipaluk-orange">
-												<span>BOEING</span>
-											</label>
-											<input id="filtertype2" name="filtertype" value="2" type="radio">
-											<label for="filtertype2" class="button  button-pipaluk-orange">
-												<span>AIRBUS</span>
-											</label>
-										</div>--}}
 									</form>
 								</div>
 							</div>
@@ -70,10 +54,6 @@
 									</a>
 								@endforeach
 								<p style="margin-top: 80px;"></p>
-								{{--<div class="ajax-filter-count" data-count="16">
-									<a href="#" class="ajax-more button button-pipaluk button-pipaluk-orange"><i>Загрузить ещё</i></a>
-								</div>--}}
-								<div id="ourguestes"></div>
 							</div>
 						</div>
 					</div>
@@ -81,32 +61,6 @@
 			</div>
 		</div>
 	</article>
-
-	<div id="dag-content" class="guests">
-		<div class="container">
-			<div class="dag-new-top">
-				<h2>@lang('main.galereya.our-guests')</h2>
-			</div>
-			<div class="dag-white-line"></div>
-			<div class="dag-guests clearfix">
-				<div class="guests clearfix">
-					<div class="page_guests">
-						@foreach($guests as $item)
-							<div class="guest">
-								<a href="{{ (array_key_exists('video_url', $item->data_json) && $item->data_json['video_url']) ? $item->data_json['video_url'] : '#' }}" target="_blank">
-									<img src="{{ (array_key_exists('photo_preview_file_path', $item->data_json) && $item->data_json['photo_preview_file_path']) ? '/upload/' . $item->data_json['photo_preview_file_path'] : '' }}" alt="">
-								</a>
-								<div class="title clearfix">
-									<img src="{{ asset('img/insta-white.png') }}" alt="insta">
-									<span>{{ $item->title }} <a href="{{ (array_key_exists('video_url', $item->data_json) && $item->data_json['video_url']) ? $item->data_json['video_url'] : '#' }}">{{ strip_tags($item->preview_text) }}</a></span>
-								</div>
-							</div>
-						@endforeach
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	@include('forms.question')
 @endsection

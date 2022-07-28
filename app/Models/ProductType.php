@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|ProductType withTrashed()
  * @method static \Illuminate\Database\Query\Builder|ProductType withoutTrashed()
  * @mixin \Eloquent
+ * @property int $tax
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductType whereTax($value)
  */
 class ProductType extends Model
 {

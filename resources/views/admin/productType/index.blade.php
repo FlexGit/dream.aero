@@ -32,7 +32,7 @@
 							<th class="text-center">Name</th>
 							<th class="text-center">Alias</th>
 							<th class="text-center">Is tariff</th>
-							<th class="text-center">Tax</th>
+							<th class="text-center">Vat</th>
 							<th class="text-center">Is active</th>
 							<th class="text-center">Action</th>
 						</tr>

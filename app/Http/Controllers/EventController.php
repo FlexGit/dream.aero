@@ -132,7 +132,7 @@ class EventController extends Controller
 					// контактное лицо
 					$title = $deal ? $deal->name . ' ' . HelpFunctions::formatPhone($deal->phone) : '';
 					// тариф
-					$title .= $product ? ' ' . $product->name : '';
+					$title .= $product ? ' | ' . $product->name : '';
 					// доп. время
 					if ($event->extra_time) {
 						$title .= '(+' . $event->extra_time . ')';
@@ -158,7 +158,7 @@ class EventController extends Controller
 						}
 						
 						// инфа о Сертификате
-						$title .= '. Voucher: ' . $certificate->number . ' ' . Carbon::parse($certificate->created_at)->format('d.m.Y') . ' = ' . ($amount ?? '-') . '$' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
+						$title .= ' | Voucher: ' . $certificate->number . ' ' . Carbon::parse($certificate->created_at)->format('d.m.Y') . ' = ' . ($amount ?? '-') . '$' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
 					}
 					
 					if ($position) {
@@ -174,21 +174,23 @@ class EventController extends Controller
 						}
 					}
 					
-					// сумма Сделки
-					$title .= '. Deal amount ' . $deal->amount() . '$';
+					// сумма Позиции сделки
+					if ($position) {
+						$title .= ' | Amount ' . ($position->currency ? $position->currency->name : '') . $position->total_amount;
+					}
 					
 					// способы оплаты
 					if ($paymentMethodNames) {
-						$title .= '. ' . implode(', ', array_unique($paymentMethodNames));
+						$title .= ' | ' . implode(', ', array_unique($paymentMethodNames));
 					}
 					
 					// инфа об акции
 					if (isset($promo)) {
-						$title .= '. Promo: ' . $promo->name . ' (' . ($promo->discount ? $promo->discount->valueFormatted() : '') . ')';
+						$title .= ' | Promo: ' . $promo->name . ' (' . ($promo->discount ? $promo->discount->valueFormatted() : '') . ')';
 					}
 					// инфа о промокоде
 					if (isset($promocode)) {
-						$title .= '. Promo code: ' . $promocode->number . ' (' . ($promocode->discount ? $promocode->discount->valueFormatted() : '') . ')';
+						$title .= ' | Promo code: ' . $promocode->number . ' (' . ($promocode->discount ? $promocode->discount->valueFormatted() : '') . ')';
 					}
 					// время работы платформы от админа
 					/*if ($event->simulator_up_at || $event->simulator_down_at) {
@@ -196,19 +198,19 @@ class EventController extends Controller
 					}*/
 					// спонтанный полет
 					if ($event->is_unexpected_flight) {
-						$title .= '. Spontaneous';
+						$title .= ' | Spontaneous';
 					}
 					// повторный полет
 					if ($event->is_repeated_flight) {
-						$title .= '. Repeated';
+						$title .= ' | Repeated';
 					}
 					// описание
 					if ($event->description) {
-						$title .= '. ' . $event->description;
+						$title .= ' | ' . $event->description;
 					}
 					// инфа о прикрепленном к событию документе
 					if (is_array($event->data_json) && array_key_exists('doc_file_path', $event->data_json) && $event->data_json['doc_file_path']) {
-						$title .= '. Document attached';
+						$title .= ' | Document attached';
 					}
 					
 					$allDay = false;
@@ -794,7 +796,7 @@ class EventController extends Controller
 					
 					$commentId = $this->request->comment_id ?? 0;
 					$commentText = $this->request->comment ?? '';
-					$user = \Auth::user();
+					$user = Auth::user();
 					if ($commentText) {
 						if ($commentId) {
 							$comment = $event->comments->find($commentId);
@@ -975,7 +977,7 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -985,6 +987,7 @@ class EventController extends Controller
 		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		$flightInvitationFilePath = (is_array($event->data_json) && array_key_exists('flight_invitation_file_path', $event->data_json)) ? $event->data_json['flight_invitation_file_path'] : '';
+		$docFilePath = (is_array($event->data_json) && array_key_exists('doc_file_path', $event->data_json)) ? $event->data_json['doc_file_path'] : '';
 		
 		if (!$event->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
@@ -992,6 +995,9 @@ class EventController extends Controller
 		
 		if ($flightInvitationFilePath) {
 			Storage::disk('private')->delete($flightInvitationFilePath);
+		}
+		if ($docFilePath) {
+			Storage::disk('private')->delete($docFilePath);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -1037,7 +1043,7 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -1047,15 +1053,16 @@ class EventController extends Controller
 		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
 		$data = $event->data_json;
-		if(is_array($data)
-			&& array_key_exists('doc_file_path', $data)
-			&& $data['doc_file_path']) {
+		if(is_array($data) && array_key_exists('doc_file_path', $data) && $data['doc_file_path']) {
+			$docFilePath = $data['doc_file_path'];
 			$data['doc_file_path'] = '';
 			$event->data_json = $data;
 			if (!$event->save()) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 			}
-
+			
+			Storage::disk('private')->delete($docFilePath);
+			
 			return response()->json(['status' => 'success', 'msg' => trans('main.success.файл-успешно-удален')]);
 		}
 		

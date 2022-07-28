@@ -36,7 +36,7 @@ class Currency extends Model
 	use HasFactory, SoftDeletes;
 
 	const USD_ALIAS = 'USD';
-	const SCORE_ALIAS = 'SCORE';
+	const USD_NAME = '$';
 
 	/**
 	 * The attributes that are mass assignable.

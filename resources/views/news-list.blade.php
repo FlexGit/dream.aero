@@ -22,7 +22,7 @@
 									<article class="row">
 										<div class="col-md-6">
 											<div class="img">
-												<a href="/news/{{ $oneNews->alias }}">@lang('main.news.подробнее')</a>
+												<a href="news/{{ $oneNews->alias }}">@lang('main.news.подробнее')</a>
 												@if(is_array($oneNews->data_json) && array_key_exists('photo_preview_file_path', $oneNews->data_json))
 													<img src="/upload/{{ $oneNews->data_json['photo_preview_file_path'] }}" alt="">
 												@endif
@@ -30,9 +30,9 @@
 										</div>
 										<div class="col-md-6">
 											<div class="item">
-												<a href="/news/{{ $oneNews->alias }}"><h2>{{ $oneNews->title }}</h2></a>
+												<a href="news/{{ $oneNews->alias }}"><h2>{{ $oneNews->title }}</h2></a>
 												<p></p>
-												<span>{{ $oneNews->published_at->format('d.m.Y') }}</span>
+												<span>{{ $oneNews->published_at->format('m-d-Y') }}</span>
 											</div>
 										</div>
 									</article>

@@ -12,24 +12,27 @@
 								<td width="4" height="4"><p style="margin:0;font-size:1px;line-height:1px;">&nbsp;</p></td>
 								<td colspan="3" rowspan="3" bgcolor="#FFFFFF" style="padding:10px 0 30px;text-align:center">
 									<a href="https://dream.aero" style="display:flex;width:167px;height:auto;margin:0 auto;" target="_blank" rel=" noopener noreferrer">
-										<img src="https://dream.aero/assets/img/logo-new-mail.png" width="172px" alt="logo" style="display: flex; border: 0; margin: 0;">
+										<img src="https://dream.aero/assets/img/logo-eng.png" width="172px" alt="logo" style="display: flex; border: 0; margin: 0;">
 									</a>
 
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
-										Dear Mr/Ms {{ $name ?? '' }}</p>
+										Hi {{ $name ?? '' }},
+									</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
-										Greetings from Dream Aero!</p>
+										Thank you for choosing Dream Aero.
+									</p>
+									<p style="margin:15px 30px 33px;text-align:left;font-size:14px;line-height:30px;color:#484a42;">Attached is your flight voucher # <b>{{ $certificate->number }}</b>. The voucher is valid <b>{{ $certificate->expire_at ? 'until ' . \Carbon\Carbon::parse($certificate->expire_at)->format('d.m.Y') : 'termless' }}</b>.</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
-										Thank you for choosing us.</p>
-									<p style="margin:15px 30px 33px;text-align:left;font-size:14px;line-height:30px;color:#484a42;">In attachment you can find your flight voucher # <b>{{ $certificate->number }}</b>. Voucher validity <b>{{ $certificate->expire_at ? 'till ' . \Carbon\Carbon::parse($certificate->expire_at)->format('d.m.Y') : 'termless' }}</b>.</p>
+										Please book your flight beforehand.
+									</p>
 									<p style="border-top:2px solid #e5e5e5;font-size:5px;line-height:5px;margin:0 30px 29px;">&nbsp;</p>
 									<table cellpadding="0" cellspacing="0" border="0" width="100%">
 										<tbody>
 										<tr valign="top">
 											<td width="30"><p style="margin:0;font-size:1px;line-height:1px;">&nbsp;</p></td>
 											<td style="text-align:left;">
-												<p style="margin:0 0 4px;font-weight:bold;color:#333333;font-size:14px;line-height:22px;">If you have any questions,</p>
-												<p style="margin:0;color:#333333;font-size:11px;line-height:18px;">our administrator is ready to answer them.<br>Call us <a target="_blank" rel="noopener noreferrer"><span class="js-phone-number">{{ $city->phone ?? '' }}</span></a> or e-mail us <a href="mailto:{{ $city->email ?? '' }}" target="_blank" rel="noopener noreferrer">{{ $city->email ?? '' }}</a>
+												<p style="margin:0 0 4px;font-weight:bold;color:#333333;font-size:14px;line-height:22px;">NEED HELP?</p>
+												<p style="margin:0;color:#333333;font-size:11px;line-height:18px;">Our customer service team are always on hand to answer any questions you may have.<br>Call us at <a target="_blank" rel="noopener noreferrer"><span class="js-phone-number">{{ $city->phone ?? '' }}</span></a> or e-mail at <a href="mailto:{{ $city->email ?? '' }}" target="_blank" rel="noopener noreferrer">{{ $city->email ?? '' }}</a>
 												</p>
 												<p style="margin:10px 0;font-size:1px;line-height:1px;">&nbsp;</p>
 												<a href="https://www.facebook.com/dreamaerous/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">

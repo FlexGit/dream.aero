@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Локации
+				Locations
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
-				<li class="breadcrumb-item"><a href="/">Главная</a></li>
-				<li class="breadcrumb-item active">Локации</li>
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Locations</li>
 			</ol>
 		</div>
 	</div>
@@ -22,7 +22,7 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="table-filter d-sm-flex mb-2">
-						<div class="form-group">
+						{{--<div class="form-group">
 							<label for="filter_city_id">Город</label>
 							<select class="form-control" id="filter_city_id" name="filter_city_id">
 								<option value="0">Все</option>
@@ -39,21 +39,21 @@
 									<option value="{{ $legalEntity->id }}">{{ $legalEntity->name }}</option>
 								@endforeach
 							</select>
-						</div>
+						</div>--}}
 						<div class="form-group align-self-end text-right ml-auto pl-2">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/location/add" data-action="/location" data-method="POST" data-title="Добавление" class="btn btn-secondary btn-sm" title="Добавить запись">Добавить</a>
+							<a href="javascript:void(0)" data-toggle="modal" data-url="/location/add" data-action="/location" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
 						</div>
 					</div>
 					<table id="locationTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
 						<tr>
-							<th class="text-center">Наименование</th>
-							<th class="text-center d-none d-sm-table-cell">Алиас</th>
-							<th class="text-center d-none d-md-table-cell">Авиатренажеры</th>
-							<th class="text-center d-none d-lg-table-cell">Город</th>
-							<th class="text-center d-none d-xl-table-cell">Юр.лицо</th>
-							<th class="text-center d-none d-xl-table-cell">Активность</th>
-							<th class="text-center">Действие</th>
+							<th class="text-center">Name</th>
+							<th class="text-center d-none d-sm-table-cell">Alias</th>
+							<th class="text-center d-none d-md-table-cell">Flight Simulators</th>
+							{{--<th class="text-center d-none d-lg-table-cell">City</th>--}}
+							{{--<th class="text-center d-none d-xl-table-cell">Юр.лицо</th>--}}
+							<th class="text-center d-none d-xl-table-cell">Is active</th>
+							<th class="text-center">Action</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -68,7 +68,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalLabel">Редактирование</h5>
+					<h5 class="modal-title" id="modalLabel">Edit</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -76,8 +76,8 @@
 				<form id="location" enctype="multipart/form-data">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn btn-primary">Подтвердить</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
 				</form>
 			</div>
@@ -98,15 +98,15 @@
 			function getList() {
 				var $selector = $('#locationTable tbody');
 
-				$selector.html('<tr><td colspan="30" class="text-center">Загрузка данных...</td></tr>');
+				$selector.html('<tr><td colspan="30" class="text-center">Loading data...</td></tr>');
 
 				$.ajax({
 					url: "{{ route('locationList') }}",
 					type: 'GET',
 					dataType: 'json',
 					data: {
-						"filter_city_id": $('#filter_city_id').val(),
-						"filter_legal_entity_id": $('#filter_legal_entity_id').val(),
+						/*"filter_city_id": $('#filter_city_id').val(),
+						"filter_legal_entity_id": $('#filter_legal_entity_id').val(),*/
 					},
 					success: function(result) {
 						if (result.status !== 'success') {
@@ -117,7 +117,7 @@
 						if (result.html) {
 							$selector.html(result.html);
 						} else {
-							$selector.html('<tr><td colspan="30" class="text-center">Ничего не найдено</td></tr>');
+							$selector.html('<tr><td colspan="30" class="text-center">Nothing found</td></tr>');
 						}
 					}
 				})
@@ -134,7 +134,7 @@
 					title = $(this).data('title');
 
 				if (!url) {
-					toastr.error('Некорректные параметры');
+					toastr.error('Incorrect parameters');
 					return null;
 				}
 
@@ -194,13 +194,13 @@
 							return;
 						}
 
-						var msg = 'Локация успешно ';
+						var msg = 'Location successfully ';
 						if (method === 'POST') {
-							msg += 'добавлена';
+							msg += 'added';
 						} else if (method === 'PUT') {
-							msg += 'сохранена';
+							msg += 'saved';
 						} else if (method === 'DELETE') {
-							msg += 'удалена';
+							msg += 'deleted';
 						}
 
 						$('#modal').modal('hide');
@@ -214,9 +214,9 @@
 				$(this).next('.custom-file-label').html($(this).val());
 			});
 
-			$(document).on('change', '#filter_city_id, #filter_legal_entity_id', function(e) {
+			/*$(document).on('change', '#filter_city_id, #filter_legal_entity_id', function(e) {
 				getList();
-			});
+			});*/
 
 			$(document).on('change', '.js-simulator', function(e) {
 				var disabled = true;

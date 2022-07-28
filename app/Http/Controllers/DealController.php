@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use LVR\CreditCard\CardCvc;
+use LVR\CreditCard\CardNumber;
+use LVR\CreditCard\CardExpirationDate;
+
 use App\Models\Bill;
 use App\Models\Certificate;
 use App\Models\Content;
@@ -18,7 +22,6 @@ use App\Models\Location;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\Promocode;
-use App\Models\Score;
 use App\Models\Status;
 use App\Models\User;
 use App\Repositories\CityRepository;
@@ -29,6 +32,7 @@ use App\Repositories\DealPositionRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\DealRepository;
 use App\Repositories\StatusRepository;
+use App\Services\AuthorizeNetService;
 use App\Services\HelpFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -386,18 +390,26 @@ class DealController extends Controller
 		
 		if ($this->request->source == Deal::WEB_SOURCE) {
 			$rules = [
-				'name' => 'required',
-				'email' => 'required|email',
-				'phone' => 'required',
-				'product_id' => 'required',
+				'product_id' => ['required', 'numeric', 'min:0|not_in:0'],
+				'name' => ['required'],
+				'email' => ['required', 'email'],
+				'phone' => ['required'],
+				'card_number' => ['required', new CardNumber],
+				'expiration_date' => ['required', new CardExpirationDate('mY')],
+				'card_name' => ['required'],
+				'card_code' => ['required', new CardCvc($this->request->card_number)],
 			];
 			
 			$validator = Validator::make($this->request->all(), $rules)
 				->setAttributeNames([
-					'name' => trans('main.modal-certificate.имя'),
-					'email' => trans('main.modal-certificate.email'),
-					'phone' => trans('main.modal-certificate.телефон'),
-					'product_id' => trans('main.modal-certificate.выберите-продолжительность-полета'),
+					'product_id' => 'Flight option',
+					'name' => 'Name',
+					'email' => 'E-mail',
+					'phone' => 'Phone number',
+					'card_number' => 'Card number',
+					'expiration_date' => 'Expiration date',
+					'card_name' => 'Full name',
+					'card_code' => 'CVC',
 				]);
 			if (!$validator->passes()) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.проверьте-правильность-заполнения-полей-формы'), 'errors' => $validator->errors()]);
@@ -408,7 +420,6 @@ class DealController extends Controller
 				'email' => 'required|email',
 				'phone' => 'required|valid_phone',
 				'product_id' => 'required|numeric|min:0|not_in:0',
-				/*'city_id' => 'required|numeric|min:0',*/
 			];
 			
 			$validator = Validator::make($this->request->all(), $rules)
@@ -417,35 +428,40 @@ class DealController extends Controller
 					'email' => 'E-mail',
 					'phone' => 'Phone',
 					'product_id' => 'Product',
-					/*'city_id' => 'Город',*/
 				]);
 			if (!$validator->passes()) {
 				return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 			}
 		}
 		
-		$cityId = $this->request->city_id/* ?: $this->request->user()->city_id*/;
+		$cityId = $this->request->city_id;
 		$productId = $this->request->product_id ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
 		$promocodeUuid = $this->request->promocode_uuid ?? '';
-		$certificateWhom = $this->request->certificate_whom ?? '';
-		$certificateWhomPhone = $this->request->certificate_whom_phone ?? '';
 		$comment = $this->request->comment ?? '';
-		$deliveryAddress = $this->request->delivery_address ?? '';
 		$certificateExpireAt = $this->request->certificate_expire_at ?? null;
-		$amount = $this->request->amount ?? 0;
 		$contractorId = $this->request->contractor_id ?? 0;
 		$name = $this->request->name ?? '';
 		$email = $this->request->email ?? '';
 		$phone = $this->request->phone ?? '';
 		$source = $this->request->source ?? '';
-		$isUnified = $this->request->is_unified ?? 0;
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
 		$isPaid = (bool)$this->request->is_paid;
+		$cardNumber = $this->request->card_number ?? '';
+		$expirationDate = $this->request->expiration_date ?? '';
+		if ($expirationDate) {
+			$expirationDate = mb_substr($expirationDate, 2, 4) . '-' . mb_substr($expirationDate, 0, 2);
+		}
+		$cardCode = $this->request->card_code ?? '';
 		
 		$product = Product::find($productId);
 		if (!$product) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$productType = $product->productType;
+		if (!$productType) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
@@ -492,15 +508,6 @@ class DealController extends Controller
 		}
 		
 		$data = [];
-		if ($certificateWhom) {
-			$data['certificate_whom'] = $certificateWhom;
-		}
-		if ($certificateWhomPhone) {
-			$data['certificate_whom_phone'] = $certificateWhomPhone;
-		}
-		if ($deliveryAddress) {
-			$data['delivery_address'] = $deliveryAddress ?? '';
-		}
 		if ($comment) {
 			$data['comment'] = $comment;
 		}
@@ -517,6 +524,12 @@ class DealController extends Controller
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-с-таким-e-mail-уже-существует')]);
 			}
 		}
+		
+		$amount = $product->calcAmount($contractorId, $cityId, $source, false, 0, $paymentMethodId, $promoId, $promocodeId, 0, false, false, 0, true);
+		$tax = round($amount * $productType->tax / 100, 2);
+		$totalAmount = round($amount + $tax, 2);
+		
+		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 		
 		try {
 			\DB::beginTransaction();
@@ -535,7 +548,7 @@ class DealController extends Controller
 			$certificate = new Certificate();
 			$certificateStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);
 			$certificate->status_id = $certificateStatus->id ?? 0;
-			$certificate->city_id = ($isUnified || !$cityId) ? 0 : $cityId;
+			$certificate->city_id = $cityId;
 			$certificate->product_id = $product->id ?? 0;
 			$certificatePeriod = ($product && array_key_exists('certificate_period', $product->data_json)) ? $product->data_json['certificate_period'] : 6;
 			$certificate->expire_at = Carbon::parse($certificateExpireAt)->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
@@ -545,7 +558,7 @@ class DealController extends Controller
 			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CREATED_STATUS);
 			$deal->status_id = $dealStatus->id ?? 0;
 			$deal->contractor_id = $contractor->id ?? 0;
-			$deal->city_id = /*$isUnified ? 0 : */$cityId ?: $this->request->user()->city_id;
+			$deal->city_id = $cityId ?: $this->request->user()->city_id;
 			$deal->name = $name;
 			$deal->phone = $phone;
 			$deal->email = $email;
@@ -558,8 +571,10 @@ class DealController extends Controller
 			$position->certificate_id = $certificate->id ?? 0;
 			$position->duration = $product->duration ?? 0;
 			$position->amount = $amount;
-			$position->currency_id = $cityProduct->pivot->currency_id ?? 0;
-			$position->city_id = /*$isUnified ? 0 : */$cityId ?: $this->request->user()->city_id;
+			$position->tax = $tax;
+			$position->total_amount = $totalAmount;
+			$position->currency_id = $currency->id ?? 0;
+			$position->city_id = $cityId ?: $this->request->user()->city_id;
 			$position->promo_id = $promo->id ?? 0;
 			$position->promocode_id = ($promocodeId || $promocodeUuid) ? $promocode->id : 0;
 			$position->is_certificate_purchase = true;
@@ -570,25 +585,23 @@ class DealController extends Controller
 
 			$deal->positions()->save($position);
 			
-			
 			if ($amount) {
 				$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 				$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
 				$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
-				$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 				
 				if ($source == Deal::WEB_SOURCE) {
 					$billLocation = $city->getLocationForBill($product);
-					if (!$billLocation) {
+					/*if (!$billLocation) {
 						\DB::rollback();
 						
 						Log::debug('500 - Certificate Deal Create: Не найден номер счета платежной системы');
 						
 						return response()->json(['status' => 'error', 'reason' => trans('main.error.не-найден-номер-счета-платежной-системы')]);
-					}
+					}*/
 					$billLocationId = $billLocation->id;
 				} else {
-					$billLocationId = $this->request->user()->location_id ?? 0;
+					$billLocationId = $user ? $user->location_id : 0;
 				}
 				
 				$bill = new Bill();
@@ -600,13 +613,12 @@ class DealController extends Controller
 				$bill->status_id = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? $billPayedStatus->id : $billStatus->id;
 				$bill->payed_at = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? Carbon::now()->format('Y-m-d H:i:s') : null;
 				$bill->amount = $amount;
+				$bill->tax = $tax;
+				$bill->total_amount = $totalAmount;
 				$bill->currency_id = $currency->id ?? 0;
+				$bill->city_id = $cityId ?: $this->request->user()->city_id;
 				$bill->user_id = $this->request->user()->id ?? 0;
 				$bill->save();
-				
-				/*if ($this->request->user()) {
-					\Log::debug($bill->number . ' - ' . $source . ' - ' . $billLocationId . ' - ' . $this->request->user()->id . ' - ' . $this->request->user()->location_id);
-				}*/
 				
 				$deal->bills()->save($bill);
 			}
@@ -615,21 +627,45 @@ class DealController extends Controller
 				$promocode->contractors()->save($contractor);
 			}
 			
+			$paymentResponse = null;
+			if (in_array($source, [Deal::WEB_SOURCE])) {
+				$paymentResponse = AuthorizeNetService::payment($bill, $cardNumber, $expirationDate, $cardCode, $deal->email, $product->name);
+
+				Log::channel('authorize')->info($paymentResponse);
+
+				if ($paymentResponse['status'] == 'error') {
+					\DB::rollback();
+
+					return response()->json(['status' => 'error', 'reason' => $paymentResponse['original']['error_code'] . ': ' . $paymentResponse['original']['error_message']]);
+				}
+				
+				$billData = [
+					'payment' => [
+						'status' => $paymentResponse['status'],
+						'transaction_id' => $paymentResponse['transaction_id'],
+						'transaction_code' => $paymentResponse['transaction_code'],
+						'message_code' => $paymentResponse['message_code'],
+						'auth_code' => $paymentResponse['auth_code'],
+						'description' => $paymentResponse['description'],
+					],
+				];
+				
+				$bill->status_id = $billPayedStatus->id;
+				$bill->payed_at = Carbon::now();
+				$bill->data_json = $billData;
+				$bill->save();
+			}
+			
 			\DB::commit();
 		} catch (Throwable $e) {
 			\DB::rollback();
 			
 			Log::debug('500 - Deal Certificate Store: ' . $e->getMessage());
 			
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже'), 'error_code' => $e->getMessage()]);
 		}
 		
-		if (in_array($source, [Deal::WEB_SOURCE])) {
-			$paymentFormHtml = PayAnyWayService::generatePaymentForm($bill);
-			return response()->json(['status' => 'success', 'message' => trans('main.success.заявка-успешно-отправлена-перенаправляем-на-страницу-оплаты'), 'html' => $paymentFormHtml]);
-		}
-
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Your Order # <b>' . $deal->number . '</b> has been successfully submitted.<br>Soon you will receive your Voucher by E-mail', 'paymentResponse' => $paymentResponse]);
 	}
 
 	/**
@@ -642,6 +678,7 @@ class DealController extends Controller
 		}
 		
 		$user = \Auth::user();
+		$city = $user->city;
 		
 		if ($user) {
 			if (!$user->isAdminOrHigher()) {
@@ -649,7 +686,7 @@ class DealController extends Controller
 			}
 		}
 		
-		if ($this->request->source == Deal::WEB_SOURCE) {
+		/*if ($this->request->source == Deal::WEB_SOURCE) {
 			$rules = [
 				'name' => 'required',
 				'email' => 'required|email',
@@ -671,15 +708,15 @@ class DealController extends Controller
 			if (!$validator->passes()) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.проверьте-правильность-заполнения-полей-формы'), 'errors' => $validator->errors()]);
 			}
-		} else {
+		} else {*/
 			switch ($this->request->event_type) {
 				case Event::EVENT_TYPE_DEAL:
 					$rules = [
 						'name' => 'required',
 						'email' => 'required|email',
-						'phone' => 'required', //|valid_phone
+						'phone' => 'required',
 						'product_id' => 'required|numeric|min:0|not_in:0',
-						'location_id' => 'required|numeric|min:0|not_in:0',
+						/*'location_id' => 'required|numeric|min:0|not_in:0',*/
 						'flight_date_at' => 'required|date',
 						'flight_time_at' => 'required',
 					];
@@ -690,7 +727,7 @@ class DealController extends Controller
 							'email' => trans('main.modal-booking.email'),
 							'phone' => trans('main.modal-booking.телефон'),
 							'product_id' => trans('main.modal-booking.выберите-продолжительность-полета'),
-							'location_id' => trans('main.modal-booking.локация'),
+							/*'location_id' => trans('main.modal-booking.локация'),*/
 							'flight_date_at' => 'Start date',
 							'flight_time_at' => 'Start time',
 						]);
@@ -698,7 +735,7 @@ class DealController extends Controller
 				case Event::EVENT_TYPE_BREAK:
 				case Event::EVENT_TYPE_CLEANING:
 					$rules = [
-						'location_id' => 'required|numeric|min:0|not_in:0',
+						/*'location_id' => 'required|numeric|min:0|not_in:0',*/
 						'flight_date_at' => 'required|date',
 						'flight_time_at' => 'required',
 						'flight_date_stop_at' => 'required|date',
@@ -707,7 +744,7 @@ class DealController extends Controller
 					
 					$validator = Validator::make($this->request->all(), $rules)
 						->setAttributeNames([
-							'location_id' => trans('main.modal-booking.локация'),
+							/*'location_id' => trans('main.modal-booking.локация'),*/
 							'flight_date_at' => 'Start date',
 							'flight_time_at' => 'Start time',
 							'flight_date_stop_at' => 'End date',
@@ -716,7 +753,7 @@ class DealController extends Controller
 				break;
 				case Event::EVENT_TYPE_USER_FLIGHT:
 					$rules = [
-						'location_id' => 'required|numeric|min:0|not_in:0',
+						/*'location_id' => 'required|numeric|min:0|not_in:0',*/
 						'flight_date_at' => 'required|date',
 						'flight_time_at' => 'required',
 						'flight_date_stop_at' => 'required|date',
@@ -726,7 +763,7 @@ class DealController extends Controller
 					
 					$validator = Validator::make($this->request->all(), $rules)
 						->setAttributeNames([
-							'location_id' => trans('main.modal-booking.локация'),
+							/*'location_id' => trans('main.modal-booking.локация'),*/
 							'flight_date_at' => 'Start date',
 							'flight_time_at' => 'Start time',
 							'flight_date_stop_at' => 'End date',
@@ -736,7 +773,7 @@ class DealController extends Controller
 				break;
 				case Event::EVENT_TYPE_TEST_FLIGHT:
 					$rules = [
-						'location_id' => 'required|numeric|min:0|not_in:0',
+						/*'location_id' => 'required|numeric|min:0|not_in:0',*/
 						'flight_date_at' => 'required|date',
 						'flight_time_at' => 'required',
 						'flight_date_stop_at' => 'required|date',
@@ -746,7 +783,7 @@ class DealController extends Controller
 					
 					$validator = Validator::make($this->request->all(), $rules)
 						->setAttributeNames([
-							'location_id' => trans('main.modal-booking.локация'),
+							/*'location_id' => trans('main.modal-booking.локация'),*/
 							'flight_date_at' => 'Start date',
 							'flight_time_at' => 'Start time',
 							'flight_date_stop_at' => 'End date',
@@ -758,9 +795,9 @@ class DealController extends Controller
 			if (!$validator->passes()) {
 				return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 			}
-		}
+		/*}*/
 		
-		$cityId = $this->request->city_id ?: $this->request->user()->city_id;
+		/*$cityId = $this->request->city_id ?: $this->request->user()->city_id;*/
 		$productId = $this->request->product_id ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
@@ -779,8 +816,8 @@ class DealController extends Controller
 		$flightAt = str_replace(' AM', '', $flightAt);
 		$flightAt = str_replace(' PM', '', $flightAt);
 		$flightStopAt = ($this->request->flight_date_stop_at ?? '') . ' ' . ($this->request->flight_time_stop_at ?? '');
-		$locationId = $this->request->location_id ?? 0;
-		$simulatorId = $this->request->flight_simulator_id ?? 0;
+		/*$locationId = $this->request->location_id ?? 0;
+		$simulatorId = $this->request->flight_simulator_id ?? 0;*/
 		$certificateNumber = $this->request->certificate ?? '';
 		$certificateUuid = $this->request->certificate_uuid ?? '';
 		$isIndefinitely = $this->request->is_indefinitely ?? 0;
@@ -803,33 +840,40 @@ class DealController extends Controller
 			if (!$product) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 			}
+			
+			$productType = $product->productType;
+			if (!$productType) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+			}
+			
 			if ($source != Deal::WEB_SOURCE && !$product->validateFlightDate($flightAt)) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.для-бронирования-полета-по-тарифу-regular-доступны-только-будние-дни')]);
 			}
 		}
 		
-		$location = Location::find($locationId);
+		$location = Location::where('city_id', $city->id)
+			->first();
 		if (!$location) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 		}
 		
-		if (!$cityId) {
+		/*if (!$cityId) {
 			$cityId = $location->city->id ?? 0;
 		}
 
 		$city = $this->cityRepo->getById($cityId);
 		if (!$city) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
-		}
+		}*/
 		
 		if (in_array($eventType, [Event::EVENT_TYPE_DEAL])) {
-			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId);
+			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 			if (!$cityProduct) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			}
 		}
 		
-		$simulator = FlightSimulator::find($simulatorId);
+		$simulator = $location->simulators()->first();
 		if (!$simulator) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 		}
@@ -870,7 +914,7 @@ class DealController extends Controller
 			
 			// проверка сертификата на валидность
 			if ($certificateNumber) {
-				$certificate = Certificate::whereIn('city_id', [$cityId, 0])
+				$certificate = Certificate::whereIn('city_id', [$city->id, 0])
 					->where('number', $certificateNumber)
 					->first();
 			} elseif ($certificateUuid) {
@@ -879,9 +923,9 @@ class DealController extends Controller
 			if (!$certificate) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 			}
-			if ($certificate->wasUsed()) {
+			/*if ($certificate->wasUsed()) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-уже-был-ранее-использован')]);
-			}
+			}*/
 			if (in_array($source, [Deal::WEB_SOURCE, Deal::MOB_SOURCE]) && !in_array($certificate->status_id, [$certificateStatus->id, 0])) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.Incorrect Certificate Status')]);
 			}
@@ -892,13 +936,13 @@ class DealController extends Controller
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.срок-действия-сертификата-истек')]);
 			}
 			$certificateId = $certificate->id;
-			$certificateProduct = $certificate->product;
+			/*$certificateProduct = $certificate->product;
 			if ($certificateProduct && $certificateProduct->alias != $product->alias) {
 				$certificateCityProduct = $certificateProduct->cities()->where('cities_products.is_active', true)->find($cityId);
 				if ($certificateCityProduct && $certificateCityProduct->pivot) {
 					$certificateProductAmount = $certificateCityProduct->pivot->price;
 				}
-			}
+			}*/
 		}
 		
 		if ($contractorId) {
@@ -914,15 +958,18 @@ class DealController extends Controller
 			}
 		}
 
-		//\Log::debug($amount . ' - ' . $certificateProductAmount);
-		//$amount -= $certificateProductAmount;
-		//if ($amount < 0) $amount = 0;
-		
 		$data = [];
 		if ($comment) {
 			$data['comment'] = $comment;
 		}
-
+		
+		$tax = $totalAmount = 0;
+		if ($amount) {
+			$tax = round($amount * $productType->tax / 100, 2);
+			$totalAmount = round($amount + $tax, 2);
+		}
+		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
+		
 		try {
 			\DB::beginTransaction();
 
@@ -933,38 +980,40 @@ class DealController extends Controller
 						$contractor->name = $name;
 						$contractor->email = $email;
 						$contractor->phone = $phone;
-						$contractor->city_id = $cityId ?: $this->request->user()->city_id;
+						$contractor->city_id = $city ? $city->id : 0;
 						$contractor->source = $source ?: Contractor::ADMIN_SOURCE;
-						$contractor->user_id = $this->request->user()->id ?? 0;
+						$contractor->user_id = $user ? $user->id : 0;
 						$contractor->save();
 					}
 					
 					$deal = new Deal();
 					$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CREATED_STATUS);
-					$deal->status_id = $dealStatus->id ?? 0;
-					$deal->contractor_id = $contractor->id ?? 0;
-					$deal->city_id = $cityId ?: $this->request->user()->city_id;
+					$deal->status_id = $dealStatus->id;
+					$deal->contractor_id = $contractor->id;
+					$deal->city_id = $city ? $city->id : 0;
 					$deal->name = $name;
 					$deal->phone = $phone;
 					$deal->email = $email;
 					$deal->source = $source ?: Deal::ADMIN_SOURCE;
-					$deal->user_id = $this->request->user()->id ?? 0;
+					$deal->user_id = $user ? $user->id : 0;
 					$deal->save();
 					
 					$position = new DealPosition();
-					$position->product_id = $product->id ?? 0;
+					$position->product_id = $product->id;
 					$position->certificate_id = $certificateId;
-					$position->duration = $product->duration ?? 0;
+					$position->duration = $product->duration;
 					$position->amount = $amount;
-					$position->currency_id = $cityProduct->pivot->currency_id ?? 0;
-					$position->city_id = $cityId ?: $this->request->user()->city_id;
-					$position->location_id = $location->id ?? 0;
-					$position->flight_simulator_id = $simulator->id ?? 0;
+					$position->tax = $tax;
+					$position->total_amount = $totalAmount;
+					$position->currency_id = $currency ? $currency->id : 0;
+					$position->city_id = $city ? $city->id : 0;
+					$position->location_id = $location->id;
+					$position->flight_simulator_id = $simulator->id;
 					$position->promo_id = $promo->id ?? 0;
 					$position->promocode_id = ($promocodeId || $promocodeUuid) ? $promocode->id : 0;
 					$position->flight_at = Carbon::parse($flightAt)->format('Y-m-d H:i');
 					$position->source = $source ?: Deal::ADMIN_SOURCE;
-					$position->user_id = $this->request->user()->id ?? 0;
+					$position->user_id = $user ? $user->id : 0;
 					$position->data_json = !empty($data) ? $data : null;
 					$position->save();
 				
@@ -974,30 +1023,27 @@ class DealController extends Controller
 						$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 						$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
 						$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
-						$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 						
 						if ($source == Deal::WEB_SOURCE) {
-							$billLocationId = $location->id ?? 0;
+							$billLocationId = $location ? $location->id : 0;
 						} else {
-							$billLocationId = $this->request->user()->location_id ?? 0;
+							$billLocationId = $user ? $user->location_id : 0;
 						}
 						
 						$bill = new Bill();
-						$bill->contractor_id = $contractor->id ?? 0;
-						$bill->deal_id = $deal->id ?? 0;
-						$bill->deal_position_id = $position->id ?? 0;
+						$bill->contractor_id = $contractor->id;
+						$bill->deal_id = $deal->id;
+						$bill->deal_position_id = $position->id;
 						$bill->location_id = $billLocationId;
 						$bill->payment_method_id = ($source == Deal::WEB_SOURCE) ? 0 : ($paymentMethodId ?? 0);
 						$bill->status_id = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? $billPayedStatus->id : $billStatus->id;
 						$bill->payed_at = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? Carbon::now()->format('Y-m-d H:i:s') : null;
 						$bill->amount = $amount;
-						$bill->currency_id = $currency->id ?? 0;
-						$bill->user_id = $this->request->user()->id ?? 0;
+						$bill->tax = $tax;
+						$bill->total_amount = $totalAmount;
+						$bill->currency_id = $currency ? $currency->id : 0;
+						$bill->user_id = $user ? $user->id : 0;
 						$bill->save();
-						
-						/*if ($this->request->user()) {
-							\Log::debug($bill->number . ' - ' . $source . ' - ' . $billLocationId . ' - ' . $this->request->user()->id . ' - ' . $this->request->user()->location_id);
-						}*/
 						
 						$deal->bills()->save($bill);
 					}
@@ -1018,9 +1064,9 @@ class DealController extends Controller
 							$contractor->name = $name;
 							$contractor->email = $email;
 							$contractor->phone = $phone;
-							$contractor->city_id = $cityId ?: $this->request->user()->city_id;
+							$contractor->city_id = $city ? $city->id : 0;
 							$contractor->source = $source ?: Contractor::ADMIN_SOURCE;
-							$contractor->user_id = $this->request->user()->id ?? 0;
+							$contractor->user_id = $user ? $user->id : 0;
 							$contractor->save();
 						}
 						
@@ -1029,7 +1075,7 @@ class DealController extends Controller
 						$event->contractor_id = $contractor->id ?? 0;
 						$event->deal_id = $deal->id ?? 0;
 						$event->deal_position_id = $position->id ?? 0;
-						$event->city_id = $cityId ?: $this->request->user()->city_id;
+						$event->city_id = $city ? $city->id : 0;
 						$event->location_id = $location->id ?? 0;
 						$event->flight_simulator_id = $simulator->id ?? 0;
 						$event->start_at = Carbon::parse($flightAt)->format('Y-m-d H:i');
@@ -1052,7 +1098,7 @@ class DealController extends Controller
 				case Event::EVENT_TYPE_USER_FLIGHT:
 					$event = new Event();
 					$event->event_type = $eventType;
-					$event->city_id = $cityId ?: $this->request->user()->city_id;
+					$event->city_id = $city ? $city->id : 0;
 					$event->location_id = $location->id ?? 0;
 					$event->flight_simulator_id = $simulator->id ?? 0;
 					$event->user_id = $this->request->user()->id ?? 0;
@@ -1091,6 +1137,7 @@ class DealController extends Controller
 		}
 		
 		$user = \Auth::user();
+		$city = $user->city;
 		
 		if ($user) {
 			if (!$user->isAdminOrHigher()) {
@@ -1103,7 +1150,7 @@ class DealController extends Controller
 			'email' => 'required|email',
 			'phone' => 'required|valid_phone',
 			'product_id' => 'required|numeric|min:0|not_in:0',
-			'city_id' => 'required|numeric|min:0|not_in:0',
+			/*'city_id' => 'required|numeric|min:0|not_in:0',*/
 		];
 
 		$validator = Validator::make($this->request->all(), $rules)
@@ -1112,16 +1159,16 @@ class DealController extends Controller
 				'email' => 'E-mail',
 				'phone' => 'Телефон',
 				'product_id' => 'Продукт',
-				'city_id' => 'Город',
+				/*'city_id' => 'Город',*/
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
-		$cityId = $this->request->city_id ?: $this->request->user()->city_id;
+		/*$cityId = $this->request->city_id ?: $this->request->user()->city_id;*/
 		$productId = $this->request->product_id ?? 0;
-		$promoId = $this->request->promo_id ?? 0;
-		$promocodeId = $this->request->promocode_id ?? 0;
+		/*$promoId = $this->request->promo_id ?? 0;
+		$promocodeId = $this->request->promocode_id ?? 0;*/
 		$comment = $this->request->comment ?? '';
 		$amount = $this->request->amount ?? 0;
 		$contractorId = $this->request->contractor_id ?? 0;
@@ -1132,33 +1179,19 @@ class DealController extends Controller
 		$source = $this->request->source ?? '';
 		$isPaid = (bool)$this->request->is_paid;
 		
-		$city = $this->cityRepo->getById($cityId);
-		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
-		}
-		
 		$product = Product::find($productId);
 		if (!$product) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$productType = $product->productType;
+		if (!$productType) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 		if (!$cityProduct) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
-		}
-		
-		if ($promoId) {
-			$promo = Promo::find($promoId);
-			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
-			}
-		}
-
-		if ($promocodeId) {
-			$promocode = Promocode::find($promocodeId);
-			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
-			}
 		}
 		
 		if ($paymentMethodId) {
@@ -1186,7 +1219,12 @@ class DealController extends Controller
 		if ($comment) {
 			$data['comment'] = $comment;
 		}
-
+		
+		$tax = round($amount * $productType->tax / 100, 2);
+		$totalAmount = round($amount + $tax, 2);
+		
+		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
+		
 		try {
 			\DB::beginTransaction();
 			
@@ -1195,79 +1233,67 @@ class DealController extends Controller
 				$contractor->name = $name;
 				$contractor->email = $email;
 				$contractor->phone = $phone;
-				$contractor->city_id = $cityId ?: $this->request->user()->city_id;
+				$contractor->city_id = $city ? $city->id : 0;
 				$contractor->source = $source ?: Contractor::ADMIN_SOURCE;
-				$contractor->user_id = $this->request->user()->id ?? 0;
+				$contractor->user_id = $user ? $user->id : 0;
 				$contractor->save();
 			}
 
 			$deal = new Deal();
 			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CREATED_STATUS);
-			$deal->status_id = $dealStatus->id ?? 0;
-			$deal->contractor_id = $contractor->id ?? 0;
-			$deal->city_id = $cityId ?: $this->request->user()->city_id;
+			$deal->status_id = $dealStatus ? $dealStatus->id : 0;
+			$deal->contractor_id = $contractor ? $contractor->id : 0;
+			$deal->city_id = $city ? $city->id : 0;
 			$deal->name = $name;
 			$deal->phone = $phone;
 			$deal->email = $email;
-			$deal->user_id = $this->request->user()->id ?? 0;
+			$deal->user_id = $user ? $user->id : 0;
 			$deal->source = $source ?: Deal::ADMIN_SOURCE;
 			$deal->save();
 
 			$position = new DealPosition();
 			$position->product_id = $product->id ?? 0;
 			$position->amount = $amount;
+			$position->tax = $tax;
+			$position->total_amount = $totalAmount;
 			$position->currency_id = $cityProduct->pivot->currency_id ?? 0;
-			$position->city_id = $cityId ?: $this->request->user()->city_id;
-			$position->promo_id = $promo->id ?? 0;
-			$position->promocode_id = $promocodeId ? $promocode->id : 0;
+			$position->city_id = $city ? $city->id : 0;
 			$position->source = Deal::ADMIN_SOURCE;
-			$position->user_id = $this->request->user()->id ?? 0;
+			$position->user_id = $user ? $user->id : 0;
 			$position->source = $source ?: Deal::ADMIN_SOURCE;
 			$position->data_json = !empty($data) ? $data : null;
 			$position->save();
 
 			$deal->positions()->save($position);
 			
-			if ($promocodeId) {
-				$promocode->contractors()->save($contractor);
-			}
-			
 			if ($amount) {
 				$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 				$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
 				$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
-				$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 				
 				if ($source == Deal::WEB_SOURCE) {
 					$billLocationId = /*$location ? $location->id : */0;
 				} else {
-					$billLocationId = $this->request->user()->location_id ?? 0;
+					$billLocationId = $user->location_id;
 				}
 				
 				$bill = new Bill();
-				$bill->contractor_id = $contractor->id ?? 0;
-				$bill->deal_id = $deal->id ?? 0;
-				$bill->deal_position_id = $position->id ?? 0;
+				$bill->contractor_id = $contractor->id;
+				$bill->deal_id = $deal->id;
+				$bill->deal_position_id = $position->id;
 				$bill->location_id = $billLocationId;
 				$bill->payment_method_id = ($source == Deal::WEB_SOURCE) ? 0 : ($paymentMethodId ?? 0);
 				$bill->status_id = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? $billPayedStatus->id : $billStatus->id;
 				$bill->payed_at = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? Carbon::now()->format('Y-m-d H:i:s') : null;
 				$bill->amount = $amount;
-				$bill->currency_id = $currency->id ?? 0;
-				$bill->user_id = $this->request->user()->id ?? 0;
+				$bill->tax = $tax;
+				$bill->total_amount = $totalAmount;
+				$bill->currency_id = $currency ? $currency->id : 0;
+				$bill->user_id = $user ? $user->id : 0;
 				$bill->save();
-				
-				/*if ($this->request->user()) {
-					\Log::debug($bill->number . ' - ' . $source . ' - ' . $billLocationId . ' - ' . $this->request->user()->id . ' - ' . $this->request->user()->location_id);
-				}*/
 				
 				$deal->bills()->save($bill);
 			}
-			
-			/*if ($source == Deal::WEB_SOURCE) {
-				$job = new \App\Jobs\SendDealEmail($deal);
-				$job->handle();
-			}*/
 			
 			\DB::commit();
 		} catch (Throwable $e) {
@@ -1302,7 +1328,7 @@ class DealController extends Controller
 		$deal = Deal::find($id);
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
-		if (!$deal->scores->empty() && $deal->status && in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
+		if ($deal->status && in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
@@ -1356,23 +1382,6 @@ class DealController extends Controller
 				}
 			}
 			
-			// если сделку отменяют, а по ней было списание баллов, то начисляем баллы обратно
-			if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
-				$scores = Score::where('deal_id', $deal->id)
-					->where('type', Score::USED_TYPE)
-					->get();
-				foreach ($scores as $item) {
-					$score = new Score();
-					$score->score = abs($item->score);
-					$score->type = Score::SCORING_TYPE;
-					$score->contractor_id = $item->contractor_id;
-					$score->deal_id = $item->deal_id;
-					$score->deal_position_id = $item->deal_position_id;
-					$score->user_id = $this->request->user()->id;
-					$score->save();
-				}
-			}
-
 			\DB::commit();
 		} catch (Throwable $e) {
 			\DB::rollback();
@@ -1394,6 +1403,8 @@ class DealController extends Controller
 			abort(404);
 		}
 		
+		//\Log::debug($this->request);
+		
 		$productId = $this->request->product_id ?? 0;
 		$contractorId = $this->request->contractor_id ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
@@ -1406,13 +1417,11 @@ class DealController extends Controller
 		$source = $this->request->source ?? 'admin';
 		$flightDate = $this->request->flight_date ?? '';
 		$isFree = $this->request->is_free ?? 0;
-		$isUnified = $this->request->is_unified ?? 0;
-		$score = $this->request->score ?? 0;
 		$isCertificatePurchase = $this->request->is_certificate_purchase ?? 0;
+		$birthday = $this->request->birthday ?? 0;
+		$weekends = $this->request->weekends ?? 0;
 		
-		if ($isUnified) {
-			$cityId = 1;
-		} elseif ($this->request->city_id) {
+		if ($this->request->city_id) {
 			$cityId = $this->request->city_id ?? 0;
 		} elseif ($this->request->location_id) {
 			$location = Location::find($locationId);
@@ -1421,14 +1430,46 @@ class DealController extends Controller
 			$cityId = 1;
 		}
 		
+		$currency = Currency::USD_NAME;
+		$city = City::find($cityId);
+		if ($city) {
+			$currency = $city->currency->name;
+		}
+		
 		if (!$productId) {
-			return response()->json(['status' => 'success', 'amount' => 0]);
+			return response()->json([
+				'status' => 'success',
+				'amount' => 0,
+				'baseAmount' => 0,
+				'tax' => 0,
+				'totalAmount' => 0,
+				'currency' => $currency,
+			]);
 		}
 		
 		$product = Product::find($productId);
-		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		if ($weekends) {
+			$regularUltimateProductTypes = ProductType::whereIn('alias', [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS])
+				->pluck('id')
+				->toArray();
+			$product = Product::where('duration', $product->duration)
+				->where('id', '!=', $product->id)
+				->whereIn('product_type_id', $regularUltimateProductTypes)
+				->first();
 		}
+		if (!$product) {
+			return response()->json([
+				'status' => 'error',
+				'amount' => 0,
+				'baseAmount' => 0,
+				'tax' => 0,
+				'totalAmount' => 0,
+				'currency' => $currency,
+				'reason' => trans('main.error.продукт-не-найден'),
+			]);
+		}
+		
+		$productType = $product->productType;
 
 		if ($flightDate) {
 			$flightDate = str_replace('/', '.', $flightDate);
@@ -1442,7 +1483,15 @@ class DealController extends Controller
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId);
 		if (!$cityProduct || !$cityProduct->pivot) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.не-задана-базовая-стоимость-продукта')]);
+			return response()->json([
+				'status' => 'error',
+				'amount' => 0,
+				'baseAmount' => 0,
+				'tax' => 0,
+				'totalAmount' => 0,
+				'currency' => $currency,
+				'reason' => trans('main.error.не-задана-базовая-стоимость-продукта'),
+			]);
 		}
 		
 		// базовая стоимость продукта
@@ -1464,10 +1513,30 @@ class DealController extends Controller
 			$certificate = HelpFunctions::getEntityByUuid(Certificate::class, $certificateUuid);
 			$certificateId = $certificate ? $certificate->id : 0;
 		}
-
-		$amount = $product->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, $promoId, $promocodeId, $certificateId, $isUnified, false, $score, $isCertificatePurchase);
 		
-		return response()->json(['status' => 'success', 'amount' => $amount, 'baseAmount' => $baseAmount, 'certificateUuid' => $certificateUuid, 'certificateId' => $certificateId]);
+		if ($birthday) {
+			$promo = HelpFunctions::getEntityByAlias(Promo::class, Promo::BIRTHDAY_ALIAS);
+			$promoId = $promo->id;
+		}
+
+		$amount = $product->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, $promoId, $promocodeId, $certificateId, false, false, 0, $isCertificatePurchase);
+		$tax = round($amount * $productType->tax / 100, 2);
+		$totalAmount = round($amount + $tax, 2);
+		
+		return response()->json([
+			'status' => 'success',
+			'amount' => $amount,
+			'baseAmount' => $baseAmount,
+			'tax' => $tax,
+			'totalAmount' => $totalAmount,
+			'certificateUuid' => $certificateUuid,
+			'certificateId' => $certificateId,
+			'currency' => $currency,
+			'product_name' => $product->name,
+			'product_public_name' => $product->public_name,
+			'product_duration' => $product->duration,
+			'product_type_alias' => mb_strtoupper($productType->alias),
+		]);
 	}
 	
 	/**

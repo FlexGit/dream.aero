@@ -76,6 +76,8 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property-read int|null $contractor_promocodes_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Promocode[] $promocodes
  * @property-read int|null $promocodes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Bill[] $bills
+ * @property-read int|null $bills_count
  */
 class Contractor extends Authenticatable
 {
@@ -395,7 +397,7 @@ class Contractor extends Authenticatable
 					return $query->whereNotIn('certificates.status_id', [$certificateReturnedStatus, $certificateCanceledStatus]);
 				});
 			})
-			->withSum('positions as amount', 'amount')
+			->withSum('positions as amount', 'total_amount')
 			->get();
 		foreach ($deals as $deal) {
 			$dealSum += $deal->amount;
@@ -403,7 +405,7 @@ class Contractor extends Authenticatable
 
 		$billSum = Bill::where('status_id', $billPayedStatusId)
 			->where('contractor_id', $this->id)
-			->sum('amount');
+			->sum('total_amount');
 
 		return ($billSum - $dealSum);
 	}
@@ -435,7 +437,7 @@ class Contractor extends Authenticatable
 		foreach ($this->bills as $bill) {
 			if ($bill->status->alias != Bill::PAYED_STATUS) continue;
 			
-			$amount += $bill->amount;
+			$amount += $bill->total_amount;
 		}
 		
 		return $amount;

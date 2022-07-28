@@ -12,9 +12,9 @@
 		<a href="javascript:void(0)" data-toggle="modal" data-url="/product_type/{{ $productType->id }}/edit" data-action="/product_type/{{ $productType->id }}" data-method="PUT" data-title="Edit">
 			<i class="fa fa-edit" aria-hidden="true"></i>
 		</a>&nbsp;&nbsp;&nbsp;
-		<a href="javascript:void(0)" data-toggle="modal" data-target="#modal" data-url="/product_type/{{ $productType->id }}/delete" data-action="/product_type/{{ $productType->id }}" data-method="DELETE" data-title="Delete">
+		{{--<a href="javascript:void(0)" data-toggle="modal" data-target="#modal" data-url="/product_type/{{ $productType->id }}/delete" data-action="/product_type/{{ $productType->id }}" data-method="DELETE" data-title="Delete">
 			<i class="fa fa-trash" aria-hidden="true"></i>
-		</a>
+		</a>--}}
 	</td>
 </tr>
 @endforeach

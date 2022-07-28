@@ -130,9 +130,6 @@ class MainController extends Controller
 		if ($productAlias) {
 			$product = Product::where('alias', $productAlias)
 				->first();
-			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
-			$dataJson = json_decode($cityProduct->pivot->data_json, true);
-			$period = (is_array($dataJson) && array_key_exists('certificate_period', $dataJson)) ? $dataJson['certificate_period'] : 6;
 		} else {
 			$products = $city->products()
 				->orderBy('product_type_id')
@@ -143,7 +140,6 @@ class MainController extends Controller
 		$VIEW = view('modal.certificate', [
 			'city' => $city,
 			'product' => isset($product) ? $product : new Product(),
-			'period' => isset($period) ? $period : 6,
 			'products' => $products ?? [],
 		]);
 		
@@ -213,11 +209,11 @@ class MainController extends Controller
 		$promocode = $promocode->first();
 		//\Log::debug(\DB::getQueryLog());
 		if (!$promocode) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
+			return response()->json(['status' => 'error', 'reason' => 'Please enter a valid promo code']);
 		}
 		
 		// для неперсональных промокодов проверяем доступность для Бронирования или Покупки Сертификата
-		if (!$promocode->contractor_id) {
+		/*if (!$promocode->contractor_id) {
 			$dataJson = $promocode->data_json ? (array)$promocode->data_json : [];
 			if (!$locationId) {
 				$isDiscountAllow = array_key_exists('is_discount_certificate_purchase_allow', $dataJson) ? (bool)$dataJson['is_discount_certificate_purchase_allow'] : false;
@@ -228,7 +224,7 @@ class MainController extends Controller
 			if (!$isDiscountAllow) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 			}
-		}
+		}*/
 		
 		return response()->json(['status' => 'success', 'message' => trans('main.modal-booking.промокод-применен'), 'uuid' => $promocode->uuid]);
 	}
@@ -498,9 +494,9 @@ class MainController extends Controller
 				foreach ($cityProducts ?? [] as $cityProduct) {
 					if ($product->id != $cityProduct->id) continue;
 					
-					$price = $cityProduct->pivot->price;
+					$basePrice = $price = $cityProduct->pivot->price;
 					if ($cityProduct->pivot->discount) {
-						$price = $cityProduct->pivot->discount->is_fixed ? ($price - $cityProduct->pivot->discount->value) : ($price - $price * $cityProduct->pivot->discount->value / 100);
+						$price = $cityProduct->pivot->discount->is_fixed ? ($basePrice - $cityProduct->pivot->discount->value) : ($basePrice - $basePrice * $cityProduct->pivot->discount->value / 100);
 					}
 					
 					$pivotData = json_decode($cityProduct->pivot->data_json, true);
@@ -508,10 +504,12 @@ class MainController extends Controller
 					$products[mb_strtoupper($productType->alias)][$product->alias] = [
 						'id' => $product->id,
 						'name' => $product->name,
+						'public_name' => $product->public_name,
 						'alias' => $product->alias,
 						'duration' => $product->duration,
-						'price' => round($price),
-						'currency' => $cityProduct->pivot->currency ? $cityProduct->pivot->currency->name : 'руб',
+						'base_price' => $basePrice,
+						'price' => $price,
+						'currency' => $cityProduct->pivot->currency ? $cityProduct->pivot->currency->name : '$',
 						'is_hit' => (bool)$cityProduct->pivot->is_hit,
 						'is_booking_allow' => false,
 						'is_certificate_purchase_allow' => false,
@@ -626,8 +624,8 @@ class MainController extends Controller
 		$content->preview_text = $body ?? '';
 		$content->parent_id = $reviewParentContent->id;
 		$content->city_id = $city->id;
-		$content->meta_title = 'Отзыв от клиента ' . $name . ' из города ' . $city->name . ' от ' . Carbon::now()->format('d.m.Y');
-		$content->meta_description = 'Отзыв от клиента ' . $name . ' из города ' . $city->name . ' от ' . Carbon::now()->format('d.m.Y');
+		$content->meta_title = 'Review by ' . $name . ' from ' . $city->name . ' | ' . Carbon::now()->format('m-d-Y');
+		$content->meta_description = 'Review by ' . $name . ' from ' . $city->name . ' | ' . Carbon::now()->format('m-d-Y');
 		$content->is_active = 0;
 		if (!$content->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
@@ -702,6 +700,20 @@ class MainController extends Controller
 			'page' => $page ?? new Content,
 		]);
 	}
+
+	public function privateEvents()
+	{
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'private-events');
+		
+		return view('private-events', [
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
+		]);
+	}
 	
 	/**
 	 * @param $locationId
@@ -719,16 +731,30 @@ class MainController extends Controller
 	}
 	
 	/**
-	 * @param null $alias
+	 * @param $alias
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function getInfoModal($alias)
+	{
+		$VIEW = view('modal.info', [
+			'alias' => $alias,
+		]);
+		
+		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
+	}
+	
+	/**
+	 * @param $alias
+	 * @param null $newsAlias
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
-	public function getNews($alias = null)
+	public function getNews($alias, $newsAlias = null)
 	{
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		if ($alias) {
-			$news = Content::where('alias', $alias)
+		if ($newsAlias) {
+			$news = Content::where('alias', $newsAlias)
 				->where('is_active', true)
 				->whereIn('city_id', [$city->id, 0])
 				->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
@@ -873,18 +899,12 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 
-		$parentGallery = HelpFunctions::getEntityByAlias(Content::class, 'gallery');
+		$parentGallery = Content::where('alias', 'gallery')
+			->where('city_id', $city->id)
+			->where('is_active', true)
+			->first();
 		
 		$gallery = Content::where('parent_id', $parentGallery->id)
-			->where('is_active', true)
-			->whereIn('city_id', [$city->id, 0])
-			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
-			->latest()
-			->get();
-		
-		$parentGuests = HelpFunctions::getEntityByAlias(Content::class, 'guests');
-		
-		$guests = Content::where('parent_id', $parentGuests->id)
 			->where('is_active', true)
 			->whereIn('city_id', [$city->id, 0])
 			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
@@ -895,7 +915,6 @@ class MainController extends Controller
 		
 		return view('gallery', [
 			'gallery' => $gallery,
-			'guests' => $guests,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
@@ -910,11 +929,14 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$parentReviews = HelpFunctions::getEntityByAlias(Content::class, 'reviews');
+		$parentReviews = Content::where('alias', 'reviews')
+			->where('city_id', $city->id)
+			->where('is_active', true)
+			->first();
 		
 		$reviews = Content::where('parent_id', $parentReviews->id)
 			->where('is_active', true)
-			/*->whereIn('city_id', [$city->id, 0])*/
+			->whereIn('city_id', [$city->id, 0])
 			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
 			->latest()
 			->get();
@@ -1050,6 +1072,20 @@ class MainController extends Controller
 			'city' => $city,
 			'product' => '',
 			'products' => $products ?? [],
+		]);
+	}
+	
+	public function privacyPolicy()
+	{
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'privacyPolicy');
+		
+		return view('privacy-policy', [
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
 		]);
 	}
 }

@@ -78,6 +78,13 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereSuccessPaymentSentAt($value)
  * @property \Illuminate\Support\Carbon|null $aeroflot_transaction_created_at
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereAeroflotTransactionCreatedAt($value)
+ * @property float $tax
+ * @property float $total_amount
+ * @property int $city_id
+ * @property-read \App\Models\City|null $city
+ * @method static \Illuminate\Database\Eloquent\Builder|Bill whereCityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bill whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bill whereTotalAmount($value)
  */
 class Bill extends Model
 {
@@ -91,6 +98,8 @@ class Bill extends Model
 		'payment_method_id' => 'Payment method',
 		'status_id' => 'Bill status',
 		'amount' => 'Amount',
+		'tax' => 'Tax',
+		'total_amount' => 'Totla amount',
 		'currency_id' => 'Currency',
 		'city_id' => 'City',
 		'location_id' => 'Location',
@@ -138,6 +147,8 @@ class Bill extends Model
 		'payment_method_id',
 		'status_id',
 		'amount',
+		'tax',
+		'total_amount',
 		'currency_id',
 		'city_id',
 		'location_id',

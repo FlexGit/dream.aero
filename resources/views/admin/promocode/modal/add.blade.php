@@ -24,14 +24,27 @@
 		@endforeach
 	</select>
 </div>--}}
-<div class="form-group">
-	<label for="discount_id">Discount</label>
-	<select class="form-control" id="discount_id" name="discount_id">
-		<option value=""></option>
-		@foreach($discounts ?? [] as $discount)
-			<option value="{{ $discount->id }}">{{ $discount->valueFormatted() }}</option>
-		@endforeach
-	</select>
+<div class="row">
+	<div class="col">
+		<div class="form-group">
+			<label for="discount_id">Discount</label>
+			<select class="form-control" id="discount_id" name="discount_id">
+				<option value=""></option>
+				@foreach($discounts ?? [] as $discount)
+					<option value="{{ $discount->id }}">{{ $discount->valueFormatted() }}</option>
+				@endforeach
+			</select>
+		</div>
+	</div>
+	<div class="col">
+		<div class="form-group">
+			<label for="is_active">Is active</label>
+			<select class="form-control" id="is_active" name="is_active">
+				<option value="1" selected>Yes</option>
+				<option value="0">No</option>
+			</select>
+		</div>
+	</div>
 </div>
 {{--<div class="row">
 	<div class="col">
@@ -53,13 +66,6 @@
 		</div>
 	</div>
 </div>--}}
-<div class="form-group">
-	<label for="is_active">Is active</label>
-	<select class="form-control" id="is_active" name="is_active">
-		<option value="1" selected>Yes</option>
-		<option value="0">No</option>
-	</select>
-</div>
 <div class="form-group">
 	<label for="flight_at">Activity start date</label>
 	<div class="d-flex">

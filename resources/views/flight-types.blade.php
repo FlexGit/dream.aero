@@ -32,47 +32,47 @@
 			<ul class="row">
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 1</span>
-					<p>@lang('main.flight-types.выбирайте-любой-аэропорт-москвы')</p>
+					<p>Washington DC (the White House and United States Capitol)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 2</span>
-					<p>@lang('main.flight-types.полет-над-аэропортом-пулково')</p>
+					<p>San Francisco (the Golden Gate Bridge)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 3</span>
-					<p>@lang('main.flight-types.сочи')</p>
+					<p>Paris (Eiffel Tower)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 4</span>
-					<p>@lang('main.flight-types.кольцово')</p>
+					<p>Innsbruck (an airport located in Austrian Alps)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 5</span>
-					<p>@lang('main.flight-types.иркутск')</p>
+					<p>Seattle (the place where Boeing was founded)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 6</span>
-					<p>@lang('main.flight-types.дубаи')</p>
+					<p>Las Vegas (McCarran International Airport)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 7</span>
-					<p>@lang('main.flight-types.инсбрук')</p>
+					<p>Nice (Cote d'Azur, France)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 8</span>
-					<p>@lang('main.flight-types.ницца')</p>
+					<p>Tivat (a Montenegrin airport with a complicated landing approach)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 9</span>
-					<p>@lang('main.flight-types.тиват')</p>
+					<p>Tenerife (an island with 2 airports within close proximity to one another)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 10</span>
-					<p>@lang('main.flight-types.тенерифе')</p>
+					<p>Saint-Martin (a world-famous island airport with the runway next to the beach)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 11</span>
-					<p>@lang('main.flight-types.сен-мартен')</p>
+					<p>A route of your choice (any city, weather conditions, etc.)</p>
 				</li>
 				<li class="col-md-3 wow fadeInUp var4fact" data-wow-delay="0" data-wow-duration="2s">
 					<span>@lang('main.flight-types.маршрут') 12</span>
@@ -83,11 +83,11 @@
 	</div>
 
 	<div class="row">
-		<a class="popup-with-form offer">
+		<a class="popup-with-form offer" style="color: #000;">
 			<p class="bold" style="color: black;font-size: 24px;">@lang('main.flight-types.экстремальные-программы')</p>
 			@lang('main.flight-types.любителям-пощекотать-себе-нервы')
 		</a>
-		<a class="popup-with-form offer">
+		<a class="popup-with-form offer" style="color: #000;">
 			<p class="bold" style="color: black;font-size: 24px;">@lang('main.flight-types.программа-для-детей')</p>
 			<p>@lang('main.flight-types.любовь-к-авиации')</p>
 		</a>

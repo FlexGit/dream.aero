@@ -10,9 +10,9 @@
 			<li class="nav-item">
 				<a class="nav-link active" data-toggle="tab" href="{{ asset('#flight') }}">Flight</a>
 			</li>
-			<li class="nav-item">
+			{{--<li class="nav-item">
 				<a class="nav-link" data-toggle="tab" href="{{ asset('#deal-info') }}">Deal</a>
-			</li>
+			</li>--}}
 			{{--<li class="nav-item">
 				<a class="nav-link" data-toggle="tab" href="{{ asset('#simulator') }}">Platform</a>
 			</li>
@@ -29,7 +29,7 @@
 				<a class="nav-link" data-toggle="tab" href="{{ asset('#pilot') }}">Pilot</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" data-toggle="tab" href="{{ asset('#doc') }}">Документ</a>
+				<a class="nav-link" data-toggle="tab" href="{{ asset('#doc') }}">Document</a>
 			</li>
 		</ul>
 
@@ -114,12 +114,12 @@
 					<div class="col-8">
 						<div class="form-group">
 							<label for="description">Description</label>
-							<textarea class="form-control" id="description" name="description" rows="3" placeholder="Введите текст">{{ $event->description ?? '' }}</textarea>
+							<textarea class="form-control" id="description" name="description" rows="3" placeholder="">{{ $event->description ?? '' }}</textarea>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="tab-pane fade" id="deal-info">
+			{{--<div class="tab-pane fade" id="deal-info">
 				<div class="row mt-3">
 					<div class="col">
 						<div class="text-center font-weight-bold">Client</div>
@@ -148,7 +148,7 @@
 								@endif
 								{{ number_format($event->deal->amount(), 0, '.', ' ') }}
 							</div>
-							{{--@if($event->deal->scores)
+							--}}{{--@if($event->deal->scores)
 								@php($scoreAmount = 0)
 								@foreach($event->deal->scores ?? [] as $score)
 									@if($score->type != app('\App\Models\Score')::USED_TYPE)
@@ -161,7 +161,7 @@
 										<i class="far fa-star"></i> {{ number_format($scoreAmount, 0, '.', ' ') }}
 									</div>
 								@endif
-							@endif--}}
+							@endif--}}{{--
 							<div class="d-inline-block" title="Итого к оплате">
 								@php($balance = $event->deal->balance())
 								@if($balance < 0)
@@ -169,7 +169,7 @@
 								@elseif($balance > 0)
 									<span class="pl-2 pr-2" style="background-color: #e9ffc9;">+{{ number_format($balance, 0, '.', ' ') }}</span>
 								@else
-									<span class="pl-2 pr-2" style="background-color: #e9ffc9;">оплачена</span>
+									<span class="pl-2 pr-2" style="background-color: #e9ffc9;">paid</span>
 								@endif
 							</div>
 							@if($event->deal->status)
@@ -202,9 +202,7 @@
 								<div># {{ $bill->number ?? '' }}, {{ $bill->created_at ? $bill->created_at->format('Y-m-d H:i') : '' }}</div>
 								<div>
 									@if($bill->currency)
-										@if($bill->currency->alias == app('\App\Models\Currency')::RUB_ALIAS)
-											<i class="fas fa-ruble-sign"></i>
-										@elseif($bill->currency->alias == app('\App\Models\Currency')::USD_ALIAS)
+										@if($bill->currency->alias == app('\App\Models\Currency')::USD_ALIAS)
 											<i class="fas fa-dollar-sign"></i>
 										@endif
 									@endif
@@ -238,7 +236,7 @@
 								@endif
 							</div>
 							<div>{{ $event->dealPosition->number ?? '' }}, {{ $event->dealPosition->created_at ? $event->dealPosition->created_at->format('Y-m-d H:i') : '' }}</div>
-							@if($event->city)
+							--}}{{--@if($event->city)
 								<div>
 									<i class="fas fa-map-marker-alt"></i>
 									{{ $event->city->name }}
@@ -249,7 +247,7 @@
 										{{ $event->simulator->name }}
 									@endif
 								</div>
-							@endif
+							@endif--}}{{--
 							<div class="d-inline-block">
 								@if($event->city)
 									<i class="fas fa-dollar-sign"></i>
@@ -300,15 +298,15 @@
 									</div>
 								@endif
 							@endif
-							{{--@if($event->deal->roistat)
+							--}}{{--@if($event->deal->roistat)
 								<hr>
 								<div class="text-center font-weight-bold">Номер визита Roistat</div>
 								<div>{{ $event->deal->roistat }}</div>
-							@endif--}}
+							@endif--}}{{--
 						@endif
 					</div>
 				</div>
-			</div>
+			</div>--}}
 			{{--<div class="tab-pane fade" id="simulator">
 				<div class="row mt-3">
 					<div class="col-4">

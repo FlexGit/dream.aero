@@ -56,6 +56,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Content whereRatingValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Content whereMetaDescriptionEn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Content whereMetaTitleEn($value)
+ * @property string $version версия
+ * @method static \Illuminate\Database\Eloquent\Builder|Content whereVersion($value)
  */
 class Content extends Model
 {

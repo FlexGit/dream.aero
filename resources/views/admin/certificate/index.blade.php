@@ -61,7 +61,9 @@
 							<th class="ext-center align-middle">Voucher #</th>
 							<th class="align-middle">Voucher date</th>
 							<th class="align-middle">Product</th>
-							<th class="align-middle">Amount, {{ ($city->alias == 'uae') ? 'AED' : 'USD' }}</th>
+							<th class="align-middle text-nowrap">Amount</th>
+							<th class="align-middle text-nowrap">Vat</th>
+							<th class="align-middle text-nowrap">Total amount</th>
 							<th class="align-middle">Voucher status</th>
 							<th class="align-middle">Voucher validity</th>
 							<th class="align-middle">Invoice #</th>

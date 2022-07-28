@@ -1,0 +1,765 @@
+.header .main-menu {
+     text-align:center;
+    }
+@media screen and (max-width: 1500px) {
+    .header .main-menu {
+        width: 70%;
+        margin: 40px 0 0 2%
+    }
+    
+    .offer {
+        width: 49%;
+    }
+    .table .tr p:first-of-type {
+        width: 59%;
+        margin: 20px 2% 0 0;
+    }
+}
+@media screen and (max-width: 1280px) {
+    .instruction {
+        margin-top: 45px;
+    }
+    .header {
+        text-align: center;
+        padding: 0 15px 10px
+    }
+    .header .main-menu {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%
+    }
+    .header .nav {
+        float: none;
+        width: 100%
+    }
+    .header .nav .item {
+        vertical-align: middle
+    }
+    .header .nav .phone {
+        vertical-align: middle
+    }
+    .variants .items .text {
+        position: static;
+        width: 100%
+    }
+    .variants .items .text p {
+        margin-bottom: 0
+    }
+    /*.relax .col-md-8.wow.fadeInLeft {
+        padding: 100px 23px 0 15px;
+    }*/
+    .relax .col-md-4.wow.fadeInRight {
+        padding: 100px 25px 100px 25px;
+        margin: 100px 0px 0px;
+        background: #f7f7f9;
+    }
+    .offer {
+        width: 49%;
+    }
+    .table .tr p:first-of-type {
+        width: 59%;
+        margin: 20px 2% 0 0;
+    }
+}
+@media screen and (max-width: 1199px) {
+    .price .price-list .list table tr td {
+        padding: 0 15px
+    }
+    .price .price-list .img {
+        display: none
+    }
+    .content .questions .form button {
+        margin: 50px 0 0 29%
+    }
+    .left-price {
+        width: 100%;
+        display: block;
+        position: relative;
+        height: 100%;
+    }
+    .right-price {
+        display: block;
+        vertical-align: top;
+        width: 100%;
+        position: initial;
+        left: 23%;
+        margin-left: 0;
+    }
+    ul.tabs__caption {
+        padding: 0px;
+        margin-top: 40px;
+        text-align: center;
+    }
+    ul.tabs__caption li {
+        display: inline-block;
+        border: 2px solid #f35e1c;
+        color: #f35e1c;
+        padding: 11px 4px;
+        margin: 10px 6px 0;
+        font-weight: 600;
+        text-align: center;
+        font-size: 11px !important;
+        width: 22%;
+    }
+    .left-price .top-inf{
+        min-height: inherit;
+    }
+    .left-price .bottom-inf{
+        min-height: inherit;
+    }
+    .right-price p.stars {
+        margin: 25px 0px;
+        font-size: 14px;
+    }
+    .block-price{
+        width: 100%;
+        max-width: 300px;
+    }
+    .price h4 {
+        margin: 20px 0 50px;
+    }
+    .row.download {
+        margin-bottom: 0px;
+    }
+    .conteiner-min {
+        width: 100%;
+        padding: 0 15px;
+        margin: 26px auto 0;
+        background: white;
+    }
+    ul.tabs2__caption li {
+        display: inline-block;
+        border: 2px solid #f35e1c;
+        color: #f35e1c;
+        position: relative;
+        padding: 12px 0px;
+        margin-right: 2%;
+        font-weight: 600;
+        text-align: center;
+        width: 30%;
+    }
+    .row.free p {
+        font-size: 16px;
+        padding: 0px 0px;
+        line-height: normal;
+        margin: 0;
+        color: #4e4d52;
+    }
+    .row.free .col-md-6 {
+        margin-bottom: 45px;
+    }
+    .relax {
+        overflow: hidden;
+        padding: 0 15px;
+    }
+    .relax h2.block-title {
+        margin: 0px 0 70px;
+    }
+    .left-price:after{
+        height: 50%;
+    }
+    .tabs__content.active {
+        display: block;
+        text-align: center;
+    }
+    .offer {
+        width: 49%;
+    }
+    .table .tr p:first-of-type {
+        width: 59%;
+        margin: 20px 2% 0 0;
+    }
+}
+@media screen and (min-width: 992px) {
+    .main-menu {
+        display: inline-block !important
+    }
+}
+@media screen and (max-width: 991px) {
+    .dropdown-menu li a{
+        margin: 0 auto;
+    }
+    .content .questions .form button {
+        margin: 50px auto 0
+    }
+    li#mob{
+        display: inline-block;
+    }
+    body {
+        padding: 0px !important;
+    }
+    .descr {
+        float: none;
+        width: 100%;
+    }
+    .filtr {
+        width: 100%;
+        float: none;
+        text-align: center;
+        position: initial;
+        margin-top: 100px;
+    }
+    .ajax-container a {
+        width: 100%;
+    }
+    .blockgallery {
+        display: block;
+        height: initial;
+    }
+    .content .obtain ul li {
+        margin-bottom: 40px
+    }
+    .content .obtain ul li:last-child {
+        margin-bottom: 0
+    }
+    .content .questions {
+        margin-top: 20px;
+        background: none
+    }
+    .content .questions h2 {
+        font-size: 30px
+    }
+    .content .questions span {
+        padding-top: 20px
+    }
+    .content .questions img {
+        display: none
+    }
+    .content .questions .form {
+        background-color: #f25714;
+        padding-left: 15px;
+        padding-right: 15px
+    }
+    .content .questions .form:before {
+        display: none
+    }
+    .content .questions .form a {
+        margin-left: auto;
+        margin-right: auto
+    }
+    .content .questions .form form {
+        text-align: center
+    }
+    .reviews {
+        background-color: #fff
+    }
+    .reviews-carousel:before, .reviews-carousel:after {
+        display: none
+    }
+    .reviews-body {
+        max-height: 160px;
+        height: auto;
+        overflow-y: auto
+    }
+    .reviews-author {
+        margin-top: 20px;
+        padding-left: 0
+    }
+    .content .facts {
+        padding-bottom: 30px
+    }
+    .content .facts ul li {
+        margin-bottom: 40px
+    }
+    .content .facts ul li span {
+        min-height: auto
+    }
+    .content .facts ul li p {
+        padding-top: 10px
+    }
+    .header {
+        position: relative !important;
+    }
+    .header .mobile-burger {
+        display: block
+    }
+    .header .main-menu {
+        display: none;
+        margin: 0;
+        padding-top: 20px;
+        padding-bottom: 10px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        z-index: 1000;
+        box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.35);
+        overflow: hidden
+    }
+    .header .main-menu li {
+        display: block;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0
+    }
+    .header .main-menu a {
+        display: block;
+        padding: 10px 5px
+    }
+    .content .about .image {
+        display: none
+    }
+    .content .about .text-block {
+        float: none;
+        padding-left: 15px;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        width: 100%;
+        margin-top: 30px
+    }
+    .content .about .text-block:after {
+        display: none
+    }
+    .content .stock {
+        margin-top: 70px
+    }
+    .content .stock .row {
+        width:100% !important;
+    }
+    .content .stock h2 {
+        margin-top: 0
+    }
+    .content .stock a {
+        margin-left: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        width: 220px
+    }
+    .content .stock .text {
+        padding-bottom: 0
+    }
+    .content .stock .col-md-8 {
+        padding-top: 30px;
+        padding-bottom: 30px;
+        padding-left: 20px;
+        padding-right: 20px;
+        min-height: auto
+    }
+    .content .stock .col-md-8:before {
+        display: none
+    }
+    .content .stock .img {
+        display: none
+    }
+    .about-simulator h2 {
+        font-weight: 600;
+        padding: 40px 0 60px;
+    }
+    p.blod.board-left {
+        font-weight: 600;
+        border-left: 4px solid #f04915;
+        padding: 15px 0 15px 20px;
+        font-size: 16px;
+        margin: 50px 0 50px 23px;
+    }
+    .table .tr p:first-of-type {
+        width: 57%;
+        margin: 20px 2% 0 0;
+    }
+    .table .tr p {
+        display: inline-block;
+        border: 2px solid #f7f7f9;
+        padding: 20px 5px;
+        min-height: 125px;
+        vertical-align: bottom;
+    }
+    .offer {
+        width: 49%;
+    }
+}
+@media screen and (max-width: 767px) {
+  .content .main-block-full.str {
+    background: url(../img/main-bg2.jpg) no-repeat bottom;
+  }
+  blockquote p {
+    margin: 0 !important;
+    font-size: 15px !important;
+    padding: 20px 0px 20px 20px;
+}
+blockquote {
+    margin: 10px 0px 15px 20px;
+}
+    form.ajax-form label {
+      color: #af3f0e;
+      margin: 2%;
+    }
+  .content .main-block-full .video{
+    display: none;
+  }
+  .offer {
+    width: 100%;
+    margin: 20px 0;
+  }
+    
+    .price .price-list .fly {
+        margin-left: auto;
+        margin-right: auto
+    }
+    .price {
+        padding-bottom: 60px
+    }
+    .price .price-list .list {
+        margin-top: 0
+    }
+    .price .price-list .list h3 {
+        margin-top: 30px
+    }
+    .reviews .block-title {
+        margin-bottom: 45px
+    }
+    .content .team .owl-nav .owl-prev, .content .team .owl-nav .owl-next {
+        display: none
+    }
+    .content .variants .items {
+        margin-top: 50px
+    }
+    .content .variants .item-left {
+        width: 100%;
+        float: none
+    }
+    .content .variants .item-right {
+        width: 100%;
+        float: none
+    }
+    .content .main-block-full h1 {
+        padding-top: 40px;
+        font-size: 35px
+    }
+    .content .main-block-full {
+        min-height: auto;
+        padding-bottom: 40px
+    }
+    .content .main-block-full .scroll {
+        display: none
+    }
+    .content .main-block-full .fly, .content .main-block-full .give {
+        display: block;
+        width: 220px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px
+    }
+    .map {
+        float: none;
+        width: 100%;
+        min-height: 300px
+    }
+    .block-title {
+        margin: 70px 0 0 0px;
+        font-size: 30px
+    }
+    .contacts-inner {
+        min-height: auto;
+        float: none;
+        width: 100%;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        padding-left: 15px
+    }
+    .contacts-list li {
+        font-size: 15px
+    }
+    .content .obtain {
+        text-align: center
+    }
+    .content .obtain ul li {
+        text-align: center;
+        background-position: center;
+        margin-bottom: 40px
+    }
+    .content .obtain ul li:last-child {
+        margin-bottom: 0
+    }
+    .content .obtain ul li span {
+        margin-left: auto;
+        margin-right: auto
+    }
+    .popup {
+        padding-left: 15px;
+        padding-right: 15px
+    }
+    .left-price {
+        width: 100%;
+        display: block;
+        position: relative;
+        height: 100%;
+    }
+    .right-price {
+        display: block;
+        vertical-align: top;
+        width: 100%;
+        position: initial;
+        left: 23%;
+        margin-left: 0;
+    }
+    ul.tabs__caption {
+        padding: 0px;
+        margin-top: 40px;
+        text-align: center;
+    }
+    ul.tabs__caption li {
+        display: inline-block;
+        border: 2px solid #f35e1c;
+        color: #f35e1c;
+        padding: 11px 4px;
+        margin: 10px 6px 0;
+        font-weight: 600;
+        text-align: center;
+        font-size: 11px !important;
+        width: 46%;
+    }
+    .left-price .top-inf{
+        min-height: inherit;
+    }
+    .left-price .bottom-inf{
+        min-height: inherit;
+    }
+    .right-price p.stars {
+        margin: 25px 0px;
+        font-size: 14px;
+    }
+    .block-price{
+        width: 100%;
+        max-width: 300px;
+    }
+    .price h4 {
+        margin: 20px 0 50px;
+    }
+    .row.download {
+        margin-bottom: 0px;
+    }
+    .conteiner-min {
+        width: 100%;
+        padding: 0 15px;
+        margin: 26px auto 0;
+        background: white;
+    }
+    ul.tabs2__caption li {
+        display: inline-block;
+        border: 2px solid #f35e1c;
+        color: #f35e1c;
+        position: relative;
+        padding: 12px 0px;
+        margin-right: 2%;
+        font-weight: 600;
+        text-align: center;
+        width: 30%;
+    }
+    .row.free p {
+        font-size: 16px;
+        padding: 0px 0px;
+        line-height: normal;
+        margin: 0;
+        color: #4e4d52;
+    }
+    .row.free .col-md-6 {
+        margin-bottom: 45px;
+    }
+    .relax {
+        overflow: hidden;
+        padding: 0 15px;
+    }
+    .relax h2.block-title {
+        margin: 0px 0 70px;
+    }
+    .left-price:after{
+        height: 50%;
+    }
+    .tabs__content.active {
+        display: block;
+        text-align: center;
+    }
+    form#popup-reservation-price p#pop-title{
+        display: inline-block;
+        font-size: 18px;
+        text-align: center;
+    }
+    form#popup-reservation-price p#pop-number {
+        font-size: 18px;
+        margin-left: 10px;
+    }
+    form#popup-reservation-price {
+        max-width: initial;
+        padding: 56px 15px;
+    }
+    form#popup-reservation-price li.list {
+        display: inline-block;
+        width: 100%;
+        margin-right: 0;
+    }
+    form#popup-reservation-price li.list:nth-of-type(3n) {
+        position: relative;
+        top: 45px;
+    }
+    form#popup-reservation-price li.list:nth-of-type(4n) {
+        position: relative;
+        top: -40px;
+    }
+    form#popup-reservation-price p#price-popup {
+        text-align: center;
+        font-size: 17px;
+        font-weight: bold;
+        padding: 20px 15px;
+    }
+    form#popup-reservation-price .block {
+        width: inherit;
+        margin: AUTO;
+    }
+    form#popup-call-back-new {
+        max-width: inherit;
+        padding: 56px 15px;
+    }
+    form#popup-call-back-new .popup-call-back span {
+        color: #212124;
+        font-size: 14px;
+    }
+    form#popup-call-back-new input.popup-input {
+        display: inline-block;
+        width: 100%;
+        margin-right: 0;
+    }
+    form#popup-call-back-new .block span {
+        padding-bottom: 0px;
+        text-align: left;
+    }
+    form#popup-call-back-new .block {
+        width: inherit;
+        margin: AUTO;
+    }
+    .item iframe {
+        max-width: 100%;
+    }
+}
+@media screen and (max-width: 425px) {
+    .footer {
+        text-align: center
+    }
+    .relax .col-md-4.wow.fadeInRight {
+        padding: 50px 25px 100px 25px;
+    }
+    .gl-default {
+        width: 300px !important;
+    }
+    .gl-change-select {
+     width: 300px !important;
+    }
+    .relax .col-md-8.wow.fadeInLeft .text a {
+        font-size: 12px;
+        padding: 20px 10px;
+    
+    }
+    .footer .logo {
+        display: block
+    }
+    .footer span {
+        padding-top: 20px;
+        display: block;
+        float: none
+    }
+    .content .main-block-full h1 {
+        font-size: 30px
+    }
+    .social {
+        margin-left: 0;
+        padding-top: 25px;
+    }
+    .left-price {
+        width: 100%;
+        display: block;
+        position: relative;
+        height: 100%;
+    }
+    .right-price {
+        display: block;
+        vertical-align: top;
+        width: 100%;
+        position: initial;
+        left: 23%;
+        margin-left: 0;
+    }
+    ul.tabs__caption {
+        padding: 0px;
+        margin-top: 40px;
+        text-align: center;
+    }
+    ul.tabs__caption li {
+        display: inline-block;
+        border: 2px solid #f35e1c;
+        color: #f35e1c;
+        padding: 11px 4px;
+        margin: 10px 6px 0;
+        font-weight: 600;
+        text-align: center;
+        font-size: 11px !important;
+        width: 124px;
+        height: 60px;
+        vertical-align: top;
+    }
+    .left-price .top-inf{
+        min-height: inherit;
+    }
+    .left-price .bottom-inf{
+        min-height: inherit;
+    }
+    .right-price p.stars {
+        margin: 25px 0px;
+        font-size: 14px;
+    }
+    .block-price{
+        width: 100%;
+    }
+    .price h4 {
+        margin: 20px 0 50px;
+    }
+    .row.download {
+        margin-bottom: 0px;
+    }
+    .relax .col-md-8.wow.fadeInLeft .text {
+        padding: 0 ;
+    }
+    .conteiner-min {
+        width: 100%;
+        padding: 0 15px;
+        margin: 26px auto 0;
+        background: white;
+    }
+    ul.tabs2__caption li {
+        display: inline-block;
+        border: 2px solid #f35e1c;
+        color: #f35e1c;
+        position: relative;
+        padding: 12px 0px;
+        margin: 2%;
+        font-weight: 600;
+        text-align: center;
+        width: 100px;
+    }
+    .row.free p {
+        font-size: 16px;
+        padding: 0px 0px;
+        line-height: normal;
+        margin: 0;
+        color: #4e4d52;
+    }
+    .row.free .col-md-6 {
+        margin-bottom: 45px;
+    }
+    .relax {
+        overflow: hidden;
+        padding: 0 15px;
+    }
+    .relax h2.block-title {
+        margin: 0px 0 70px;
+    }
+    .left-price:after{
+        height: 50%;
+    }
+}
+
+@media screen and (min-width: 1500px) {
+    .variants .items .text {
+        height: 365px;
+    }
+}

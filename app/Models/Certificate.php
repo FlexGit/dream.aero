@@ -156,7 +156,7 @@ class Certificate extends Model
 		$productTypeAlias = ($this->product && $this->product->productType) ? mb_strtoupper(substr($this->product->productType->alias, 0, 1)) : '';
 		$productDuration = $this->product ? $this->product->duration : '';
 		
-		return 'C' . date('y') . $cityAlias . (!in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productTypeAlias : '') . $productAlias  . (in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productDuration : '') . sprintf('%05d', $this->id);
+		return 'V' . date('y') . $cityAlias . (!in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productTypeAlias : '') . $productAlias  . (in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productDuration : '') . sprintf('%05d', $this->id);
 	}
 	
 	/**
@@ -176,13 +176,26 @@ class Certificate extends Model
 		$position = $this->position;
 		if (!$position) return null;
 		
-		$bill = $position->bill;
-		if (!$bill) return null;
-		if (!$bill->payed_at) return null;
+		$deal = $position->deal;
+		if (!$deal) return null;
 		
-		$billStatus = $bill->status;
-		if (!$billStatus) return null;
-		if ($billStatus->alias != Bill::PAYED_STATUS) return null;
+		if ($deal->balance() < 0) return null;
+		
+		$bills = $deal->bills;
+		$lastBill = null;
+		foreach ($bills as $bill) {
+			/** @var Bill $bill */
+			if(!$bill->payed_at) continue;
+			
+			$position = $bill->position;
+			if (!$position) continue;
+			
+			$certificate = $position->certificate;
+			if ($certificate) {
+				$lastBill = $bill;
+				break;
+			}
+		}
 		
 		$product = $this->product;
 		if (!$product) return null;
@@ -192,12 +205,8 @@ class Certificate extends Model
 		
 		$city = $this->city;
 		
-		if (!$city && in_array($productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS])) {
-			// единый Сертификат
-			$certificateTemplateFilePath = 'certificate/template/' . mb_strtoupper($productType->alias) . '_UNI.jpg';
-		} else {
-			$certificateTemplateFilePath = 'certificate/template/' . preg_replace("/[^A-Z]/", '', mb_strtoupper($product->alias)) . '_' . ($city ? mb_strtoupper($city->alias) : 'UNKNOWN') . '.jpg';
-		}
+		$pattern = ($productType->alias == ProductType::COURSES_ALIAS) ? "/[^A-Z_]/" : "/[^A-Z]/";
+		$certificateTemplateFilePath = 'certificate/template/' . preg_replace($pattern, '', mb_strtoupper($product->alias)) . '_' . ($city ? mb_strtoupper($city->alias) : 'UNKNOWN') . '.jpg';
 		
 		if (!Storage::disk('private')->exists($certificateTemplateFilePath)) {
 			return null;
@@ -210,144 +219,56 @@ class Certificate extends Model
 		
 		switch ($productType->alias) {
 			case ProductType::REGULAR_ALIAS:
+				switch ($city->alias) {
+					case City::DC_ALIAS:
+						$certificateFile->text($this->number, 690, 83, function ($font) use ($fontPath) {
+							$font->file($fontPath);
+							$font->size(20);
+							$font->color('#000000');
+						});
+						$certificateFile->text($lastBill->payed_at->format('d.m.Y'), 1035, 83, function ($font) use ($fontPath) {
+							$font->file($fontPath);
+							$font->size(20);
+							$font->color('#000000');
+						});
+						$certificateFile->text($product->duration ?? '-', (mb_strlen($product->duration) == 3) ? 455 : 485, 960, function ($font) use ($fontPath) {
+							$font->file($fontPath);
+							$font->size(46);
+							$font->color('#000000');
+						});
+					break;
+				}
+			break;
 			case ProductType::ULTIMATE_ALIAS:
-				// Единый сертификат
-				if (!$city) {
-					$certificateFile->text($this->number, 935, 485, function ($font) use ($fontPath) {
-						$font->file($fontPath);
-						$font->size(40);
-						$font->color('#000000');
-					});
-					$certificateFile->text($bill->payed_at->format('d.m.Y'), 1735, 485, function ($font) use ($fontPath) {
-						$font->file($fontPath);
-						$font->size(40);
-						$font->color('#000000');
-					});
-					$certificateFile->text($product->duration ?? '-', 1340, 2590, function ($font) use ($fontPath) {
-						$font->file($fontPath);
-						$font->size(56);
-						$font->color('#000000');
-					});
-				} else {
-					switch ($city->alias) {
-						case City::DC_ALIAS:
-							$certificateFile->text($this->number, 835, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($bill->payed_at->format('d.m.Y'), 1300, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($product->duration ?? '-', 355, 1210, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(46);
-								$font->color('#000000');
-							});
-						break;
-						case City::SPB_ALIAS:
-							$certificateFile->text($this->number, 840, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($bill->payed_at->format('d.m.Y'), 1300, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($product->duration ?? '-', 355, 1225, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(46);
-								$font->color('#000000');
-							});
-						break;
-						case City::VRN_ALIAS:
-						case City::NNV_ALIAS:
-						case City::SAM_ALIAS:
-							$certificateFile->text($this->number, 855, 155, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($bill->payed_at->format('d.m.Y'), 1300, 155, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($product->duration ?? '-', 370, 1370, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(46);
-								$font->color('#000000');
-							});
-						break;
-						case City::EKB_ALIAS:
-							$certificateFile->text($this->number, 850, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($bill->payed_at->format('d.m.Y'), 1300, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($product->duration ?? '-', 355, 1225, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(46);
-								$font->color('#000000');
-							});
-						break;
-						case City::KZN_ALIAS:
-						case City::KRD_ALIAS:
-						case City::NSK_ALIAS:
-							$certificateFile->text($this->number, 850, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($bill->payed_at->format('d.m.Y'), 1300, 121, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($product->duration ?? '-', 355, 1370, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(46);
-								$font->color('#000000');
-							});
-						break;
-						case City::KHV_ALIAS:
-							$certificateFile->text($this->number, 840, 127, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($bill->payed_at->format('d.m.Y'), 1300, 127, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(22);
-								$font->color('#000000');
-							});
-							$certificateFile->text($product->duration ?? '-', 360, 1370, function ($font) use ($fontPath) {
-								$font->file($fontPath);
-								$font->size(46);
-								$font->color('#000000');
-							});
-						break;
-					}
+				switch ($city->alias) {
+					case City::DC_ALIAS:
+						$certificateFile->text($this->number, 690, 83, function ($font) use ($fontPath) {
+							$font->file($fontPath);
+							$font->size(20);
+							$font->color('#000000');
+						});
+						$certificateFile->text($lastBill->payed_at->format('d.m.Y'), 1035, 83, function ($font) use ($fontPath) {
+							$font->file($fontPath);
+							$font->size(20);
+							$font->color('#000000');
+						});
+						$certificateFile->text($product->duration ?? '-', (mb_strlen($product->duration) == 3) ? 455 : 485, 965, function ($font) use ($fontPath) {
+							$font->file($fontPath);
+							$font->size(46);
+							$font->color('#000000');
+						});
+					break;
 				}
 			break;
 			case ProductType::COURSES_ALIAS:
-				$certificateFile->text($this->number, 1560, 1005, function($font) use ($fontPath) {
+				$certificateFile->text($this->number, 1180, 758, function($font) use ($fontPath) {
 					$font->file($fontPath);
-					$font->size(24);
+					$font->size(20);
 					$font->color('#000000');
 				});
-				$certificateFile->text($bill->payed_at->format('d.m.Y'), 2030, 1005, function($font) use ($fontPath) {
+				$certificateFile->text($lastBill->payed_at->format('d.m.Y'), 1510, 758, function($font) use ($fontPath) {
 					$font->file($fontPath);
-					$font->size(24);
+					$font->size(20);
 					$font->color('#000000');
 				});
 			break;
@@ -366,18 +287,5 @@ class Certificate extends Model
 		}
 		
 		return $this;
-	}
-	
-	/**
-	 * @return bool
-	 */
-	public function wasUsed()
-	{
-		/*$positionCount = DealPosition::where('is_certificate_purchase', false)
-			->where('certificate_id', $this->id)
-			->count();
-		
-		return (bool)$positionCount;*/
-		return false;
 	}
 }

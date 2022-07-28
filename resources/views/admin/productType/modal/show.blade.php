@@ -14,19 +14,21 @@
 		</tr>
 		<tr class="odd">
 			<td>Is tariff</td>
-			<td>{{ $productType->is_tariff ? 'Да' : 'Нет' }}</td>
+			<td>{{ $productType->is_tariff ? 'Yes' : 'No' }}</td>
 		</tr>
+		@if($productType->is_tariff)
+			<tr class="odd">
+				<td>Duration</td>
+				<td>{{ isset($productType->data_json['duration']) ? implode(',', $productType->data_json['duration']) : '' }}</td>
+			</tr>
+		@endif
 		<tr class="odd">
-			<td>Duration</td>
-			<td>{{ array_key_exists('duration', $productType->data_json) ? implode(',', $productType->data_json['duration']) : '' }}</td>
-		</tr>
-		<tr class="odd">
-			<td>Tax</td>
+			<td>Vat</td>
 			<td>{{ $productType->tax }}%</td>
 		</tr>
 		<tr class="odd">
 			<td>Is active</td>
-			<td>{{ $productType->enable ? 'Да' : 'Нет' }}</td>
+			<td>{{ $productType->is_active ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
 			<td>Create date</td>

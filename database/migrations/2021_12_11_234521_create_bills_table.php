@@ -21,7 +21,9 @@ class CreateBillsTable extends Migration
 			$table->integer('deal_position_id')->default(0)->index()->comment('позиция сделки');
 			$table->integer('payment_method_id')->default(0)->index()->comment('способ оплаты');
 			$table->integer('status_id')->default(0)->index()->comment('статус');
-			$table->integer('amount')->default(0)->comment('сумма счета');
+			$table->float('amount')->default(0)->comment('сумма счета');
+			$table->float('tax')->default(0)->comment('ставка налога');
+			$table->float('total_amount')->default(0)->comment('итоговая стоимость');
 			$table->integer('currency_id')->default(0)->index()->comment('валюта');
 			$table->integer('city_id')->default(0)->index()->comment('город');
 			$table->integer('location_id')->default(0)->index()->comment('локация, по которой выставлен счет');

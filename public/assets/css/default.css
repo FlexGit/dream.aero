@@ -281,3 +281,87 @@ h1.block-title:after {
 		width: 70%;
 	}
 }
+
+.footer {
+	text-align: center;
+	margin-top: 0;
+}
+.footer-menu {
+	text-align: left;
+}
+.footer-menu ul a {
+	color: #fff;
+	font-size: 12px;
+}
+.go-up.active {
+	opacity: 1;
+	pointer-events: auto;
+}
+.go-up {
+	width: 60px;
+	height: 60px;
+	position: fixed;
+	left: 20px;
+	bottom: 30px;
+	cursor: pointer;
+	background-color: #ebebef;
+	transition: .2s;
+	opacity: 0;
+	pointer-events: none;
+}
+.article .article-content .item {
+	padding-top: 0;
+}
+.article .article-content .item img {
+	margin: 0;
+}
+.content .main-block-full .give, .content .main-block-full .fly {
+	margin: 58px 0 0 0;
+}
+@media screen and (max-width: 767px) {
+	.content .main-block-full .give, .content .main-block-full .fly {
+		margin: 58px auto 0;
+	}
+}
+.content .main-block-full .give i:after {
+	background: none;
+	margin: 0;
+}
+.amount-container {
+	margin: 0 15px 20px 0;
+}
+.consent-container {
+	margin: 20px;
+}
+.amount {
+	font-size: 24px;
+	font-weight: bold;
+}
+.strikethrough {
+	margin-right: 20px;
+}
+.strikethrough:before {
+	width: 70px;
+	transform: rotate(-15deg);
+}
+.consent-container {
+	margin-top: 20px;
+}
+.switch_container {
+	margin-left: 18px;
+	margin-right: 18px;
+}
+.block-price .give {
+	color: #fffefe;
+	font-size: 12px;
+	font-family: "GothamProMedium";
+	padding: 22px 0 20px;
+	width: 220px;
+	text-align: center;
+	letter-spacing: 1.2px;
+	display: inline-block;
+	vertical-align: top;
+	text-transform: uppercase;
+	transition: .5s all;
+	background-color: rgba(0,0,0,.3);
+}

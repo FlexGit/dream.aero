@@ -13,35 +13,14 @@ $(function(){
     
     url = document.location.href;
 
-    if (url.match(/ourguestes/)) {
-    	$('html, body').animate({
-			scrollTop: ($('#ourguestes').offset().top - 180)
-		},800);
-    } /*else if (url.match(/virttourair/)) {
-    	newContent('tourDIV','virttourair');
-    } else if (url.match(/virttourboeing/)) {
-    	newContent('tourDIV','virttourboeing');
-    }
-
-	if (window.location.hash) {
-		var hash = window.location.hash.substring(1);
-		newContent('tourDIV',hash);
-	}*/
-
-	if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+	/*if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 		Modile = $('#mainphone').text().replace('+7','8');
 		Modile = Modile.replace(/[^0-9]/g,'');
 		$('#mainphone').attr('href', 'tel:' + Modile);
 		$('#mainphone').removeClass('popup-with-form');
 	} else {
 		$('#mainphone').attr('href', '#popup-call-back');
-	}
-
-	/*$('.lazy').lazy();*/
-
-	/*$('.main-menu .dropdown-menu a').click(function() {
-		newContent('tourDIV',hash);
-	});*/
+	}*/
 
 	$('#delaydiv .cboxClose').click(function() {
 		$('#delaydiv').hide("slow");
@@ -150,9 +129,9 @@ $(function(){
 					var url = '';
 
 					switch ($el.data('popup-type')) {
-						case 'product':
+						/*case 'product':
 							url = '/modal/certificate-booking/' + $el.data('product-alias');
-							break;
+							break;*/
 						case 'callback':
 							url = '/modal/callback';
 							break;
@@ -161,6 +140,9 @@ $(function(){
 							break;
 						case 'scheme':
 							url = '/modal/scheme/' + $el.data('alias');
+							break;
+						case 'info':
+							url = '/modal/info/' + $el.data('alias');
 							break;
 					}
 
@@ -177,6 +159,7 @@ $(function(){
 							switch ($el.data('popup-type')) {
 								case 'callback':
 								case 'review':
+								case 'info':
 									$popup.show();
 									break;
 								case 'scheme':
@@ -213,6 +196,7 @@ $(function(){
 			type: 'GET',
 			url: '/modal/certificate/' + productAlias,
 			success: function (result) {
+				console.log(result);
 				if (result.status !== 'success') {
 					return;
 				}
@@ -227,71 +211,28 @@ $(function(){
 			}
 		});
 	}
-
-	function bookingForm(productAlias, productTypeAlias) {
-		$.ajax({
-			type: 'GET',
-			url: '/modal/booking/' + productAlias,
-			success: function (result) {
-				if (result.status !== 'success') {
-					return;
-				}
-
-				var $popup = $('#popup');
-
-				$popup.find('.form-container').html(result.html).find('select').niceSelect();
-
-				var weekDays = (productTypeAlias === 'regular') ? [0, 6] : [],
-					holidays = (productTypeAlias === 'regular') ? $popup.find('#holidays').val() : '';
-
-				calcAmount();
-
-				$popup.show();
-
-				$('.datetimepicker').datetimepicker({
-					format: 'd.m.Y H:i',
-					step: 30,
-					dayOfWeekStart: 1,
-					minDate: 0,
-					minTime: '10:00',
-					maxTime: '23:00',
-					lang: 'ru',
-					lazyInit: true,
-					scrollInput: false,
-					scrollTime: false,
-					scrollMonth: false,
-					validateOnBlur: false,
-					onChangeDateTime: function (value) {
-						value.setSeconds(0);
-
-						//console.log(value.toLocaleString('ru-RU'));
-
-						$('#flight_date').val(value.toLocaleString('ru-RU'));
-
-						calcAmount();
-					},
-					disabledWeekDays: weekDays,
-					disabledDates: holidays,
-					formatDate: 'd.m.Y',
-				});
-			}
-		});
-	}
-
-	$(document).on('click', '.button-tab[data-simulator]', function() {
-		if ($(this).data('simulator') === '737NG') {
-			$('#content-astab1').show();
-			$('#content-astab2').hide();
-		} else if ($(this).data('simulator') === 'A320') {
-			$('#content-astab2').show();
-			$('#content-astab1').hide();
-		}
-	});
 
 	$(document).on('change', 'input[name="consent"]', function() {
 		var $popup = $(this).closest('.popup, .form'),
-			$btn = $popup.find('.js-booking-btn, .js-certificate-btn, .js-callback-btn, .js-review-btn, .js-question-btn');
+			$btn = $popup.find('.js-callback-btn, .js-review-btn, .js-question-btn');
+
 		if ($(this).is(':checked')) {
+			$btn.removeClass('button-pipaluk-grey')
+				.addClass('button-pipaluk-orange')
+				.prop('disabled', false);
+		} else {
+			$btn.removeClass('button-pipaluk-orange')
+				.addClass('button-pipaluk-grey')
+				.prop('disabled', true);
+		}
+	});
+
+	$(document).on('change', 'input[name="rules-consent"], input[name="policy-consent"]', function() {
+		var $popup = $(this).closest('.popup, .form'),
+			$btn = $popup.find('.js-certificate-btn'),
+			$secondCheckbox = ($(this).attr('name') === 'rules-consent') ? $('input[name="policy-consent"]') : $('input[name="rules-consent"]');
+
+		if ($(this).is(':checked') && $secondCheckbox.is(':checked')) {
 			$btn.removeClass('button-pipaluk-grey')
 				.addClass('button-pipaluk-orange')
 				.prop('disabled', false);
@@ -437,32 +378,27 @@ function bodyPadding(){
 
 function calcAmount() {
 	var $popup = $('#popup'),
-		productId = $popup.find('#product').val(),
+		productId = $popup.find('#product_id').val(),
 		promocodeUuid = $popup.find('#promocode_uuid').val(),
-		locationId = $popup.find('input[name="locationSimulator"]:checked').data('location-id'),
-		simulatorId = $popup.find('input[name="locationSimulator"]:checked').data('simulator-id'),
-		flightDate = $popup.find('#flight_date').val(),
-		certificate = $popup.find('#certificate_number').val(),
+		birthday = $popup.find('#birthday').is(':checked') ? 1 : 0,
+		weekends = $popup.find('#weekends').is(':checked') ? 1 : 0,
 		cityId = $('#city_id').val(),
 		$amount = $popup.find('#amount'),
-		$isUnified = $popup.find('#is_unified'),
-		isUnified = $isUnified.is(':checked') ? 1 : 0,
 		$amountContainer = $popup.find('.js-amount'),
+		$taxContainer = $popup.find('.js-tax'),
+		$totalAmountContainer = $popup.find('.js-total-amount'),
 		amount = 0;
 
 	var data = {
 		product_id: productId,
 		promocode_uuid: promocodeUuid,
-		location_id: locationId,
-		simulator_id: simulatorId,
+		birthday: birthday,
+		weekends: weekends,
 		city_id: cityId,
-		is_unified: isUnified,
-		flight_date: flightDate,
-		certificate: certificate,
 		source: 'web',
 	};
 
-	//console.log(data);
+	console.log(data);
 
 	$.ajax({
 		type: 'GET',
@@ -470,18 +406,23 @@ function calcAmount() {
 		data: data,
 		dataType: 'json',
 		success: function(result) {
-			//console.log(result);
+			console.log(result);
+
 			if (result.status !== 'success') {
 				return;
 			}
 
+			$('.js-product-name').html(result.product_public_name ? result.product_public_name + (result.product_type_alias !== 'COURSES' ? ' ' + result.product_type_alias + ' <span style="color: #ff8200;">' + result.product_duration + '</span>' : '') : '');
+
 			if (result.amount !== result.baseAmount) {
-				amount = '<span class="strikethrough">' + result.baseAmount + '</span>' + result.amount;
-			} else if (result.amount) {
-				amount = result.amount;
+				amount = '<span class="strikethrough">' + result.currency + result.baseAmount + '</span>' + result.currency + result.amount;
+			} else {
+				amount = result.currency + result.amount;
 			}
 			$amount.val(result.amount);
 			$amountContainer.html(amount);
+			$taxContainer.text(result.currency + result.tax);
+			$totalAmountContainer.text(result.currency + result.totalAmount);
 		}
 	});
 }

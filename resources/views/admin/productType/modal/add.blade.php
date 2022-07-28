@@ -23,8 +23,8 @@
 	</select>
 </div>
 <div class="form-group">
-	<label for="tax">Tax, %</label>
-	<input type="text" class="form-control" id="tax" name="tax" placeholder="Tax">
+	<label for="tax">Vat, %</label>
+	<input type="text" class="form-control" id="tax" name="tax" placeholder="Vat">
 </div>
 <div class="form-group">
 	<label for="is_active">Is active</label>

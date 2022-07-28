@@ -5,11 +5,11 @@
 			<td>{{ $city->id }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Наименование</td>
+			<td>Name</td>
 			<td>{{ $city->name }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Алиас</td>
+			<td>Alias</td>
 			<td>{{ $city->alias }}</td>
 		</tr>
 		<tr class="odd">
@@ -17,23 +17,23 @@
 			<td>{{ $city->email }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Телефон</td>
+			<td>Phone number</td>
 			<td>{{ $city->phone }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Whatsapp</td>
+			<td>WhatsApp</td>
 			<td>{{ $city->whatsapp }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Активность</td>
-			<td>{{ $city->is_active ? 'Да' : 'Нет' }}</td>
+			<td>Is active</td>
+			<td>{{ $city->is_active ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата создания</td>
+			<td>Create date</td>
 			<td>{{ $city->created_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего изменения</td>
+			<td>Last edit date</td>
 			<td>{{ $city->updated_at }}</td>
 		</tr>
 	</tbody>

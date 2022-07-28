@@ -46,6 +46,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin \Eloquent
  * @property int $employee_id пилот
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereEmployeeId($value)
+ * @property string|null $public_name
+ * @property bool $is_active
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product wherePublicName($value)
  */
 class Product extends Model
 {
@@ -141,7 +145,7 @@ class Product extends Model
 	 * @param bool $isUnified
 	 * @return float|int
 	 */
-	public function calculateProductPrice(Contractor $contractor, Promocode $promocode = null, $flightAt = null, $isUnified = false)
+	/*public function calculateProductPrice(Contractor $contractor, Promocode $promocode = null, $flightAt = null, $isUnified = false)
 	{
 		$product = $this;
 		$productTypeId = $product->product_type_id ?? 0;
@@ -205,7 +209,7 @@ class Product extends Model
 		}
 		
 		return $price;
-	}
+	}*/
 	
 	/**
 	 * @param $flightAt
@@ -274,7 +278,7 @@ class Product extends Model
 				}
 			}
 		}
-
+		
 		$contractor = $contractorId ? Contractor::whereIsActive(true)->find($contractorId) : null;
 
 		$promo = $promoId ? Promo::whereIsActive(true)->find($promoId) : null;
@@ -294,13 +298,15 @@ class Product extends Model
 		$cityProduct = $this->cities()->where('cities_products.is_active', true)->find($cityId);
 		if (!$cityProduct || !$cityProduct->pivot) return 0;
 
-		// баллы в расчете стоимости из моб. не учитываем
+		/*// баллы в расчете стоимости из моб. не учитываем
 		if ($source == Deal::MOB_SOURCE && $score) {
 			$score = 0;
-		}
+		}*/
 		
 		// базовая стоимость продукта
 		$amount = $cityProduct->pivot->price;
+		
+		//\Log::debug($amount);
 		
 		// если это бронирование по Сертификату, выбран иной тариф, и стоимомть текущего тарифа больше,
 		// то вычисляем разницу для доплаты
@@ -308,58 +314,59 @@ class Product extends Model
 		if ($amount < 0) $amount = 0;
 
 		// скидка на продукт
-		$dataJson = $cityProduct->pivot->data_json ? (array)$cityProduct->pivot->data_json : [];
+		/*$dataJson = $cityProduct->pivot->data_json ? (array)$cityProduct->pivot->data_json : [];
 		if ($isCertificatePurchase) {
 			$isDiscountAllow = array_key_exists('is_discount_certificate_purchase_allow', $dataJson) ? $dataJson['is_discount_certificate_purchase_allow'] : false;
 		} else {
 			$isDiscountAllow = array_key_exists('is_discount_booking_allow', $dataJson) ? $dataJson['is_discount_booking_allow'] : false;
-		}
+		}*/
 		
 		$discount = $cityProduct->pivot->discount ?? null;
-		if ($isDiscountAllow && $discount) {
+		if (/*$isDiscountAllow && */$discount) {
 			$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
 
-			return ($amount > 0) ? (round($amount) + $score) : 0;
+			return ($amount > 0) ? (round($amount, 2) + $score) : 0;
 		}
 		
 		// скидка по промокоду/акции/клиента действует только для типов тарифов Regular и Ultimate
 		if ($this->productType && in_array($this->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS])) {
 			// скидка по промокоду
 			if ($promocode) {
-				$dataJson = $promocode->data_json ? (array)$promocode->data_json : [];
+				/*$dataJson = $promocode->data_json ? (array)$promocode->data_json : [];
 				// персональные промокоды на другой тип тренажера доступны только действуют только на бронирование
 				if ($isCertificatePurchase) {
 					$isDiscountAllow = ($promocode->type == Promocode::SIMULATOR_TYPE) ? false : (array_key_exists('is_discount_certificate_purchase_allow', $dataJson) ? (bool)$dataJson['is_discount_certificate_purchase_allow'] : false);
 				}
 				else {
 					$isDiscountAllow = ($promocode->type == Promocode::SIMULATOR_TYPE) ? true : (array_key_exists('is_discount_booking_allow', $dataJson) ? (bool)$dataJson['is_discount_booking_allow'] : false);
-				}
+				}*/
 				$discount = $promocode->discount ?? null;
-				if ($isDiscountAllow && $discount && (!$promocode->location_id || $promocode->location_id == $locationId)) {
+				if (/*$isDiscountAllow && */$discount && (!$promocode->location_id || $promocode->location_id == $locationId)) {
 					$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
 					
-					return ($amount > 0) ? (round($amount) + $score) : 0;
+					return ($amount > 0) ? (round($amount, 2) + $score) : 0;
 				}
 			}
 			
 			// скидка по указанной акции
 			if ($promo) {
-				$dataJson = $promo->data_json ? (array)$promo->data_json : [];
+				/*$dataJson = $promo->data_json ? (array)$promo->data_json : [];
 				if ($isCertificatePurchase) {
 					$isDiscountAllow = array_key_exists('is_discount_certificate_purchase_allow', $dataJson) ? (bool)$dataJson['is_discount_certificate_purchase_allow'] : false;
 				} else {
 					$isDiscountAllow = array_key_exists('is_discount_booking_allow', $dataJson) ? (bool)$dataJson['is_discount_booking_allow'] : false;
-				}
-				$discount = $promo->discount ?? null;
-				if ($isDiscountAllow && $discount) {
-					$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
-					
-					return ($amount > 0) ? (round($amount) + $score) : 0;
-				}
-				/*if ($promo->alias == 'birthday') {
-					\Log::debug($isDiscountAllow . ' - ' . $amount);
-					\Log::debug($discount);
 				}*/
+				$discount = $promo->discount ?? null;
+				if (/*$isDiscountAllow && */$discount) {
+					$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
+					\Log::debug($amount . ' - ' . $discount->is_fixed . ' - ' . $discount->value);
+					
+					return ($amount > 0) ? (round($amount, 2) + $score) : 0;
+				}
+				if ($promo->alias == 'birthday') {
+					\Log::debug($amount);
+					\Log::debug($discount);
+				}
 			}
 
 			$date = date('Y-m-d');
@@ -367,7 +374,7 @@ class Product extends Model
 			$amounts = [];
 
 			// акция ДР
-			if ($contractor) {
+			/*if ($contractor) {
 				$birthdayPromo = Promo::where('is_active', true)
 					->where('is_published', true)
 					->where('discount_id', '!=', 0)
@@ -397,7 +404,7 @@ class Product extends Model
 						$amounts[] = ($amount > 0) ? round($amount) : 0;
 					}
 				}
-			}
+			}*/
 
 			// активные акции для публикации со скидкой
 			$promos = Promo::where('is_active', true)
@@ -416,17 +423,17 @@ class Product extends Model
 				->orderByDesc('active_from_at')
 				->get();
 			foreach ($promos as $promo) {
-				$dataJson = $promo->data_json ? (array)$promo->data_json : [];
+				/*$dataJson = $promo->data_json ? (array)$promo->data_json : [];
 				if ($isCertificatePurchase) {
 					$isDiscountAllow = array_key_exists('is_discount_certificate_purchase_allow', $dataJson) ? (bool)$dataJson['is_discount_certificate_purchase_allow'] : false;
 				} else {
 					$isDiscountAllow = array_key_exists('is_discount_booking_allow', $dataJson) ? (bool)$dataJson['is_discount_booking_allow'] : false;
-				}
+				}*/
 				$discount = $promo->discount ?? null;
-				if ($isDiscountAllow && $discount) {
+				if (/*$isDiscountAllow && */$discount) {
 					$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
 
-					$amounts[] = ($amount > 0) ? round($amount) : 0;
+					$amounts[] = ($amount > 0) ? round($amount, 2) : 0;
 				}
 			}
 
@@ -439,7 +446,7 @@ class Product extends Model
 
 			// скидка контрагента
 			if ($contractor) {
-				// все статусы контрагента
+				/*// все статусы контрагента
 				$statuses = Status::where('is_active', true)
 					->where('type', Status::STATUS_TYPE_CONTRACTOR)
 					->get();
@@ -452,10 +459,12 @@ class Product extends Model
 
 				if ($status->discount) {
 					$amount = $status->discount->is_fixed ? ($amount - $status->discount->value) : ($amount - $amount * $status->discount->value / 100);
-				}
+				}*/
+				$discount = $contractor->discount();
+				$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
 			}
 		}
 
-		return ($amount > 0) ? (round($amount) + $score) : 0;
+		return ($amount > 0) ? (round($amount, 2) + $score) : 0;
 	}
 }

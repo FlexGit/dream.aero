@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FlightSimulator;
+use Auth;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Location;
@@ -28,13 +29,13 @@ class LocationController extends Controller
 		$cities = City::orderBy('name')
 			->get();
 		
-		$legalEntities = LegalEntity::where('is_active', true)
+		/*$legalEntities = LegalEntity::where('is_active', true)
 			->orderBy('name', 'asc')
-			->get();
+			->get();*/
 
 		return view('admin.location.index', [
 			'cities' => $cities,
-			'legalEntities' => $legalEntities,
+			/*'legalEntities' => $legalEntities,*/
 		]);
 	}
 	
@@ -46,17 +47,17 @@ class LocationController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+		
+		$user = Auth::user();
+		$city = $user->city;
 
-		$locations = Location::with(['city', 'legalEntity']);
-		if ($this->request->filter_city_id) {
-			$locations = $locations->where('city_id', $this->request->filter_city_id);
-		}
-		if ($this->request->filter_legal_entity_id) {
-			$locations = $locations->where('legal_entity_id', $this->request->filter_legal_entity_id);
-		}
-		$locations = $locations->get();
+		$locations = Location::where('city_id', $city->id)
+			->get();
 
-		$VIEW = view('admin.location.list', ['locations' => $locations]);
+		$VIEW = view('admin.location.list', [
+			'locations' => $locations,
+			'city' => $city,
+		]);
 
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
 	}
@@ -82,16 +83,16 @@ class LocationController extends Controller
 			->orderBy('name', 'asc')
 			->get();
 		
-		$legalEntities = LegalEntity::where('is_active', true)
+		/*$legalEntities = LegalEntity::where('is_active', true)
 			->orderBy('name', 'asc')
-			->get();
+			->get();*/
 
 		$simulators = FlightSimulator::get();
 		
 		$VIEW = view('admin.location.modal.edit', [
 			'location' => $location,
 			'cities' => $cities,
-			'legalEntities' => $legalEntities,
+			/*'legalEntities' => $legalEntities,*/
 			'simulators' => $simulators,
 		]);
 		
@@ -115,13 +116,13 @@ class LocationController extends Controller
 			->orderBy('name', 'asc')
 			->get();
 		
-		$legalEntities = LegalEntity::where('is_active', true)
+		/*$legalEntities = LegalEntity::where('is_active', true)
 			->orderBy('name', 'asc')
-			->get();
+			->get();*/
 
 		$VIEW = view('admin.location.modal.add', [
 			'cities' => $cities,
-			'legalEntities' => $legalEntities,
+			/*'legalEntities' => $legalEntities,*/
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -187,7 +188,7 @@ class LocationController extends Controller
 		$rules = [
 			'name' => 'required|max:255|unique:locations,name',
 			'alias' => 'required|min:2|max:25|unique:locations,alias',
-			'legal_entity_id' => 'required|integer',
+			/*'legal_entity_id' => 'required|integer',*/
 			'city_id' => 'required|integer',
 			'address' => 'required',
 			'working_hours' => 'required',
@@ -200,7 +201,7 @@ class LocationController extends Controller
 			->setAttributeNames([
 				'name' => 'Наименование',
 				'alias' => 'Алиас',
-				'legal_entity_id' => 'Юр.лицо',
+				/*'legal_entity_id' => 'Юр.лицо',*/
 				'city_id' => 'Город',
 				'address' => 'Адрес',
 				'working_hours' => 'Часы работы',
@@ -221,7 +222,7 @@ class LocationController extends Controller
 		$location->name = $this->request->name;
 		$location->alias = $this->request->alias;
 		$location->is_active = $this->request->is_active;
-		$location->legal_entity_id = $this->request->legal_entity_id;
+		/*$location->legal_entity_id = $this->request->legal_entity_id;*/
 		$location->city_id = $this->request->city_id;
 		$location->data_json = [
 			'address' => $this->request->address,
@@ -260,7 +261,7 @@ class LocationController extends Controller
 		$rules = [
 			'name' => 'required|max:255|unique:locations,name,' . $id,
 			'alias' => 'required|min:2|max:25|unique:locations,alias,' . $id,
-			'legal_entity_id' => 'required|integer',
+			/*'legal_entity_id' => 'required|integer',*/
 			'city_id' => 'required|integer',
 			'address' => 'required',
 			'working_hours' => 'required',
@@ -273,7 +274,7 @@ class LocationController extends Controller
 			->setAttributeNames([
 				'name' => 'Наименование',
 				'alias' => 'Алиас',
-				'legal_entity_id' => 'Юр.лицо',
+				/*'legal_entity_id' => 'Юр.лицо',*/
 				'city_id' => 'Город',
 				'address' => 'Адрес',
 				'working_hours' => 'Часы работы',
@@ -293,7 +294,7 @@ class LocationController extends Controller
 		$location->name = $this->request->name;
 		$location->alias = $this->request->alias;
 		$location->is_active = $this->request->is_active;
-		$location->legal_entity_id = $this->request->legal_entity_id;
+		/*$location->legal_entity_id = $this->request->legal_entity_id;*/
 		$location->city_id = $this->request->city_id;
 		
 		$data = $location->data_json;

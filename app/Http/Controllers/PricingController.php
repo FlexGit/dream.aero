@@ -55,9 +55,9 @@ class PricingController extends Controller
 
 			$citiesProductsData[$city->id][$product->id] = [
 				'price' => $cityProduct->pivot->price,
-				'currency' => $cityProduct->pivot->currency ? $cityProduct->pivot->currency->name : '',
+				'currency' => $city->currency ? $city->currency->name : '',
 				'is_hit' => $cityProduct->pivot->is_hit,
-				'score' => $cityProduct->pivot->score,
+				/*'score' => $cityProduct->pivot->score,*/
 				'is_active' => $cityProduct->pivot->is_active,
 				'data_json' => $cityProduct->pivot->data_json,
 			];

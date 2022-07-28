@@ -50,13 +50,7 @@
 	</div>
 	<div class="col-4">
 		<div class="form-group">
-			<label for="certificate">Voucher</label>
-			<input type="text" class="form-control" id="certificate" name="certificate" placeholder="Voucher">
-		</div>
-	</div>
-	{{--<div class="col-4">
-		<div class="form-group">
-			<label for="promocode_id">Промокод</label>
+			<label for="promocode_id">Promocode</label>
 			<select class="form-control" id="promocode_id" name="promocode_id">
 				<option value=""></option>
 				@foreach($promocodes ?? [] as $promocode)
@@ -64,7 +58,7 @@
 				@endforeach
 			</select>
 		</div>
-	</div>--}}
+	</div>
 </div>
 <div class="row">
 	<div class="col-5">
@@ -90,15 +84,15 @@
 		<label for="comment">Comment</label>
 		<textarea class="form-control" id="comment" name="comment" rows="2"></textarea>
 	</div>
-	{{--<div class="col-4 text-right">
+	<div class="col-4 text-right">
 		<div class="form-group mt-4">
 			<div class="custom-control custom-switch custom-control-inline">
 				<input type="checkbox" id="is_free" name="is_free" value="1" class="custom-control-input">
 				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
 			</div>
 			<div id="amount-text">
-				<h1 class="d-inline-block">0</h1> <i class="fas fa-ruble-sign" style="font-size: 25px;"></i>
+				<i class="fas fa-dollar-sign" style="font-size: 25px;"></i> <h1 class="d-inline-block">0</h1>
 			</div>
 		</div>
-	</div>--}}
+	</div>
 </div>

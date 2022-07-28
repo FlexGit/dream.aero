@@ -199,7 +199,7 @@ class ProductController extends Controller
 
 		$rules = [
 			'name' => 'required|max:255|unique:products,name',
-			'public_name' => 'required|max:255|unique:products,public_name',
+			'public_name' => 'required|max:255',
 			'alias' => 'required|max:255|unique:products,alias',
 			'product_type_id' => 'required|numeric|min:0|not_in:0',
 			'icon_file' => 'sometimes|image|max:512',
@@ -264,7 +264,7 @@ class ProductController extends Controller
 		
 		$rules = [
 			'name' => 'required|max:255|unique:products,name,' . $id,
-			'public_name' => 'required|max:255|unique:products,public_name,' . $id,
+			'public_name' => 'required|max:255',
 			'alias' => 'required|max:255|unique:products,alias,' . $id,
 			'product_type_id' => 'required|numeric|min:0|not_in:0',
 			'icon_file' => 'sometimes|image|max:512',

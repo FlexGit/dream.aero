@@ -26,6 +26,7 @@ class CreateEventsTable extends Migration
 			$table->timestamp('start_at')->nullable()->comment('дата и время начала события');
 			$table->timestamp('stop_at')->nullable()->comment('дата и время окончания события');
 			$table->integer('extra_time')->default(0)->comment('дополнительное время');
+			$table->text('description')->nullable()->comment('описание');
 			$table->boolean('is_repeated_flight')->default(false)->index()->comment('признак повторного полета');
 			$table->boolean('is_unexpected_flight')->default(false)->index()->comment('признак спонтанного полета');
 			$table->string('notification_type')->nullable()->comment('способ оповещения контрагента о полете');

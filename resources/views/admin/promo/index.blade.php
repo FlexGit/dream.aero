@@ -32,8 +32,7 @@
 							<th class="text-center align-middle">Name</th>
 							<th class="text-center align-middle d-none d-sm-table-cell">Alias</th>
 							<th class="text-center align-middle d-none d-sm-table-cell">Discount</th>
-							<th class="text-center align-middle d-none d-xl-table-cell">City</th>
-							<th class="text-center align-middle d-none d-xl-table-cell">For publication</th>
+							{{--<th class="text-center align-middle d-none d-xl-table-cell">For publication</th>--}}
 							<th class="text-center align-middle d-none d-xl-table-cell">Is active</th>
 							<th class="text-center align-middle d-none d-xl-table-cell">Activity start date</th>
 							<th class="text-center align-middle d-none d-xl-table-cell">Activity end date</th>

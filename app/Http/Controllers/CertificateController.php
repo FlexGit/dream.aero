@@ -132,21 +132,18 @@ class CertificateController extends Controller
 			$certificateItems[$certificate->id] = [
 				'number' => $certificate->number,
 				'created_at' => $certificate->created_at,
-				/*'city_name' => $certificateCity ? $certificateCity->name : (isset($certificate->data_json['sell_date']) ? '' : 'Any'),*/
 				'certificate_product_name' => $certificateProduct ? $certificateProduct->name : '',
 				'position_product_name' => $positionProduct ? $positionProduct->name : '',
 				'position_amount' => $position ? $position->amount : 0,
+				'position_tax' => $position ? $position->tax : 0,
+				'position_total_amount' => $position ? $position->total_amount : 0,
 				'comment' => $comment . ($oldData ? ' Old CRM info: ' . $oldData : ''),
-				/*'certificate_whom' => $certificateWhom,
-				'certificate_whom_phone' => $certificateWhomPhone,
-				'delivery_address' => $deliveryAddress,*/
 				'expire_at' => $certificate->expire_at ? Carbon::parse($certificate->expire_at)->format('Y-m-d') : 'termless',
 				'certificate_status_name' => $certificateStatus ? $certificateStatus->name : '',
 				'bill_number' => $positionBill ? $positionBill->number : '',
 				'bill_status_alias' => $positionBillStatus ? $positionBillStatus->alias : '',
 				'bill_status_name' => $positionBillStatus ? $positionBillStatus->name : '',
 				'bill_payment_method_name' => $positionBillPaymentMethod ? $positionBillPaymentMethod->name : '',
-				/*'currency_alias' => $currency ? $currency->alias : '',*/
 			];
 		}
 		

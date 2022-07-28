@@ -32,7 +32,7 @@
 							{{ $product->name }}
 						</td>
 						<td class="text-right align-middle">
-							{{ isset($citiesProductsData[$city->id][$product->id]) ? number_format($citiesProductsData[$city->id][$product->id]['price'], 0, '.', ' ') . ' ' . $citiesProductsData[$city->id][$product->id]['currency'] : '' }}
+							{{ isset($citiesProductsData[$city->id][$product->id]) ? $citiesProductsData[$city->id][$product->id]['currency'] . number_format($citiesProductsData[$city->id][$product->id]['price'], 2, '.', ' ') : '' }}
 						</td>
 						<td class="text-right align-middle d-none d-sm-table-cell">
 							@if(isset($citiesProductsData[$city->id][$product->id]) && isset($citiesProductsData[$city->id][$product->id]['discount']))

@@ -3,15 +3,11 @@
 namespace App\Jobs;
 
 use App\Jobs\QueueExtension\ReleaseHelperTrait;
-use App\Models\Bill;
-use App\Models\City;
 use App\Models\Event;
-use App\Repositories\CityRepository;
 use Carbon\Carbon;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Storage;
 use Mail;
 
 class SendFlightInvitationEmail extends Job implements ShouldQueue {
@@ -27,17 +23,6 @@ class SendFlightInvitationEmail extends Job implements ShouldQueue {
 	 * @return int|void
 	 */
 	public function handle() {
-		$flightInvitationFilePath = isset($this->event->data_json['flight_invitation_file_path']) ? $this->event->data_json['flight_invitation_file_path'] : '';
-		$flightInvitationFileExists = Storage::disk('private')->exists($flightInvitationFilePath);
-		
-		// если файла приглашения по какой-то причине не оказалось, генерим его
-		if (!$flightInvitationFilePath || !$flightInvitationFileExists) {
-			$this->event = $this->event->generateFile();
-			if (!$this->event) {
-				return null;
-			}
-		}
-		
 		$city = $this->event->city;
 		if (!$city) return null;
 
@@ -56,21 +41,6 @@ class SendFlightInvitationEmail extends Job implements ShouldQueue {
 		$position = $this->event->dealPosition;
 		if (!$position) return null;
 		
-		//$amount = 0;
-		$bill = $position->bill;
-		/*if ($bill) {
-			// если к позиции привязан счет, то он должен быть оплачен
-			if ($bill->status->alias != Bill::PAYED_STATUS) {
-				return null;
-			}
-			$amount = $bill->amount;
-			if ($amount <= 0) return null;
-		} else {
-			// если к позиции не привязан счет, то проверяем чтобы вся сделка была оплачена
-			$balance = $deal->balance();
-			if ($balance < 0) return null;
-		}*/
-		
 		$dealEmail = $deal->email ?? '';
 		$dealName = $deal->name ?? '';
 		$contractorEmail = $contractor->email ?? '';
@@ -87,9 +57,7 @@ class SendFlightInvitationEmail extends Job implements ShouldQueue {
 			'flightDate' => $this->event->start_at ?? '',
 			'location' => $location,
 			'simulator' => $simulator,
-			'amount' => $bill->amount ?? 0,
 			'city' => $city,
-			'payLink' => $bill ? ((($city->version == City::EN_VERSION) ? url('//' . env('DOMAIN_EN')) : url('//' . env('DOMAIN_RU'))) . '/payment/' . $bill->uuid) : '',
 		];
 		
 		$recipients = $bcc = [];
@@ -98,19 +66,18 @@ class SendFlightInvitationEmail extends Job implements ShouldQueue {
 			$bcc[] = $city->email;
 		}
 		
-		$subject = env('APP_NAME') . ': приглашение на полет';
+		$subject = env('APP_NAME') . ': Flight invitation';
 
-		Mail::send(['html' => "admin.emails.send_flight_invitation"], $messageData, function ($message) use ($subject, $recipients, $flightInvitationFilePath, $bcc) {
+		Mail::send(['html' => "admin.emails.send_flight_invitation"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
-			$message->attach(Storage::disk('private')->path($this->event->data_json['flight_invitation_file_path']));
 			$message->to($recipients);
 			$message->bcc($bcc);
 		});
 		
 		$failures = Mail::failures();
 		if ($failures) {
-			\Log::debug($this->event->id . ' - ' . $this->event->data_json['flight_invitation_file_path']);
+			\Log::debug($failures);
 			return null;
 		}
 		

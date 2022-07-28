@@ -40,9 +40,7 @@
 													</div>
 													<div class="col-md-5">
 														<div class="reviews-author wow fadeIn" data-wow-delay="1s" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-delay: 1s; animation-name: fadeIn;">
-															<span class="reviews-name">{{ $item->title }}{{ $item->city ? ' | ' . $item->city->name : '' }}</span>
-															<span class="reviews-sent">@lang('main.reviews.отправлено'): {{ $item->created_at->format('d.m.Y') }}</span>
-
+															<span class="reviews-sent">sent: {{ $item->created_at->format('m-d-Y') }}</span>
 														</div>
 													</div>
 												</div>

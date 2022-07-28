@@ -15,7 +15,13 @@
 				@endif
 			</td>
 			<td class="align-middle text-right">
-				{{ number_format($certificateItem['position_amount'], 2, '.', ' ') }} {{--{{ $certificateItem['currency_alias'] }}--}}
+				{{ number_format($certificateItem['position_amount'], 2, '.', ' ') }}
+			</td>
+			<td class="align-middle text-right">
+				{{ number_format($certificateItem['position_tax'], 2, '.', ' ') }}
+			</td>
+			<td class="align-middle text-right">
+				{{ number_format($certificateItem['position_total_amount'], 2, '.', ' ') }}
 			</td>
 			<td class="align-middle text-center">
 				{{ $certificateItem['certificate_status_name'] }}

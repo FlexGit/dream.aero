@@ -1,13 +1,13 @@
 <input type="hidden" id="id" name="id">
 <div class="form-group">
-	<label for="name">Наименование</label>
-	<input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="Наименование">
+	<label for="name">Name</label>
+	<input type="text" class="form-control form-control-sm" id="name" name="name" placeholder="Name">
 </div>
 <div class="form-group">
-	<label for="alias">Алиас</label>
-	<input type="text" class="form-control form-control-sm" id="alias" name="alias" placeholder="Алиас">
+	<label for="alias">Alias</label>
+	<input type="text" class="form-control form-control-sm" id="alias" name="alias" placeholder="Alias">
 </div>
-<div class="form-group">
+{{--<div class="form-group">
 	<label for="legal_entity_id">Юридическое лицо</label>
 	<select id="legal_entity_id" name="legal_entity_id" class="form-control form-control-sm">
 		<option></option>
@@ -15,27 +15,27 @@
 			<option value="{{ $legalEntity->id }}">{{ $legalEntity->name }}</option>
 		@endforeach
 	</select>
-</div>
-<div class="form-group">
-	<label for="city_id">Город</label>
+</div>--}}
+{{--<div class="form-group">
+	<label for="city_id">City</label>
 	<select id="city_id" name="city_id" class="form-control form-control-sm">
 		<option></option>
 		@foreach($cities as $city)
 			<option value="{{ $city->id }}">{{ $city->name }}</option>
 		@endforeach
 	</select>
-</div>
+</div>--}}
 <div class="form-group">
-	<label for="address">Адрес</label>
+	<label for="address">Address</label>
 	<textarea class="form-control form-control-sm" id="address" name="address" rows="2"></textarea>
 </div>
 <div class="form-group">
-	<label for="working_hours">Часы работы</label>
-	<input type="text" class="form-control form-control-sm" id="working_hours" name="working_hours" placeholder="Часы работы">
+	<label for="working_hours">Working hours</label>
+	<input type="text" class="form-control form-control-sm" id="working_hours" name="working_hours" placeholder="Working hours">
 </div>
 <div class="form-group">
-	<label for="phone">Телефон</label>
-	<input type="text" class="form-control form-control-sm" id="phone" name="phone" placeholder="Телефон">
+	<label for="phone">Phone number</label>
+	<input type="text" class="form-control form-control-sm" id="phone" name="phone" placeholder="Phone number">
 </div>
 <div class="form-group">
 	<label for="email">E-mail</label>
@@ -50,24 +50,24 @@
 	<input type="text" class="form-control form-control-sm" id="whatsapp" name="whatsapp" placeholder="WhatsApp">
 </div>
 <div class="form-group">
-	<label for="map_link">Ссылка на карту (Контакты)</label>
+	<label for="map_link">Map link (Contacts)</label>
 	<textarea class="form-control form-control-sm" id="map_link" name="map_link" rows="5"></textarea>
 </div>
 <div class="form-group">
-	<label for="review_map_link">Ссылка на карту (Отзывы)</label>
+	<label for="review_map_link">Map link (Reviews)</label>
 	<textarea class="form-control form-control-sm" id="review_map_link" name="review_map_link" rows="5"></textarea>
 </div>
 <div class="form-group">
-	<label for="scheme_file">Путь к файлу план-схемы</label>
+	<label for="scheme_file">Scheme file path</label>
 	<div class="custom-file">
 		<input type="file" class="custom-file-input" id="scheme_file" name="scheme_file">
-		<label class="custom-file-label" for="scheme_file">Выбрать файл</label>
+		<label class="custom-file-label" for="scheme_file">Choose a file</label>
 	</div>
 </div>
 <div class="form-group">
-	<label for="is_active">Активность</label>
+	<label for="is_active">Is active</label>
 	<select class="form-control form-control-sm" id="is_active" name="is_active">
-		<option value="1" selected>Да</option>
-		<option value="0">Нет</option>
+		<option value="1" selected>Yes</option>
+		<option value="0">No</option>
 	</select>
 </div>

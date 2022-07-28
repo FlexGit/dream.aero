@@ -57,13 +57,13 @@
 	<div class="col-6">
 		<div class="form-group">
 			<label for="contractor_search">Client search</label>
-			<input type="email" class="form-control" id="contractor_search" name="email" placeholder="Search by full name, e-mail, phone">
+			<input type="email" class="form-control" id="contractor_search" name="email" placeholder="Search by name, lastname, e-mail, phone number">
 			<div class="js-contractor-container hidden">
 				<span class="js-contractor"></span> <i class="fas fa-times js-contractor-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 			</div>
 		</div>
 	</div>
-	<div class="col-2">
+	<div class="col-3">
 		<div class="form-group">
 			<label for="payment_method_id">Payment method</label>
 			<select class="form-control" id="payment_method_id" name="payment_method_id">
@@ -74,19 +74,13 @@
 			</select>
 		</div>
 	</div>
-	<div class="col-2 text-center">
+	<div class="col-3 text-center">
 		<div class="form-group" style="margin-top: 40px;">
 			<div class="custom-control custom-switch custom-control">
 				<input type="checkbox" id="is_paid" name="is_paid" value="1" class="custom-control-input">
 				<label class="custom-control-label font-weight-normal" for="is_paid">Invoice is paid</label>
 			</div>
 		</div>
-	</div>
-	<div class="col-2">
-		{{--<div class="form-group">
-			<label for="roistat_visit">Номер визита Roistat</label>
-			<input type="text" class="form-control" id="roistat_visit" name="roistat_visit" placeholder="Номер">
-		</div>--}}
 	</div>
 </div>
 <div class="row">
@@ -110,8 +104,8 @@
 	</div>
 	<div class="col">
 		<div class="form-group">
-			<label for="lastname">Surname</label>
-			<input type="text" class="form-control" id="lastname" name="lastname" placeholder="Surname">
+			<label for="lastname">Lastname</label>
+			<input type="text" class="form-control" id="lastname" name="lastname" placeholder="Lastname">
 		</div>
 	</div>
 </div>
@@ -244,10 +238,10 @@
 					</select>
 				</div>
 			</div>
-			@if($source)
+			{{--@if($source)--}}
 				<div class="col">
 					<div class="form-group">
-						<label for="is_repeated_flight">Repeated flight</label>
+						<label for="is_repeated_flight">Repeated</label>
 						<select class="form-control" id="is_repeated_flight" name="is_repeated_flight">
 							<option value="0" selected>No</option>
 							<option value="1">Yes</option>
@@ -256,14 +250,14 @@
 				</div>
 				<div class="col">
 					<div class="form-group">
-						<label for="is_unexpected_flight">Spontaneous flight</label>
+						<label for="is_unexpected_flight">Spontaneous</label>
 						<select class="form-control" id="is_unexpected_flight" name="is_unexpected_flight">
 							<option value="0" selected>No</option>
 							<option value="1">Yes</option>
 						</select>
 					</div>
 				</div>
-			@endif
+			{{--@endif--}}
 		</div>
 	</div>
 </div>
@@ -279,8 +273,7 @@
 				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
 			</div>
 			<div id="amount-text">
-				<h1 class="d-inline-block">0</h1>
-				<i class="fas fa-dollar-sign" style="font-size: 25px;"></i>
+				<i class="fas fa-dollar-sign" style="font-size: 30px;"></i> <h1 class="d-inline-block">0</h1>
 			</div>
 		</div>
 	</div>

@@ -20,6 +20,7 @@ class CreateCitiesTable extends Migration
 			$table->string('alias', 50)->comment('алиас');
 			$table->string('email', 255)->comment('e-mail');
 			$table->string('phone', 50)->comment('телефон');
+			$table->integer('currency_id')->default(0)->index()->comment('валюта');
 			$table->string('version', 25)->default('ru')->index()->comment('версия');
 			$table->string('timezone', 50)->nullable()->comment('временная зона');
 			$table->integer('sort')->default(0)->comment('сортировка');

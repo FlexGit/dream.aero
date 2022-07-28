@@ -5,31 +5,31 @@
 			<td>{{ $location->id }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Наименование</td>
+			<td>Name</td>
 			<td>{{ $location->name }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Алиас</td>
+			<td>Alias</td>
 			<td>{{ $location->alias }}</td>
 		</tr>
-		<tr class="odd">
+		{{--<tr class="odd">
 			<td>Юридическое лицо</td>
 			<td>{{ $location->legalEntity ? $location->legalEntity->name : '' }}</td>
-		</tr>
-		<tr class="odd">
-			<td>Город</td>
+		</tr>--}}
+		{{--<tr class="odd">
+			<td>City</td>
 			<td>{{ $location->city ? $location->city->name : '' }}</td>
+		</tr>--}}
+		<tr class="odd">
+			<td>Is active</td>
+			<td>{{ $location->is_active ? 'Yes' : 'No' }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Активность</td>
-			<td>{{ $location->is_active ? 'Да' : 'Нет' }}</td>
-		</tr>
-		<tr class="odd">
-			<td>Дата создания</td>
+			<td>Create date</td>
 			<td>{{ $location->created_at }}</td>
 		</tr>
 		<tr class="odd">
-			<td>Дата последнего изменения</td>
+			<td>Last edit date</td>
 			<td>{{ $location->updated_at }}</td>
 		</tr>
 	</tbody>

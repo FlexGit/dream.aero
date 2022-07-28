@@ -6,7 +6,7 @@
 @section('description', $news->meta_description ?: $news->name)
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url(Request::get('cityAlias') ?? '/') }}">@lang('main.home.title')</a> <a href="{{ url('news') }}">@lang('main.news.title')</a> <span>{{ $news->title }}</span></div>
+	<div class="breadcrumbs container"><a href="{{ url($cityAlias) }}">@lang('main.home.title')</a> <a href="{{ url($cityAlias . '/news') }}">@lang('main.news.title')</a> <span>{{ $news->title }}</span></div>
 
 	<article class="article">
 		<div class="container">
@@ -14,9 +14,17 @@
 				<h1 class="article-title">{{ $news->title }}</h1>
 				<div class="article-content">
 					<div class="row">
-						<div class="col-md-8">
+						{{--<div class="col-md-12">--}}
 							<div class="item">
-								<span>{{ $news->published_at->format('d.m.Y') }}</span>
+								{{--<span>{{ $news->published_at->format('m-d-Y') }}</span>--}}
+
+								<div class="img">
+									@if(is_array($news->data_json) && array_key_exists('photo_preview_file_path', $news->data_json))
+										<img src="/upload/{{ $news->data_json['photo_preview_file_path'] }}" alt="" style="float:left;width:45%;margin-bottom: 30px;">
+									@endif
+								</div>
+
+								<div class="clearfix"></div>
 
 								<p>{!! $news->detail_text !!}</p>
 
@@ -41,9 +49,9 @@
 									<meta itemprop="ratingValue" content="{{ $news->rating_value }}">
 								</div>
 							</div>
-						</div>
+						{{--</div>--}}
 					</div>
-					<a href="{{ url('news') }}" class="more button-wayra button-wayra-orange"><i>@lang('main.news.все-новости')</i></a>
+					<a href="{{ url($cityAlias . '/news') }}" class="more button-wayra button-wayra-orange"><i>@lang('main.news.все-новости')</i></a>
 				</div>
 				<meta itemprop="name" content="{{ $news->title }}">
 			</div>

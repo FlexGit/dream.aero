@@ -43,7 +43,7 @@
 </div>
 @if($type != app('\App\Models\Content')::PAGES_TYPE)
 	<div class="form-group">
-		<label for="preview_text">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Reivew @else Description @endif</label>
+		<label for="preview_text">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Review @else Description @endif</label>
 		<textarea class="form-control tinymce" id="preview_text" name="preview_text" @if($type == app('\App\Models\Content')::REVIEWS_TYPE) rows="5" @endif></textarea>
 	</div>
 	<div class="form-group">
@@ -61,13 +61,13 @@
 	@endif
 	@if($type == app('\App\Models\Content')::GALLERY_TYPE)
 		<div class="form-group">
-			<label for="video_url">Видео (Youtube-ссылка)</label>
-			<input type="text" class="form-control" id="video_url" name="video_url" placeholder="Видео (Youtube-ссылка)">
+			<label for="video_url">Video (Youtube link)</label>
+			<input type="text" class="form-control" id="video_url" name="video_url" placeholder="Video (Youtube link)">
 		</div>
 	@elseif($type == app('\App\Models\Content')::GUESTS_TYPE)
 		<div class="form-group">
-			<label for="video_url">Ссылка на соц. сеть</label>
-			<input type="text" class="form-control" id="video_url" name="video_url" placeholder="Ссылка на соц. сеть">
+			<label for="video_url">Social network link</label>
+			<input type="text" class="form-control" id="video_url" name="video_url" placeholder="Social network link">
 		</div>
 	@endif
 @endif
@@ -79,10 +79,10 @@
 	<label for="meta_description">Meta Description</label>
 	<textarea class="form-control" id="meta_description" name="meta_description"></textarea>
 </div>
-<div class="form-group">
+{{--<div class="form-group">
 	<label for="photo_preview_file">Шаблон сертификата</label>
 	<div class="custom-file">
 		<input type="file" class="custom-file-input" id="certificate_template_file_path" name="certificate_template_file_path">
 		<label class="custom-file-label" for="certificate_template_file_path">Выбрать файл</label>
 	</div>
-</div>
+</div>--}}

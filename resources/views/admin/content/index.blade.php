@@ -53,7 +53,6 @@
 						<thead>
 						<tr>
 							<th class="text-center">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name @else Title @endif</th>
-							<th class="text-center d-none d-lg-table-cell">City</th>
 							@if($type != app('\App\Models\Content')::PAGES_TYPE)
 								<th class="text-center d-none d-xl-table-cell">Publication Date</th>
 								<th class="text-center d-none d-xl-table-cell">Is active</th>

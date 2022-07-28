@@ -2,67 +2,58 @@
 	<div class="container">
 		<div class="footer-menu">
 			<a href="{{ url(Request::session()->get('cityAlias') ?? '/') }}" class="logo">
-				@if (App::isLocale('en'))
-					<img src="{{ asset('img/logo-eng-footer.png') }}" alt="logo">
-				@else
-					<img src="{{ asset('img/logo-footer.webp') }}" alt="logo">
-				@endif
+				<img src="{{ asset('img/logo-eng-footer.png') }}" alt="logo">
 			</a>
-			<div class="social">
-				{{--<a href="https://www.facebook.com/dreamaero/"  target="_block"><div class="icon-fb"></div></a>--}}
-				<a href="https://t.me/dreamaero" target="_block"><div class="icon-telegram"></div></a>
-				<a href="https://www.instagram.com/dream.aero/" target="_block"><div class="icon-inst"></div></a>
-				<a href="https://www.youtube.com/channel/UC3huC7ltIlfkNMsz8Jt4qnw" target="_block"><div class="icon-yout"></div></a>
+			<div class="social" style="display: block;vertical-align: bottom;margin: 25px 0 0 0;text-align: center;padding-bottom: 5px;">
+				<a href="https://www.facebook.com/dreamaerous/" target="_block"><img src="{{ asset('img/fb.png') }}" alt="logo"></a>
+				<a href="https://www.instagram.com/dreamaero.us" target="_block"><img src="{{ asset('img/inst.png') }}" alt="logo"></a>
+				<a href="https://www.youtube.com/channel/UCSg-5Jw7aeZdqPOKeGC3ctA" target="_block"><img src="{{ asset('img/you.png') }}" alt="logo"></a>
+				<a href="https://www.snapchat.com/add/dreamaerous" target="_block"><img src="{{ asset('img/snapchat.png') }}" alt="logo"></a>
+				<a href="https://twitter.com/dream_aero" target="_block"><img src="{{ asset('img/twitter.png') }}" alt="logo"></a>
 			</div>
 		</div>
 		<div class="footer-menu">
 			<ul>
 				<li class="first">
-					<a href="{{ url('o-trenazhere') }}">@lang('main.нижнее-меню.о-тренажере')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/about-simulator') }}">ABOUT THE SIMULATOR</a>
 				</li>
 				<li>
-					<a href="{{ url('podarit-polet') }}">@lang('main.нижнее-меню.подарить-полет')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/gift-sertificates') }}">GIFT VOUCHERS</a>
 				</li>
 				<li>
-					<a href="{{ url('variantyi-poleta') }}">@lang('main.нижнее-меню.варианты-полета')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/flight-options') }}">FLIGHT ROUTE OPTIONS</a>
 				</li>
 				<li>
-					<a href="{{ url('news') }}">@lang('main.нижнее-меню.новости')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/news') }}">NEWS</a>
 				</li>
 				<li>
-					<a href="{{ url('instruktazh') }}">@lang('main.нижнее-меню.инструктаж')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/private-events') }}">PRIVATE EVENTS</a>
 				</li>
 				<li>
-					<a href="{{ url(Request::session()->get('cityAlias') ? Request::session()->get('cityAlias') . '/price' : 'price') }}">@lang('main.нижнее-меню.цены')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/prices') }}">PRICES</a>
 				</li>
 				<li>
-					<a href="{{ url('galereya') }}">@lang('main.нижнее-меню.галерея')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/gallery') }}">GALLERY</a>
 				</li>
 				<li>
-					<a href="{{ url('reviews') }}">@lang('main.нижнее-меню.отзывы')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/reviews') }}">REVIEWS</a>
 				</li>
 				<li>
-					<a href="{{ url(Request::session()->get('cityAlias') ? Request::session()->get('cityAlias') . '/contacts' : 'contacts') }}">@lang('main.нижнее-меню.контакты')</a>
-				</li>
-				<li>
-					<a href="{{ url('pravila') }}">@lang('main.нижнее-меню.правила')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/contacts') }}">CONTACT US</a>
 				</li>
 				<li class="last">
-					<a href="{{ url('oferta-dreamaero') }}" target=_blank>@lang('main.нижнее-меню.публичная-оферта')</a>
+					<a href="{{ url(Request::session()->get('cityAlias') . '/privacy-policy') }}">PRIVACY AND COOKIE POLICY</a>
 				</li>
 			</ul>
-			<div class="advert" style="font-size: 13px;">@lang('main.нижнее-меню.копирование-материалов')</div>
 		</div>
 		<div class="footer-menu">
-			<span {{ App::isLocale('en') ? 'style=margin-left:0;' : '' }}>
-				<a href="https://www.rossiya-airlines.com/" target="_blank">
-					<img style="width: 172px;margin:0 15px 15px 15px;" src="{{ asset('img/logo-white.webp') }}" alt="">
-				</a>
-				<p style="color: white;margin-top: -5px;font-size: 9px">@lang('main.нижнее-меню.в-партнерстве-с-компанией-россия')</p>
-				<p class="advert" style="margin: 0;text-align: right;margin-top: 45px;">
-					@lang('main.нижнее-меню.реклама-и-сотрудничество:') <a href="mailto:ads@dream-aero.com">ads@dream-aero.com</a>
+			<div id="payments" style="color: #fff;float: right;font-size: 10px;letter-spacing: .5px;margin-left: 25px;display: inline-block;">
+				<p>We accept payments</p>
+				<p>
+					<img src="{{ asset('img/visa-mastercard.png') }}" width="90px" alt="">
+					<img src="{{ asset('img/verified-by-visa-png.png') }}" width="120px" alt="">
 				</p>
-			</span>
+			</div>
 		</div>
 	</div>
 	<input type="hidden" id="city_id" name="city_id" value="{{ isset($city) ? $city->id : 1 }}">

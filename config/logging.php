@@ -106,9 +106,9 @@ return [
 			'path' => storage_path('logs/api.log'),
 		],
 
-		'authorize.net' => [
+		'authorize' => [
 			'driver' => 'single',
-			'path' => storage_path('logs/authorize.net.log'),
+			'path' => storage_path('logs/authorize.log'),
 			'level' => 'info',
 		],
 

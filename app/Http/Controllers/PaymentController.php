@@ -10,10 +10,16 @@ use App\Models\DealPosition;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Status;
+use App\Services\AuthorizeNetService;
 use App\Services\HelpFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Bill;
+use Log;
+use LVR\CreditCard\CardCvc;
+use LVR\CreditCard\CardExpirationDate;
+use LVR\CreditCard\CardNumber;
+use Validator;
 
 class PaymentController extends Controller
 {
@@ -29,10 +35,9 @@ class PaymentController extends Controller
 	
 	/**
 	 * @param $uuid
-	 * @param null $type
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
-	public function payment($uuid, $type = null)
+	public function payment($uuid)
 	{
 		$bill = Bill::where('uuid', $uuid)
 			->where('location_id', '!=', 0)
@@ -40,11 +45,11 @@ class PaymentController extends Controller
 		if (!$bill) {
 			abort(404);
 		}
-
+		
 		if ($bill->amount <= 0) {
 			abort(404);
 		}
-
+		
 		$deal = $bill->deal;
 		if (!$deal) {
 			abort(404);
@@ -61,6 +66,8 @@ class PaymentController extends Controller
 		$billStatus = $bill->status;
 		if (!$billStatus || $billStatus->alias != Bill::NOT_PAYED_STATUS || $bill->payed_at != null) {
 			return view('payment', [
+				'bill' => $bill,
+				'deal' => $deal,
 				'page' => $page ?? new Content,
 				'city' => $city,
 				'html' => '',
@@ -72,6 +79,8 @@ class PaymentController extends Controller
 		$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, PaymentMethod::ONLINE_ALIAS);
 		if ($bill->paymentMethod->alias != $onlinePaymentMethod->alias) {
 			return view('payment', [
+				'bill' => $bill,
+				'deal' => $deal,
 				'page' => $page ?? new Content,
 				'city' => $city,
 				'html' => '',
@@ -80,161 +89,96 @@ class PaymentController extends Controller
 			]);
 		}
 
-		// автоматическая проверка состояния заказа на списание милей, если такой есть
-		if ($bill->aeroflot_transaction_type == AeroflotBonusService::TRANSACTION_TYPE_REGISTER_ORDER
-			&& $bill->aeroflot_transaction_order_id
-			&& $bill->aeroflot_status == 0
-			&& in_array($bill->aeroflot_state, [AeroflotBonusService::REGISTERED_STATE, null])) {
-			$orderInfoResult = AeroflotBonusService::getOrderInfo($bill);
-			$bill = $bill->fresh();
-		}
-		
-		$paymentFormHtml = PayAnyWayService::generatePaymentForm($bill);
-		
 		return view('payment', [
-			'page' => $page ?? new Content,
-			'city' => $city,
 			'bill' => $bill,
 			'deal' => $deal,
-			'html' => $paymentFormHtml ?? '',
+			'page' => $page ?? new Content,
+			'city' => $city,
+			'html' => '',
 			'error' => '',
 			'payType' => $type ?? '',
 		]);
 	}
 	
-	/**
-	 * Ответ на уведомление об оплате от сервиса Монета
-	 *
-	 * @return string
-	 */
-	public function paymentCallback()
+	public function paymentProceed()
 	{
-		$uuid = $this->request->MNT_TRANSACTION_ID ?? '';
-		if (!$uuid) {
-			return 'FAIL';
+		if (!$this->request->ajax()) {
+			abort(404);
 		}
 		
-		$result = PayAnyWayService::paymentCallback($this->request);
-		if (!$result) {
-			return 'FAIL';
-		}
-		
-		$bill = HelpFunctions::getEntityByUuid(Bill::class, $uuid);
-		if (!$bill) {
-			return 'FAIL';
-		}
-		
-		$certificate = null;
-		if ($bill->status && $bill->status->alias != Bill::PAYED_STATUS) {
-			$payedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
-			$bill->status_id = $payedStatus->id;
-			$bill->payed_at = Carbon::now()->format('Y-m-d H:i:s');
-			if(!$bill->save()) {
-				return 'FAIL';
-			}
-			
-			$bill = $bill->fresh();
-			
-			//dispatch(new \App\Jobs\SendSuccessPaymentEmail($bill, $certificate));
-			$job = new \App\Jobs\SendSuccessPaymentEmail($bill, $certificate);
-			$job->handle();
-			
-			/** @var DealPosition $position */
-			$position = $bill->position;
-			/** @var Certificate $certificate */
-			$certificate = $position ? $position->certificate : null;
-			if ($certificate && $position->is_certificate_purchase) {
-				// при выставлении даты оплаты генерим и дату окончания срока действия сертификата,
-				// если это счет на позицию покупки сертификата
-				/** @var Product $product */
-				$product = $certificate ? $certificate->product : null;
-				$certificatePeriod = ($product && $position->is_certificate_purchase && array_key_exists('certificate_period', $product->data_json)) ? $product->data_json['certificate_period'] : 6;
-				$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
-				$certificate->save();
-				$certificate = $certificate->fresh();
-				$certificate = $certificate->generateFile();
-				
-				//dispatch(new \App\Jobs\SendCertificateEmail($certificate));
-				$job = new \App\Jobs\SendCertificateEmail($certificate);
-				$job->handle();
-			}
-		}
-		
-		return 'SUCCESS';
-	}
-	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function paymentSuccess()
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'rules');
-		
-		$data = [
-			'city' => $city,
-			'cityAlias' => $cityAlias,
-			'page' => $page ?? new Content,
-			'error' => '',
-			'message' => '',
+		$rules = [
+			'card_number' => ['required', new CardNumber],
+			'expiration_date' => ['required', new CardExpirationDate('mY')],
+			'card_name' => ['required'],
+			'card_code' => ['required', new CardCvc($this->request->card_number)],
 		];
 		
-		$uuid = $this->request->MNT_TRANSACTION_ID ?? '';
-		if (!$uuid) {
-			$data['error'] = trans('main.payment.счет-не-найден');
-			return view('payment-success', $data);
+		$validator = Validator::make($this->request->all(), $rules)
+			->setAttributeNames([
+				'card_number' => 'Card number',
+				'expiration_date' => 'Expiration date',
+				'card_name' => 'Full name',
+				'card_code' => 'CVC',
+			]);
+		if (!$validator->passes()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.проверьте-правильность-заполнения-полей-формы'), 'errors' => $validator->errors()]);
 		}
 		
+		$uuid = $this->request->uuid;
+		$cardNumber = $this->request->card_number ?? '';
+		$expirationDate = $this->request->expiration_date ?? '';
+		$cardName = $this->request->card_name ?? '';
+		$cardCode = $this->request->card_code ?? '';
+		
+		$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
+
 		$bill = HelpFunctions::getEntityByUuid(Bill::class, $uuid);
 		if (!$bill) {
-			$data['error'] = trans('main.payment.счет-не-найден');
-			return view('payment-success', $data);
+			return response()->json(['status' => 'error', 'reason' => 'Invoice not found']);
 		}
-		
-		if ($bill->status && $bill->status->alias != Bill::NOT_PAYED_STATUS) {
-			$data['error'] = trans('main.payment.счет-уже-был-оплачен', ['number' => $bill->number]);
-			return view('payment-success', $data);
+		if ($bill->status_id == $billPayedStatus->id || $bill->payed_at) {
+			return response()->json(['status' => 'error', 'reason' => 'Invoice has already been paid']);
 		}
-		
-		$payedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_PROCESSING_STATUS);
-		$bill->status_id = $payedStatus->id;
-		$bill->save();
 		
 		$position = $bill->position;
+		$description = '';
 		if ($position) {
-			if ($position->is_certificate_purchase) {
-				$data['message'] = trans('main.payment.оплата-успешно-принята-сертификат-будет-отправлен', ['number' => $bill->number]);
-			} else {
-				$data['message'] = trans('main.payment.оплата-успешно-принята-приглашение-на-полет-будет-отправлено', ['number' => $bill->number]);
+			$product = $position->product;
+			if ($product) {
+				$description = $product->name;
 			}
-		} else {
-			$data['message'] = trans('main.payment.оплата-успешно-принята', ['number' => $bill->number]);
 		}
 		
-		return view('payment-success', $data);
-	}
-	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function paymentFail()
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'rules');
+		$deal = $bill->deal;
+		if (!$deal) {
+			return response()->json(['status' => 'error', 'reason' => 'Deal not found']);
+		}
+
+		$paymentResponse = AuthorizeNetService::payment($bill, $cardNumber, $expirationDate, $cardCode, $deal->email, $description);
 		
-		$uuid = $this->request->MNT_TRANSACTION_ID ?? '';
-		if ($uuid) {
-			$bill = HelpFunctions::getEntityByUuid(Bill::class, $uuid);
+		Log::channel('authorize')->info($paymentResponse);
+		
+		if ($paymentResponse['status'] == 'error') {
+			return response()->json(['status' => 'error', 'reason' => isset($paymentResponse['original']) ? $paymentResponse['original']['error_code'] . ': ' . $paymentResponse['original']['error_message'] : trans('main.error.повторите-позже') ]);
 		}
 		
-		return view('payment-fail', [
-			'city' => $city,
-			'cityAlias' => $cityAlias,
-			'page' => $page ?? new Content,
-			'error' => trans('main.payment.оплата-счета-отклонена', ['number' => $bill->number ?? '']),
-		]);
+		$billData = $bill->data_json;
+		$billData['payment'] = [
+			'status' => $paymentResponse['status'],
+			'transaction_id' => $paymentResponse['transaction_id'],
+			'transaction_code' => $paymentResponse['transaction_code'],
+			'message_code' => $paymentResponse['message_code'],
+			'auth_code' => $paymentResponse['auth_code'],
+			'description' => $paymentResponse['description'],
+		];
+		
+		$bill->status_id = $billPayedStatus->id;
+		$bill->payed_at = Carbon::now();
+		$bill->data_json = $billData;
+		if (!$bill->save()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
+		}
+		
+		return response()->json(['status' => 'success', 'message' => 'Invoice # <b>' . $bill->number . '</b> has been successfully paid.', 'paymentResponse' => $paymentResponse]);
 	}
-	
 }

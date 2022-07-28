@@ -27,7 +27,7 @@
 								<div>
 									<label for="search_doc">Search</label>
 								</div>
-								<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="Document, Client full name, E-mail, Phone">
+								<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="Document #, Name, E-mail, Phone number">
 							</div>
 							<div class="form-group ml-2">
 								<div>
@@ -479,13 +479,14 @@
 					},
 					success: function(result) {
 						//console.log(result);
-						if (result.status !== 'success') {
-							toastr.error(result.reason);
-							return;
-						}
 
 						$('#amount').val(result.amount);
 						$('#amount-text h1').text(result.amount);
+
+						if (result.status !== 'success') {
+							toastr.error(result.reason);
+							//return;
+						}
 					}
 				});
 			}

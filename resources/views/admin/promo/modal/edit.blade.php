@@ -28,6 +28,15 @@
 	</div>
 	<div class="col">
 		<div class="form-group">
+			<label for="is_active">Is active</label>
+			<select class="form-control" id="is_active" name="is_active">
+				<option value="1" @if($promo->is_active) selected @endif>Yes</option>
+				<option value="0" @if(!$promo->is_active) selected @endif>No</option>
+			</select>
+		</div>
+	</div>
+	{{--<div class="col">
+		<div class="form-group">
 			<label for="city_id">City</label>
 			<select class="form-control" id="city_id" name="city_id">
 				<option value="0">All</option>
@@ -36,18 +45,18 @@
 				@endforeach
 			</select>
 		</div>
-	</div>
+	</div>--}}
 </div>
-<div class="form-group">
+{{--<div class="form-group">
 	<label for="preview_text">Brief description</label>
 	<textarea class="form-control" id="preview_text" name="preview_text" rows="3">{{ $promo->preview_text }}</textarea>
 </div>
 <div class="form-group">
 	<label for="detail_text">Detailed description</label>
 	<textarea class="form-control tinymce" id="detail_text" name="detail_text" rows="5">{{ $promo->detail_text }}</textarea>
-</div>
-<div class="row">
-	<div class="col">
+</div>--}}
+{{--<div class="row">--}}
+	{{--<div class="col">
 		<div class="form-group">
 			<label for="is_published">For publication</label>
 			<select class="form-control" id="is_published" name="is_published">
@@ -55,17 +64,8 @@
 				<option value="0" @if(!$promo->is_published) selected @endif>No</option>
 			</select>
 		</div>
-	</div>
-	<div class="col">
-		<div class="form-group">
-			<label for="is_active">Is active</label>
-			<select class="form-control" id="is_active" name="is_active">
-				<option value="1" @if($promo->is_active) selected @endif>Yes</option>
-				<option value="0" @if(!$promo->is_active) selected @endif>No</option>
-			</select>
-		</div>
-	</div>
-</div>
+	</div>--}}
+{{--</div>--}}
 <div class="row">
 	<div class="col">
 		<div class="form-group">
@@ -80,7 +80,7 @@
 		</div>
 	</div>
 </div>
-<div class="form-group">
+{{--<div class="form-group">
 	<label for="image_file">Image</label>
 	<div class="custom-file">
 		<input type="file" class="custom-file-input" id="image_file" name="image_file">
@@ -101,4 +101,4 @@
 <div class="form-group">
 	<label for="meta_description">Meta Description</label>
 	<textarea class="form-control" id="meta_description" name="meta_description">{{ $promo->meta_description }}</textarea>
-</div>
+</div>--}}

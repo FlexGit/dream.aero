@@ -13,17 +13,17 @@
 			<h1 class="block-title">@lang('main.contacts.title')</h1>
 		</div>
 
-		@foreach($locations as $location)
+		{{--@foreach($locations as $location)
 			<a href="{{ url('#location-' . $location->alias) }}" class="anchor">
 				{{ $location->name }}
 			</a>
-		@endforeach
+		@endforeach--}}
 
 		<div class="clear"></div>
 
 		@foreach($locations as $index => $location)
 			<section id="location-{{ $location->alias }}" @if (!$loop->first) style="margin-top: 65px;" @endif>
-				<h3>
+				{{--<h3>
 					<strong>
 						@lang('main.contacts.авиатренажерный-центр')
 						@foreach($location->simulators ?? [] as $simulator)
@@ -31,7 +31,7 @@
 							@if(!$loop->last) / @endif
 						@endforeach
 					</strong>
-				</h3>
+				</h3>--}}
 
 				@if ($location->data_json['map_link'])
 					<div class="map" id="map-{{ $location->alias }}" @if ($loop->even) style="float: right;" @endif>
@@ -43,7 +43,7 @@
 					<div class="contacts-inner-inner">
 						<ul class="contacts-list">
 							@if (array_key_exists('address', $location->data_json) && $location->data_json['address'])
-								<li class="address">{{ $location->data_json['address'] }}</li>
+								<li class="address">{!! $location->data_json['address'] !!}</li>
 							@endif
 
 							@if (array_key_exists('working_hours', $location->data_json) && $location->data_json['working_hours'])

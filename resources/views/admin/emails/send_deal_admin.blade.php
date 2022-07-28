@@ -22,6 +22,6 @@
 	<p>Дополнительная информация: {{ $comment }}</p>
 @endif--}}
 <p>Deal source: {{ $source ?? '' }}</p>
-<p>Deal date: {{ $updatedAt ? Carbon\Carbon::parse($updatedAt)->format('d.m.Y H:i') : '' }}</p>
+<p>Deal date: {{ $updatedAt ? Carbon\Carbon::parse($updatedAt)->format('m-d-Y g:i A') : '' }}</p>
 <br>
 <p><small>Email sent automatically</small></p>
