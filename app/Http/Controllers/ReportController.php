@@ -190,7 +190,8 @@ class ReportController extends Controller {
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
+		$city = $user->city;
 		
 		$dateFromAt = $this->request->filter_date_from_at ?? '';
 		$dateToAt = $this->request->filter_date_to_at ?? '';
@@ -227,7 +228,9 @@ class ReportController extends Controller {
 			}
 		}
 		
-		$cities = $this->cityRepo->getList($this->request->user());
+		//$cities = $this->cityRepo->getList($this->request->user());
+		$cities = City::where('id', $city->id)
+			->get();
 		
 		$data = [
 			'eventItems' => $eventItems,
