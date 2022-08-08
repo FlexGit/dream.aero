@@ -24,6 +24,7 @@
 							<li>Only one (l) adult at a time may be on the drawing bridge.</li>
 						</ul>
 						<p><strong>It is prohibited:</strong></p>
+						<a name="birthday"></a>
 						<ul>
 							<li>For unauthorized persons to stay in the cockpit without an Instructor present.</li>
 							<li>To bring food and animals into the Simulator.</li>
@@ -31,7 +32,9 @@
 							<li>To use physical force to the control system of the Simulator, including its levers, buttons, switches, taps.</li>
 							<li>To enter or exit the Simulator cockpit in any other way except using the drawing bridge (this rule does not apply to emergency situations). Persons violating this rule will be barred from the flight simulation and will forfeit the ticket price.</li>
 						</ul>
-						<p><strong>Birthday 20% Discount Terms and Conditions:</strong></p>
+						<p>
+							<strong>Birthday 20% Discount Terms and Conditions:</strong>
+						</p>
 						<p><strong>Flight Purchases:</strong></p>
 						<ul>
 							<li>When you purchase a flight with a Birthday discount, you have to book an appointment at the time of the purchase. The appointment date can be either on the birthday or three days before or after the birthday.</li>
@@ -41,7 +44,7 @@
 							<li>You can purchase and book the flight at any time period before your birthday</li>
 							<li>The appointment cannot be booked without prior payment.</li>
 						</ul>
-						<p><strong>Gift Certificate Purchases:</strong></p>
+						<p><strong>Gift Voucher Purchases:</strong></p>
 						<ul>
 							<li>You can purchase a Gift Certificate with the 20% Birthday Discount either on your birthday or 3 days before or 3 days after your birthday. Proof of ID should be presented upon purchase</li>
 							<li>Failure to provide proof of ID will result in forfeiting the 20% discount</li>

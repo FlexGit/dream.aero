@@ -976,6 +976,9 @@ class PositionController extends Controller
 			abort(404);
 		}
 
+		$user = Auth::user();
+		$city = $user->city;
+		
 		$position = DealPosition::find($id);
 		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
@@ -1001,7 +1004,6 @@ class PositionController extends Controller
 		}
 		
 		$productId = $this->request->product_id ?? 0;
-		$cityId = $this->request->city_id ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
 		$comment = $this->request->comment ?? '';
@@ -1010,11 +1012,6 @@ class PositionController extends Controller
 		$product = Product::find($productId);
 		if (!$product) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
-		}
-		
-		$city = City::find($cityId);
-		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);

@@ -21,19 +21,14 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<div class="table-filter d-sm-flex">
-						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/product_type/add" data-action="/product_type" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
-						</div>
-					</div>
 					<table id="productTypeTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
 						<tr>
 							<th class="text-center">Name</th>
 							<th class="text-center">Alias</th>
-							<th class="text-center">Is tariff</th>
+{{--							<th class="text-center">Is tariff</th>--}}
 							<th class="text-center">Vat</th>
-							<th class="text-center">Is active</th>
+							{{--<th class="text-center">Is active</th>--}}
 							<th class="text-center">Action</th>
 						</tr>
 						</thead>
@@ -69,13 +64,13 @@
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
 @stop
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
 	<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>
-	<script src="{{ asset('js/admin/common.js') }}"></script>
+	<script src="{{ asset('js/admin/common.js?v=' . time()) }}"></script>
 	<script>
 		$(function() {
 			function getList() {

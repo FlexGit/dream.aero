@@ -21,11 +21,6 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					<div class="table-filter d-sm-flex">
-						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/city/add" data-action="/city" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
-						</div>
-					</div>
 					<table id="cityTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
 							<tr>
@@ -73,7 +68,7 @@
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
-	<script src="{{ asset('js/admin/common.js') }}"></script>
+	<script src="{{ asset('js/admin/common.js?v=' . time()) }}"></script>
 	<script>
 		$(function() {
 			function getList() {

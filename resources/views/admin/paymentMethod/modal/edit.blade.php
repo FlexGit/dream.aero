@@ -5,7 +5,7 @@
 </div>
 <div class="form-group">
 	<label for="alias">Alias</label>
-	<input type="text" class="form-control" id="alias" name="alias" value="{{ $paymentMethod->alias }}" placeholder="Alias">
+	<input type="text" class="form-control" id="alias" name="alias" value="{{ $paymentMethod->alias }}" placeholder="Alias" readonly>
 </div>
 <div class="form-group">
 	<label for="is_active">Is active</label>

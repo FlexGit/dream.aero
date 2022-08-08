@@ -101,15 +101,25 @@
 						<form method="post" id="popup-call-back-new" class="popup popup-call-back ajax_form">
 							<h2>REQUEST A CALL BACK</h2>
 							<span>Fill out just a couple of fields and we will contact you in the nearest future</span>
-							<input type="text" id="callback-name" name="name" placeholder="Your name*" class="popup-input">
-							<input type="tel" id="callback-phone" name="phone" placeholder="What is your phone number*" class="popup-input">
-							<textarea id="callback-comment" name="comment" type="text" placeholder="Comment" class="popup-area"></textarea>
+							<input type="text" id="name" name="name" placeholder="Your name" class="popup-input" required>
+							<input type="tel" id="phone" name="phone" placeholder="What is your phone number" class="popup-input" required>
+							<textarea id="comment" name="comment" placeholder="Comment" class="popup-area"></textarea>
 							<span class="nice-select-label city">City: <b>{{ $city->name }}</b></span>
-							<div class="block" style="margin-top: 20px;">
-								<input type="checkbox" required=""> I hereby give my consent to process my personal data
-								<a href="{{ url($cityAlias . '/privacy-policy') }}">learn more</a>
+							<div class="consent-container">
+								<label class="cont">
+									I hereby give my consent to process my personal data.
+									<input type="checkbox" name="consent" value="1">
+									<span class="checkmark" style="padding-bottom: 0;"></span>
+								</label>
+								<a href="{{ url(($cityAlias ?? '') . '/privacy-policy') }}" target="_blank">Learn more</a>
 							</div>
-							<button type="button" onclick="fbq('track', 'Purchase'); " class="popup-submit button-pipaluk button-pipaluk-orange"><i>Submit</i></button>
+							<div style="margin-top: 10px;">
+								<div class="alert alert-success hidden" role="alert">
+									@lang('main.modal-callback.запрос-успешно-отправлен')
+								</div>
+								<div class="alert alert-danger hidden" role="alert"></div>
+							</div>
+							<button type="button" onclick="fbq('track', 'Purchase');" class="popup-submit button-pipaluk button-pipaluk-grey js-callback-btn" disabled><i>Submit</i></button>
 						</form>
 					</div>
 				</div>
@@ -370,8 +380,4 @@
 @push('scripts')
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
 	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
-	<script>
-		$(function() {
-		});
-	</script>
 @endpush

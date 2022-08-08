@@ -114,11 +114,7 @@ input[readonly]{
 .nps-event {
 	cursor: help;
 }
-/*
-.platform-data-table tr td {
-	position: relative;
+tr.unactive td,
+tr.unactive td a {
+	color: #bbb;
 }
-.platform-data-table tr td:first-child {
-	z-index: 99999;
-	position: sticky;
-}*/

@@ -27,7 +27,7 @@
 							}
 						}
 					@endphp
-					<tr class="odd">
+					<tr class="odd @if(!$product->is_active) unactive @endif">
 						<td class="align-middle">
 							{{ $product->name }}
 						</td>

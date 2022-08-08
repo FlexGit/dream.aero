@@ -12,7 +12,7 @@ return [
         'date'                  => 'Дата',
         'day'                   => 'День',
         'description'           => 'Описание',
-        'email'                 => 'E-Mail адрес',
+        'email'                 => 'E-Mail',
         'excerpt'               => 'Выдержка',
         'first_name'            => 'Имя',
         'gender'                => 'Пол',

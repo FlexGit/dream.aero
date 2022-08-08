@@ -1,5 +1,5 @@
 @foreach ($cities as $city)
-<tr class="odd">
+<tr class="odd @if(!$city->is_active) unactive @endif">
 	<td>
 		<a href="javascript:void(0)" data-toggle="modal" data-url="/city/{{ $city->id }}/show" data-title="Show" title="Show">{{ $city->name }}</a>
 	</td>
@@ -10,10 +10,7 @@
 	<td class="text-center">
 		<a href="javascript:void(0)" data-toggle="modal" data-url="/city/{{ $city->id }}/edit" data-action="/city/{{ $city->id }}" data-method="PUT" data-title="Edit">
 			<i class="fa fa-edit" aria-hidden="true"></i>
-		</a>&nbsp;&nbsp;&nbsp;
-		{{--<a href="javascript:void(0)" data-toggle="modal" data-target="#modal" data-url="/city/{{ $city->id }}/delete" data-action="/city/{{ $city->id }}" data-method="DELETE" data-title="Delete">
-			<i class="fa fa-trash" aria-hidden="true"></i>
-		</a>--}}
+		</a>
 	</td>
 </tr>
 @endforeach

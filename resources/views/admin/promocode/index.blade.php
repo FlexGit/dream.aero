@@ -30,9 +30,6 @@
 						<thead>
 							<tr>
 								<th class="text-center">Number</th>
-								{{--<th class="text-center">Город</th>
-								<th class="text-center">Локация</th>--}}
-								{{--<th class="text-center d-none d-sm-table-cell">Контрагент</th>--}}
 								<th class="text-center d-none d-md-table-cell">Discount</th>
 								<th class="text-center d-none d-md-table-cell">Is active</th>
 								<th class="text-center d-none d-xl-table-cell">Activity start date</th>
@@ -71,14 +68,12 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-	{{--<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">--}}
-	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
 @stop
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
-	{{--<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>--}}
-	<script src="{{ asset('js/admin/common.js') }}"></script>
+	<script src="{{ asset('js/admin/common.js?v=' . time()) }}"></script>
 	<script>
 		$(function() {
 			function getList() {

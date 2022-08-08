@@ -665,7 +665,7 @@ class DealController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже'), 'error_code' => $e->getMessage()]);
 		}
 		
-		return response()->json(['status' => 'success', 'message' => 'Your Order # <b>' . $deal->number . '</b> has been successfully submitted.<br>Soon you will receive your Voucher by E-mail', 'paymentResponse' => $paymentResponse]);
+		return response()->json(['status' => 'success', 'message' => 'Your Voucher # <b>' . $certificate->number . '</b> has been successfully submitted.<br>Soon you will receive your Voucher by E-mail', 'paymentResponse' => $paymentResponse]);
 	}
 
 	/**

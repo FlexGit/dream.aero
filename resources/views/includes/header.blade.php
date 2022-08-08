@@ -24,60 +24,67 @@
 		<div class="main-menu">
 			<ul>
 				<li class="first active" id="mob">
-					<a href="{{ url(Request::session()->get('cityAlias') ?? '/') }}">Home</a>
+					<a href="{{ url($city->alias ?? '/') }}">Home</a>
 				</li>
 				<ul>
 					<li class="first">
-						<a href="{{ url(Request::session()->get('cityAlias') . '/about-simulator') }}">ABOUT THE SIMULATOR</a>
+						<a href="{{ url($city->alias . '/about-simulator') }}">ABOUT THE SIMULATOR</a>
 					</li>
 					<li>
-						<a href="{{ url(Request::session()->get('cityAlias') . '/gift-sertificates') }}">GIFT VOUCHERS</a>
+						<a href="{{ url($city->alias . '/gift-sertificates') }}">GIFT VOUCHERS</a>
 					</li>
 					<li>
-						<a href="{{ url(Request::session()->get('cityAlias') . '/flight-options') }}">FLIGHT ROUTE OPTIONS</a>
+						<a href="{{ url($city->alias . '/flight-options') }}">FLIGHT ROUTE OPTIONS</a>
 					</li>
 					<li>
-						<a href="{{ url(Request::session()->get('cityAlias') . '/news') }}">NEWS</a>
+						<a href="{{ url($city->alias . '/news') }}">NEWS</a>
 					</li>
+					@if ($city->alias == app('\App\Models\City')::UAE_ALIAS)
+						<li>
+							<a href="{{ url($city->alias . '/flight-briefing') }}">FLIGHT BRIEFING</a>
+						</li>
+					@endif
+					@if ($city->alias == app('\App\Models\City')::DC_ALIAS)
+						<li class="dropdownf">
+							<a href="{{ url($city->alias . '/private-events') }}">PRIVATE EVENTS</a>
+							<ul class="dropdown-menu">
+								<li class="first">
+									<a href="{{ url($city->alias . '/private-events#officeparties') }}">OFFICE PARTIES</a>
+								</li>
+								<li>
+									<a href="{{ url($city->alias . '/private-events#birthday') }}">BIRTHDAY CELEBRATIONS</a>
+								</li>
+								<li class="last">
+									<a href="{{ url($city->alias . '/private-events#socials') }}">SOCIALS</a>
+								</li>
+							</ul>
+						</li>
+					@endif
 					<li class="dropdownf">
-						<a href="{{ url(Request::session()->get('cityAlias') . '/private-events') }}">PRIVATE EVENTS</a>
+						<a href="{{ url($city->alias . '/prices') }}">PRICES</a>
 						<ul class="dropdown-menu">
 							<li class="first">
-								<a href="{{ url(Request::session()->get('cityAlias') . '/private-events#officeparties') }}">OFFICE PARTIES</a>
+								<a href="{{ url($city->alias . '/prices#pran') }}">FLIGHTS</a>
 							</li>
 							<li>
-								<a href="{{ url(Request::session()->get('cityAlias') . '/private-events#birthday') }}">BIRTHDAY CELEBRATIONS</a>
+								<a href="{{ url($city->alias . '/prices#courses') }}">COURSES</a>
+							</li>
+							<li>
+								<a href="{{ url($city->alias . '/prices#sertan') }}">GIFT VOUCHERS</a>
 							</li>
 							<li class="last">
-								<a href="{{ url(Request::session()->get('cityAlias') . '/private-events#socials') }}">SOCIALS</a>
+								<a href="{{ url($city->alias . '/prices#kpsch') }}">KIDS PILOT SCHOOL</a>
 							</li>
 						</ul>
 					</li>
-					<li class="dropdownf">
-						<a href="{{ url(Request::session()->get('cityAlias') . '/prices') }}">PRICES</a>
-						<ul class="dropdown-menu">
-							<li class="first">
-								<a href="{{ url(Request::session()->get('cityAlias') . '/prices#pran') }}">FLIGHTS</a>
-							</li>
-							<li>
-								<a href="{{ url(Request::session()->get('cityAlias') . '/prices#courses') }}">COURSES</a>
-							</li>
-							<li>
-								<a href="{{ url(Request::session()->get('cityAlias') . '/prices#sertan') }}">GIFT CERTIFICATES</a>
-							</li>
-							<li class="last">
-								<a href="{{ url(Request::session()->get('cityAlias') . '/prices#kpsch') }}">KIDS PILOT SCHOOL</a>
-							</li>
-						</ul>
+					<li>
+						<a href="{{ url($city->alias . '/gallery') }}">GALLERY</a>
 					</li>
 					<li>
-						<a href="{{ url(Request::session()->get('cityAlias') . '/gallery') }}">GALLERY</a>
-					</li>
-					<li>
-						<a href="{{ url(Request::session()->get('cityAlias') . '/reviews') }}">REVIEWS</a>
+						<a href="{{ url($city->alias . '/reviews') }}">REVIEWS</a>
 					</li>
 					<li class="last">
-						<a href="{{ url(Request::session()->get('cityAlias') . '/contacts') }}">CONTACT US</a>
+						<a href="{{ url($city->alias . '/contacts') }}">CONTACT US</a>
 					</li>
 				</ul>
 			</ul>
@@ -86,18 +93,16 @@
 		<div class="flexy_column nav">
 			<div class="item">
 				<p class="gl-current-select" id="city" data-toggle="modal" data-target="#city_modal">
-					@if(Request::session()->get('cityName'))
-						{{ Request::session()->get('cityName') }}
-					@else
-						{{ app('\App\Models\City')::DEFAULT_CITY_NAME }}
-					@endif
+					{{ $city->name }}
 				</p>
 			</div>
 			<div>
 				<span class="phone">
-					<a href="tel:{{ $city->phone ?? '+1 240 224 48 85' }}">
-						{{ ($city && $city->phone) ? $city->phoneFormatted() : '+1 240 224 48 85' }}
-					</a>
+					@if($city->phone)
+						<a href="javascript:void(0)" class="popup-with-form" data-popup-type="callback">
+							{{ $city->phoneFormatted() }}
+						</a>
+					@endif
 				</span>
 			</div>
 		</div>

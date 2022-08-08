@@ -7,24 +7,6 @@
 	<label for="alias">Alias</label>
 	<input type="text" class="form-control form-control-sm" id="alias" name="alias" placeholder="Alias">
 </div>
-{{--<div class="form-group">
-	<label for="legal_entity_id">Юридическое лицо</label>
-	<select id="legal_entity_id" name="legal_entity_id" class="form-control form-control-sm">
-		<option></option>
-		@foreach($legalEntities as $legalEntity)
-			<option value="{{ $legalEntity->id }}">{{ $legalEntity->name }}</option>
-		@endforeach
-	</select>
-</div>--}}
-{{--<div class="form-group">
-	<label for="city_id">City</label>
-	<select id="city_id" name="city_id" class="form-control form-control-sm">
-		<option></option>
-		@foreach($cities as $city)
-			<option value="{{ $city->id }}">{{ $city->name }}</option>
-		@endforeach
-	</select>
-</div>--}}
 <div class="form-group">
 	<label for="address">Address</label>
 	<textarea class="form-control form-control-sm" id="address" name="address" rows="2"></textarea>

@@ -7,7 +7,7 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ __('Пожалуйста, подтвердите свой пароль, прежде чем продолжить.') }}
+            Please confirm your password before continuing.
         </div>
 
         <!-- Validation Errors -->
@@ -28,7 +28,7 @@
 
             <div class="flex justify-end mt-4">
                 <x-button>
-                    {{ __('Подтвердить') }}
+                    Submit
                 </x-button>
             </div>
         </form>

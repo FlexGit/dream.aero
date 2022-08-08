@@ -15,15 +15,12 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\LocationController;
-//use App\Http\Controllers\LegalEntityController;
-use App\Http\Controllers\FlightSimulatorController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PromocodeController;
-use App\Http\Controllers\StatusController;
 use App\Http\Controllers\RevisionController;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -405,54 +402,51 @@ Route::domain(env('DOMAIN_SITE', 'dream.aero'))->group(function () {
 	
 	Route::group(['middleware' => ['citycheck']], function () {
 		Route::get('{alias?}', [MainController::class, 'home'])->name('home');
-		Route::get('{alias}/about-simulator', [MainController::class, 'about'])->name('o-trenazhere');
-		Route::get('{alias}/gift-sertificates', [MainController::class, 'giftFlight'])->name('podarit-polet');
-		Route::get('{alias}/flight-options', [MainController::class, 'flightTypes'])->name('variantyi-poleta');
-		Route::get('{alias}/news/{newsAlias?}', [MainController::class, 'getNews'])->name('news');
-		Route::get('{alias}/private-events', [MainController::class, 'privateEvents'])->name('private-events');
-		Route::get('{alias}/prices', [MainController::class, 'price']);
-		Route::get('{alias}/gallery', [MainController::class, 'getGallery'])->name('galereya');
-		Route::get('{alias}/reviews', [MainController::class, 'getReviews'])->name('reviews');
-		Route::get('{alias}/contacts', [MainController::class, 'contacts']);
-		Route::get('{alias}/privacy-policy', [MainController::class, 'privacyPolicy'])->name('privacy-policy');
-		Route::get('{alias}/impressions', [MainController::class, 'impressions'])->name('impressions');
-		Route::get('{alias}/prof-assistance', [MainController::class, 'profAssistance'])->name('prof-assistance');
-		Route::get('{alias}/the-world-of-aviation', [MainController::class, 'worldAviation'])->name('world-aviation');
-		Route::get('{alias}/treating-aerophobia', [MainController::class, 'flyNoFear'])->name('lechenie-aerofobii');
-		Route::get('{alias}/rules', [MainController::class, 'rules'])->name('rules');
-		
-		Route::get('sertbuy', [MainController::class, 'certificateForm'])->name('certificate-form');
-		
-		Route::post('promocode/verify', [MainController::class, 'promocodeVerify']);
-		
-		Route::post('review/create', [MainController::class, 'reviewCreate']);
-		
-		Route::get('city/list/ajax', [MainController::class, 'getCityListAjax']);
-		Route::get('city/change', [MainController::class, 'changeCity']);
-		
-		Route::post('payment', [PaymentController::class, 'paymentProceed'])->name('paymentProceed');
-		Route::get('payment/{uuid}', [PaymentController::class, 'payment'])->name('payment');
-		
-		Route::post('rating', [MainController::class, 'setRating'])->name('set-rating');
-		
-		/*Route::get('modal/booking/{product_alias?}', [MainController::class, 'getBookingModal']);*/
-		Route::get('modal/certificate/{product_alias?}', [MainController::class, 'getCertificateModal']);
-		/*Route::get('modal/certificate-booking/{product_alias}', [MainController::class, 'getCertificateBookingModal']);*/
-		/*Route::get('modal/order/{product_alias?}', [MainController::class, 'getOrderModal']);*/
-		Route::get('modal/review', [MainController::class, 'getReviewModal']);
-		Route::get('modal/scheme/{location_id}', [MainController::class, 'getSchemeModal']);
-		Route::get('modal/callback', [MainController::class, 'getCallbackModal']);
-		Route::get('modal/vip', [MainController::class, 'getVipFlightModal']);
-		Route::get('modal/info/{alias}', [MainController::class, 'getInfoModal']);
-		
-		Route::post('callback', [MainController::class, 'callback'])->name('callbackRequestStore');
-		Route::post('question', [MainController::class, 'question'])->name('questionStore');
+		Route::get('{alias?}/about-simulator', [MainController::class, 'about'])->name('o-trenazhere');
+		Route::get('{alias?}/gift-sertificates', [MainController::class, 'giftFlight'])->name('podarit-polet');
+		Route::get('{alias?}/flight-options', [MainController::class, 'flightTypes'])->name('variantyi-poleta');
+		Route::get('{alias?}/news/{newsAlias?}', [MainController::class, 'getNews'])->name('news');
+		Route::get('{alias?}/private-events', [MainController::class, 'privateEvents'])->name('private-events');
+		Route::get('{alias?}/prices', [MainController::class, 'price']);
+		Route::get('{alias?}/gallery', [MainController::class, 'getGallery'])->name('galereya');
+		Route::get('{alias?}/reviews', [MainController::class, 'getReviews'])->name('reviews');
+		Route::get('{alias?}/contacts', [MainController::class, 'contacts']);
+		Route::get('{alias?}/privacy-policy', [MainController::class, 'privacyPolicy'])->name('privacy-policy');
+		Route::get('{alias?}/flight-briefing', [MainController::class, 'flightBriefing'])->name('flight-briefing');
+		Route::get('{alias?}/impressions', [MainController::class, 'impressions'])->name('impressions');
+		Route::get('{alias?}/prof-assistance', [MainController::class, 'profAssistance'])->name('prof-assistance');
+		Route::get('{alias?}/the-world-of-aviation', [MainController::class, 'worldAviation'])->name('world-aviation');
+		Route::get('{alias?}/treating-aerophobia', [MainController::class, 'flyNoFear'])->name('lechenie-aerofobii');
+		Route::get('{alias?}/rules', [MainController::class, 'rules'])->name('rules');
 	});
+	
+	Route::get('sertbuy', [MainController::class, 'certificateForm'])->name('certificate-form');
+	
+	Route::post('promocode/verify', [MainController::class, 'promocodeVerify']);
+	
+	Route::post('review/create', [MainController::class, 'reviewCreate']);
+	
+	Route::get('city/list/ajax', [MainController::class, 'getCityListAjax']);
+	Route::get('city/change', [MainController::class, 'changeCity']);
+	
+	Route::post('payment', [PaymentController::class, 'paymentProceed'])->name('paymentProceed');
+	Route::get('payment/{uuid}', [PaymentController::class, 'payment'])->name('payment');
+	
+	Route::post('rating', [MainController::class, 'setRating'])->name('set-rating');
+	
+	Route::post('modal/certificate', [MainController::class, 'getCertificateModal']);
+	Route::get('modal/review', [MainController::class, 'getReviewModal']);
+	Route::get('modal/scheme/{location_id}', [MainController::class, 'getSchemeModal']);
+	Route::get('modal/callback', [MainController::class, 'getCallbackModal']);
+	Route::get('modal/vip', [MainController::class, 'getVipFlightModal']);
+	Route::get('modal/info/{alias}', [MainController::class, 'getInfoModal']);
+	
+	Route::post('callback', [MainController::class, 'callback'])->name('callbackRequestStore');
+	Route::post('question', [MainController::class, 'question'])->name('questionStore');
 });
 
 Route::get('deal/product/calc', [DealController::class, 'calcProductAmount'])->name('calcProductAmount');
 Route::post('deal/certificate', [DealController::class, 'storeCertificate'])->name('dealCertificateStore');
-Route::post('deal/booking', [DealController::class, 'storeBooking'])->name('dealBookingStore');
 
 Route::fallback(function () {
 	abort(404);

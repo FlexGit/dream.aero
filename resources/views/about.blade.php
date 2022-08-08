@@ -13,7 +13,7 @@
 			<h2 class="block-title">@lang('main.o-trenazhere.title')</h2>
 			<div class="gallery-button-top">
 				<div class="button-free">
-					<a href="{{ url('#popup') }}" class="obtain-button button-pipaluk button-pipaluk-orange wow zoomIn popup-with-form form_open" data-modal="booking" style="padding: 10px;margin: 0 0 35px 36%;width: 280px;" data-wow-delay="1.6s" data-wow-duration="2s" data-wow-iteration="1">
+					<a href="{{ url('#popup') }}" class="obtain-button button-pipaluk button-pipaluk-orange wow zoomIn popup-with-form form_open" data-modal="certificate" style="padding: 10px;margin: 0 0 35px 36%;" data-wow-delay="1.6s" data-wow-duration="2s" data-wow-iteration="1">
 						<i>Buy Now</i>
 					</a>
 				</div>
@@ -23,7 +23,7 @@
 			</div>
 		</div>
 		<div class="image wow fadeInLeft" data-wow-delay="1s" data-wow-duration="2s" style="visibility: visible;animation-duration: 2s;animation-delay: 1s;animation-name: fadeInLeft;">
-			<iframe width="100%" src="{{ asset('img/aboutsim2.jpg') }}" frameborder="0" scrolling="no" allowfullscreen></iframe>
+			<iframe width="100%" src="{{ ($cityAlias == app('\App\Models\City')::UAE_ALIAS) ? asset('img/about_uae.jpg') : asset('img/aboutsim2.jpg') }}" frameborder="0" scrolling="no" allowfullscreen></iframe>
 		</div>
 	</div>
 
@@ -120,6 +120,9 @@
 @push('css')
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/card.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/scale.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/light-border.css') }}">
 	<style>
 		.about-simulator p,
 		.about-simulator ul li {
@@ -146,35 +149,13 @@
 			text-transform: uppercase;
 			font-size: 20px;
 		}
-		#airboeing {
-			width: 98%;
-		}
-		#airboeing .simtype {
-			color: #FF8200;
-			font-weight: 700;
-			font-size: 16px;
-		}
-		#airboeing .tdcity {
-			color: #FF8200;
-		}
-		#airboeing td {
-			width: 50%;
-			text-align: left;
-		}
-		td.halfnhalf {
-			background: linear-gradient(to bottom, #f0f0f0 0%, #f0f0f0 50%, white 50%, white 100%);
-		}
-		td.halfnhalf_white {
-			background: linear-gradient(to bottom, white 0%, white 50%, #f0f0f0 50%, #f0f0f0 100%);
-		}
 	</style>
 @endpush
 
 @push('scripts')
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.card.js') }}"></script>
+	<script src="{{ asset('js/popper.min.js') }}"></script>
+	<script src="{{ asset('js/tippy-bundle.umd.min.js') }}"></script>
 	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
-	<script>
-		$(function() {
-		});
-	</script>
 @endpush

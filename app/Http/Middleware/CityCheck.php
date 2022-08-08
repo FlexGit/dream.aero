@@ -16,6 +16,9 @@ class CityCheck
 		
 		$cityAliases = City::ALIASES;
 		
+		\Log::debug($request->segment(1));
+		\Log::debug($request->session()->get('cityAlias'));
+		
 		if (in_array($request->segment(1), $cityAliases) && (($request->session()->get('cityAlias') && ($request->segment(1) != $request->session()->get('cityAlias'))) || !$request->session()->get('cityAlias'))) {
 			$city = HelpFunctions::getEntityByAlias(City::class, $request->segment(1));
 			if ($city) {

@@ -1,5 +1,5 @@
 @foreach ($contractors as $contractor)
-<tr class="odd" data-id="{{ $contractor->id }}">
+<tr class="odd @if(!$contractor->is_active) unactive @endif" data-id="{{ $contractor->id }}">
 	<td class="text-center">
 		{{ $contractor->name }}
 	</td>

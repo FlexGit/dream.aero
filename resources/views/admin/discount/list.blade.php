@@ -1,5 +1,5 @@
 @foreach ($discounts as $discount)
-<tr class="odd">
+<tr class="odd @if(!$discount->is_active) unactive @endif">
 	<td class="text-center">{{ $discount->valueFormatted() }}</td>
 	<td class="text-center">{{ $discount->is_fixed ? 'Yes' : 'No' }}</td>
 	<td class="text-center">{{ $discount->is_active ? 'Yes' : 'No' }}</td>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\Discount;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
@@ -164,7 +165,10 @@ class PromoController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
@@ -193,7 +197,7 @@ class PromoController extends Controller
 		$promo->name = $this->request->name;
 		$promo->alias = $this->request->alias;
 		$promo->discount_id = $this->request->discount_id ?? 0;
-		$promo->city_id = $this->request->city_id ?? 0;
+		$promo->city_id = $city->id;
 		$promo->preview_text = $this->request->preview_text ?? '';
 		$promo->detail_text = $this->request->detail_text ?? '';
 		$promo->is_published = (bool)$this->request->is_published;
@@ -230,7 +234,9 @@ class PromoController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
@@ -266,7 +272,6 @@ class PromoController extends Controller
 		$promo->name = $this->request->name;
 		$promo->alias = $this->request->alias;
 		$promo->discount_id = $this->request->discount_id ?? 0;
-		$promo->city_id = $this->request->city_id ?? 0;
 		$promo->preview_text = $this->request->preview_text ?? '';
 		$promo->detail_text = $this->request->detail_text ?? '';
 		$promo->is_published = (bool)$this->request->is_published;

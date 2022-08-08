@@ -6,7 +6,7 @@
 </div>
 <div class="form-group">
 	<label for="alias">Alias</label>
-	<input type="text" class="form-control" id="alias" name="alias" value="{{ $productType->alias }}" placeholder="Alias">
+	<input type="text" class="form-control" id="alias" name="alias" value="{{ $productType->alias }}" placeholder="Alias" readonly>
 </div>
 <div class="form-group">
 	<label for="is_tariff">Is tariff</label>
@@ -27,10 +27,10 @@
 	<label for="tax">Vat, %</label>
 	<input type="text" class="form-control" id="tax" name="tax" value="{{ $productType->tax }}" placeholder="Vat">
 </div>
-<div class="form-group">
+{{--<div class="form-group">
 	<label for="is_active">Is active</label>
 	<select class="form-control" id="is_active" name="is_active">
 		<option value="1" @if($productType->is_active) selected @endif>Yes</option>
 		<option value="0" @if(!$productType->is_active) selected @endif>No</option>
 	</select>
-</div>
+</div>--}}

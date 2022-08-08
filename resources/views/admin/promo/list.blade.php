@@ -1,5 +1,5 @@
 @foreach ($promos as $promo)
-<tr class="odd">
+<tr class="odd @if(!$promo->is_active) unactive @endif">
 	<td>
 		<a href="javascript:void(0)" data-toggle="modal" data-url="/promo/{{ $promo->id }}/show" data-title="Show" title="Show">{{ $promo->name }}</a>
 	</td>

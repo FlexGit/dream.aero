@@ -376,7 +376,7 @@ return [
 			],
 		],
 		[
-			'text'        => 'Operation log',
+			'text'        => 'Log',
 			'url'         => '/log',
 			'icon'        => 'fas fa-fw fa-history',
 			'can'	  => 'is_superadmin',
@@ -584,7 +584,7 @@ return [
 				[
 					'type' => 'js',
 					'asset' => true,
-					'location' => 'vendor/fullcalendar/locales/ru.js',
+					'location' => 'vendor/fullcalendar/locales/en.js',
 				],
 				[
 					'type' => 'css',

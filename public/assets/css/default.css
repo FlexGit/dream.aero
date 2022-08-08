@@ -335,7 +335,7 @@ h1.block-title:after {
 }
 .amount {
 	font-size: 24px;
-	font-weight: bold;
+	/*font-weight: bold;*/
 }
 .strikethrough {
 	margin-right: 20px;
@@ -364,4 +364,17 @@ h1.block-title:after {
 	text-transform: uppercase;
 	transition: .5s all;
 	background-color: rgba(0,0,0,.3);
+}
+.content .stock .text a {
+	color: #fff;
+	margin: 0;
+	padding: 0;
+	transition: none;
+}
+.help {
+	cursor: pointer;
+	margin: -1px 0 0 5px;
+}
+.switch {
+	margin-top: 5px;
 }

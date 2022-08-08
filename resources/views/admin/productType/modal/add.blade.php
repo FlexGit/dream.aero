@@ -26,10 +26,10 @@
 	<label for="tax">Vat, %</label>
 	<input type="text" class="form-control" id="tax" name="tax" placeholder="Vat">
 </div>
-<div class="form-group">
+{{--<div class="form-group">
 	<label for="is_active">Is active</label>
 	<select class="form-control" id="is_active" name="is_active">
 		<option value="1" selected>Yes</option>
 		<option value="0">No</option>
 	</select>
-</div>
+</div>--}}

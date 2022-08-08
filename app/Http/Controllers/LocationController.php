@@ -7,8 +7,6 @@ use Auth;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\Location;
-use App\Models\City;
-use App\Models\LegalEntity;
 
 class LocationController extends Controller
 {
@@ -26,16 +24,7 @@ class LocationController extends Controller
 	 */
 	public function index()
 	{
-		$cities = City::orderBy('name')
-			->get();
-		
-		/*$legalEntities = LegalEntity::where('is_active', true)
-			->orderBy('name', 'asc')
-			->get();*/
-
 		return view('admin.location.index', [
-			'cities' => $cities,
-			/*'legalEntities' => $legalEntities,*/
 		]);
 	}
 	
@@ -79,20 +68,10 @@ class LocationController extends Controller
 		$location = Location::find($id);
 		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
 		
-		$cities = City::where('is_active', true)
-			->orderBy('name', 'asc')
-			->get();
-		
-		/*$legalEntities = LegalEntity::where('is_active', true)
-			->orderBy('name', 'asc')
-			->get();*/
-
 		$simulators = FlightSimulator::get();
 		
 		$VIEW = view('admin.location.modal.edit', [
 			'location' => $location,
-			'cities' => $cities,
-			/*'legalEntities' => $legalEntities,*/
 			'simulators' => $simulators,
 		]);
 		
@@ -112,17 +91,7 @@ class LocationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
 		}
 
-		$cities = City::where('is_active', true)
-			->orderBy('name', 'asc')
-			->get();
-		
-		/*$legalEntities = LegalEntity::where('is_active', true)
-			->orderBy('name', 'asc')
-			->get();*/
-
 		$VIEW = view('admin.location.modal.add', [
-			'cities' => $cities,
-			/*'legalEntities' => $legalEntities,*/
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -188,8 +157,6 @@ class LocationController extends Controller
 		$rules = [
 			'name' => 'required|max:255|unique:locations,name',
 			'alias' => 'required|min:2|max:25|unique:locations,alias',
-			/*'legal_entity_id' => 'required|integer',*/
-			'city_id' => 'required|integer',
 			'address' => 'required',
 			'working_hours' => 'required',
 			'phone' => 'required',
@@ -201,8 +168,6 @@ class LocationController extends Controller
 			->setAttributeNames([
 				'name' => 'Наименование',
 				'alias' => 'Алиас',
-				/*'legal_entity_id' => 'Юр.лицо',*/
-				'city_id' => 'Город',
 				'address' => 'Адрес',
 				'working_hours' => 'Часы работы',
 				'phone' => 'Телефон',
@@ -213,6 +178,9 @@ class LocationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
+		$user = Auth::user();
+		$city = $user->city;
+
 		$isFileUploaded = false;
 		if($file = $this->request->file('scheme_file')) {
 			$isFileUploaded = $file->move(public_path('upload/scheme'), $file->getClientOriginalName());
@@ -222,8 +190,7 @@ class LocationController extends Controller
 		$location->name = $this->request->name;
 		$location->alias = $this->request->alias;
 		$location->is_active = $this->request->is_active;
-		/*$location->legal_entity_id = $this->request->legal_entity_id;*/
-		$location->city_id = $this->request->city_id;
+		$location->city_id = $city->id;
 		$location->data_json = [
 			'address' => $this->request->address,
 			'working_hours' => $this->request->working_hours,
@@ -261,8 +228,6 @@ class LocationController extends Controller
 		$rules = [
 			'name' => 'required|max:255|unique:locations,name,' . $id,
 			'alias' => 'required|min:2|max:25|unique:locations,alias,' . $id,
-			/*'legal_entity_id' => 'required|integer',*/
-			'city_id' => 'required|integer',
 			'address' => 'required',
 			'working_hours' => 'required',
 			'phone' => 'required',
@@ -274,8 +239,6 @@ class LocationController extends Controller
 			->setAttributeNames([
 				'name' => 'Наименование',
 				'alias' => 'Алиас',
-				/*'legal_entity_id' => 'Юр.лицо',*/
-				'city_id' => 'Город',
 				'address' => 'Адрес',
 				'working_hours' => 'Часы работы',
 				'phone' => 'Телефон',
@@ -285,6 +248,9 @@ class LocationController extends Controller
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
+		
+		$user = Auth::user();
+		$city = $user->city;
 
 		$isFileUploaded = false;
 		if($file = $this->request->file('scheme_file')) {
@@ -294,8 +260,7 @@ class LocationController extends Controller
 		$location->name = $this->request->name;
 		$location->alias = $this->request->alias;
 		$location->is_active = $this->request->is_active;
-		/*$location->legal_entity_id = $this->request->legal_entity_id;*/
-		$location->city_id = $this->request->city_id;
+		$location->city_id = $city->id;
 		
 		$data = $location->data_json;
 		$data['address'] = $this->request->address;
@@ -312,19 +277,21 @@ class LocationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
 		}
 
-		$colors = $this->request->color ?? [];
-		$letterNames = $this->request->letter_name ?? [];
-		$locationSimulatorData = [];
-		foreach (array_keys($this->request->simulator) ?? [] as $simulatorId) {
-			$locationSimulatorData[$simulatorId]['data_json'] = [];
-			foreach ($colors[$simulatorId] as $eventType => $color) {
-				$locationSimulatorData[$simulatorId]['data_json'][$eventType] = $color ?? '';
+		if ($this->request->simulator) {
+			$colors = $this->request->color ?? [];
+			$letterNames = $this->request->letter_name ?? [];
+			$locationSimulatorData = [];
+			foreach (array_keys($this->request->simulator) ?? [] as $simulatorId) {
+				$locationSimulatorData[$simulatorId]['data_json'] = [];
+				foreach ($colors[$simulatorId] as $eventType => $color) {
+					$locationSimulatorData[$simulatorId]['data_json'][$eventType] = $color ?? '';
+				}
+				$locationSimulatorData[$simulatorId]['data_json']['letter_name'] = isset($letterNames[$simulatorId]) ? $letterNames[$simulatorId] : '';
+				$locationSimulatorData[$simulatorId]['data_json'] = json_encode($locationSimulatorData[$simulatorId]['data_json'], JSON_UNESCAPED_UNICODE);
 			}
-			$locationSimulatorData[$simulatorId]['data_json']['letter_name'] = isset($letterNames[$simulatorId]) ? $letterNames[$simulatorId] : '';
-			$locationSimulatorData[$simulatorId]['data_json'] = json_encode($locationSimulatorData[$simulatorId]['data_json'], JSON_UNESCAPED_UNICODE);
-		}
 
-		$location->simulators()->sync($locationSimulatorData);
+			$location->simulators()->sync($locationSimulatorData);
+		}
 		
 		return response()->json(['status' => 'success', 'id' => $location->id]);
 	}

@@ -26,10 +26,10 @@
 			<td>Vat</td>
 			<td>{{ $productType->tax }}%</td>
 		</tr>
-		<tr class="odd">
+		{{--<tr class="odd">
 			<td>Is active</td>
 			<td>{{ $productType->is_active ? 'Yes' : 'No' }}</td>
-		</tr>
+		</tr>--}}
 		<tr class="odd">
 			<td>Create date</td>
 			<td>{{ $productType->created_at }}</td>

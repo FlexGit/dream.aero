@@ -15,7 +15,7 @@
 				<input type="checkbox" name="consent" value="1">
 				<span class="checkmark" style="padding-bottom: 0;"></span>
 			</label>
-			<a href="{{ url(Request::get('cityAlias') . '/privacy-policy') }}">Learn more</a>
+			<a href="{{ url(Request::get('cityAlias') . '/privacy-policy') }}" target="_blank">Learn more</a>
 		</div>
 
 		<div style="margin-top: 10px;">

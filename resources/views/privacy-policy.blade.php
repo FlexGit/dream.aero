@@ -50,7 +50,7 @@
 						<p>To the extent that we are required to do so by law.</p>
 						<p>In connection with any ongoing or prospective legal proceedings.</p>
 						<p>In order to establish, exercise, or defend our legal rights (including providing information to others for the purposes of fraud prevention).</p>
-						<p>For the delivery of a gift certificate that was purchased through our website.</p>
+						<p>For the delivery of a gift voucher that was purchased through our website.</p>
 						<p>We will not disclose your personal information to third parties other than in the previously stated situations.</p>
 						<p><strong>Retaining your data and personal information</strong></p>
 						<p>We will collect, process, and use your data and personal information exclusively for the purposes of providing a public offer. Your data and personal information will not be stored any longer than what is necessary to fulfill these goals.</p>

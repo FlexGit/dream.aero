@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -92,17 +91,12 @@ class User extends Authenticatable
     protected $fillable = [
 		'lastname',
         'name',
-		'middlename',
         'email',
         'password',
 		'role',
 		'city_id',
 		'location_id',
 		'phone',
-		'birthdata',
-		'position',
-		'is_reserved',
-		'is_official',
 		'enable',
 		'data_json',
     ];
@@ -127,7 +121,6 @@ class User extends Authenticatable
 		'updated_at' => 'datetime:Y-m-d H:i:s',
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
         'email_verified_at' => 'datetime',
-		'birthdate' => 'datetime',
 		'enable' => 'boolean',
 		'data_json' => 'array',
     ];
@@ -179,7 +172,7 @@ class User extends Authenticatable
 	 */
 	public function fio()
 	{
-		return $this->lastname . ' ' . $this->name . ' ' . $this->middlename;
+		return $this->name . ' ' . $this->lastname;
 	}
 	
 	/**
@@ -191,7 +184,7 @@ class User extends Authenticatable
 			return $this->name;
 		}
 		
-		return $this->lastname . ($this->name ? ' ' . mb_substr($this->name, 0, 1) . '.' : '') . ($this->middlename ? ' ' . mb_substr($this->middlename, 0, 1) . '.' : '');
+		return ($this->name ? ' ' . mb_substr($this->name, 0, 1) . '.' : '') . $this->lastname;
 	}
 	
 	/**

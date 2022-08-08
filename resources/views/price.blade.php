@@ -299,8 +299,8 @@
 				<div class="col-md-8 wow fadeInLeft" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-name: fadeInLeft;">
 					<h2 class="block-title">SPECIAL OFFERS</h2>
 					<div class="text">
-						<p>Weekdays happy hours from 12 PM to 2 PM get 15 minutes additional for free. Ready! Steady! Fly!<br><br>Get a 20% discount if you visit us on your birthday, 3 days before or 3 days after your birthday. ID proof is required.&nbsp;</p>
-						<p>Get 25% discount when purchasing 4 or more Gift Certificates.</p>
+						<p>Weekdays happy hours from 12 PM to 2 PM get 15 minutes additional for free. Ready! Steady! Fly!<br><br>Get a 20% discount if you visit us on your birthday, 3 days before or 3 days after your birthday. ID proof is required. Please see our <a href="{{ url($cityAlias . '/rules#birthday') }}" target="_blank">terms and conditions</a>.</p>
+						<p>Get 25% discount when purchasing 4 or more Gift Vouchers.</p>
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -319,6 +319,9 @@
 @push('css')
 	<link rel="stylesheet" href="{{ asset('css/pricestyle.css?v=' . time()) }}">
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/card.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/scale.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/light-border.css') }}">
 	<style>
 		.strikethrough {
 			position: relative;
@@ -366,5 +369,8 @@
 
 @push('scripts')
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.card.js') }}"></script>
+	<script src="{{ asset('js/popper.min.js') }}"></script>
+	<script src="{{ asset('js/tippy-bundle.umd.min.js') }}"></script>
 	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
 @endpush

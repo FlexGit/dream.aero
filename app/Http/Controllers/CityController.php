@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\City;
@@ -36,7 +37,11 @@ class CityController extends Controller
 			abort(404);
 		}
 
-		$cities = City::get();
+		$user = Auth::user();
+		$city = $user->city;
+		
+		$cities = City::where('id', $city->id)
+			->get();
 		
 		$VIEW = view('admin.city.list', ['cities' => $cities]);
 

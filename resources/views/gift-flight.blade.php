@@ -6,7 +6,7 @@
 @section('description', $page->meta_description)
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url(Request::get('cityAlias') ?? '/') }}">@lang('main.home.title')</a> <span>Gift vouchers</span></div>
+	<div class="breadcrumbs container"><a href="{{ url($cityAlias ?? '/') }}">@lang('main.home.title')</a> <span>Gift vouchers</span></div>
 
 	<div class="about simul" id="about">
 		<div class="container">
@@ -60,6 +60,9 @@
 @push('css')
 	<link rel="stylesheet" href="{{ asset('css/simulstyle.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/card.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/scale.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/light-border.css') }}">
 	<style>
 		.offer:nth-of-type(2n+2) {
 			margin-right: 7px;
@@ -119,9 +122,8 @@
 
 @push('scripts')
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
+	<script src="{{ asset('js/jquery.card.js') }}"></script>
+	<script src="{{ asset('js/popper.min.js') }}"></script>
+	<script src="{{ asset('js/tippy-bundle.umd.min.js') }}"></script>
 	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
-	<script>
-		$(function() {
-		});
-	</script>
 @endpush

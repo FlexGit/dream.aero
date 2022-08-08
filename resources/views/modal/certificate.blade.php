@@ -81,7 +81,7 @@
 							<label class="switch">
 								<input type="checkbox" id="weekends" name="weekends" class="edit_field" value="1">
 								<span class="slider round"></span>
-							</label><span>Weekends</span>
+							</label><span>Weekends</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="Option to fly on any day, including weekend" alt="help" width="20">
 						</div>
 					</div>
 				</div>
@@ -92,7 +92,7 @@
 							<label class="switch">
 								<input type="checkbox" id="birthday" name="birthday" class="edit_field" value="1">
 								<span class="slider round"></span>
-							</label><span>Birthday</span>
+							</label><span>Birthday</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="Birthday 20% Discount" alt="help" width="20">
 						</div>
 					</div>
 				</div>
@@ -100,13 +100,13 @@
 
 			<div class="amount-container text-right">
 				<div class="amount">
-					<span>SUBTOTAL: <span class="js-amount">{{ $city ? $city->currency->name : '' }}0</span></span>
+					<span>Subtotal: <span class="js-amount">{{ $city ? $city->currency->name : '' }}0</span></span>
 				</div>
 				<div class="amount">
-					<span>TAX: <span class="js-tax">{{ $city ? $city->currency->name : '' }}0</span></span>
+					<span style="font-size: 18px;">Tax: <span class="js-tax">{{ $city ? $city->currency->name : '' }}0</span></span>
 				</div>
-				<div class="amount">
-					<span>TOTAL: <span class="js-total-amount">{{ $city ? $city->currency->name : '' }}0</span></span>
+				<div class="amount" style="line-height: 0.5em;">
+					<span style="font-size: 18px;">Total: <span class="js-total-amount">{{ $city ? $city->currency->name : '' }}0</span></span>
 				</div>
 			</div>
 

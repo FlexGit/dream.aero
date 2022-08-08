@@ -32,7 +32,7 @@
 											<div class="item">
 												<a href="news/{{ $oneNews->alias }}"><h2>{{ $oneNews->title }}</h2></a>
 												<p></p>
-												<span>{{ $oneNews->published_at->format('m-d-Y') }}</span>
+												<span>{{ ($cityAlias == app('\App\Models\City')::UAE_ALIAS) ? $oneNews->published_at->format('d.m.Y') : $oneNews->published_at->format('m-d-Y') }}</span>
 											</div>
 										</div>
 									</article>

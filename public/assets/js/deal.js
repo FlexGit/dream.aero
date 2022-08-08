@@ -39,10 +39,13 @@ $(function() {
 				};
 
 				$.ajax({
-					type: 'GET',
-					url: '/modal/certificate/' + t.data('product-alias'),
+					type: 'POST',
+					url: '/modal/certificate',
+					data: {
+						product_alias: (t.data('product-alias') !== undefined) ? t.data('product-alias') : '',
+					},
 					success: function (result) {
-						//console.log(result);
+						console.log(result);
 						if (result.status !== 'success') {
 							return;
 						}
@@ -51,6 +54,10 @@ $(function() {
 						$popup.show();
 
 						calcAmount();
+
+						tippy('[data-tippy-content]', {
+							placement: 'right',
+						});
 					}
 				});
 			}
@@ -158,6 +165,7 @@ $(function() {
 	});
 
 	$(document).on('click', '.js-card-btn', function() {
+		$(this).addClass('hidden');
 		$('.consent-container, .js-certificate-btn, .card-requisites').removeClass('hidden');
 		$('#payment_form').card({
 			container: '.card-wrapper',

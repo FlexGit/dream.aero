@@ -115,10 +115,9 @@ class MainController extends Controller
 	}
 	
 	/**
-	 * @param null $productAlias
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function getCertificateModal($productAlias = null)
+	public function getCertificateModal()
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -126,6 +125,8 @@ class MainController extends Controller
 		
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$productAlias = $this->request->product_alias ?? '';
 		
 		if ($productAlias) {
 			$product = Product::where('alias', $productAlias)
@@ -139,7 +140,7 @@ class MainController extends Controller
 		
 		$VIEW = view('modal.certificate', [
 			'city' => $city,
-			'product' => isset($product) ? $product : new Product(),
+			'product' =>$product ?? null,
 			'products' => $products ?? [],
 		]);
 		
@@ -228,19 +229,23 @@ class MainController extends Controller
 		
 		return response()->json(['status' => 'success', 'message' => trans('main.modal-booking.промокод-применен'), 'uuid' => $promocode->uuid]);
 	}
-
+	
 	/**
+	 * @param null $cityAlias
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
-	public function about()
+	public function about($cityAlias = null)
 	{
-		$cityAlias = $this->request->session()->get('cityAlias');
+		if ($cityAlias && !in_array($cityAlias, City::ALIASES)) {
+			abort(404);
+		}
+		
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-
+		
 		$flightSimulators = FlightSimulator::where('is_active', true)
 			->get();
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'about');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'about-simulator_' . $city->alias);
 		
 		return view('about', [
 			'flightSimulators' => $flightSimulators,
@@ -253,69 +258,12 @@ class MainController extends Controller
 	/**
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
-	public function virtualTour()
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'virtual-tour');
-		
-		return view('virtual-tour', [
-			'page' => $page ?? new Content,
-			'city' => $city,
-			'cityAlias' => $cityAlias,
-		]);
-	}
-	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function virtualTourAir()
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'virtual-tour');
-		
-		return view('virtual-tour-air', [
-			'page' => $page ?? new Content,
-			'city' => $city,
-			'cityAlias' => $cityAlias,
-		]);
-	}
-
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function virtualTourBoeing()
-	{
-		return view('boeing-virttour');
-	}
-	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function virtualTourAirbus()
-	{
-		return view('airbus-virttour');
-	}
-	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function virtualTourAirbusMobile()
-	{
-		//return view('airbus-virttour-mobile');
-		return view('airbus-virttour');
-	}
-
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
 	public function giftFlight()
 	{
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-gift');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'gift-sertificates_' . $city->alias);
 		
 		return view('gift-flight', [
 			'page' => $page ?? new Content,
@@ -332,7 +280,7 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'variantyi-poleta');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-options_' . $city->alias);
 		
 		return view('flight-types', [
 			'page' => $page ?? new Content,
@@ -675,7 +623,7 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'rules');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'rules_' . $city->alias);
 		
 		return view('rules', [
 			'city' => $city,
@@ -706,7 +654,7 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'private-events');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'private-events_' . $city->alias);
 		
 		return view('private-events', [
 			'city' => $city,
@@ -715,6 +663,20 @@ class MainController extends Controller
 		]);
 	}
 	
+	public function flightBriefing()
+	{
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-briefing_' . $city->alias);
+		
+		return view('flight-briefing', [
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
+		]);
+	}
+
 	/**
 	 * @param $locationId
 	 * @return \Illuminate\Http\JsonResponse
@@ -776,7 +738,7 @@ class MainController extends Controller
 				->where('is_active', true)
 				->whereIn('city_id', [$city->id, 0])
 				->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
-				->latest()
+				->orderByDesc('published_at')
 				->get();
 			
 			$page = HelpFunctions::getEntityByAlias(Content::class, 'news');
@@ -934,12 +896,14 @@ class MainController extends Controller
 			->where('is_active', true)
 			->first();
 		
+		//\DB::connection()->enableQueryLog();
 		$reviews = Content::where('parent_id', $parentReviews->id)
 			->where('is_active', true)
 			->whereIn('city_id', [$city->id, 0])
 			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
 			->latest()
 			->get();
+		//\Log::debug(\DB::getQueryLog());
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'reviews');
 		
@@ -1007,9 +971,9 @@ class MainController extends Controller
 		
 		$name = trim(strip_tags($this->request->name));
 		$phone = trim(strip_tags($this->request->phone));
+		$comment = trim(strip_tags($this->request->comment ?? ''));
 		
-		//dispatch(new \App\Jobs\SendCallbackEmail($name, $phone));
-		$job = new \App\Jobs\SendCallbackEmail($name, $phone, $city);
+		$job = new \App\Jobs\SendCallbackEmail($name, $phone, $city, $comment);
 		$job->handle();
 		
 		return response()->json(['status' => 'success']);
@@ -1054,33 +1018,12 @@ class MainController extends Controller
 		return response()->json(['status' => 'success']);
 	}
 	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function certificateForm()
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		
-		$products = $city->products()
-			->orderBy('product_type_id')
-			->orderBy('duration')
-			->get();
-		
-		return view('certificate-form', [
-			'page' => $page ?? new Content,
-			'city' => $city,
-			'product' => '',
-			'products' => $products ?? [],
-		]);
-	}
-	
 	public function privacyPolicy()
 	{
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'privacyPolicy');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'privacy-policy_' . $city->alias);
 		
 		return view('privacy-policy', [
 			'city' => $city,

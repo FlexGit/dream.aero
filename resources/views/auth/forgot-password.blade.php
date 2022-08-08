@@ -7,7 +7,7 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ __('Укажите E-mail. На него будет отправлена ссылка для сброса пароля, которая позволит вам задать новый пароль.') }}
+            Specify E-mail. A password reset link will be sent to it, allowing you to set a new password.
         </div>
 
         <!-- Session Status -->
@@ -28,7 +28,7 @@
 
             <div class="flex items-center justify-end mt-4">
                 <x-button>
-                    {{ __('Отправить ссылку') }}
+                    Send link
                 </x-button>
             </div>
         </form>

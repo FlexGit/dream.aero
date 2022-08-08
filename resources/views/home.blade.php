@@ -170,7 +170,7 @@
 								<p>Get a 20% discount if you visit us on your birthday, 3 days before or 3 days after your birthday. ID proof is required.</p>
 							</li>
 							<li>
-								<p>Get 25% discount when purchasing 4 or more Gift Certificates.</p>
+								<p>Get 25% discount when purchasing 4 or more Gift Vouchers.</p>
 							</li>
 						</ul>
 						<p>
@@ -233,17 +233,16 @@
 	<link rel="stylesheet" href="{{ asset('css/owl.carousel.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/card.css') }}">
-	<style>
-		.fly_en, .give_en {
-			width: 320px !important;
-		}
-	</style>
+	<link rel="stylesheet" href="{{ asset('css/scale.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/light-border.css') }}">
 @endpush
 
 @push('scripts')
 	<script src="{{ asset('js/owl.carousel.js') }}"></script>
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
 	<script src="{{ asset('js/jquery.card.js') }}"></script>
+	<script src="{{ asset('js/popper.min.js') }}"></script>
+	<script src="{{ asset('js/tippy-bundle.umd.min.js') }}"></script>
 	<script src="{{ asset('js/mainonly.js?' . time()) }}"></script>
 	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
 @endpush

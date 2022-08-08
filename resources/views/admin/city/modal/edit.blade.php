@@ -5,7 +5,7 @@
 </div>
 <div class="form-group">
 	<label for="alias">Alias</label>
-	<input type="text" class="form-control" id="alias" name="alias" value="{{ $city->alias }}" placeholder="Alias">
+	<input type="text" class="form-control" id="alias" name="alias" value="{{ $city->alias }}" placeholder="Alias" readonly>
 </div>
 <div class="form-group">
 	<label for="email">E-mail</label>

@@ -24,15 +24,6 @@
 				@endforeach
 			</select>
 		</div>
-		{{--<div class="form-group">
-			<label for="city_id">City</label>
-			<select class="form-control" id="city_id" name="city_id">
-				<option></option>
-				@foreach($cities ?? [] as $city)
-					<option value="{{ $city->id }}">{{ $city->name }}</option>
-				@endforeach
-			</select>
-		</div>
 		<div class="form-group">
 			<label for="location_id">Location</label>
 			<select class="form-control" id="location_id" name="location_id">
@@ -41,7 +32,7 @@
 					<option value="{{ $location->id }}" data-city_id="{{ $location->city_id }}">{{ $location->name }}</option>
 				@endforeach
 			</select>
-		</div>--}}
+		</div>
 		<div class="form-group">
 			<label for="enable">Is active</label>
 			<select class="form-control" id="enable" name="enable">

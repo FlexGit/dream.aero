@@ -6,7 +6,7 @@
 </div>
 <div class="form-group">
 	<label for="alias">Alias</label>
-	<input type="text" class="form-control form-control-sm" id="alias" name="alias" value="{{ $location->alias }}" placeholder="Alias">
+	<input type="text" class="form-control form-control-sm" id="alias" name="alias" value="{{ $location->alias }}" placeholder="Alias" readonly>
 </div>
 <div class="form-group">
 	<label>Flight simulators</label>

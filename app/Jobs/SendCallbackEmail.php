@@ -14,11 +14,13 @@ class SendCallbackEmail extends Job implements ShouldQueue {
 	protected $name;
 	protected $phone;
 	protected $city;
+	protected $comment;
 
-	public function __construct($name, $phone, $city) {
+	public function __construct($name, $phone, $city, $comment) {
 		$this->name = $name;
 		$this->phone = $phone;
 		$this->city = $city;
+		$this->comment = $comment;
 	}
 	
 	/**
@@ -32,6 +34,7 @@ class SendCallbackEmail extends Job implements ShouldQueue {
 		$messageData = [
 			'name' => $this->name,
 			'phone' => $this->phone,
+			'comment' => $this->comment,
 		];
 
 		$subject = env('APP_NAME') . ': запрос обратного звонка';

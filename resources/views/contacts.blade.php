@@ -107,10 +107,3 @@
 		}
 	</style>
 @endpush
-
-@push('scripts')
-	<script>
-		$(function() {
-		});
-	</script>
-@endpush

@@ -140,7 +140,7 @@
 		$(document).on('click', '.btn-change', function(e) {
 			$container = $(this).closest('.uk-modal-dialog');
 			$container.removeClass('gl-default').addClass('gl-change-select');
-			$container.find('span.city').text('Выберите Ваш город');
+			$container.find('span.city').text('Select your city');
 			$container.find('span.btn-yes').remove();
 			$container.find('span.btn-change').remove();
 			$container.find('ul.gl-change-list').show(300);

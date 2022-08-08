@@ -333,12 +333,14 @@ $(function(){
 		var $popup = $(this).closest('.popup'),
 			name = $popup.find('#name').val(),
 			phone = $popup.find('#phone').val(),
+			comment = $popup.find('#comment').length ? $popup.find('#comment').val() : '',
 			$alertSuccess = $popup.find('.alert-success'),
 			$alertError = $popup.find('.alert-danger');
 
 		var data = {
 			'name': name,
 			'phone': phone,
+			'comment': comment,
 		};
 
 		$.ajax({
@@ -366,7 +368,7 @@ $(function(){
 				}
 
 				$alertSuccess.removeClass('hidden');
-				$popup.find('#name, #phone').val('');
+				$popup.find('#name, #phone, #comment').val('');
 			}
 		});
 	});

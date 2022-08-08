@@ -7,20 +7,19 @@
 				<img src="{{ asset('img/bplane.webp') }}" alt="" width="100%" height="auto">
 			</div>
 			<div class="col-md-5">
-				<div class="form wow fadeInRight" data-wow-duration="2s">
+				<div class="form wow fadeInRight" data-wow-duration="2s" style="text-align: center;">
 					<form class="ajax_form" action="#" method="post">
 						<input type="text" id="name" name="name" placeholder="YOUR NAME">
 						<input type="email" id="email" name="email" placeholder="YOUR E-MAIL">
 						<textarea id="body" name="body" placeholder="YOUR MESSAGE"></textarea>
 
-						<div class="consent-container" style="text-align: center;color: #fff;">
-							<label class="cont">
+						<div class="consent-container">
+							<label class="cont" style="color: #fff;">
 								I hereby give my consent to process my personal data.
 								<input type="checkbox" name="consent" value="1">
 								<span class="checkmark" style="padding-top: 0;"></span>
 							</label>
-							<br>
-							<a href="{{ url(Request::get('cityAlias') . '/privacy-policy') }}">Learn more</a>
+							<a href="{{ url(($cityAlias ?? '') . '/privacy-policy') }}" target="_blank" style="color: #fff;">Learn more</a>
 						</div>
 
 						<div>

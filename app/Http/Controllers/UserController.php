@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\City;
 use App\Models\Location;
 use App\Models\User;
-use Carbon\Carbon;
+use Auth;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -25,14 +24,8 @@ class UserController extends Controller
 	 */
 	public function index()
 	{
-		$cities = City::orderBy('name')
-			->get();
-		
-		$roles = User::ROLES;
-
 		return view('admin.user.index', [
-			'cities' => $cities,
-			'roles' => $roles,
+			'roles' => User::ROLES,
 		]);
 	}
 	
@@ -44,26 +37,21 @@ class UserController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		/*$id = $this->request->id ?? 0;*/
-
-		$users = User::orderBy('lastname')->orderBy('name');
-		if ($this->request->city_id) {
-			$users = $users->where('city_id', $this->request->city_id);
-		}
+		
+		$user = Auth::user();
+		$city = $user->city;
+		
+		$users = User::where('city_id', $city->id)
+			->orderBy('lastname')
+			->orderBy('name');
 		if ($this->request->role) {
 			$users = $users->where('role', $this->request->role);
 		}
-		/*if ($id) {
-			$users = $users->where('id', '<', $id);
-		}*/
-		$users = $users/*->limit(20)*/->get();
+		$users = $users->get();
 
-		$roles = User::ROLES;
-		
 		$VIEW = view('admin.user.list', [
 			'users' => $users,
-			'roles' => $roles,
+			'roles' => User::ROLES,
 		]);
 
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -78,26 +66,24 @@ class UserController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
+
+		$user = Auth::user();
+		$city = $user->city;
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
+		$locations = Location::where('city_id', $city->id)
+			->where('is_active', true)
+			->orderBy('name')
+			->get();
+		
 		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
-		
-		$roles = User::ROLES;
-		
-		$cities = City::orderBy('name')
-			->get();
-		
-		$locations = Location::orderBy('name')
-			->get();
 		
 		$VIEW = view('admin.user.modal.edit', [
 			'user' => $user,
-			'roles' => $roles,
-			'cities' => $cities,
+			'roles' => User::ROLES,
 			'locations' => $locations,
 		]);
 		
@@ -113,21 +99,20 @@ class UserController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$roles = User::ROLES;
-		
-		$cities = City::orderBy('name')
-			->get();
-		
-		$locations = Location::orderBy('name')
+		$locations = Location::where('city_id', $city->id)
+			->where('is_active', true)
+			->orderBy('name')
 			->get();
 
 		$VIEW = view('admin.user.modal.add', [
-			'roles' => $roles,
-			'cities' => $cities,
+			'roles' => User::ROLES,
 			'locations' => $locations,
 		]);
 		
@@ -190,64 +175,40 @@ class UserController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
-			'lastname' => ['required', 'max:255'],
 			'name' => ['required', 'max:255'],
-			/*'email' => ['required', 'email', 'unique:users,email,NULL,id,deleted_at,NULL'],*/
+			'email' => ['required', 'email'],
 			'role' => ['required'],
-			'photo_file' => 'sometimes|image|max:1024',
+			'location_id' => ['required'],
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'lastname' => 'Фамилия',
-				'name' => 'Имя',
-				/*'email' => 'E-mail',*/
-				'role' => 'Роль',
-				'photo_file' => 'Фото',
+				'name' => 'Name',
+				'email' => 'E-mail',
+				'role' => 'Role',
+				'location_id' => 'Location',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
-		$email = $this->request->email ?? '';
-		if ($email) {
-			$user = User::where('email', $email)
-				->first();
-			if ($user) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-с-таким-e-mail-уже-существует')]);
-			}
-		}
-		
-		$isPhotoFileUploaded = false;
-		if($photoFile = $this->request->file('photo_file')) {
-			$isPhotoFileUploaded = $photoFile->move(public_path('upload/user/photo'), $photoFile->getClientOriginalName());
-		}
-		
 		$user = new User();
 		$user->lastname = $this->request->lastname;
 		$user->name = $this->request->name;
-		$user->middlename = $this->request->middlename ?? null;
 		$user->email = $this->request->email;
 		$user->password = '';
 		$user->role = $this->request->role;
-		$user->birthdate = $this->request->birthdate ? Carbon::parse($this->request->birthdate)->format('Y-m-d') : null;
-		$user->phone = $this->request->phone ?? null;
-		$user->position = $this->request->position ?? null;
-		$user->city_id = $this->request->city_id ?? 0;
-		$user->location_id = $this->request->location_id ?? 0;
-		$user->is_reserved = (bool)$this->request->is_reserved;
-		$user->is_official = (bool)$this->request->is_official;
+		$user->city_id = $city->id;
+		$user->location_id = $this->request->location_id;
 		$user->enable = (bool)$this->request->enable;
-		$data = [];
-		if ($isPhotoFileUploaded) {
-			$data['photo_file_path'] = 'user/photo/' . $photoFile->getClientOriginalName();
-		}
-		$user->data_json = $data;
 		if (!$user->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
@@ -265,65 +226,39 @@ class UserController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
-
 		$rules = [
-			'lastname' => ['required', 'max:255'],
 			'name' => ['required', 'max:255'],
-			/*'email' => ['sometimes', 'required', 'email', 'unique:users,email,' . $id . ',id,deleted_at,NULL'],*/
+			'email' => ['required', 'email'],
 			'role' => ['required'],
-			'photo_file' => ['sometimes', 'image', 'max:1024'],
+			'location_id' => ['required'],
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'lastname' => 'Фамилия',
-				'name' => 'Имя',
-				/*'email' => 'E-mail',*/
-				'role' => 'Роль',
-				'photo_file' => 'Фото',
+				'name' => 'Name',
+				'email' => 'E-mail',
+				'role' => 'Role',
+				'location_id' => 'Location',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
-		$email = $this->request->email ?? '';
-		if ($email) {
-			$emailUser = User::where('email', $email)
-				->first();
-			if ($emailUser && $emailUser->id != $id) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-с-таким-e-mail-уже-существует')]);
-			}
-		}
-
-		$isPhotoFileUploaded = false;
-		if($photoFile = $this->request->file('photo_file')) {
-			$isPhotoFileUploaded = $photoFile->move(public_path('upload/user/photo'), $photoFile->getClientOriginalName());
-		}
-		
+		$user = User::find($id);
 		$user->lastname = $this->request->lastname;
 		$user->name = $this->request->name;
-		$user->middlename = $this->request->middlename ?? '';
-		$user->email = $email;
+		$user->email = $this->request->email;
 		$user->role = $this->request->role;
-		$user->birthdate = $this->request->birthdate ? Carbon::parse($this->request->birthdate)->format('Y-m-d') : null;
-		$user->phone = $this->request->phone ?? null;
-		$user->position = $this->request->position ?? null;
-		$user->city_id = $this->request->city_id ?? 0;
-		$user->location_id = $this->request->location_id ?? 0;
-		$user->is_reserved = (bool)$this->request->is_reserved;
-		$user->is_official = (bool)$this->request->is_official;
+		$user->city_id = $city->id;
+		$user->location_id = $this->request->location_id;
 		$user->enable = (bool)$this->request->enable;
-		$data = $user->data_json;
-		if ($isPhotoFileUploaded) {
-			$data['photo_file_path'] = 'user/photo/' . $photoFile->getClientOriginalName();
-		}
-		$user->data_json = $data;
 		if (!$user->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
@@ -351,7 +286,7 @@ class UserController extends Controller
 	 * @param $id
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function delete($id)
+	/*public function delete($id)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -373,5 +308,5 @@ class UserController extends Controller
 		}
 		
 		return response()->json(['status' => 'success']);
-	}
+	}*/
 }

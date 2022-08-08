@@ -40,9 +40,9 @@
 								@endforeach
 							</select>
 						</div>--}}
-						<div class="form-group align-self-end text-right ml-auto pl-2">
+						{{--<div class="form-group align-self-end text-right ml-auto pl-2">
 							<a href="javascript:void(0)" data-toggle="modal" data-url="/location/add" data-action="/location" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
-						</div>
+						</div>--}}
 					</div>
 					<table id="locationTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
@@ -87,7 +87,7 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
 @stop
 
 @section('js')
@@ -104,10 +104,6 @@
 					url: "{{ route('locationList') }}",
 					type: 'GET',
 					dataType: 'json',
-					data: {
-						/*"filter_city_id": $('#filter_city_id').val(),
-						"filter_legal_entity_id": $('#filter_legal_entity_id').val(),*/
-					},
 					success: function(result) {
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
@@ -213,10 +209,6 @@
 			$(document).on('change', '.custom-file-input', function() {
 				$(this).next('.custom-file-label').html($(this).val());
 			});
-
-			/*$(document).on('change', '#filter_city_id, #filter_legal_entity_id', function(e) {
-				getList();
-			});*/
 
 			$(document).on('change', '.js-simulator', function(e) {
 				var disabled = true;

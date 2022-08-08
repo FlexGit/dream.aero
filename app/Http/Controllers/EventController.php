@@ -78,6 +78,7 @@ class EventController extends Controller
 	public function getListAjax()
 	{
 		$user = \Auth::user();
+		$city = $user->city;
 		
 		$locations = Location::where('is_active', true)
 			->with('simulators')
@@ -91,7 +92,7 @@ class EventController extends Controller
 
 		$startAt = $this->request->start ?? '';
 		$stopAt = $this->request->end ?? '';
-		$cityId = $this->request->city_id ?? 0;
+		$cityId = $city->id;
 		$locationId = $this->request->location_id ?? 0;
 		$simulatorId = $this->request->simulator_id ?? 0;
 		
@@ -314,6 +315,7 @@ class EventController extends Controller
 		}
 		
 		$user = \Auth::user();
+		$city = $user->city;
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -332,7 +334,7 @@ class EventController extends Controller
 				$VIEW = view('admin.event.modal.shift_add', [
 					'users' => $users,
 					'cities' => $cities,
-					'cityId' => $this->request->city_id,
+					'cityId' => $city->id,
 					'locationId' => $this->request->location_id,
 					'simulatorId' => $this->request->simulator_id,
 					'eventType' => $eventType,
@@ -455,6 +457,7 @@ class EventController extends Controller
 		}
 		
 		$user = \Auth::user();
+		$city = $user->city;
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -476,7 +479,7 @@ class EventController extends Controller
 				}
 			
 				$userId = $this->request->user_id ?? 0;
-				$cityId = $this->request->city_id ?? 0;
+				$cityId = $city->id;
 				$locationId = $this->request->location_id ?? 0;
 				$simulatorId = $this->request->simulator_id ?? 0;
 				

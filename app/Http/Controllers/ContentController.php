@@ -43,6 +43,9 @@ class ContentController extends Controller
 			abort(404);
 		}
 
+		$user = Auth::user();
+		$city = $user->city;
+		
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
@@ -51,6 +54,7 @@ class ContentController extends Controller
 		$id = $this->request->id ?? 0;
 
 		$contents = Content::orderByDesc('id')
+			->where('city_id', $city->id)
 			->where('parent_id', $parentContent->id);
 		if ($this->request->search_content) {
 			$contents = $contents->where(function ($query) {
@@ -98,13 +102,9 @@ class ContentController extends Controller
 			->find($id);
 		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
 
-		$cities = City::orderBy('name')
-			->get();
-
 		$VIEW = view('admin.content.modal.edit', [
 			'content' => $content,
 			'type' => $type,
-			'cities' => $cities,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -126,12 +126,8 @@ class ContentController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 
-		$cities = City::orderBy('name')
-			->get();
-
 		$VIEW = view('admin.content.modal.add', [
 			'type' => $type,
-			'cities' => $cities,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -184,20 +180,33 @@ class ContentController extends Controller
 		$user = Auth::user();
 		$city = $user->city;
 
-		$rules = [
-			'title' => ['required', 'min:3', 'max:250'],
-			'alias' => ['required', 'min:3', 'max:250', 'regex:/([A-Za-z0-9\-]+)/'],
-			'published_at' => ['date'],
-			'photo_preview_file' => ['sometimes', 'image', 'max:20480', 'mimes:webp,png,jpg,jpeg'],
-		];
-		
-		$validator = Validator::make($this->request->all(), $rules)
-			->setAttributeNames([
-				'title' => 'Title',
-				'alias' => 'Alias',
-				'published_at' => 'Publication date',
-				'photo_preview_file' => 'Photo preview',
-			]);
+		if ($type == Content::REVIEWS_TYPE) {
+			$rules = [
+				'title' => ['required', 'min:3', 'max:250'],
+				'published_at' => ['date'],
+			];
+			
+			$validator = Validator::make($this->request->all(), $rules)
+				->setAttributeNames([
+					'title' => 'Title',
+					'published_at' => 'Publication date',
+				]);
+		} else {
+			$rules = [
+				'title' => ['required', 'min:3', 'max:250'],
+				'alias' => ['required', 'min:3', 'max:250', 'regex:/([A-Za-z0-9\-]+)/'],
+				'published_at' => ['date'],
+				'photo_preview_file' => ['sometimes', 'image', 'max:20480', 'mimes:webp,png,jpg,jpeg'],
+			];
+			
+			$validator = Validator::make($this->request->all(), $rules)
+				->setAttributeNames([
+					'title' => 'Title',
+					'alias' => 'Alias',
+					'published_at' => 'Publication date',
+					'photo_preview_file' => 'Photo preview',
+				]);
+		}
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
@@ -207,11 +216,6 @@ class ContentController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
 		
-		$cityId = $this->request->city_id ?? 0;
-		if ($parentContent->alias == Content::PAGES_TYPE) {
-			$city = City::find($cityId);
-		}
-
 		$data = [];
 		if($file = $this->request->file('photo_preview_file')) {
 			$isFileUploaded = $file->move(public_path('upload/content/' . $type), $file->getClientOriginalName());

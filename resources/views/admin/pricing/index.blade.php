@@ -21,19 +21,6 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-body">
-					{{--<div class="table-filter mb-2">
-						<div class="d-sm-flex">
-							<div class="form-group">
-								<label for="filter_city_id">Город</label>
-								<select class="form-control" id="filter_city_id" name="filter_city_id">
-									<option value="0">Все</option>
-									@foreach($cities ?? [] as $city)
-										<option value="{{ $city->id }}">{{ $city->name }}</option>
-									@endforeach
-								</select>
-							</div>
-						</div>
-					</div>--}}
 					<table id="pricingTable" class="table table-sm table-bordered">
 						<tbody>
 						</tbody>
@@ -66,12 +53,12 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
 @stop
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
-	<script src="{{ asset('js/admin/common.js') }}"></script>
+	<script src="{{ asset('js/admin/common.js?v=' . time()) }}"></script>
 	<script>
 		$(function() {
 			function getList() {
