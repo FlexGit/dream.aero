@@ -30,7 +30,7 @@ class CityCheck
 		}
 		
 		if (!in_array($request->segment(1), $cityAliases)) {
-			return redirect(($request->session()->get('cityAlias') ?? City::UAE_ALIAS) . ($request->segment(1) ? '/' . $request->segment(1) : ''), 301);
+			return redirect(($request->session()->get('cityAlias') ?? City::DC_ALIAS) . ($request->segment(1) ? '/' . $request->segment(1) : ''), 301);
 		}
 		
 		return $next($request);

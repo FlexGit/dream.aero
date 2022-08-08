@@ -139,6 +139,10 @@
 		});
 
 		$(document).on('click', '.js-city', function(e) {
+			var pathname = window.location.pathname,
+				currentCityAlias = $(this).closest('.uk-modal-dialog').find('[data-current-alias]').data('current-alias');
+
+			console.log(currentCityAlias);
 			$.ajax({
 				url: '/city/change',
 				type: 'GET',
@@ -147,9 +151,10 @@
 					alias: $(this).data('alias'),
 				},
 				success: function(result) {
+					console.log(result);
 					if (result.status === 'success') {
 						$('#city_modal').modal('hide');
-						window.location.href = '/' + result.cityAlias;
+						window.location.href = pathname.replace(currentCityAlias, result.cityAlias);
 					}
 				}
 			});
