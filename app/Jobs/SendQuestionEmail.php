@@ -27,7 +27,7 @@ class SendQuestionEmail extends Job implements ShouldQueue {
 	 * @return int|void
 	 */
 	public function handle() {
-		$recipients = $bcc = [];
+		$recipients = /*$bcc = */[];
 		$recipients[] = $this->city->email ?: env('ADMIN_EMAIL');
 		//$bcc[] = env('DEV_EMAIL');
 
@@ -37,13 +37,13 @@ class SendQuestionEmail extends Job implements ShouldQueue {
 			'body' => $this->body,
 		];
 
-		$subject = env('APP_NAME') . ': новое сообщение';
+		$subject = env('APP_NAME') . ': new message';
 
-		Mail::send(['html' => "admin.emails.send_question"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
+		Mail::send(['html' => "admin.emails.send_question"], $messageData, function ($message) use ($subject, $recipients/*, $bcc*/) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
 			$message->to($recipients);
-			$message->bcc($bcc);
+			/*$message->bcc($bcc);*/
 		});
 	}
 }

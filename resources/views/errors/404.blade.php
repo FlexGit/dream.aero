@@ -8,7 +8,7 @@
 @section('content')
 	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main.home.title')</a> <span>@lang('main.404.title')</span></div>
 
-	<article class="article">
+	<article class="article" style="height: 100vh;">
 		<div class="container">
 			<h1 class="article-title">@lang('main.404.title')</h1>
 			<div class="article-content">

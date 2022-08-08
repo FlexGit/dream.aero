@@ -30,7 +30,7 @@ class SendUserPasswordResetEmail extends Job implements ShouldQueue {
 			'name' => $user->name ?? '',
 		];
 		
-		$subject = env('APP_NAME') . ': восстановление пароля';
+		$subject = env('APP_NAME') . ': password reset';
 
 		Mail::send(['html' => "admin.emails.send_password_reset"], $messageData, function ($message) use ($subject, $user) {
 			/** @var \Illuminate\Mail\Message $message */

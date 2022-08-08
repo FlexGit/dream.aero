@@ -27,7 +27,7 @@ class SendCallbackEmail extends Job implements ShouldQueue {
 	 * @return int|void
 	 */
 	public function handle() {
-		$recipients = $bcc = [];
+		$recipients = /*$bcc = */[];
 		$recipients[] = $this->city->email ?: env('ADMIN_EMAIL');
 		//$bcc[] = env('DEV_EMAIL');
 
@@ -37,13 +37,13 @@ class SendCallbackEmail extends Job implements ShouldQueue {
 			'comment' => $this->comment,
 		];
 
-		$subject = env('APP_NAME') . ': запрос обратного звонка';
+		$subject = env('APP_NAME') . ': callback request';
 
-		Mail::send(['html' => "admin.emails.send_callback"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
+		Mail::send(['html' => "admin.emails.send_callback"], $messageData, function ($message) use ($subject, $recipients/*, $bcc*/) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
 			$message->to($recipients);
-			$message->bcc($bcc);
+			/*$message->bcc($bcc);*/
 		});
 	}
 }

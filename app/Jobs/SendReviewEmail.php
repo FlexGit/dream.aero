@@ -23,22 +23,22 @@ class SendReviewEmail extends Job implements ShouldQueue {
 	 * @return int|void
 	 */
 	public function handle() {
-		$recipients = $bcc = [];
+		$recipients = /*$bcc = */[];
 		$recipients[] = env('ADMIN_EMAIL');
-		$bcc[] = env('DEV_EMAIL');
+		/*$bcc[] = env('DEV_EMAIL');*/
 		
 		$messageData = [
 			'name' => $this->name,
 			'body' => $this->body,
 		];
 
-		$subject = env('APP_NAME') . ': новый отзыв';
+		$subject = env('APP_NAME') . ': new review';
 
-		Mail::send(['html' => "admin.emails.send_review"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
+		Mail::send(['html' => "admin.emails.send_review"], $messageData, function ($message) use ($subject, $recipients/*, $bcc*/) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
 			$message->to($recipients);
-			$message->bcc($bcc);
+			/*$message->bcc($bcc);*/
 		});
 	}
 }
