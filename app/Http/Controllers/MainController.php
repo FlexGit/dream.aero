@@ -520,6 +520,7 @@ class MainController extends Controller
 		$this->request->session()->put('cityId', $city->id);
 		$this->request->session()->put('cityAlias', $city->alias);
 		$this->request->session()->put('cityName', $city->name);
+		$this->request->session()->put('cityName', $city->phone ? $city->phoneFormatted() : '');
 		
 		return response()->json(['status' => 'success', 'cityAlias' => $city->alias]);
 	}

@@ -22,7 +22,7 @@ class CityCheck
 				$request->session()->put('cityId', $city->id);
 				$request->session()->put('cityAlias', $city->alias);
 				$request->session()->put('cityName', $city->name);
-				$request->session()->put('cityPhone', $city->phone);
+				$request->session()->put('cityPhone', $city->phone ? $city->phoneFormatted() : '');
 				
 				//return redirect($city->alias . ($request->segment(1) ? '/' . $request->segment(2) : ''), 301);
 				return $next($request);
