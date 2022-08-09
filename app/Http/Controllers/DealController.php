@@ -544,8 +544,8 @@ class DealController extends Controller
 		$amount = $product->calcAmount($contractorId, $cityId, $source, false, 0, $paymentMethodId, $promoId, $promocodeId, 0, false, false, 0, true);
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
-		
 		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
+		$certificatePeriod = ($productType->alias == ProductType::COURSES_ALIAS) ? 12 : 6;
 		
 		try {
 			\DB::beginTransaction();
@@ -563,17 +563,16 @@ class DealController extends Controller
 
 			$certificate = new Certificate();
 			$certificateStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);
-			$certificate->status_id = $certificateStatus->id ?? 0;
+			$certificate->status_id = $certificateStatus->id;
 			$certificate->city_id = $cityId;
-			$certificate->product_id = $product->id ?? 0;
-			$certificatePeriod = ($product && array_key_exists('certificate_period', $product->data_json)) ? $product->data_json['certificate_period'] : 6;
+			$certificate->product_id = $product->id;
 			$certificate->expire_at = Carbon::parse($certificateExpireAt)->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 			$certificate->save();
 			
 			$deal = new Deal();
 			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CONFIRMED_STATUS);
-			$deal->status_id = $dealStatus->id ?? 0;
-			$deal->contractor_id = $contractor->id ?? 0;
+			$deal->status_id = $dealStatus->id;
+			$deal->contractor_id = $contractor->id;
 			$deal->city_id = $cityId ?: $this->request->user()->city_id;
 			$deal->name = $name;
 			$deal->phone = $phone;
@@ -583,15 +582,15 @@ class DealController extends Controller
 			$deal->save();
 			
 			$position = new DealPosition();
-			$position->product_id = $product->id ?? 0;
-			$position->certificate_id = $certificate->id ?? 0;
-			$position->duration = $product->duration ?? 0;
+			$position->product_id = $product->id;
+			$position->certificate_id = $certificate->id;
+			$position->duration = $product->duration;
 			$position->amount = $amount;
 			$position->tax = $tax;
 			$position->total_amount = $totalAmount;
-			$position->currency_id = $currency->id ?? 0;
+			$position->currency_id = $currency->id;
 			$position->city_id = $cityId ?: $this->request->user()->city_id;
-			$position->promo_id = $promo->id ?? 0;
+			$position->promo_id = $promo->id;
 			$position->promocode_id = ($promocodeId || $promocodeUuid) ? $promocode->id : 0;
 			$position->is_certificate_purchase = true;
 			$position->source = $source ?: Deal::ADMIN_SOURCE;
@@ -608,13 +607,6 @@ class DealController extends Controller
 				
 				if ($source == Deal::WEB_SOURCE) {
 					$billLocation = $city->getLocationForBill($product);
-					/*if (!$billLocation) {
-						\DB::rollback();
-						
-						Log::debug('500 - Certificate Deal Create: Не найден номер счета платежной системы');
-						
-						return response()->json(['status' => 'error', 'reason' => trans('main.error.не-найден-номер-счета-платежной-системы')]);
-					}*/
 					$billLocationId = $billLocation->id;
 				} else {
 					$billLocationId = $user ? $user->location_id : 0;
