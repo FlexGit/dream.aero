@@ -7,6 +7,7 @@ use App\Models\Currency;
 use App\Models\DealPosition;
 use App\Models\Event;
 use App\Models\FlightSimulator;
+use App\Models\ProductType;
 use App\Models\Promo;
 use App\Models\Deal;
 use App\Models\City;
@@ -260,13 +261,11 @@ class PositionController extends Controller
 
 		$rules = [
 			'product_id' => 'required|numeric|min:0|not_in:0',
-			/*'city_id' => 'required|numeric|min:0',*/
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'product_id' => 'Продукт',
-				/*'city_id' => 'Город',*/
+				'product_id' => 'Product',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -276,15 +275,10 @@ class PositionController extends Controller
 		$city = $user->city;
 
 		$dealId = $this->request->deal_id ?? 0;
-		/*$cityId = $this->request->city_id ?? 0;*/
 		$productId = $this->request->product_id ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
-		/*$certificateWhom = $this->request->certificate_whom ?? '';
-		$certificateWhomPhone = $this->request->certificate_whom_phone ?? '';*/
 		$comment = $this->request->comment ?? '';
-		/*$deliveryAddress = $this->request->delivery_address ?? '';*/
-		$certificateExpireAt = $this->request->certificate_expire_at ?? null;
 		$amount = $this->request->amount ?? 0;
 		
 		$deal = Deal::find($dealId);
@@ -326,24 +320,15 @@ class PositionController extends Controller
 		}
 
 		$data = [];
-		/*if ($certificateWhom) {
-			$data['certificate_whom'] = $certificateWhom;
-		}
-		if ($certificateWhomPhone) {
-			$data['certificate_whom_phone'] = $certificateWhomPhone;
-		}
-		if ($deliveryAddress) {
-			$data['delivery_address'] = $deliveryAddress ?? '';
-		}*/
 		if ($comment) {
 			$data['comment'] = $comment;
 		}
 		
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
-		
 		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
-
+		$certificatePeriod = ($productType->alias == ProductType::COURSES_ALIAS) ? 12 : 6;
+		
 		try {
 			\DB::beginTransaction();
 
@@ -352,8 +337,7 @@ class PositionController extends Controller
 			$certificate->status_id = $certificateStatus->id ?? 0;
 			$certificate->city_id = $city->id;
 			$certificate->product_id = $product->id ?? 0;
-			$certificatePeriod = ($product && array_key_exists('certificate_period', $product->data_json)) ? $product->data_json['certificate_period'] : 6;
-			$certificate->expire_at = Carbon::parse($certificateExpireAt)->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
+			$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 			$certificate->save();
 			
 			$position = new DealPosition();
@@ -408,7 +392,6 @@ class PositionController extends Controller
 
 		$rules = [
 			'product_id' => 'required|numeric|min:0|not_in:0',
-			/*'location_id' => 'required|numeric|min:0|not_in:0',*/
 			'flight_date_at' => 'required|date',
 			'flight_time_at' => 'required',
 		];
@@ -416,7 +399,6 @@ class PositionController extends Controller
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'product_id' => 'Product',
-				/*'location_id' => 'Location',*/
 				'flight_date_at' => 'Desired flight date',
 				'flight_time_at' => 'Desired flight time',
 			]);
@@ -426,8 +408,6 @@ class PositionController extends Controller
 		
 		$dealId = $this->request->deal_id ?? 0;
 		$productId = $this->request->product_id ?? 0;
-		/*$locationId = $this->request->location_id ?? 0;
-		$simulatorId = $this->request->flight_simulator_id ?? 0;*/
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
 		$comment = $this->request->comment ?? '';
@@ -530,7 +510,6 @@ class PositionController extends Controller
 		
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
-		
 		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 		
 		try {
@@ -594,13 +573,11 @@ class PositionController extends Controller
 
 		$rules = [
 			'product_id' => 'required|numeric|min:0|not_in:0',
-			/*'city_id' => 'required|numeric|min:0|not_in:0',*/
 		];
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'product_id' => 'Product',
-				/*'city_id' => 'City',*/
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -611,9 +588,6 @@ class PositionController extends Controller
 		
 		$dealId = $this->request->deal_id ?? 0;
 		$productId = $this->request->product_id ?? 0;
-		/*$cityId = $this->request->city_id ?? 0;
-		$promoId = $this->request->promo_id ?? 0;
-		$promocodeId = $this->request->promocode_id ?? 0;*/
 		$comment = $this->request->comment ?? '';
 		$amount = $this->request->amount ?? 0;
 		
@@ -648,7 +622,6 @@ class PositionController extends Controller
 		
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
-		
 		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 		
 		try {
@@ -705,13 +678,11 @@ class PositionController extends Controller
 		
 		$rules = [
 			'product_id' => 'required|numeric|min:0|not_in:0',
-			/*'city_id' => 'required|numeric|min:0',*/
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'product_id' => 'Product',
-				/*'city_id' => 'City',*/
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -991,21 +962,17 @@ class PositionController extends Controller
 		
 		$rules = [
 			'product_id' => 'required|numeric|min:0|not_in:0',
-			'city_id' => 'required|numeric|min:0|not_in:0',
 		];
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'product_id' => 'Product',
-				'city_id' => 'City',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
 		$productId = $this->request->product_id ?? 0;
-		$promoId = $this->request->promo_id ?? 0;
-		$promocodeId = $this->request->promocode_id ?? 0;
 		$comment = $this->request->comment ?? '';
 		$amount = $this->request->amount ?? 0;
 		
@@ -1017,20 +984,6 @@ class PositionController extends Controller
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
 		if (!$cityProduct) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-в-городе-не-найден', ['city_name' => $city->name])]);
-		}
-		
-		if ($promoId) {
-			$promo = Promo::find($promoId);
-			if (!$promo) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
-			}
-		}
-
-		if ($promocodeId) {
-			$promocode = Promocode::find($promocodeId);
-			if (!$promocode) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
-			}
 		}
 		
 		$data = is_array($position->data_json) ? $position->data_json : json_decode($position->data_json, true);
@@ -1045,20 +998,8 @@ class PositionController extends Controller
 			$position->amount = $amount;
 			$position->currency_id = $cityProduct->pivot->currency_id ?? 0;
 			$position->city_id = $city->id;
-			$position->promo_id = $promo->id ?? 0;
-			$position->promocode_id = $promocodeId ?? 0;
 			$position->data_json = !empty($data) ? $data : null;
 			$position->save();
-			
-			if ($promocodeId) {
-				$deal = $position->deal;
-				if ($deal) {
-					$contractor = $deal->contractor;
-					if ($contractor) {
-						$promocode->contractors()->save($contractor);
-					}
-				}
-			}
 			
 			\DB::commit();
 		} catch (Throwable $e) {

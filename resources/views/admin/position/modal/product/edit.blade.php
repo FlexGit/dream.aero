@@ -32,7 +32,7 @@
 				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
 			</div>--}}
 			<div id="amount-text">
-				<h1 class="d-inline-block">{{ $position->amount }}</h1> <i class="fas fa-ruble-sign" style="font-size: 25px;"></i>
+				<i class="fas fa-dollar-sign" style="font-size: 30px;"></i> <h1 class="d-inline-block">{{ $position->amount }}</h1>
 			</div>
 		</div>
 	</div>
