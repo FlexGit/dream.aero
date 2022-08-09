@@ -27,7 +27,7 @@
 								<div>
 									<label for="search_doc">Search</label>
 								</div>
-								<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="Document #, Name, E-mail, Phone number">
+								<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="Doc #, Name, E-mail, Phone number">
 							</div>
 							<div class="form-group ml-2">
 								<div>
