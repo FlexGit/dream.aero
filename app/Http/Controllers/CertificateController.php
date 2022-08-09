@@ -405,6 +405,7 @@ class CertificateController extends Controller
 		$certificate = Certificate::find($this->request->certificate_id);
 		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
+		\Log::debug(111);
 		$job = new \App\Jobs\SendCertificateEmail($certificate);
 		$job->handle();
 		
