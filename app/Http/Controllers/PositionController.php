@@ -975,6 +975,7 @@ class PositionController extends Controller
 		$productId = $this->request->product_id ?? 0;
 		$comment = $this->request->comment ?? '';
 		$amount = $this->request->amount ?? 0;
+		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 		
 		$product = Product::find($productId);
 		if (!$product) {
@@ -996,7 +997,7 @@ class PositionController extends Controller
 
 			$position->product_id = $product->id ?? 0;
 			$position->amount = $amount;
-			$position->currency_id = $cityProduct->pivot->currency_id ?? 0;
+			$position->currency_id = $currency->id ?? 0;
 			$position->city_id = $city->id;
 			$position->data_json = !empty($data) ? $data : null;
 			$position->save();
@@ -1035,21 +1036,6 @@ class PositionController extends Controller
 		}
 		
 		$certificateFilePath = ($position->is_certificate_purchase && $position->certificate && is_array($position->certificate->data_json) && array_key_exists('certificate_file_path', $position->certificate->data_json)) ? $position->certificate->data_json['certificate_file_path'] : '';
-		
-		// если позицию удаляют, а по ней было списание баллов, то начисляем баллы обратно
-		$scores = Score::where('deal_position_id', $position->id)
-			->where('type', Score::USED_TYPE)
-			->get();
-		foreach ($scores as $item) {
-			$score = new Score();
-			$score->score = $item->score;
-			$score->type = Score::SCORING_TYPE;
-			$score->contractor_id = $item->contractor_id;
-			$score->deal_id = $item->deal_id;
-			$score->deal_position_id = $item->deal_position_id;
-			$score->user_id = $this->request->user()->id;
-			$score->save();
-		}
 		
 		if (!$position->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
