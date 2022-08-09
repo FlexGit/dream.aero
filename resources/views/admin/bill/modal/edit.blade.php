@@ -40,7 +40,7 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="amount">Amount</label>
-			<input type="number" class="form-control" id="amount" name="amount" value="{{ $bill->total_amount }}" placeholder="Amount">
+			<input type="number" class="form-control" id="amount" name="amount" value="{{ $bill->total_amount }}" placeholder="Amount" disabled>
 		</div>
 	</div>
 </div>
