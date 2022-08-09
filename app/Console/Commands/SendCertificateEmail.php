@@ -44,6 +44,7 @@ class SendCertificateEmail extends Command
     public function handle()
     {
     	$certificates = Certificate::whereNull('sent_at')
+			->where('created_at', '>=', '2022-08-09 00:00:00')
 			->get();
     	/** @var Certificate[] $certificates */
 		foreach ($certificates as $certificate) {
