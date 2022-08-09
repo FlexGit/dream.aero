@@ -23,7 +23,7 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="promo_id">Promo</label>
-			<select class="form-control" id="promo_id" name="promo_id">
+			<select class="form-control" id="promo_id" name="promo_id" @if(in_array($position->source, [app('\App\Models\Deal')::WEB_SOURCE, app('\App\Models\Deal')::MOB_SOURCE]) && ($position->promo_id || $position->promocode_id)) disabled @endif>
 				<option value=""></option>
 				@foreach($promos ?? [] as $promo)
 					<option value="{{ $promo->id }}" @if($promo->id == $position->promo_id) selected @endif>{{ $promo->valueFormatted() }}{{ !$promo->is_active ? ' - not active' : '' }}</option>
@@ -34,7 +34,7 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="promocode_id">Promocode</label>
-			<select class="form-control" id="promocode_id" name="promocode_id" @if(in_array($position->source, [app('\App\Models\Deal')::WEB_SOURCE, app('\App\Models\Deal')::MOB_SOURCE]) && $position->promocode_id) disabled @endif>
+			<select class="form-control" id="promocode_id" name="promocode_id" @if(in_array($position->source, [app('\App\Models\Deal')::WEB_SOURCE, app('\App\Models\Deal')::MOB_SOURCE]) && ($position->promo_id || $position->promocode_id)) disabled @endif>
 				<option value=""></option>
 				@foreach($promocodes ?? [] as $promocode)
 					<option value="{{ $promocode->id }}" @if($promocode->id == $position->promocode_id) selected @endif>{{ $promocode->valueFormatted() }}</option>
