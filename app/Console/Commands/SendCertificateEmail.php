@@ -76,7 +76,7 @@ class SendCertificateEmail extends Command
 				$job = new \App\Jobs\SendCertificateEmail($certificate);
 				$job->handle();
 			} catch (Throwable $e) {
-				\Log::debug('500 - ' . $e->getMessage());
+				\Log::debug('certificate_email:send - ' . $e->getMessage());
 			
 				return 0;
 			}

@@ -181,27 +181,14 @@ class Certificate extends Model
 		
 		if ($deal->balance() < 0) return null;
 		
-		$bills = $deal->bills;
-		$lastBill = null;
-		foreach ($bills as $bill) {
-			/** @var Bill $bill */
-			if(!$bill->payed_at) continue;
-			
-			$position = $bill->position;
-			if (!$position) continue;
-			
-			$certificate = $position->certificate;
-			if ($certificate) {
-				$lastBill = $bill;
-				break;
-			}
-		}
-		
 		$product = $this->product;
 		if (!$product) return null;
 		
 		$productType = $product->productType;
 		if (!$productType) return null;
+		
+		$bill = $position->bill;
+		if (!$bill) return null;
 		
 		$city = $this->city;
 		
@@ -226,7 +213,7 @@ class Certificate extends Model
 							$font->size(20);
 							$font->color('#000000');
 						});
-						$certificateFile->text($lastBill->payed_at->format('d.m.Y'), 1035, 83, function ($font) use ($fontPath) {
+						$certificateFile->text($bill->payed_at->format('m-d-Y'), 1035, 83, function ($font) use ($fontPath) {
 							$font->file($fontPath);
 							$font->size(20);
 							$font->color('#000000');
@@ -247,7 +234,7 @@ class Certificate extends Model
 							$font->size(20);
 							$font->color('#000000');
 						});
-						$certificateFile->text($lastBill->payed_at->format('d.m.Y'), 1035, 83, function ($font) use ($fontPath) {
+						$certificateFile->text($bill->payed_at->format('m-d-Y'), 1035, 83, function ($font) use ($fontPath) {
 							$font->file($fontPath);
 							$font->size(20);
 							$font->color('#000000');
@@ -266,7 +253,7 @@ class Certificate extends Model
 					$font->size(20);
 					$font->color('#000000');
 				});
-				$certificateFile->text($lastBill->payed_at->format('d.m.Y'), 1510, 758, function($font) use ($fontPath) {
+				$certificateFile->text($bill->payed_at->format('m-d-Y'), 1510, 758, function($font) use ($fontPath) {
 					$font->file($fontPath);
 					$font->size(20);
 					$font->color('#000000');
