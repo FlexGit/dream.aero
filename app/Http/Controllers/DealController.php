@@ -242,7 +242,7 @@ class DealController extends Controller
 		}
 
 		$cities = $this->cityRepo->getList($user);
-		$products = $this->productTypeRepo->getActualProductList($user);
+		$products = $this->productTypeRepo->getActualProductList($user, true);
 		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList();
@@ -274,7 +274,7 @@ class DealController extends Controller
 		}
 
 		$cities = $this->cityRepo->getList($user);
-		$products = $this->productTypeRepo->getActualProductList($user);
+		$products = $this->productTypeRepo->getActualProductList($user, true);
 		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList();

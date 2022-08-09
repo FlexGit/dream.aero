@@ -72,7 +72,7 @@ class PositionController extends Controller
 		
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user);
-		$products = $this->productTypeRepo->getActualProductList($user);
+		$products = $this->productTypeRepo->getActualProductList($user, true);
 		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		
@@ -104,7 +104,7 @@ class PositionController extends Controller
 		
 		$user = \Auth::user();
 		$cities = $this->cityRepo->getList($user);
-		$products = $this->productTypeRepo->getActualProductList($user);
+		$products = $this->productTypeRepo->getActualProductList($user, true);
 		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		
