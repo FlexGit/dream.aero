@@ -31,8 +31,14 @@
 				<input type="checkbox" id="is_free" name="is_free" value="1" class="custom-control-input">
 				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
 			</div>--}}
-			<div id="amount-text">
-				<i class="fas fa-dollar-sign" style="font-size: 30px;"></i> <h1 class="d-inline-block">0</h1>
+			<div id="amount-text" style="font-size: 30px;">
+				<i class="fas fa-dollar-sign"></i> <span class="d-inline-block">0</span>
+			</div>
+			<div id="tax-text" style="font-size: 18px;">
+				<i class="fas fa-dollar-sign"></i> <span class="d-inline-block">0</span>
+			</div>
+			<div id="total-amount-text" style="font-size: 18px;">
+				<i class="fas fa-dollar-sign"></i> <span class="d-inline-block">0</span>
 			</div>
 		</div>
 	</div>

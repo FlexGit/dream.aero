@@ -481,7 +481,9 @@
 						console.log(result);
 
 						$('#amount').val(result.amount);
-						$('#amount-text h1').text(result.amount);
+						$('#amount-text span').text(result.amount);
+						$('#tax-text span').text(result.tax);
+						$('#total-amount-text span').text(result.totalAmount);
 
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
