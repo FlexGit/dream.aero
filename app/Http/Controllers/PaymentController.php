@@ -46,7 +46,7 @@ class PaymentController extends Controller
 			abort(404);
 		}
 		
-		if ($bill->amount <= 0) {
+		if ($bill->total_amount <= 0) {
 			abort(404);
 		}
 		

@@ -8,6 +8,7 @@ use App\Models\Currency;
 use App\Models\DealPosition;
 use App\Models\PaymentMethod;
 use App\Models\Deal;
+use App\Models\ProductType;
 use App\Models\Status;
 use App\Services\HelpFunctions;
 use App\Services\AuthorizeNetService;
@@ -163,27 +164,16 @@ class BillController extends Controller
 		}
 		
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
-		/*if ($paymentMethodId) {
-			$paymentMethod = PaymentMethod::find($paymentMethodId);
-		}*/
 
 		try {
 			\DB::beginTransaction();
-			
-			/*$location = $deal->city ? $deal->city->getLocationForBill() : null;
-			if ($paymentMethod && $paymentMethod->alias == PaymentMethod::ONLINE_ALIAS && !$location) {
-				\DB::rollback();
-				
-				Log::debug('500 - Bill Create: Не найден номер счета платежной системы');
-				
-				return response()->json(['status' => 'error', 'reason' => 'Не найден номер счета платежной системы!']);
-			}*/
 			
 			$bill = new Bill();
 			$bill->contractor_id = $deal->contractor->id ?? 0;
 			$bill->deal_id = $deal->id ?? 0;
 			$bill->deal_position_id = $position->id ?? 0;
-			$bill->location_id = /*$location->id*/$this->request->user()->location_id ?? 0;
+			$bill->city_id = $city->id ?? 0;
+			$bill->location_id = $this->request->user()->location_id ?? 0;
 			$bill->payment_method_id = $paymentMethodId;
 			$bill->status_id = $this->request->status_id ?? 0;
 			$bill->total_amount = $this->request->amount ?? 0;
@@ -195,25 +185,17 @@ class BillController extends Controller
 				// при выставлении даты оплаты генерим и дату окончания срока действия сертификата,
 				// если это счет на позицию покупки сертификата
 				$certificate = $position ? $position->certificate : null;
-				$product = $certificate->product;
-				$cityProduct = $product ? $product->cities()->where('cities_products.is_active', true)->find($city->id) : null;
-				$dataJson = ($cityProduct && $cityProduct->pivot) ? json_decode($cityProduct->pivot->data_json, true) : [];
-				
-				$certificatePeriod = ($cityProduct && $position->is_certificate_purchase && array_key_exists('certificate_period', $dataJson)) ? $dataJson['certificate_period'] : 6;
 				if ($certificate) {
+					$product = $certificate->product;
+					$productType = $product->productType;
+					$certificatePeriod = ($productType->alias == ProductType::COURSES_ALIAS) ? 12 : 6;
 					$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 					$certificate->save();
 				}
 			}
 			$bill->save();
-			
 			$deal->bills()->save($bill);
 			
-			/*if ($paymentMethod && $paymentMethod->alias == PaymentMethod::ONLINE_ALIAS) {
-				$job = new \App\Jobs\SendPayLinkEmail($bill);
-				$job->handle();
-			}*/
-
 			\DB::commit();
 		} catch (Throwable $e) {
 			\DB::rollback();
