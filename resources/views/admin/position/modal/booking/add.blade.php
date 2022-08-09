@@ -62,7 +62,7 @@
 </div>
 <div class="row">
 	<div class="col-5">
-		<label for="flight_date_at">Flight date and time</label>
+		<label for="flight_date_at">Flight start</label>
 		<div class="row">
 			<div class="d-flex">
 				<div class="col-7">

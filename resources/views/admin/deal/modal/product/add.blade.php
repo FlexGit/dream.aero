@@ -82,10 +82,10 @@
 	</div>
 	<div class="col-4 text-right">
 		<div class="form-group mt-4">
-			<div class="custom-control custom-switch custom-control-inline">
+			{{--<div class="custom-control custom-switch custom-control-inline">
 				<input type="checkbox" id="is_free" name="is_free" value="1" class="custom-control-input">
 				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
-			</div>
+			</div>--}}
 			<div id="amount-text">
 				<i class="fas fa-dollar-sign" style="font-size: 30px;"></i> <h1 class="d-inline-block">0</h1>
 			</div>

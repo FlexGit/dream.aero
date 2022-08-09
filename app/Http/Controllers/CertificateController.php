@@ -470,7 +470,7 @@ class CertificateController extends Controller
 				$city = $certificate->city;
 				$status = $certificate->status;
 				
-				$certificateInfo = $certificate->created_at->format('d.m.Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('d.m.Y') : ' - termless') . (isset($dataPosition['certificate_whom']) ? ' (' . $dataPosition['certificate_whom'] : '') . (isset($dataPosition['certificate_whom_phone']) ? ', ' . $dataPosition['certificate_whom_phone'] : '') . ')' . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
+				$certificateInfo = $certificate->created_at->format('m-d-Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('m-d-Y') : ' - termless') . (isset($dataPosition['certificate_whom']) ? ' (' . $dataPosition['certificate_whom'] : '') . (isset($dataPosition['certificate_whom_phone']) ? ', ' . $dataPosition['certificate_whom_phone'] : '') . ')' . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
 			}
 			
 			$date = date('Y-m-d');

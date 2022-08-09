@@ -91,7 +91,7 @@
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="z-index: 9999;">
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="Create voucher purchase deal" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="Create booking deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create good / service deal" class="btn btn-secondary btn-sm dropdown-item">Good / service purchase</a>
+										{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create good / service deal" class="btn btn-secondary btn-sm dropdown-item">Good / service purchase</a>--}}
 									</div>
 								</div>
 							</div>
