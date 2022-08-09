@@ -21,7 +21,7 @@
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Thank you for choosing Dream Aero.
 									</p>
-									<p style="margin:15px 30px 33px;text-align:left;font-size:14px;line-height:30px;color:#484a42;">Attached is your flight voucher # <b>{{ $certificate->number }}</b>. The voucher is valid <b>{{ $certificate->expire_at ? 'until ' . \Carbon\Carbon::parse($certificate->expire_at)->format('d.m.Y') : 'termless' }}</b>.</p>
+									<p style="margin:15px 30px 33px;text-align:left;font-size:14px;line-height:30px;color:#484a42;">Attached is your flight voucher # <b>{{ $certificate->number }}</b>. The voucher is valid <b>{{ $certificate->expire_at ? 'until ' . \Carbon\Carbon::parse($certificate->expire_at)->format('m-d-Y') : 'termless' }}</b>.</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Please book your flight beforehand.
 									</p>

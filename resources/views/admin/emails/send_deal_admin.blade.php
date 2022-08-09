@@ -7,7 +7,7 @@
 {{--<p>Тип сделки: {{ $isCertificatePurchase ? 'покупка сертификата' : 'бронирование' }}</p>--}}
 {{--<p>Статус сделки: {{ $statusName ?? '' }}</p>--}}
 <p>Voucher #: {{ $certificateNumber ?? '' }}</p>
-<p>Voucher validity: @if($certificateExpireAt) {{ Carbon\Carbon::parse($certificateExpireAt)->format('d.m.Y') }} @else termless @endif</p>
+<p>Voucher validity: @if($certificateExpireAt) {{ Carbon\Carbon::parse($certificateExpireAt)->format('m-d-Y') }} @else termless @endif</p>
 <p>City: {{ $cityName }}</p>
 <p>Product: {{ $productName ?? '' }}
 <p>Flight duration: {{ $duration ?? '' }} min</p>
