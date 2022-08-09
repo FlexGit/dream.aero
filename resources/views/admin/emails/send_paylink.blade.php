@@ -22,7 +22,7 @@
 										Greetings from Dream Aero!
 									</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
-										Please use <a href="https://dream-aero.ru/payment/{{ $bill->uuid }}" target="_blank">this payment link</a> (<a href="https://dream-aero.ru/payment/{{ $bill->uuid }}" target="_blank">https://dream-aero.ru/payment/{{ $bill->uuid }}</a>)
+										Please use <a href="{{ url('payment/' . $bill->uuid) }}" target="_blank">this payment link</a> {{--(<a href="https://dream-aero.ru/payment/{{ $bill->uuid }}" target="_blank">https://dream-aero.ru/payment/{{ $bill->uuid }}</a>)--}}
 										@if($bill->position && $bill->position->product)
 											for a {{ $bill->position->product->duration }}-minutes flight voucher
 										@endif
