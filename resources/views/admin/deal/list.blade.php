@@ -147,55 +147,35 @@
 							<div>
 								@if($position->is_certificate_purchase)
 									<div class="font-weight-bold d-inline-block">
-										{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit voucher purchase item {{ $position->number }}">--}}
-											Voucher purchase
-										{{--</a>--}}
+										Voucher purchase
 									</div>
-									{{--<div class="d-inline-block">
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit voucher purchase item {{ $position->number }}">{{ $position->number }}</a>
-									</div>--}}
-									{{--<div class="d-inline-block ml-2">
+									<div class="d-inline-block ml-2">
 										<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-									</div>--}}
+									</div>
 								@else
 									@if($position->location)
 										@if($position->certificate)
 											<div class="font-weight-bold d-inline-block">
-												{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking by voucher item {{ $position->number }}">--}}
-													Booking by voucher
-												{{--</a>--}}
+												Booking by Voucher
 											</div>
-											{{--<div class="d-inline-block">
-												<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking by voucher item {{ $position->number }}">{{ $position->number }}</a>
-											</div>--}}
-											{{--<div class="d-inline-block ml-2">
+											<div class="d-inline-block ml-2">
 												<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-											</div>--}}
+											</div>
 										@else
 											<div class="font-weight-bold d-inline-block">
-												{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking {{ $position->number }}">--}}
-													Booking
-												{{--</a>--}}
+												Booking
 											</div>
-											{{--<div class="d-inline-block">
-												<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit booking {{ $position->number }}">{{ $position->number }}</a>
-											</div>--}}
-											{{--<div class="d-inline-block ml-2">
+											<div class="d-inline-block ml-2">
 												<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-											</div>--}}
+											</div>
 										@endif
 									@else
 										<div class="font-weight-bold d-inline-block">
-											{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit good / service item {{ $position->number }}">--}}
-												Good / service purchase
-											{{--</a>--}}
+											Good / Service purchase
 										</div>
-										{{--<div class="d-inline-block">
-											<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit good / service item {{ $position->number }}">{{ $position->number }}</a>
-										</div>--}}
-										{{--<div class="d-inline-block ml-2">
+										<div class="d-inline-block ml-2">
 											<a href="javascript:void(0)" class="js-remove-position" data-id="{{ $position->id }}" title="Delete item"><i class="fas fa-times" style="color: #aaa;"></i></a>
-										</div>--}}
+										</div>
 									@endif
 								@endif
 							</div>
@@ -236,9 +216,9 @@
 						<td class="small">
 							<div>
 								{{ $position->product->productType->name }}
-								@if($position->product->productType == 'certificate')
+								@if($position->is_certificate_purchase)
 									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Voucher">
-								@elseif($position->product->productType == 'booking')
+								@elseif($position->location)
 									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Booking">
 								@else
 									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Good / Service">
@@ -370,7 +350,7 @@
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink-{{ $deal->id }}" style="z-index: 9999;">
 						{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/add/{{ $deal->id }}" data-action="/deal_position/certificate" data-method="POST" data-type="position" data-title="Add voucher purchase item" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
 						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/add/{{ $deal->id }}" data-action="/deal_position/booking" data-method="POST" data-type="position" data-title="Add booking item" class="btn btn-secondary btn-sm dropdown-item">Booking</a>--}}
-						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/add/{{ $deal->id }}" data-action="/deal_position/product" data-method="POST" data-type="position" data-title="Add good / service item" class="btn btn-secondary btn-sm dropdown-item">Good / service</a>
+						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/add/{{ $deal->id }}" data-action="/deal_position/product" data-method="POST" data-type="position" data-title="Add good / service item" class="btn btn-secondary btn-sm dropdown-item">Good / Service purchase</a>
 					</div>
 				</div>
 			</div>
