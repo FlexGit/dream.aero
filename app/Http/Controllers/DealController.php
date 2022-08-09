@@ -436,6 +436,7 @@ class DealController extends Controller
 		
 		$cityId = $this->request->city_id;
 		$productId = $this->request->product_id ?? 0;
+		\Log::debug($productId);
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
 		$promocodeUuid = $this->request->promocode_uuid ?? '';
@@ -603,7 +604,7 @@ class DealController extends Controller
 				} else {
 					$billLocationId = $user ? $user->location_id : 0;
 				}
-				\Log::debug($position->id);
+
 				$bill = new Bill();
 				$bill->contractor_id = $contractor->id;
 				$bill->deal_id = $deal->id;
