@@ -80,7 +80,6 @@ class SendCertificateEmail extends Job implements ShouldQueue {
 
 		$subject = env('APP_NAME') . ': Flight Voucher';
 		
-		\Log::debug(222);
 		Mail::send(['html' => "admin.emails.send_certificate"], $messageData, function ($message) use ($subject, $recipients, $certificateRulesFileName, $bcc, $certificateFilePath) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
