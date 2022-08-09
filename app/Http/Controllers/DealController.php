@@ -541,7 +541,7 @@ class DealController extends Controller
 			}
 		}
 		
-		$amount = $product->calcAmount($contractorId, $cityId, $source, false, 0, $paymentMethodId, $promoId, $promocodeId, 0, false, false, 0, true);
+		$amount = $product->calcAmount($contractorId, $cityId, $source, false, 0, $paymentMethodId, $promoId, $promocode->id ?? 0, 0, false, false, 0, true);
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
 		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
