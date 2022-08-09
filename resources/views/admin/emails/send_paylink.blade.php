@@ -24,12 +24,16 @@
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Please use <a href="https://dream.aero/payment/{{ $bill->uuid }}" target="_blank">this payment link</a> {{--(<a href="https://dream-aero.ru/payment/{{ $bill->uuid }}" target="_blank">https://dream-aero.ru/payment/{{ $bill->uuid }}</a>)--}}
 										@if($bill->position && $bill->position->product)
-											for a {{ $bill->position->product->duration }}-minutes flight voucher
+											@if($bill->position->product->productType->alias == 'courses')
+												for a "{{ $bill->position->product->productType->name }}" flight voucher
+											@else
+												for a {{ $bill->position->product->duration }}-minutes flight voucher
+											@endif
 										@endif
 										.
 									</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:14px;line-height:30px;color:#484a42;">
-										Payment amount {{ $bill->currency ? $bill->currency->alias : '' }}{{ $bill->total_amount }} USD.
+										Payment amount {{ $bill->total_amount }} {{ $bill->currency ? $bill->currency->alias : '' }}.
 									</p>
 									<p style="border-top:2px solid #e5e5e5;font-size:5px;line-height:5px;margin:0 30px 29px;">&nbsp;</p>
 									<table cellpadding="0" cellspacing="0" border="0" width="100%">
