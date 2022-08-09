@@ -436,7 +436,6 @@ class DealController extends Controller
 		
 		$cityId = $this->request->city_id;
 		$productId = $this->request->product_id ?? 0;
-		\Log::debug($productId);
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
 		$promocodeUuid = $this->request->promocode_uuid ?? '';
@@ -455,8 +454,19 @@ class DealController extends Controller
 			$expirationDate = mb_substr($expirationDate, 2, 4) . '-' . mb_substr($expirationDate, 0, 2);
 		}
 		$cardCode = $this->request->card_code ?? '';
+		$birthday = $this->request->birthday ?? 0;
+		$weekends = $this->request->weekends ?? 0;
 		
 		$product = Product::find($productId);
+		if ($weekends) {
+			$regularUltimateProductTypes = ProductType::whereIn('alias', [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS])
+				->pluck('id')
+				->toArray();
+			$product = Product::where('duration', $product->duration)
+				->where('id', '!=', $product->id)
+				->whereIn('product_type_id', $regularUltimateProductTypes)
+				->first();
+		}
 		if (!$product) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
@@ -484,6 +494,11 @@ class DealController extends Controller
 			if (!$promo) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
 			}
+		}
+		
+		if ($birthday) {
+			$promo = HelpFunctions::getEntityByAlias(Promo::class, Promo::BIRTHDAY_ALIAS);
+			$promoId = $promo->id;
 		}
 		
 		if ($promocodeId) {
