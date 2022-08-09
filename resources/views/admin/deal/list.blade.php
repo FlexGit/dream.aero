@@ -235,6 +235,7 @@
 						</td>
 						<td class="small">
 							<div>
+								{{ $position->product->productType->name }}
 								@if($position->product->productType == 'certificate')
 									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Voucher">
 								@elseif($position->product->productType == 'booking')
