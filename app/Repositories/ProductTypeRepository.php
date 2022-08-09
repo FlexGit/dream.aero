@@ -37,7 +37,9 @@ class ProductTypeRepository {
 		$products = [];
 		foreach ($productTypes as $productType) {
 			foreach ($productType->products as $product) {
-				if (!$user->isSuperAdmin() && $user->city) {
+				if ($onlyActive && !$product->is_active) continue;
+
+				/*if (!$user->isSuperAdmin() && $user->city) {*/
 					if ($onlyActive) {
 						$cityProduct = $product->cities()
 							->where('cities_products.is_active', true)
@@ -50,9 +52,9 @@ class ProductTypeRepository {
 					if (!$cityProduct->pivot) continue;
 
 					$products[$productType->name][$product->id] = $product;
-				} else {
+				/*} else {
 					$products[$productType->name][$product->id] = $product;
-				}
+				}*/
 			}
 		}
 		
