@@ -200,22 +200,6 @@
 								@endif
 							</div>
 							@if(!$position->is_certificate_purchase)
-								{{--@if($position->city)
-									<div title="Location">
-										<i class="fas fa-map-marker-alt"></i>
-										{{ $position->city->name }}
-										@if($position->location)
-											<div title="Location flight">
-												<i class="fas fa-map-marker-alt"></i> {{ $position->location->name }}
-											</div>
-										@endif
-										@if($position->simulator)
-											<div title="Flight simulator">
-												<i class="fas fa-plane"></i> {{ $position->simulator->name }}
-											</div>
-										@endif
-									</div>
-								@endif--}}
 								<div title="Desired flight date and time">
 									<i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($position->flight_at)->format('Y-m-d H:i') }}
 								</div>
@@ -242,12 +226,6 @@
 										@endif
 									@endif
 								</div>
-								{{--@if($position->is_certificate_purchase)
-									<div title="Voucher city">
-										<i class="fas fa-map-marker-alt"></i>
-										{{ $position->certificate->city->name }}
-									</div>
-								@endif--}}
 								@if ($position->certificate->status)
 									<div class="p-0 pl-2 pr-2" style="background-color: {{ array_key_exists('color', $position->certificate->status->data_json ?? []) ? $position->certificate->status->data_json['color'] : 'none' }};" title="Voucher status">
 										Voucher {{ $position->certificate->status->name }}
@@ -257,7 +235,13 @@
 						</td>
 						<td class="small">
 							<div>
-								<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit voucher purchase item">
+								@if($position->product->productType == 'certificate')
+									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Voucher">
+								@elseif($position->product->productType == 'booking')
+									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Booking">
+								@else
+									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Good / Service">
+								@endif
 									<b>{{ $position->product ? $position->product->name : 'no name' }}</b>
 								</a>
 							</div>
