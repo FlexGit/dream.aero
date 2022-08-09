@@ -563,16 +563,16 @@ class DealController extends Controller
 
 			$certificate = new Certificate();
 			$certificateStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);
-			$certificate->status_id = $certificateStatus->id;
-			$certificate->city_id = $cityId;
-			$certificate->product_id = $product->id;
+			$certificate->status_id = $certificateStatus->id ?? 0;
+			$certificate->city_id = $cityId ?? 0;
+			$certificate->product_id = $product->id ?? 0;
 			$certificate->expire_at = Carbon::parse($certificateExpireAt)->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 			$certificate->save();
 			
 			$deal = new Deal();
 			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CONFIRMED_STATUS);
-			$deal->status_id = $dealStatus->id;
-			$deal->contractor_id = $contractor->id;
+			$deal->status_id = $dealStatus->id ?? 0;
+			$deal->contractor_id = $contractor->id ?? 0;
 			$deal->city_id = $cityId ?: $this->request->user()->city_id;
 			$deal->name = $name;
 			$deal->phone = $phone;
@@ -582,15 +582,15 @@ class DealController extends Controller
 			$deal->save();
 			
 			$position = new DealPosition();
-			$position->product_id = $product->id;
-			$position->certificate_id = $certificate->id;
-			$position->duration = $product->duration;
+			$position->product_id = $product->id ?? 0;
+			$position->certificate_id = $certificate->id ?? 0;
+			$position->duration = $product->duration ?? 0;
 			$position->amount = $amount;
 			$position->tax = $tax;
 			$position->total_amount = $totalAmount;
-			$position->currency_id = $currency->id;
+			$position->currency_id = $currency->id ?? 0;
 			$position->city_id = $cityId ?: $this->request->user()->city_id;
-			$position->promo_id = $promo->id;
+			$position->promo_id = $promo->id ?? 0;
 			$position->promocode_id = ($promocodeId || $promocodeUuid) ? $promocode->id : 0;
 			$position->is_certificate_purchase = true;
 			$position->source = $source ?: Deal::ADMIN_SOURCE;
@@ -613,17 +613,17 @@ class DealController extends Controller
 				}
 
 				$bill = new Bill();
-				$bill->contractor_id = $contractor->id;
-				$bill->deal_id = $deal->id;
-				$bill->deal_position_id = $position->id;
-				$bill->location_id = $billLocationId;
+				$bill->contractor_id = $contractor->id ?? 0;
+				$bill->deal_id = $deal->id ?? 0;
+				$bill->deal_position_id = $position->id ?? 0;
+				$bill->location_id = $billLocationId ?? 0;
 				$bill->payment_method_id = ($source == Deal::WEB_SOURCE) ? $onlinePaymentMethod->id : ($paymentMethodId ?? 0);
 				$bill->status_id = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? $billPayedStatus->id : $billStatus->id;
 				$bill->payed_at = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? Carbon::now()->format('Y-m-d H:i:s') : null;
 				$bill->amount = $amount;
 				$bill->tax = $tax;
 				$bill->total_amount = $totalAmount;
-				$bill->currency_id = $currency->id;
+				$bill->currency_id = $currency->id ?? 0;
 				$bill->city_id = $cityId ?: $this->request->user()->city_id;
 				$bill->user_id = $this->request->user()->id ?? 0;
 				$bill->save();
@@ -658,7 +658,7 @@ class DealController extends Controller
 					],
 				];
 				
-				$bill->status_id = $billPayedStatus->id;
+				$bill->status_id = $billPayedStatus->id ?? 0;
 				$bill->payed_at = Carbon::now();
 				$bill->data_json = $billData;
 				$bill->save();
