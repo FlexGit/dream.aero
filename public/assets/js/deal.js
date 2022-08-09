@@ -194,6 +194,8 @@ $(function() {
 			cardName = $popup.find('#card_name').val(),
 			cardCode = $popup.find('#card_code').val(),
 			promocode_uuid = $popup.find('#promocode_uuid').val(),
+			birthday = $popup.find('#birthday').is(':checked') ? 1 : 0,
+			weekends = $popup.find('#weekends').is(':checked') ? 1 : 0,
 			$alertSuccess = $popup.find('.alert-success'),
 			$alertError = $popup.find('.alert-danger'),
 			source = $(this).data('source'),
@@ -220,6 +222,8 @@ $(function() {
 			'expiration_date': expirationDate.replace(/[^\d]/g, ""),
 			'card_name': cardName,
 			'card_code': cardCode.replace(/[^\d]/g, ""),
+			'birthday': birthday,
+			'weekends': weekends,
 		};
 
 		$.ajax({
