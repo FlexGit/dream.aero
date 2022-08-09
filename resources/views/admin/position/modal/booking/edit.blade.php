@@ -8,7 +8,7 @@
 <div class="row">
 	<div class="col-4">
 		<div class="form-group">
-			<label for="location_id">Локация</label>
+			<label for="location_id">Location</label>
 			<select class="form-control" id="location_id" name="location_id">
 				<option value="0"></option>
 				@foreach($cities ?? [] as $city)
@@ -25,8 +25,8 @@
 	</div>
 	<div class="col-4">
 		<div class="form-group">
-			<label for="promo_id">Акция</label>
-			<select class="form-control" id="promo_id" name="promo_id">
+			<label for="promo_id">Promo</label>
+			<select class="form-control" id="promo_id" name="promo_id" @if(in_array($position->source, [app('\App\Models\Deal')::WEB_SOURCE, app('\App\Models\Deal')::MOB_SOURCE]) && ($position->promo_id || $position->promocode_id)) disabled @endif>
 				<option value=""></option>
 				@foreach($promos ?? [] as $promo)
 					<option value="{{ $promo->id }}" @if($promo->id == $position->promo_id) selected @endif>{{ $promo->valueFormatted() }}{{ !$promo->is_active ? ' - неактивна' : '' }}</option>
@@ -36,8 +36,8 @@
 	</div>
 	<div class="col-4">
 		<div class="form-group">
-			<label for="promocode_id">Промокод</label>
-			<select class="form-control" id="promocode_id" name="promocode_id" @if(in_array($position->source, [app('\App\Models\Deal')::WEB_SOURCE, app('\App\Models\Deal')::MOB_SOURCE]) && $position->promocode_id) disabled @endif>
+			<label for="promocode_id">Promocode</label>
+			<select class="form-control" id="promocode_id" name="promocode_id" @if(in_array($position->source, [app('\App\Models\Deal')::WEB_SOURCE, app('\App\Models\Deal')::MOB_SOURCE]) && ($position->promo_id || $position->promocode_id)) disabled @endif>
 				<option value=""></option>
 				@foreach($promocodes ?? [] as $promocode)
 					<option value="{{ $promocode->id }}" @if($promocode->id == $position->promocode_id) selected @endif>{{ $promocode->valueFormatted() }}</option>
@@ -49,7 +49,7 @@
 <div class="row">
 	<div class="col-3">
 		<div class="form-group">
-			<label for="product_id">Продукт</label>
+			<label for="product_id">Product</label>
 			<select class="form-control js-product" id="product_id" name="product_id">
 				<option></option>
 				@foreach($products ?? [] as $productTypeName => $productId)
@@ -63,7 +63,7 @@
 		</div>
 	</div>
 	<div class="col-5">
-		<label for="flight_date_at">Дата и время начала полета</label>
+		<label for="flight_date_at">Flight date</label>
 		<div class="row">
 			<div class="d-flex">
 				<div class="col-7">
@@ -79,37 +79,20 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-4">
-		<div class="form-group">
-			<label for="certificate_number">Поиск по номеру Сертификата</label>
-			<input type="text" class="form-control" id="certificate_number" name="certificate_number" placeholder="Сертификат">
-			<div class="js-certificate-container hidden">
-				<span class="js-certificate"></span> <i class="fas fa-times js-certificate-delete" title="Удалить" style="cursor: pointer;color: red;"></i>
-				<div class="custom-control custom-switch custom-control js-is-indefinitely hidden">
-					<input type="checkbox" id="is_indefinitely" name="is_indefinitely" value="1" class="custom-control-input">
-					<label class="custom-control-label font-weight-normal" for="is_indefinitely">Не учитывать ограничение по сроку действия</label>
-				</div>
-			</div>
-		</div>
-		{{--<div class="form-group">
-			<label for="certificate">Сертификат</label>
-			<input type="text" class="form-control" id="certificate" name="certificate" value="{{ $position->certificate ? $position->certificate->number : '' }}" placeholder="Номер" disabled>
-		</div>--}}
-	</div>
 </div>
 <div class="row">
 	<div class="col-8">
-		<label for="comment">Комментарий</label>
+		<label for="comment">Comment</label>
 		<textarea class="form-control" id="comment" name="comment" rows="2">{{ isset($position->data_json['comment']) ? $position->data_json['comment'] : '' }}</textarea>
 	</div>
 	<div class="col-4 text-right">
 		<div class="form-group mt-4">
-			<div class="custom-control custom-switch custom-control-inline">
+			{{--<div class="custom-control custom-switch custom-control-inline">
 				<input type="checkbox" id="is_free" name="is_free" value="1" @if(!$position->amount) checked @endif class="custom-control-input">
 				<label class="custom-control-label font-weight-normal" for="is_free">Бесплатно</label>
-			</div>
+			</div>--}}
 			<div id="amount-text">
-				<h1 class="d-inline-block">{{ $position->amount }}</h1> <i class="fas fa-ruble-sign" style="font-size: 25px;"></i>
+				<i class="fas fa-dollar-sign" style="font-size: 30px;"></i> <h1 class="d-inline-block">{{ $position->amount }}</h1>
 			</div>
 		</div>
 	</div>
