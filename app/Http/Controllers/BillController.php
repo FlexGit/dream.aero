@@ -362,7 +362,7 @@ class BillController extends Controller
 		$bill = Bill::find($this->request->bill_id);
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
 		
-		if ($bill->amount <= 0) return response()->json(['status' => 'error', 'reason' => trans('main.error.сумма-счета-указана-некорректно')]);
+		if ($bill->total_amount <= 0) return response()->json(['status' => 'error', 'reason' => trans('main.error.сумма-счета-указана-некорректно')]);
 		
 		$deal = $bill->deal;
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
