@@ -555,7 +555,7 @@ class DealController extends Controller
 			$certificate->save();
 			
 			$deal = new Deal();
-			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CREATED_STATUS);
+			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CONFIRMED_STATUS);
 			$deal->status_id = $dealStatus->id ?? 0;
 			$deal->contractor_id = $contractor->id ?? 0;
 			$deal->city_id = $cityId ?: $this->request->user()->city_id;
@@ -603,11 +603,11 @@ class DealController extends Controller
 				} else {
 					$billLocationId = $user ? $user->location_id : 0;
 				}
-				
+				\Log::debug($position->id);
 				$bill = new Bill();
-				$bill->contractor_id = $contractor->id ?? 0;
-				$bill->deal_id = $deal->id ?? 0;
-				$bill->deal_position_id = $position->id ?? 0;
+				$bill->contractor_id = $contractor->id;
+				$bill->deal_id = $deal->id;
+				$bill->deal_position_id = $position->id;
 				$bill->location_id = $billLocationId;
 				$bill->payment_method_id = ($source == Deal::WEB_SOURCE) ? $onlinePaymentMethod->id : ($paymentMethodId ?? 0);
 				$bill->status_id = ($isPaid && $paymentMethodId != $onlinePaymentMethod->id) ? $billPayedStatus->id : $billStatus->id;
@@ -615,7 +615,7 @@ class DealController extends Controller
 				$bill->amount = $amount;
 				$bill->tax = $tax;
 				$bill->total_amount = $totalAmount;
-				$bill->currency_id = $currency->id ?? 0;
+				$bill->currency_id = $currency->id;
 				$bill->city_id = $cityId ?: $this->request->user()->city_id;
 				$bill->user_id = $this->request->user()->id ?? 0;
 				$bill->save();
