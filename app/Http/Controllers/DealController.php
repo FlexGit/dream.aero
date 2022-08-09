@@ -662,6 +662,8 @@ class DealController extends Controller
 				$bill->payed_at = Carbon::now();
 				$bill->data_json = $billData;
 				$bill->save();
+				
+				$certificate = $certificate->generateFile();
 			}
 			
 			\DB::commit();
