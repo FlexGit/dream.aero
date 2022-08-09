@@ -101,7 +101,7 @@
 		</div>
 	</div>
 
-	<div id="datepicker" data-date="{{ date('d.m.Y') }}"></div>
+	<div id="datepicker" data-date="{{ date('m-d-Y') }}"></div>
 
 	<div class="mt-2 mb-2 ml-3 mr-3">
 		<div class="text-center mb-2">

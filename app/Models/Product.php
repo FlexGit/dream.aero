@@ -255,12 +255,11 @@ class Product extends Model
 		if ($isFree) return 0;
 		
 		$certificateProductAmount = 0;
-		if (!$isCertificatePurchase && $certificateId && $locationId) {
+		if (!$isCertificatePurchase && $certificateId) {
 			$date = date('Y-m-d');
-			$location = Location::find($locationId);
 			$certificateStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);
 			// проверка сертификата на валидность
-			$certificate = Certificate::whereIn('city_id', [$location->city->id, 0])
+			$certificate = Certificate::whereIn('city_id', [$cityId, 0])
 				->whereIn('status_id', [$certificateStatus->id, 0])
 				->whereIn('product_id', [$this->id, 0])
 				->where(function ($query) use ($date) {
@@ -312,7 +311,7 @@ class Product extends Model
 		// то вычисляем разницу для доплаты
 		$amount -= $certificateProductAmount;
 		if ($amount < 0) $amount = 0;
-
+		
 		// скидка на продукт
 		/*$dataJson = $cityProduct->pivot->data_json ? (array)$cityProduct->pivot->data_json : [];
 		if ($isCertificatePurchase) {

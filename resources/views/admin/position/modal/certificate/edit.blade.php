@@ -55,13 +55,13 @@
 				<label class="custom-control-label font-weight-normal" for="is_free">Free</label>
 			</div>--}}
 			<div id="amount-text" style="font-size: 30px;">
-				<i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $position->amount }}</span>
+				Subtotal: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $position->amount }}</span>
 			</div>
 			<div id="tax-text" style="font-size: 18px;">
-				<i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $position->tax }}</span>
+				Tax: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $position->tax }}</span>
 			</div>
 			<div id="total-amount-text" style="font-size: 18px;">
-				<i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $position->total_amount }}</span>
+				Total: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $position->total_amount }}</span>
 			</div>
 		</div>
 	</div>

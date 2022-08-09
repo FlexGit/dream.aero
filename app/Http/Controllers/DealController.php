@@ -566,7 +566,7 @@ class DealController extends Controller
 			$certificate = new Certificate();
 			$certificateStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);
 			$certificate->status_id = $certificateStatus->id ?? 0;
-			$certificate->city_id = $cityId ?? 0;
+			$certificate->city_id = $cityId ?: $this->request->user()->city_id;
 			$certificate->product_id = $product->id ?? 0;
 			$certificate->expire_at = Carbon::parse($certificateExpireAt)->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 			$certificate->save();

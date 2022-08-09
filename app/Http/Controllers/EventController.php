@@ -154,7 +154,7 @@ class EventController extends Controller
 								->where('certificate_id', $certificate->id)
 								->first();
 							if ($certificatePurchasePosition) {
-								$amount = $certificatePurchasePosition->amount;
+								$amount = $certificatePurchasePosition->total_amount;
 							}
 						}
 						
