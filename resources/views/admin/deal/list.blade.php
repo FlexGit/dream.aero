@@ -383,8 +383,8 @@
 					<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink-{{ $deal->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Add item">Add item</a>
 
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink-{{ $deal->id }}" style="z-index: 9999;">
-						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/add/{{ $deal->id }}" data-action="/deal_position/certificate" data-method="POST" data-type="position" data-title="Add voucher purchase item" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
-						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/add/{{ $deal->id }}" data-action="/deal_position/booking" data-method="POST" data-type="position" data-title="Add booking item" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
+						{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/add/{{ $deal->id }}" data-action="/deal_position/certificate" data-method="POST" data-type="position" data-title="Add voucher purchase item" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
+						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/add/{{ $deal->id }}" data-action="/deal_position/booking" data-method="POST" data-type="position" data-title="Add booking item" class="btn btn-secondary btn-sm dropdown-item">Booking</a>--}}
 						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/add/{{ $deal->id }}" data-action="/deal_position/product" data-method="POST" data-type="position" data-title="Add good / service item" class="btn btn-secondary btn-sm dropdown-item">Good / service</a>
 					</div>
 				</div>

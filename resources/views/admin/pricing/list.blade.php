@@ -8,7 +8,7 @@
 					<th class="text-center align-middle">Amount</th>
 					<th class="text-center align-middle d-none d-sm-table-cell">Discount</th>
 					<th class="text-center align-middle d-none d-md-table-cell">Is active</th>
-					<th class="text-center align-middle d-none d-xl-table-cell">Validity</th>
+					{{--<th class="text-center align-middle d-none d-xl-table-cell">Validity</th>--}}
 					<th class="text-center">Action</th>
 				</tr>
 				</thead>
@@ -44,9 +44,9 @@
 								{{ $citiesProductsData[$city->id][$product->id]['is_active'] ? 'Yes' : 'No' }}
 							@endif
 						</td>
-						<td class="text-center align-middle d-none d-xl-table-cell">
+						{{--<td class="text-center align-middle d-none d-xl-table-cell">
 							{{ $certificatePeriod }}
-						</td>
+						</td>--}}
 						<td class="text-center align-middle">
 							<a href="javascript:void(0)" data-toggle="modal" data-url="/pricing/{{ $city->id }}/{{ $product->id }}/edit" data-action="/pricing/{{ $city->id }}/{{ $product->id }}" data-method="PUT" data-title="Edit" title="Edit">
 								<i class="fa fa-edit" aria-hidden="true"></i>

@@ -38,7 +38,7 @@
 			</select>
 		</div>
 	</div>
-	@if(!in_array($product->productType->alias, [app('\App\Models\ProductType')::SERVICES_ALIAS]))
+	{{--@if(!in_array($product->productType->alias, [app('\App\Models\ProductType')::SERVICES_ALIAS]))
 		<div class="col">
 			<div class="form-group">
 				<label for="certificate_period">Validity</label>
@@ -49,5 +49,5 @@
 				</select>
 			</div>
 		</div>
-	@endif
+	@endif--}}
 </div>
