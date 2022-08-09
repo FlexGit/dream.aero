@@ -478,7 +478,7 @@
 						'is_certificate_purchase': $('#is_certificate_purchase').val(),
 					},
 					success: function(result) {
-						//console.log(result);
+						console.log(result);
 
 						$('#amount').val(result.amount);
 						$('#amount-text h1').text(result.amount);
