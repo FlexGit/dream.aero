@@ -96,11 +96,6 @@
 					<div class="text-nowrap" style="line-height: 0.9em;" title="Create date">
 						{{ $bill->created_at ? $bill->created_at->format('Y-m-d H:i') : '' }}
 					</div>
-					{{--@if($bill->location)
-						<div class="text-nowrap" title="Location">
-							{{ $bill->location->name ?? '' }}
-						</div>
-					@endif--}}
 					<div>
 						@if($bill->currency)
 							<i class="fas fa-dollar-sign"></i>

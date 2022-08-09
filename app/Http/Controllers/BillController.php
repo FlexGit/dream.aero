@@ -225,13 +225,9 @@ class BillController extends Controller
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
 		
 		$billStatus = $bill->status;
-		if ($billStatus && $billStatus->alias == Bill::CANCELED_STATUS && !$user->isSuperAdmin()) {
+		if ($billStatus && $billStatus->alias == Bill::CANCELED_STATUS/* && !$user->isSuperAdmin()*/) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-в-текущем-статусе-недоступен-для-редактирования')]);
 		}
-		
-		/*if ($bill->aeroflot_transaction_type == AeroflotBonusService::TRANSACTION_TYPE_REGISTER_ORDER) {
-			return response()->json(['status' => 'error', 'reason' => 'Счет недоступен для редактирования. Заявка на списание миль "Аэрофлот Бонус"']);
-		}*/
 		
 		$deal = $bill->deal;
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
@@ -267,7 +263,7 @@ class BillController extends Controller
 			if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		}
 		
-		if (in_array($bill->status->alias, [Bill::PAYED_STATUS, Bill::PAYED_PROCESSING_STATUS]) && in_array($bill->paymentMethod->alias, [PaymentMethod::ONLINE_ALIAS]) && !$user->isSuperAdmin()) {
+		if (in_array($bill->status->alias, [Bill::PAYED_STATUS, Bill::PAYED_PROCESSING_STATUS]) && in_array($bill->paymentMethod->alias, [PaymentMethod::ONLINE_ALIAS]) /*&& !$user->isSuperAdmin()*/) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.оплаченный-счет-со-способом-оплаты-онлайн-недоступен-для-редактирования')]);
 		}
 
@@ -317,15 +313,16 @@ class BillController extends Controller
 		$bill = Bill::find($id);
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
 		
-		$user = \Auth::user();
+		$billStatus = $bill->status;
+		if ($billStatus && $billStatus->alias == Bill::CANCELED_STATUS/* && !$user->isSuperAdmin()*/) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-в-текущем-статусе-недоступен-для-редактирования')]);
+		}
+		
+		$user = Auth::user();
 		
 		if ($user->isAdmin() && $user->location_id && $bill->location_id && $user->location_id != $bill->location_id) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
-		
-		/*if ($bill->aeroflot_transaction_type == AeroflotBonusService::TRANSACTION_TYPE_REGISTER_ORDER) {
-			return response()->json(['status' => 'error', 'reason' => 'Счет недоступен для удаления. Заявка на списание миль "Аэрофлот Бонус"']);
-		}*/
 		
 		$deal = $bill->deal;
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
