@@ -369,7 +369,7 @@
 								calcProductAmount();
 							}
 							$('#contractor_search').attr('disabled', true);
-							$('.js-contractor').text('Linked client: ' + suggestion.data.name + ' ' + suggestion.data.lastname).closest('.js-contractor-container').removeClass('hidden');
+							$('.js-contractor').text('Linked client: ' + suggestion.data.name + ' ' + suggestion.data.lastname + ' ' + suggestion.data.discount).closest('.js-contractor-container').removeClass('hidden');
 						}
 					});
 
@@ -409,6 +409,7 @@
 				$('.js-contractor').text('').closest('.js-contractor-container').addClass('hidden');
 				$('#contractor_search').val('').attr('disabled', false).focus();
 				$('#contractor_id, #city_id').val('');
+				calcProductAmount();
 			});
 
 			$(document).on('click', '.js-certificate-delete', function() {
