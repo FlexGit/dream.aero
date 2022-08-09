@@ -96,8 +96,10 @@
 			</select>
 		</div>
 	</div>
+	<div class="col">
+	</div>
 </div>
-<div class="row mt-3">
+<div class="row">
 	<div class="col-8">
 		<label for="comment">Comment</label>
 		<textarea class="form-control" id="comment" name="comment" rows="2"></textarea>

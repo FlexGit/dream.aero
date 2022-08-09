@@ -42,7 +42,7 @@
 									<input type="text" id="email" name="email" value="{{ $deal->email }}" class="popup-input" placeholder="@lang('main.modal-certificate.email')">
 								</div>
 								<div class="col-md-6">
-									<input type="text" id="product_name" name="product_name" value="{{ $product ? $product->name : '' }}" class="popup-input" placeholder="Product">
+									<input type="text" id="product_name" name="product_name" value="{{ $product ? $product->name : '' }}" class="popup-input" placeholder="Product" readonly>
 								</div>
 							</div>
 

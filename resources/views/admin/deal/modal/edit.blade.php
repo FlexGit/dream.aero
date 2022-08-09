@@ -26,7 +26,7 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="number">Deal number</label>
-			<input type="text" class="form-control" placeholder="Number" value="{{ $deal->number }}" disabled>
+			<input type="text" class="form-control" placeholder="Number" value="{{ $deal->number }}" readonly>
 		</div>
 	</div>
 	<div class="col">
@@ -41,10 +41,6 @@
 		</div>
 	</div>
 	<div class="col">
-		{{--<div class="form-group">
-			<label for="roistat_visit">Номер визита Roistat</label>
-			<input type="text" class="form-control" id="roistat_visit" name="roistat_visit" value="{{ $deal->roistat }}" placeholder="Номер" disabled>
-		</div>--}}
 	</div>
 </div>
 <div class="row">
@@ -67,9 +63,9 @@
 		</div>
 	</div>
 </div>
-{{--<div class="row">
+<div class="row">
 	<div class="col-8">
 		<label for="comment">Comment</label>
 		<textarea class="form-control" id="comment" name="comment" rows="2">{{ isset($deal->data_json['comment']) ? $deal->data_json['comment'] : '' }}</textarea>
 	</div>
-</div>--}}
+</div>

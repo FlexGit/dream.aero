@@ -135,6 +135,7 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		// Сделки
 		Route::get('deal/{id?}', [DealController::class, 'index'])->name('dealIndex');
 		Route::get('deal/list/ajax', [DealController::class, 'getListAjax'])->name('dealList');
+		Route::post('deal/booking', [DealController::class, 'storeBooking'])->name('dealBookingStore');
 		Route::post('deal/product', [DealController::class, 'storeProduct']);
 		Route::put('deal/{id}', [DealController::class, 'update']);
 
@@ -255,32 +256,6 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('location/{id}/delete', [LocationController::class, 'confirm']);
 		Route::get('location/{id}/show', [LocationController::class, 'show']);
 
-		// Юр.лица
-		/*Route::get('legal_entity', [LegalEntityController::class, 'index'])->name('legalEntityIndex');
-		Route::get('legal_entity/list/ajax', [LegalEntityController::class, 'getListAjax'])->name('legalEntityList');
-
-		Route::post('legal_entity', [LegalEntityController::class, 'store']);
-		Route::put('legal_entity/{id}', [LegalEntityController::class, 'update']);
-		Route::delete('legal_entity/{id}', [LegalEntityController::class, 'delete']);
-
-		Route::get('legal_entity/add', [LegalEntityController::class, 'add']);
-		Route::get('legal_entity/{id}/edit', [LegalEntityController::class, 'edit']);
-		Route::get('legal_entity/{id}/delete', [LegalEntityController::class, 'confirm']);
-		Route::get('legal_entity/{id}/show', [LegalEntityController::class, 'show']);*/
-
-		// Авиатренажероы
-		/*Route::get('flight_simulator', [FlightSimulatorController::class, 'index'])->name('flightSimulatorIndex');
-		Route::get('flight_simulator/list/ajax', [FlightSimulatorController::class, 'getListAjax'])->name('flightSimulatorList');
-
-		Route::post('flight_simulator', [FlightSimulatorController::class, 'store']);
-		Route::put('flight_simulator/{id}', [FlightSimulatorController::class, 'update']);
-		Route::delete('flight_simulator/{id}', [FlightSimulatorController::class, 'delete']);
-
-		Route::get('flight_simulator/add', [FlightSimulatorController::class, 'add']);
-		Route::get('flight_simulator/{id}/edit', [FlightSimulatorController::class, 'edit']);
-		Route::get('flight_simulator/{id}/delete', [FlightSimulatorController::class, 'confirm']);
-		Route::get('flight_simulator/{id}/show', [FlightSimulatorController::class, 'show']);*/
-
 		// Типы продуктов
 		Route::get('product_type', [ProductTypeController::class, 'index'])->name('productTypeIndex');
 		Route::get('product_type/list/ajax', [ProductTypeController::class, 'getListAjax'])->name('productTypeList');
@@ -307,15 +282,6 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('product/{id}/edit', [ProductController::class, 'edit']);
 		Route::get('product/{id}/delete', [ProductController::class, 'confirm']);
 		Route::get('product/{id}/show', [ProductController::class, 'show']);
-
-		// Статусы
-		/*Route::get('status', [StatusController::class, 'index'])->name('statusIndex');
-		Route::get('status/list/ajax', [StatusController::class, 'getListAjax'])->name('statusList');
-
-		Route::put('status/{id}', [StatusController::class, 'update']);
-
-		Route::get('status/{id}/edit', [StatusController::class, 'edit']);
-		Route::get('status/{id}/show', [StatusController::class, 'show']);*/
 
 		// Способы оплаты
 		Route::get('payment_method', [PaymentMethodController::class, 'index'])->name('paymentMethodIndex');

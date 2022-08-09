@@ -4,7 +4,7 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="number">Number</label>
-			<input type="text" class="form-control" id="number" name="number" value="{{ $certificate->number }}" placeholder="Номер" disabled>
+			<input type="text" class="form-control" id="number" name="number" value="{{ $certificate->number }}" placeholder="Номер" readonly>
 		</div>
 	</div>
 	<div class="col">

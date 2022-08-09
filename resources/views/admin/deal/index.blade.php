@@ -100,9 +100,9 @@
 					<table id="dealTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
 						<tr>
-							<th class="text-center">Client</th>
+							<th class="text-center">Contact person</th>
 							<th class="text-center d-none d-sm-table-cell">Deal</th>
-							<th class="text-center d-none d-xl-table-cell">Invoices</th>
+							<th class="text-center d-none d-xl-table-cell">Invoice</th>
 							<th class="d-none d-xl-table-cell">
 								<div class="d-sm-flex justify-content-between">
 									<div></div>
@@ -394,6 +394,29 @@
 							}
 						}
 					});
+
+					$('#extra_product_id').multiselect({
+						includeSelectAllOption: false,
+						buttonWidth: '200px',
+						selectAllValue: 0,
+						buttonTextAlignment: 'left',
+						maxHeight: 300,
+						buttonText: function (options, select) {
+							if (options.length === 0) {
+								return '---';
+							} else {
+								var labels = [];
+								options.each(function () {
+									if ($(this).attr('label') !== undefined) {
+										labels.push($(this).attr('label'));
+									} else {
+										labels.push($(this).html());
+									}
+								});
+								return labels.join(', ') + '';
+							}
+						},
+					});
 				}
 			});
 
@@ -419,7 +442,7 @@
 				$('#certificate_uuid').val('');
 			});
 
-			$(document).on('change', '#product_id, #promo_id, #promocode_id, #city_id, #location_id, #is_free, #flight_date_at, #flight_time_at, #is_indefinitely', function() {
+			$(document).on('change', '#product_id, #promo_id, #promocode_id, #city_id, #location_id, #is_free, #flight_date_at, #flight_time_at, #is_indefinitely, #extra_product_id', function() {
 				calcProductAmount();
 
 				if ($.inArray($(this).attr('id'), ['product_id', 'flight_date_at', 'flight_time_at']) !== -1) {
@@ -477,11 +500,12 @@
 						'is_free': ($('#is_free').is(':checked') || $('#is_indefinitely').is(':checked')) ? 1 : 0,
 						'score': $('#score').val(),
 						'is_certificate_purchase': $('#is_certificate_purchase').val(),
+						'extra_product_id': $('#extra_product_id').val(),
 					},
 					success: function(result) {
 						console.log(result);
 
-						$('#amount').val(result.amount);
+						$('#amount').val(result.productAmount);
 						$('#amount-text span').text(result.amount);
 						$('#tax-text span').text(result.tax);
 						$('#total-amount-text span').text(result.totalAmount);

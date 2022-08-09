@@ -275,6 +275,7 @@ class DealController extends Controller
 
 		$cities = $this->cityRepo->getList($user);
 		$products = $this->productTypeRepo->getActualProductList($user, true);
+		$extraProducts = $this->productTypeRepo->getActualProductList($user, true, false, true);
 		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($user);
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList();
@@ -294,6 +295,7 @@ class DealController extends Controller
 		$VIEW = view('admin.deal.modal.booking.add', [
 			'cities' => $cities,
 			'products' => $products,
+			'extraProducts' => $extraProducts,
 			'promos' => $promos,
 			'promocodes' => $promocodes,
 			'paymentMethods' => $paymentMethods,
@@ -579,6 +581,7 @@ class DealController extends Controller
 			$deal->email = $email;
 			$deal->source = $source ?: Deal::ADMIN_SOURCE;
 			$deal->user_id = $this->request->user()->id ?? 0;
+			$deal->data_json = !empty($data) ? $data : null;
 			$deal->save();
 			
 			$position = new DealPosition();
@@ -595,7 +598,6 @@ class DealController extends Controller
 			$position->is_certificate_purchase = true;
 			$position->source = $source ?: Deal::ADMIN_SOURCE;
 			$position->user_id = $this->request->user()->id ?? 0;
-			$position->data_json = !empty($data) ? $data : null;
 			$position->save();
 
 			$deal->positions()->save($position);
@@ -807,8 +809,10 @@ class DealController extends Controller
 			}
 		/*}*/
 		
-		/*$cityId = $this->request->city_id ?: $this->request->user()->city_id;*/
+		//\Log::debug($this->request);
+		
 		$productId = $this->request->product_id ?? 0;
+		$extraProductIds = $this->request->extra_product_id ?? [];
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
 		$promocodeUuid = $this->request->promocode_uuid ?? '';
@@ -826,8 +830,6 @@ class DealController extends Controller
 		$flightAt = str_replace(' AM', '', $flightAt);
 		$flightAt = str_replace(' PM', '', $flightAt);
 		$flightStopAt = ($this->request->flight_date_stop_at ?? '') . ' ' . ($this->request->flight_time_stop_at ?? '');
-		/*$locationId = $this->request->location_id ?? 0;
-		$simulatorId = $this->request->flight_simulator_id ?? 0;*/
 		$certificateNumber = $this->request->certificate ?? '';
 		$certificateUuid = $this->request->certificate_uuid ?? '';
 		$isIndefinitely = $this->request->is_indefinitely ?? 0;
@@ -835,15 +837,9 @@ class DealController extends Controller
 		$extraTime = (int)$this->request->extra_time ?? 0;
 		$isRepeatedFlight = (bool)$this->request->is_repeated_flight ?? false;
 		$isUnexpectedFlight = (bool)$this->request->is_unexpected_flight ?? false;
-		/*$duration = $this->request->duration ?? 0;
-		$isValidFlightDate = $this->request->is_valid_flight_date ?? 0;*/
 		$employeeId = $this->request->employee_id ?? 0;
 		$pilotId = $this->request->pilot_id ?? 0;
 		$isPaid = (bool)$this->request->is_paid;
-		
-		/*if (!in_array($source, [Deal::WEB_SOURCE, Deal::MOB_SOURCE]) && in_array($eventType, Event::EVENT_TYPE_DEAL) && !$isValidFlightDate) {
-			return response()->json(['status' => 'error', 'reason' => 'Некорректная дата и время начала полета']);
-		}*/
 		
 		if (in_array($eventType, [Event::EVENT_TYPE_DEAL])) {
 			$product = Product::find($productId);
@@ -866,15 +862,6 @@ class DealController extends Controller
 		if (!$location) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 		}
-		
-		/*if (!$cityId) {
-			$cityId = $location->city->id ?? 0;
-		}
-
-		$city = $this->cityRepo->getById($cityId);
-		if (!$city) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
-		}*/
 		
 		if (in_array($eventType, [Event::EVENT_TYPE_DEAL])) {
 			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
@@ -973,11 +960,6 @@ class DealController extends Controller
 			$data['comment'] = $comment;
 		}
 		
-		$tax = $totalAmount = 0;
-		if ($amount) {
-			$tax = round($amount * $productType->tax / 100, 2);
-			$totalAmount = round($amount + $tax, 2);
-		}
 		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
 		
 		try {
@@ -997,7 +979,7 @@ class DealController extends Controller
 					}
 					
 					$deal = new Deal();
-					$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CREATED_STATUS);
+					$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CONFIRMED_STATUS);
 					$deal->status_id = $dealStatus->id;
 					$deal->contractor_id = $contractor->id;
 					$deal->city_id = $city ? $city->id : 0;
@@ -1006,7 +988,14 @@ class DealController extends Controller
 					$deal->email = $email;
 					$deal->source = $source ?: Deal::ADMIN_SOURCE;
 					$deal->user_id = $user ? $user->id : 0;
+					$deal->data_json = !empty($data) ? $data : null;
 					$deal->save();
+					
+					$tax = $totalAmount = 0;
+					if ($amount) {
+						$tax = round($amount * $productType->tax / 100, 2);
+						$totalAmount = round($amount + $tax, 2);
+					}
 					
 					$position = new DealPosition();
 					$position->product_id = $product->id;
@@ -1024,11 +1013,33 @@ class DealController extends Controller
 					$position->flight_at = Carbon::parse($flightAt)->format('Y-m-d H:i');
 					$position->source = $source ?: Deal::ADMIN_SOURCE;
 					$position->user_id = $user ? $user->id : 0;
-					$position->data_json = !empty($data) ? $data : null;
 					$position->save();
-				
 					$deal->positions()->save($position);
-				
+					
+					foreach ($extraProductIds ?? [] as $extraProductId) {
+						$extraProduct = Product::find($extraProductId);
+						$extraProductType = $extraProduct->productType;
+						$extraAmount = $extraProduct->calcAmount($contractorId, $city ? $city->id : 0, $source ?: Contractor::ADMIN_SOURCE, false, 0, $paymentMethodId ?? 0, 0, 0, 0, false, false, 0, false);
+						$extraTax = round($extraAmount * $extraProductType->tax / 100, 2);
+						$extraTotalAmount = round($extraAmount + $extraTax, 2);
+						
+						$extraPosition = new DealPosition();
+						$extraPosition->product_id = $extraProduct->id;
+						$extraPosition->amount = $extraAmount;
+						$extraPosition->tax = $extraTax;
+						$extraPosition->total_amount = $extraTotalAmount;
+						$extraPosition->currency_id = $currency ? $currency->id : 0;
+						$extraPosition->city_id = $city ? $city->id : 0;
+						$extraPosition->source = $source ?: Deal::ADMIN_SOURCE;
+						$extraPosition->user_id = $user ? $user->id : 0;
+						$extraPosition->save();
+						$deal->positions()->save($extraPosition);
+						
+						$amount += $extraAmount;
+						$tax += $extraTax;
+						$totalAmount += $extraTotalAmount;
+					}
+					
 					if ($amount) {
 						$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 						$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
@@ -1259,6 +1270,7 @@ class DealController extends Controller
 			$deal->email = $email;
 			$deal->user_id = $user ? $user->id : 0;
 			$deal->source = $source ?: Deal::ADMIN_SOURCE;
+			$deal->data_json = !empty($data) ? $data : null;
 			$deal->save();
 
 			$position = new DealPosition();
@@ -1271,7 +1283,6 @@ class DealController extends Controller
 			$position->source = Deal::ADMIN_SOURCE;
 			$position->user_id = $user ? $user->id : 0;
 			$position->source = $source ?: Deal::ADMIN_SOURCE;
-			$position->data_json = !empty($data) ? $data : null;
 			$position->save();
 
 			$deal->positions()->save($position);
@@ -1366,6 +1377,12 @@ class DealController extends Controller
 		$name = $this->request->name ?? '';
 		$email = $this->request->email ?? '';
 		$phone = $this->request->phone ?? '';
+		$comment = $this->request->comment ?? '';
+		
+		$data = [];
+		if ($comment) {
+			$data['comment'] = $comment;
+		}
 		
 		try {
 			\DB::beginTransaction();
@@ -1377,6 +1394,7 @@ class DealController extends Controller
 			if ($contractorId) {
 				$deal->contractor_id = $contractorId;
 			}
+			$deal->data_json = !empty($data) ? $data : null;
 			$deal->save();
 			
 			if ($contractorId) {
@@ -1413,9 +1431,8 @@ class DealController extends Controller
 			abort(404);
 		}
 		
-		//\Log::debug($this->request);
-		
 		$productId = $this->request->product_id ?? 0;
+		$extraProductIds = $this->request->extra_product_id ?? [];
 		$contractorId = $this->request->contractor_id ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
@@ -1529,16 +1546,29 @@ class DealController extends Controller
 			$promoId = $promo->id;
 		}
 
-		$amount = $product->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, $promoId, $promocodeId, $certificateId, false, false, 0, $isCertificatePurchase);
+		$amount = $productAmount = $product->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, $promoId, $promocodeId, $certificateId, false, false, 0, $isCertificatePurchase);
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
 		
+		foreach ($extraProductIds ?? [] as $extraProductId) {
+			$extraProduct = Product::find($extraProductId);
+			$extraProductType = $extraProduct->productType;
+			$extraAmount = $extraProduct->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, 0, 0, 0, false, false, 0, $isCertificatePurchase);
+			$extraTax = round($extraAmount * $extraProductType->tax / 100, 2);
+			$extraTotalAmount = round($extraAmount + $extraTax, 2);
+			
+			$amount += $extraAmount;
+			$tax += $extraTax;
+			$totalAmount += $extraTotalAmount;
+		}
+		
 		return response()->json([
 			'status' => 'success',
-			'amount' => $amount,
+			'productAmount' => $productAmount,
+			'amount' => round($amount, 2),
 			'baseAmount' => $baseAmount,
-			'tax' => $tax,
-			'totalAmount' => $totalAmount,
+			'tax' => round($tax, 2),
+			'totalAmount' => round($totalAmount, 2),
 			'certificateUuid' => $certificateUuid,
 			'certificateId' => $certificateId,
 			'currency' => $currency,

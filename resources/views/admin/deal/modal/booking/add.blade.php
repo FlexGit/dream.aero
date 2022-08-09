@@ -146,6 +146,18 @@
 	</div>
 	<div class="col">
 		<div class="form-group">
+			<label for="extra_product_id">Good / Service</label>
+			<select class="form-control js-extra-product" id="extra_product_id" name="extra_product_id[]" multiple="multiple">
+				@foreach($extraProducts ?? [] as $productTypeName => $productId)
+					@foreach($productId as $product)
+						<option value="{{ $product->id }}" data-product_type_id="{{ $product->product_type_id }}" data-currency="{{ $product->currency ? $product->currency->alias : '' }}">{{ $product->name }}</option>
+					@endforeach
+				@endforeach
+			</select>
+		</div>
+	</div>
+	<div class="col">
+		<div class="form-group">
 			<label for="promo_id">Promo</label>
 			<select class="form-control" id="promo_id" name="promo_id">
 				<option value="0">---</option>

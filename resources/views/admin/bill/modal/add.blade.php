@@ -5,7 +5,7 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="number">Number</label>
-			<input type="text" class="form-control" id="number" name="number" placeholder="Number" disabled>
+			<input type="text" class="form-control" id="number" name="number" placeholder="Number" readonly>
 		</div>
 	</div>
 	<div class="col">
@@ -35,7 +35,7 @@
 	<div class="col-6">
 		<div class="form-group">
 			<label for="amount">Amount</label>
-			<input type="number" class="form-control" id="amount" name="amount" value="{{ $amount }}" placeholder="Amount" disabled>
+			<input type="number" class="form-control" id="amount" name="amount" value="{{ $amount }}" placeholder="Amount" readonly>
 		</div>
 	</div>
 	{{--<div class="col-3">

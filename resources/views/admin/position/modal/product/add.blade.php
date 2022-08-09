@@ -19,13 +19,7 @@
 			</select>
 		</div>
 	</div>
-</div>
-<div class="row">
-	<div class="col-8">
-		<label for="comment">Comment</label>
-		<textarea class="form-control" id="comment" name="comment" rows="2"></textarea>
-	</div>
-	<div class="col-4 text-right">
+	<div class="col-8 text-right">
 		<div class="form-group mt-4">
 			{{--<div class="custom-control custom-switch custom-control-inline">
 				<input type="checkbox" id="is_free" name="is_free" value="1" class="custom-control-input">

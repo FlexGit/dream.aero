@@ -82,7 +82,7 @@ class BillController extends Controller
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
 		
 		
-		$amount = $deal->amount() - $deal->billPayedAmount()/* - $deal->scoreAmount()*/;
+		$amount = $deal->amount() - $deal->billPayedAmount();
 		
 		$statuses = Status::where('type', Status::STATUS_TYPE_BILL)
 			->where('alias', '!=', Bill::PAYED_PROCESSING_STATUS)
@@ -225,7 +225,7 @@ class BillController extends Controller
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
 		
 		$billStatus = $bill->status;
-		if ($billStatus && $billStatus->alias == Bill::CANCELED_STATUS/* && !$user->isSuperAdmin()*/) {
+		if ($billStatus && in_array($billStatus->alias, [Bill::PAYED_STATUS, Bill::CANCELED_STATUS])/* && !$user->isSuperAdmin()*/) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-в-текущем-статусе-недоступен-для-редактирования')]);
 		}
 		
@@ -274,7 +274,7 @@ class BillController extends Controller
 		$bill->payment_method_id = $paymentMethodId;
 		$bill->status_id = $this->request->status_id ?? 0;
 		$bill->total_amount = $amount;
-		$bill->currency_id = $this->request->currency_id ?? 0;
+		/*$bill->currency_id = $this->request->currency_id ?? 0;*/
 		if ($status->alias == Bill::PAYED_STATUS && !$bill->payed_at) {
 			$bill->payed_at = Carbon::now()->format('Y-m-d H:i:s');
 			
@@ -282,12 +282,10 @@ class BillController extends Controller
 			// если это счет на позицию покупки сертификата
 			$position = $bill->position;
 			$certificate = $position ? $position->certificate : null;
-			$product = $certificate ? $certificate->product : null;
-			$cityProduct = $product ? $product->cities()->where('cities_products.is_active', true)->find($city->id) : null;
-			$dataJson = ($cityProduct && $cityProduct->pivot) ? json_decode($cityProduct->pivot->data_json, true) : [];
-			
-			$certificatePeriod = ($cityProduct && $position->is_certificate_purchase && array_key_exists('certificate_period', $dataJson)) ? $dataJson['certificate_period'] : 6;
 			if ($certificate) {
+				$product = $certificate ? $certificate->product : null;
+				$productType = $product->productType;
+				$certificatePeriod = ($productType->alias == ProductType::COURSES_ALIAS) ? 12 : 6;
 				$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 				$certificate->save();
 			}

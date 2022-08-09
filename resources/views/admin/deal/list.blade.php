@@ -77,6 +77,16 @@
 					@endif
 				</div>
 			</div>
+			@if(is_array($deal->data_json) && ((array_key_exists('comment', $deal->data_json) && $deal->data_json['comment'])))
+				<div class="text-left mt-2">
+					<div style="border: 1px solid;border-radius: 6px;padding: 4px 8px;background-color: #fff;">
+						<div title="Comment">
+							<i class="far fa-comment-dots"></i>
+							<span><i>{{ $deal->data_json['comment'] }}</i></span>
+						</div>
+					</div>
+				</div>
+			@endif
 		</td>
 		<td class="text-center align-top d-none d-xl-table-cell small">
 			@foreach($deal->bills ?? [] as $bill)
@@ -120,7 +130,9 @@
 					@endif
 				</div>
 			@endforeach
-			<a href="javascript:void(0)" data-toggle="modal" data-url="/bill/{{ $deal->id }}/add" data-action="/bill" data-method="POST" data-title="Create Invoice" data-type="bill" title="Create Invoice" class="btn btn-info btn-sm">Create Invoice</a>
+			@if($deal->balance() < 0)
+				<a href="javascript:void(0)" data-toggle="modal" data-url="/bill/{{ $deal->id }}/add" data-action="/bill" data-method="POST" data-title="Create Invoice" data-type="bill" title="Create Invoice" class="btn btn-info btn-sm">Create Invoice</a>
+			@endif
 		</td>
 		<td class="align-top text-center d-none d-md-table-cell">
 			<table class="table table-sm table-bordered table-striped mb-0">
@@ -210,15 +222,15 @@
 						</td>
 						<td class="small">
 							<div>
-								@if($position->is_certificate_purchase)
+								{{--@if($position->is_certificate_purchase)
 									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/{{ $position->id }}/edit" data-action="/deal_position/certificate/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Voucher">
 								@elseif($position->location)
 									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/{{ $position->id }}/edit" data-action="/deal_position/booking/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Booking">
 								@else
 									<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/{{ $position->id }}/edit" data-action="/deal_position/product/{{ $position->id }}" data-method="PUT" data-type="position" data-title="Edit Good / Service">
-								@endif
+								@endif--}}
 									<b>{{ $position->product ? $position->product->name : 'no name' }}</b>
-								</a>
+								{{--</a>--}}
 							</div>
 							@if($position->promo)
 								<div title="Promo">
@@ -339,12 +351,12 @@
 			</table>
 			<div class="text-right small mt-1 mb-1" style="line-height: 0.9em;">
 				<div class="btn-group dropleft">
-					<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink-{{ $deal->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Add item">Add item</a>
+					<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink-{{ $deal->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Add">Add</a>
 
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuLink-{{ $deal->id }}" style="z-index: 9999;">
 						{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/certificate/add/{{ $deal->id }}" data-action="/deal_position/certificate" data-method="POST" data-type="position" data-title="Add voucher purchase item" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
 						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/booking/add/{{ $deal->id }}" data-action="/deal_position/booking" data-method="POST" data-type="position" data-title="Add booking item" class="btn btn-secondary btn-sm dropdown-item">Booking</a>--}}
-						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/add/{{ $deal->id }}" data-action="/deal_position/product" data-method="POST" data-type="position" data-title="Add good / service item" class="btn btn-secondary btn-sm dropdown-item">Good / Service purchase</a>
+						<a href="javascript:void(0)" data-toggle="modal" data-url="/deal_position/product/add/{{ $deal->id }}" data-action="/deal_position/product" data-method="POST" data-type="position" data-title="Add Good / Service" class="btn btn-secondary btn-sm dropdown-item">Good / Service</a>
 					</div>
 				</div>
 			</div>
