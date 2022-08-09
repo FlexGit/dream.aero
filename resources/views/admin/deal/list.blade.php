@@ -254,36 +254,6 @@
 									</div>
 								@endif
 							@endif
-							@if(is_array($position->data_json) && ((array_key_exists('comment', $position->data_json) && $position->data_json['comment']) || (array_key_exists('certificate_whom', $position->data_json) && $position->data_json['certificate_whom']) || (array_key_exists('certificate_whom_phone', $position->data_json) && $position->data_json['certificate_whom_phone']) || (array_key_exists('delivery_address', $position->data_json) && $position->data_json['delivery_address'])))
-								<div class="text-left mt-2">
-									<div style="border: 1px solid;border-radius: 6px;padding: 4px 8px;background-color: #fff;">
-										@if(array_key_exists('comment', $position->data_json) && $position->data_json['comment'])
-											<div title="Comment">
-												<i class="far fa-comment-dots"></i>
-												<span><i>{{ $position->data_json['comment'] }}</i></span>
-											</div>
-										@endif
-										{{--@if(array_key_exists('certificate_whom', $position->data_json) && $position->data_json['certificate_whom'])
-											<div title="Who the voucher is for (name)">
-												<i class="fas fa-user"></i>
-												<span><i>{{ $position->data_json['certificate_whom'] }}</i></span>
-											</div>
-										@endif
-										@if(array_key_exists('certificate_whom_phone', $position->data_json) && $position->data_json['certificate_whom_phone'])
-											<div title="Who the voucher is for (phone number)">
-												<i class="fas fa-mobile-alt"></i>
-												<span><i>{{ $position->data_json['certificate_whom_phone'] }}</i></span>
-											</div>
-										@endif
-										@if(array_key_exists('delivery_address', $position->data_json) && $position->data_json['delivery_address'])
-											<div title="Delivery address">
-												<i class="fas fa-truck"></i>
-												<span><i>{{ $position->data_json['delivery_address'] }}</i></span>
-											</div>
-										@endif--}}
-									</div>
-								</div>
-							@endif
 						</td>
 						<td class="small">
 							<div>
@@ -322,6 +292,18 @@
 								@endif
 								{{ $position->total_amount ? number_format($position->total_amount, 2, '.', ' ') : 0 }}
 							</div>
+							@if(is_array($position->data_json) && ((array_key_exists('comment', $position->data_json) && $position->data_json['comment'])))
+								<div class="text-left mt-2">
+									<div style="border: 1px solid;border-radius: 6px;padding: 4px 8px;background-color: #fff;">
+										@if(array_key_exists('comment', $position->data_json) && $position->data_json['comment'])
+											<div title="Comment">
+												<i class="far fa-comment-dots"></i>
+												<span><i>{{ $position->data_json['comment'] }}</i></span>
+											</div>
+										@endif
+									</div>
+								</div>
+							@endif
 						</td>
 						<td class="text-center small" nowrap>
 							@if(!$position->is_certificate_purchase && $position->event)
