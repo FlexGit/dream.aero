@@ -86,12 +86,12 @@
 							</div>
 							<div class="form-group align-self-end ml-auto pl-2 text-nowrap">
 								<div class="btn-group dropleft">
-									<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Create deal">Create deal</a>
+									<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Create deal">Create Deal</a>
 
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="z-index: 9999;">
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="Create voucher purchase deal" class="btn btn-secondary btn-sm dropdown-item">Voucher purchase</a>
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="Create booking deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
-										{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create good / service deal" class="btn btn-secondary btn-sm dropdown-item">Good / service purchase</a>--}}
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="Create Voucher purchase Deal" class="btn btn-secondary btn-sm dropdown-item">Voucher</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="Create Booking Deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create Good / Service Deal" class="btn btn-secondary btn-sm dropdown-item">Good / service</a>
 									</div>
 								</div>
 							</div>

@@ -1261,7 +1261,7 @@ class DealController extends Controller
 			}
 
 			$deal = new Deal();
-			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CREATED_STATUS);
+			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CONFIRMED_STATUS);
 			$deal->status_id = $dealStatus ? $dealStatus->id : 0;
 			$deal->contractor_id = $contractor ? $contractor->id : 0;
 			$deal->city_id = $city ? $city->id : 0;
