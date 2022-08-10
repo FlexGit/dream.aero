@@ -92,7 +92,7 @@
 							<label class="switch">
 								<input type="checkbox" id="birthday" name="birthday" class="edit_field" value="1">
 								<span class="slider round"></span>
-							</label><span>Birthday</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="Birthday 20% Discount" alt="help" width="20">
+							</label><span>Birthday</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="ID proof is required. Please see our terms and conditions." alt="help" width="20">
 						</div>
 					</div>
 				</div>
