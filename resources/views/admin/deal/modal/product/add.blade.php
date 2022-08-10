@@ -63,7 +63,7 @@
 		<div class="form-group">
 			<label for="product_id">Product</label>
 			<select class="form-control js-product" id="product_id" name="product_id">
-				<option>---</option>
+				<option value="">---</option>
 				@foreach($products ?? [] as $productTypeName => $productId)
 					{{--<optgroup label="{{ $productTypeName }}">--}}
 						@foreach($productId as $product)
