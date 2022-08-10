@@ -19,7 +19,7 @@
 			</select>
 		</div>
 	</div>
-	<div class="col-8 text-right">
+	<div class="col-9 text-right">
 		<div class="form-group mt-4">
 			{{--<div class="custom-control custom-switch custom-control-inline">
 				<input type="checkbox" id="is_free" name="is_free" value="1" class="custom-control-input">
