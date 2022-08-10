@@ -4,7 +4,7 @@
 <input type="hidden" id="amount" name="amount">
 
 <div class="row">
-	<div class="col-4">
+	<div class="col-3">
 		<div class="form-group">
 			<label for="product_id">Product</label>
 			<select class="form-control js-product" id="product_id" name="product_id">
