@@ -136,9 +136,10 @@ class ReportController extends Controller {
 		foreach ($users as $user) {
 			if (!$user->location_id) continue;
 			
-			$userItems[$user->location_id][] = [
+			$userItems/*[$user->location_id]*/[] = [
 				'id' => $user->id,
 				'fio' => $user->fioFormatted(),
+				'role' => User::ROLES[$user->role],
 			];
 		}
 		

@@ -55,7 +55,7 @@
 					@foreach($userItems ?? [] as $userItem)
 						<tr>
 							<td colspan="7" class="align-middle bg-gradient-olive font-weight-bold">
-								{{ $userItem['fio'] }} <small>[ {{ $userItem['city_name'] ? $userItem['city_name'] . ', ' : '' }}{{ $userItem['role'] }} ]</small>
+								{{ $userItem['fio'] }} <small>[ {{ $userItem['role'] }} ]</small>
 							</td>
 						</tr>
 						@if(isset($billItems[$userItem['id']]))
