@@ -282,7 +282,7 @@ class ContractorController extends Controller
 					->orWhere("email", "LIKE", "%{$q}%")
 					->orWhere("phone", "LIKE", "%{$q}%");
 			})
-			->where('city_id', $city->id)
+			->whereIn('city_id', [$city->id, 0])
 			->orderBy('name')
 			->orderBy('lastname')
 			->get();
