@@ -32,7 +32,7 @@
 										@endif
 										.
 									</p>
-									<p style="margin:15px 30px 33px;text-align:left;font-size:14px;line-height:30px;color:#484a42;">
+									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Payment amount {{ $bill->total_amount }} {{ $bill->currency ? $bill->currency->alias : '' }}.
 									</p>
 									<p style="border-top:2px solid #e5e5e5;font-size:5px;line-height:5px;margin:0 30px 29px;">&nbsp;</p>
@@ -41,7 +41,7 @@
 										<tr valign="top">
 											<td width="30"><p style="margin:0;font-size:1px;line-height:1px;">&nbsp;</p></td>
 											<td style="text-align:left;">
-												<p style="margin:0 0 4px;font-weight:bold;color:#333333;font-size:14px;line-height:22px;">NEED HELP?</p>
+												<p style="margin:0 0 4px;font-weight:bold;color:#333333;font-size:16px;line-height:22px;">NEED HELP?</p>
 												<p style="margin:0;color:#333333;font-size:11px;line-height:18px;">Our customer service team are always on hand to answer any questions you may have.<br>Call us at <a target="_blank" rel="noopener noreferrer"><span class="js-phone-number">{{ $city->phone ?? '' }}</span></a> or e-mail at <a href="mailto:{{ $city->email ?? '' }}" target="_blank" rel="noopener noreferrer">{{ $city->email ?? '' }}</a>
 												</p>
 												<p style="margin:10px 0;font-size:1px;line-height:1px;">&nbsp;</p>

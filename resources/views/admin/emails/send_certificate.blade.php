@@ -21,7 +21,7 @@
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Thank you for choosing Dream Aero.
 									</p>
-									<p style="margin:15px 30px 33px;text-align:left;font-size:14px;line-height:30px;color:#484a42;">Attached is your flight voucher # <b>{{ $certificate->number }}</b>. The voucher is valid <b>{{ $certificate->expire_at ? 'until ' . \Carbon\Carbon::parse($certificate->expire_at)->format('m-d-Y') : 'termless' }}</b>.</p>
+									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">Attached is your flight voucher # <b>{{ $certificate->number }}</b>. The voucher is valid <b>{{ $certificate->expire_at ? 'until ' . \Carbon\Carbon::parse($certificate->expire_at)->format('m-d-Y') : 'termless' }}</b>.</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Please book your flight beforehand.
 									</p>
@@ -31,7 +31,7 @@
 										<tr valign="top">
 											<td width="30"><p style="margin:0;font-size:1px;line-height:1px;">&nbsp;</p></td>
 											<td style="text-align:left;">
-												<p style="margin:0 0 4px;font-weight:bold;color:#333333;font-size:14px;line-height:22px;">NEED HELP?</p>
+												<p style="margin:0 0 4px;font-weight:bold;color:#333333;font-size:16px;line-height:22px;">NEED HELP?</p>
 												<p style="margin:0;color:#333333;font-size:11px;line-height:18px;">Our customer service team are always on hand to answer any questions you may have.<br>Call us at <a target="_blank" rel="noopener noreferrer"><span class="js-phone-number">{{ $city->phone ?? '' }}</span></a> or e-mail at <a href="mailto:{{ $city->email ?? '' }}" target="_blank" rel="noopener noreferrer">{{ $city->email ?? '' }}</a>
 												</p>
 												<p style="margin:10px 0;font-size:1px;line-height:1px;">&nbsp;</p>
