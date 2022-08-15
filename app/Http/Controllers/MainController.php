@@ -138,10 +138,25 @@ class MainController extends Controller
 				->get();
 		}
 		
+		$date = date('Y-m-d H:i:s');
+		
+		$activePromocodes = Promocode::whereRelation('cities', 'cities.id', '=', $city->id)
+			->where('is_active', true)
+			->where(function ($query) use ($date) {
+				$query->where('active_from_at', '<=', $date)
+					->orWhereNull('active_from_at');
+			})
+			->where(function ($query) use ($date) {
+				$query->where('active_to_at', '>=', $date)
+					->orWhereNull('active_to_at');
+			})
+			->get();
+		
 		$VIEW = view('modal.certificate', [
 			'city' => $city,
 			'product' =>$product ?? null,
 			'products' => $products ?? [],
+			'activePromocodes' => $activePromocodes,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);

@@ -1,8 +1,6 @@
 <div>
 	<p class="popup-description">
-		Purchase a flight voucher.
-		<br>
-		Fill out a couple of fields for online voucher purchase
+		Fill out a couple of fields to purchase a flight voucher online
 	</p>
 	<h2 class="text-center js-product-name" style="height: 33px;"></h2>
 	<form id="payment_form">
@@ -56,7 +54,8 @@
 			</div>
 
 			@if(($product && $product->productType && in_array($product->productType->alias, [app('\App\Models\ProductType')::REGULAR_ALIAS, app('\App\Models\ProductType')::ULTIMATE_ALIAS])) || !$product)
-				<div class="row switch_container promocode_container">
+				@if($activePromocodes->count())
+					<div class="row switch_container promocode_container">
 					<div style="display: flex;">
 						<div class="switch_box" style="margin-bottom: 10px;">
 							<label class="switch">
@@ -74,6 +73,7 @@
 					</div>
 					{{--<small class="promocode_note" style="display: none;">* @lang('main.modal-certificate.не-суммируется-с-другими-акциями-и-предложениями')</small>--}}
 				</div>
+				@endif
 
 				<div class="row switch_container">
 					<div style="display: flex;">
@@ -81,7 +81,7 @@
 							<label class="switch">
 								<input type="checkbox" id="weekends" name="weekends" class="edit_field" value="1">
 								<span class="slider round"></span>
-							</label><span>Weekends</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="Option to fly on any day, including weekend" alt="help" width="20">
+							</label><span>Weekends</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="Option to fly on any day, including Saturday-Sunday" alt="help" width="20">
 						</div>
 					</div>
 				</div>
