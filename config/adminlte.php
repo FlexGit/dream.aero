@@ -581,11 +581,11 @@ return [
 					'asset' => true,
 					'location' => 'vendor/fullcalendar/locales-all.min.js',
 				],
-				[
+				/*[
 					'type' => 'js',
 					'asset' => true,
 					'location' => 'vendor/fullcalendar/locales/en.js',
-				],
+				],*/
 				[
 					'type' => 'css',
 					'asset' => true,

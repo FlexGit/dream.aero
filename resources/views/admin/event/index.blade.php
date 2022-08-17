@@ -174,6 +174,7 @@
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-datepicker3.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/material-icons.css') }}">
 	<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
 	<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css">
@@ -188,7 +189,7 @@
 	<script src="{{ asset('js/admin/moment-timezone-with-data.min.js') }}"></script>
 	<script src="{{ asset('js/admin/bootstrap-datepicker.min.js') }}"></script>
 	<script src="{{ asset('js/admin/bootstrap-datepicker.ru.min.js') }}"></script>
-	<script src="{{ asset('js/admin/popper.min.js') }}"></script>
+	<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>
 	<script src="{{ asset('js/admin/jquery.autocomplete.min.js') }}" defer></script>
 	<script src="https://unpkg.com/@popperjs/core@2"></script>
 	<script src="https://unpkg.com/tippy.js@6"></script>
@@ -218,7 +219,7 @@
 					//aspectRatio: 0.8,
 					stickyHeaderDates: true,
 					initialView: calendarViewType,
-					locale: 'en',
+					/*locale: 'en',*/
 					editable: true,
 					selectable: true,
 					//height: '100%',
@@ -531,15 +532,14 @@
 
 				var action = $(this).attr('action'),
 					method = $(this).attr('method'),
-					formId = $(this).attr('id'),
 					$docFile = $('#doc_file');
 
 				var formData = new FormData($(this)[0]);
-				console.log(formData);
+				//console.log(formData);
 
 				if ($docFile.val()) {
-					console.log($docFile.val());
-					console.log($docFile.prop('files')[0]);
+					//console.log($docFile.val());
+					//console.log($docFile.prop('files')[0]);
 					formData.append('doc_file', $docFile.prop('files')[0]);
 				}
 
