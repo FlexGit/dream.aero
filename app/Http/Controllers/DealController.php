@@ -530,6 +530,7 @@ class DealController extends Controller
 			$data['comment'] = $comment;
 		}
 		
+		$contractor = null;
 		if ($contractorId) {
 			$contractor = Contractor::find($contractorId);
 			if (!$contractor) {
@@ -543,7 +544,7 @@ class DealController extends Controller
 			}
 		}
 		
-		$amount = $product->calcAmount($contractor->id, $cityId ?: $this->request->user()->city_id, $source ?: Contractor::ADMIN_SOURCE, false, 0, $paymentMethodId, $promoId, ($promocodeId || $promocodeUuid) ? $promocode->id : 0, 0, false, false, 0, true);
+		$amount = $product->calcAmount($contractor ? $contractor->id : 0, $cityId ?: $this->request->user()->city_id, $source ?: Contractor::ADMIN_SOURCE, false, 0, $paymentMethodId, $promoId, ($promocodeId || $promocodeUuid) ? $promocode->id : 0, 0, false, false, 0, true);
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
 		$currency = HelpFunctions::getEntityByAlias(Currency::class, Currency::USD_ALIAS);
