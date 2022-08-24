@@ -49,7 +49,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @mixin \Eloquent
  * @property \datetime|null $sent_at
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate whereSentAt($value)
- * @property string|null $certificate_sent_at время последней отправки Сертификата контрагенту
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate whereCertificateSentAt($value)
  * @property-read \App\Models\Deal|null $deal
  */

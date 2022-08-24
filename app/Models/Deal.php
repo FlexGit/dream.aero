@@ -93,8 +93,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property int $promo_id
  * @property int $promocode_id
  * @property bool $is_certificate_purchase
- * @property string|null $invite_sent_at
- * @property string|null $certificate_sent_at
  * @property-read \App\Models\Currency|null $currency
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereCurrencyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereTax($value)

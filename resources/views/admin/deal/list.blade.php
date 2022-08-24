@@ -34,7 +34,7 @@
 						@endif
 					</th>
 					<th class="col-2">Invoice</th>
-					<th class="col-1"></th>
+					{{--<th class="col-1"></th>--}}
 				</tr>
 				</thead>
 				<tbody>
@@ -59,7 +59,9 @@
 						</td>
 						<td>
 							<div>
-								{{ $deal->number }}
+								<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/{{ $deal->id }}/edit" data-action="/deal/{{ $deal->id }}" data-title="Edit @if($deal->is_certificate_purchase) Voucher purchase @elseif($deal->location_id) Booking @else Good / Service purchase @endif" data-method="PUT" data-type="deal" class="{{--btn btn-secondary btn-sm--}}font-weight-bold">
+									{{ $deal->number }}
+								</a>
 							</div>
 							@if($deal->status)
 								<div title="Deal status">
@@ -315,11 +317,11 @@
 								<a href="javascript:void(0)" data-toggle="modal" data-url="/bill/{{ $deal->id }}/add" data-action="/bill" data-method="POST" data-title="Create Invoice" data-type="bill" title="Create Invoice" class="btn btn-info btn-sm">Create Invoice</a>
 							@endif
 						</td>
-						<td>
+						{{--<td>
 							<div>
 								<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/{{ $deal->id }}/edit" data-action="/deal/{{ $deal->id }}" data-title="Edit @if($deal->is_certificate_purchase) Voucher purchase @elseif($deal->location_id) Booking @else Good / Service purchase @endif" data-method="PUT" data-type="deal" class="btn btn-secondary btn-sm">Edit</a>
 							</div>
-						</td>
+						</td>--}}
 					</tr>
 				</tbody>
 			</table>

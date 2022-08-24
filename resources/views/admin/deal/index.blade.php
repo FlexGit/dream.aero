@@ -112,7 +112,6 @@
 				<form id="deal">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						{{--<button type="button" class="btn btn-default js-add-deal mr-5">Добавить сделку</button>--}}
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>

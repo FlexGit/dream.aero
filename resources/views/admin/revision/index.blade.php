@@ -43,8 +43,8 @@
 							<th class="align-middle">Object</th>
 							<th class="align-middle">Linked object</th>
 							<th class="align-middle">Attribute</th>
-							<th class="align-middle">Was</th>
-							<th class="align-middle">No</th>
+							<th class="align-middle">Previous value</th>
+							<th class="align-middle">Current value</th>
 							<th class="align-middle">User</th>
 							<th class="align-middle">Date</th>
 						</tr>

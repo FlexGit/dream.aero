@@ -16,6 +16,7 @@ class RevisionController extends Controller
 		'Bill' => 'Invoice',
 		'Certificate' => 'Voucher',
 		'Event' => 'Event',
+		'Tip' => 'Tips',
 	];
 	
 	/**
@@ -67,6 +68,9 @@ class RevisionController extends Controller
 			case 'events':
 				$field = 'start_at';
 			break;
+			case 'tips':
+				$field = 'amount';
+			break;
 			case '':
 				$field = 'title';
 			break;
@@ -107,6 +111,8 @@ class RevisionController extends Controller
 					$object = $model->title;
 				} else if ($model->name) {
 					$object = $model->name;
+				} else if ($model->amount) {
+					$object = $model->amount;
 				} else if ($model->start_at) {
 					$object = Carbon::parse($model->start_at)->format('Y-m-d H:i');
 				}
@@ -130,6 +136,8 @@ class RevisionController extends Controller
 						$newValue = $model->value;
 					} elseif ($model->title) {
 						$newValue = $model->title;
+					} elseif ($model->amount) {
+						$newValue = $model->amount;
 					} else {
 						$newValue = $model->name;
 					}
