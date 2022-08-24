@@ -269,6 +269,9 @@
 						</td>
 						<td>
 							@foreach($deal->bills ?? [] as $bill)
+								@if(!$loop->first)
+									<hr>
+								@endif
 								<div class="mb-2">
 									<div>
 										<div class="d-inline-block font-weight-bold">
