@@ -164,7 +164,7 @@ class ProductTypeController extends Controller
 		$productType->name = $this->request->name;
 		$productType->alias = $this->request->alias;
 		$productType->is_tariff = $this->request->is_tariff;
-		$productType->is_active = $this->request->is_active;
+		/*$productType->is_active = $this->request->is_active;*/
 		$productType->data_json = [
 			'duration' => ($this->request->duration && $this->request->is_tariff) ? (!is_array($this->request->duration) ? array_map('intval', explode(',', $this->request->duration)) : array_map('intval', $this->request->duration)) : null,
 		];
@@ -212,7 +212,7 @@ class ProductTypeController extends Controller
 		$productType->alias = $this->request->alias;
 		$productType->is_tariff = $this->request->is_tariff;
 		$productType->tax = $this->request->tax;
-		$productType->is_active = $this->request->is_active;
+		/*$productType->is_active = $this->request->is_active;*/
 		$productType->data_json = [
 			'duration' => ($this->request->duration && $this->request->is_tariff) ? (!is_array($this->request->duration) ? array_map('intval', explode(',', $this->request->duration)) : array_map('intval', $this->request->duration)) : null,
 		];
