@@ -301,12 +301,12 @@
 										</div>
 										<div class="text-nowrap">
 											@if($bill->status->alias == app('\App\Models\Bill')::PAYED_STATUS)
-												<a href="{{ route('getReceipt', ['uuid' => $bill->uuid]) }}" class="ml-2" data-id="{{ $bill->id }}" title="Download Receipt"><i class="far fa-file-alt"></i></a>
-												<a href="javascript:void(0)" class="js-print-receipt-link ml-2" data-id="{{ $bill->id }}" title="Print Receipt" onclick="var w = window.open('{{ route('getReceipt', ['uuid' => $bill->uuid, 'print' => true]) }}', 'mywin'); w.print();"><i class="fas fa-print"></i></a>
+												<a href="{{ route('getReceipt', ['uuid' => $bill->uuid]) }}" class="ml-2" data-id="{{ $bill->id }}" title="Download Invoice Receipt"><i class="far fa-file-alt"></i></a>
+												<a href="javascript:void(0)" class="js-print-receipt-link ml-2" data-id="{{ $bill->id }}" title="Print Invoice Receipt" onclick="var w = window.open('{{ route('getReceipt', ['uuid' => $bill->uuid, 'print' => true]) }}', 'mywin'); w.print();"><i class="fas fa-print"></i></a>
 												@if ($bill->receipt_sent_at)
 													<a href="javascript:void(0)" class="js-send-receipt-link ml-2" data-id="{{ $bill->id }}" title="{{ $bill->receipt_sent_at }}"><i class="far fa-envelope-open"></i></a>
 												@else
-													<a href="javascript:void(0)" class="js-send-receipt-link ml-2" data-id="{{ $bill->id }}" title="Сheque not sent yet"><i class="far fa-envelope"></i></a>
+													<a href="javascript:void(0)" class="js-send-receipt-link ml-2" data-id="{{ $bill->id }}" title="Invoice Receipt not sent yet"><i class="far fa-envelope"></i></a>
 												@endif
 											@endif
 										</div>
