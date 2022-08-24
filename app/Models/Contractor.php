@@ -7,10 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-use PHPUnit\TextUI\Help;
 use \Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -110,15 +107,11 @@ class Contractor extends Authenticatable
 	const ADMIN_SOURCE = 'admin';
 	const CALENDAR_SOURCE = 'calendar';
 	const WEB_SOURCE = 'web';
-	/*const MOB_SOURCE = 'api';*/
 	const SOURCES = [
 		self::ADMIN_SOURCE => 'Admin',
 		self::CALENDAR_SOURCE => 'Calendar',
 		self::WEB_SOURCE => 'Web',
-		/*self::MOB_SOURCE => 'Mob',*/
 	];
-
-	/*const REGISTRATION_SCORE = 500;*/
 
 	const ANONYM_EMAIL = 'anonym@dream.aero';
 	
@@ -195,16 +188,6 @@ class Contractor extends Authenticatable
 		return $this->hasOne(City::class, 'id', 'city_id');
 	}
 	
-	/*public function discount()
-	{
-		return $this->hasOne(Discount::class, 'id', 'discount_id');
-	}*/
-	
-	/*public function tokens()
-	{
-		return $this->hasMany(Token::class, 'contractor_id', 'id');
-	}*/
-	
 	public function bills()
 	{
 		return $this->hasMany(Bill::class, 'contractor_id', 'id');
@@ -247,122 +230,6 @@ class Contractor extends Authenticatable
 		return (string)\Webpatser\Uuid\Uuid::generate();
 	}
 	
-	/*public function format()
-	{
-		$data = $this->data_json ? (is_array($this->data_json) ? $this->data_json : json_decode($this->data_json, true)) : [];
-
-		$avatar = isset($data['avatar']) ? $data['avatar'] : null;
-		$avatarFileName = ($avatar && isset($avatar['name'])) ? $avatar['name'] : null;
-		$avatarFileExt = ($avatar && isset($avatar['ext'])) ? $avatar['ext'] : null;
-
-		$base64 = '';
-		if ($avatarFileName && $avatarFileExt && Storage::disk('private')->exists('contractor/avatar/' . $avatarFileName . '.' . $avatarFileExt)) {
-			$file = storage_path('app/private/contractor/avatar/' . $avatarFileName . '.' . $avatarFileExt);
-			$type = pathinfo($file, PATHINFO_EXTENSION);
-			$fileData = file_get_contents($file);
-			$base64 = 'data:image/' . $type . ';base64,' . base64_encode($fileData);
-		}
-
-		// все статусы контрагента
-		$statuses = Status::where('is_active', true)
-			->where('type', Status::STATUS_TYPE_CONTRACTOR)
-			->get();
-		
-		// время налета контрагента
-		$contractorFlightTime = $this->getFlightTime();
-		// баллы контрагента
-		$score = $this->getScore();
-		// статус контрагента
-		$status = $this->getStatus($statuses, $contractorFlightTime ?? 0);
-
-		return [
-			'id' => $this->id,
-			'uuid' => $this->uuid,
-			'name' => $this->name,
-			'lastname' => $this->lastname,
-			'email' => $this->email,
-			'phone' => $this->phone,
-			'city' => $this->city ? $this->city->format() : null,
-			'birthdate' => $this->birthdate ? $this->birthdate->format('Y-m-d') : null,
-			'avatar_file_base64' => $base64 ?: null,
-			'score' => $score ?? 0,
-			'status' => $status->name ?? null,
-			'flight_time' => (int)$contractorFlightTime,
-			'discount' => $status->discount ? $status->discount->valueFormatted() : '0%',
-		];
-	}*/
-	
-	/**
-	 * @param $statuses
-	 * @param int $contractorFlightTime
-	 * @return mixed|null
-	 */
-	/*public function getStatus($statuses, $contractorFlightTime = 0)
-	{
-		$flightTimes = [];
-		foreach ($statuses ?? [] as $status) {
-			if ($status->type != Status::STATUS_TYPE_CONTRACTOR) continue;
-			
-			$flightTimes[$status->id] = $status->flight_time;
-		}
-		if (!$flightTimes) return null;
-		
-		rsort($flightTimes);
-		$result = array_filter($flightTimes, function($item) use ($contractorFlightTime) {
-			return $item <= $contractorFlightTime;
-		});
-		if (!$result) {
-			$result[] = $flightTimes[count($flightTimes) - 1];
-		};
-
-		$flightTime = array_shift($result);
-
-		$statusId = 0;
-		foreach ($statuses ?? [] as $status) {
-			if ($status->type != Status::STATUS_TYPE_CONTRACTOR) continue;
-
-			if ($status->flight_time == $flightTime) {
-				$statusId = $status->id;
-				break;
-			}
-		}
-		foreach ($statuses ?? [] as $status) {
-			if ($status->id == $statusId) {
-				return $status;
-			}
-		}
-		
-		return null;
-	}*/
-	
-	/**
-	 * @return mixed
-	 */
-	/*public function getScore()
-	{
-		return Score::where('contractor_id', $this->id)
-			->sum('score');
-	}*/
-	
-	/**
-	 * @return mixed
-	 */
-	public function getFlightTime()
-	{
-		return Score::where('contractor_id', $this->id)
-			->sum('duration');
-	}
-	
-	/**
-	 * @return mixed
-	 */
-	public function getFlightCount()
-	{
-		return Score::where('contractor_id', $this->id)
-			->where('duration', '>', 0)
-			->count();
-	}
-	
 	/**
 	 * @param $statuses
 	 * @return int|mixed
@@ -392,12 +259,9 @@ class Contractor extends Authenticatable
 		$dealSum = 0;
 		$deals = Deal::whereNotIn('status_id', [$dealReturnedStatusId, $dealCanceledStatusId])
 			->where('contractor_id', $this->id)
-			->orWhereRelation('positions', function ($query) use ($certificateReturnedStatus, $certificateCanceledStatus) {
-				return $query->orWhereHas('certificate', function ($query) use ($certificateReturnedStatus, $certificateCanceledStatus) {
-					return $query->whereNotIn('certificates.status_id', [$certificateReturnedStatus, $certificateCanceledStatus]);
-				});
+			->orWhereHas('certificate', function ($query) use ($certificateReturnedStatus, $certificateCanceledStatus) {
+				return $query->whereNotIn('certificates.status_id', [$certificateReturnedStatus, $certificateCanceledStatus]);
 			})
-			->withSum('positions as amount', 'total_amount')
 			->get();
 		foreach ($deals as $deal) {
 			$dealSum += $deal->amount;

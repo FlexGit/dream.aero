@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Contractor;
 use App\Services\HelpFunctions;
+use Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -45,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
 			$inputs = $validator->getData();
 
 			$city = City::find($inputs['city_id']);
-			if (!$city || !$city->is_active || (\Auth::check() && \Auth::user()->city && \Auth::user()->city->id != $city->id)) {
+			if (!$city || !$city->is_active || (Auth::check() && Auth::user()->city && Auth::user()->city->id != $city->id)) {
 				return false;
 			}
 			

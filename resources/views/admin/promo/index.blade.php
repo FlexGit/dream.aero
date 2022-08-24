@@ -30,12 +30,11 @@
 						<thead>
 						<tr>
 							<th class="text-center align-middle">Name</th>
-							<th class="text-center align-middle d-none d-sm-table-cell">Alias</th>
-							<th class="text-center align-middle d-none d-sm-table-cell">Discount</th>
-							{{--<th class="text-center align-middle d-none d-xl-table-cell">For publication</th>--}}
-							<th class="text-center align-middle d-none d-xl-table-cell">Is active</th>
-							<th class="text-center align-middle d-none d-xl-table-cell">Activity start date</th>
-							<th class="text-center align-middle d-none d-xl-table-cell">Activity end date</th>
+							<th class="text-center align-middle">Alias</th>
+							<th class="text-center align-middle">Discount</th>
+							<th class="text-center align-middle">Is active</th>
+							<th class="text-center align-middle">Activity start date</th>
+							<th class="text-center align-middle">Activity end date</th>
 							<th class="text-center align-middle">Action</th>
 						</tr>
 						</thead>
@@ -174,18 +173,9 @@
 							return;
 						}
 
-						var msg = 'Promo successfully ';
-						if (method === 'POST') {
-							msg += 'added';
-						} else if (method === 'PUT') {
-							msg += 'saved';
-						} else if (method === 'DELETE') {
-							msg += 'deleted';
-						}
-
 						$('#modal').modal('hide');
 						getList();
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});
@@ -265,7 +255,7 @@
 						}
 
 						$div.hide();
-						toastr.success('Image successfully deleted');
+						toastr.success(result.message);
 					}
 				});
 			});

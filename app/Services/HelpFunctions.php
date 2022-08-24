@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\City;
 use App\Models\Deal;
+use App\Models\Promocode;
 use App\Models\Status;
-use App\Models\Token;
 use Carbon\Carbon;
 
 class HelpFunctions {
@@ -120,33 +121,6 @@ class HelpFunctions {
 	}
 
 	/**
-	 * @param $authToken
-	 * @return mixed
-	 */
-	public static function validToken($authToken)
-	{
-		$date = date('Y-m-d H:i:s');
-		
-		return Token::where('token', $authToken)
-			->where(function ($query) use ($date) {
-				$query->where('expire_at', '>=', $date)
-					->orWhereNull('expire_at');
-			})
-			->first();
-	}
-	
-	/**
-	 * @return int
-	 */
-	/*public static function getNewOrderCount()
-	{
-		return Order::whereHas('status', function ($query) {
-			$query->where('type', Status::STATUS_TYPE_ORDER)
-				->where('alias', Order::RECEIVED_STATUS);
-		})->count();
-	}*/
-	
-	/**
 	 * @return int
 	 */
 	public static function getNewDealCount()
@@ -156,28 +130,6 @@ class HelpFunctions {
 				->where('alias', Deal::CREATED_STATUS);
 		})->count();
 	}
-	
-	/**
-	 * @return int
-	 */
-	/*public static function getNewBillCount()
-	{
-		return Bill::whereHas('status', function ($query) {
-			$query->where('type', Status::STATUS_TYPE_BILL)
-				->where('alias', Bill::NOT_PAYED_STATUS);
-		})->count();
-	}*/
-
-	/**
-	 * @return int
-	 */
-	/*public static function getNewPaymentCount()
-	{
-		return Payment::whereHas('status', function ($query) {
-			$query->where('type', Status::STATUS_TYPE_PAYMENT)
-				->where('alias', Payment::NOT_SUCCEED_STATUS);
-		})->count();
-	}*/
 	
 	public static function formatPhone($phone)
 	{

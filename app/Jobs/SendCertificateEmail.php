@@ -4,15 +4,11 @@ namespace App\Jobs;
 
 use App\Jobs\QueueExtension\ReleaseHelperTrait;
 use App\Models\Certificate;
-use App\Models\City;
-use App\Models\ProductType;
-use App\Services\HelpFunctions;
 use Carbon\Carbon;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 use Mail;
 
 class SendCertificateEmail extends Job implements ShouldQueue {
@@ -38,14 +34,11 @@ class SendCertificateEmail extends Job implements ShouldQueue {
 				return null;
 			}
 		}
-
-		$position = $this->certificate->position;
-		if (!$position) return null;
 		
-		$deal = $position->deal;
+		$deal = $this->certificate->deal;
 		if (!$deal) return null;
 		
-		$product = $position->product;
+		$product = $deal->product;
 		if (!$product) return null;
 		
 		$productType = $product->productType;

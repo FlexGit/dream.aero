@@ -47,8 +47,8 @@
 		<div class="form-group">
 			<label for="period">Period</label>
 			<div class="d-flex">
-				<input type="time" class="form-control" id="start_at" name="start_at" value="10:00">
-				<input type="time" class="form-control ml-2" id="stop_at" name="stop_at" value="22:00">
+				<input type="time" class="form-control" id="start_at" name="start_at" value="{{ $startAt }}">
+				<input type="time" class="form-control ml-2" id="stop_at" name="stop_at" value="{{ $stopAt }}">
 			</div>
 		</div>
 	</div>

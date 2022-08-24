@@ -22,37 +22,14 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="table-filter d-sm-flex mb-2">
-						{{--<div class="form-group">
-							<label for="filter_city_id">Город</label>
-							<select class="form-control" id="filter_city_id" name="filter_city_id">
-								<option value="0">Все</option>
-								@foreach($cities ?? [] as $city)
-									<option value="{{ $city->id }}">{{ $city->name }}</option>
-								@endforeach
-							</select>
-						</div>
-						<div class="form-group pl-2">
-							<label for="filter_legal_entity_id">Юр.лицо</label>
-							<select class="form-control" id="filter_legal_entity_id" name="filter_legal_entity_id">
-								<option value="0">Все</option>
-								@foreach($legalEntities ?? [] as $legalEntity)
-									<option value="{{ $legalEntity->id }}">{{ $legalEntity->name }}</option>
-								@endforeach
-							</select>
-						</div>--}}
-						{{--<div class="form-group align-self-end text-right ml-auto pl-2">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/location/add" data-action="/location" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Add">Add</a>
-						</div>--}}
 					</div>
 					<table id="locationTable" class="table table-hover table-sm table-bordered table-striped table-data">
 						<thead>
 						<tr>
 							<th class="text-center">Name</th>
-							<th class="text-center d-none d-sm-table-cell">Alias</th>
-							<th class="text-center d-none d-md-table-cell">Flight Simulators</th>
-							{{--<th class="text-center d-none d-lg-table-cell">City</th>--}}
-							{{--<th class="text-center d-none d-xl-table-cell">Юр.лицо</th>--}}
-							<th class="text-center d-none d-xl-table-cell">Is active</th>
+							<th class="text-center">Alias</th>
+							<th class="text-center">Flight Simulators</th>
+							<th class="text-center">Is active</th>
 							<th class="text-center">Action</th>
 						</tr>
 						</thead>
@@ -190,18 +167,9 @@
 							return;
 						}
 
-						var msg = 'Location successfully ';
-						if (method === 'POST') {
-							msg += 'added';
-						} else if (method === 'PUT') {
-							msg += 'saved';
-						} else if (method === 'DELETE') {
-							msg += 'deleted';
-						}
-
 						$('#modal').modal('hide');
 						getList();
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});

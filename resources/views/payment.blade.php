@@ -1,6 +1,6 @@
 @php
-	$position = $bill->position ?? null;
-	$product = $position ? $position->product : null;
+	$deal = $bill->deal ?? null;
+	$product = $deal ? $deal->product : null;
 @endphp
 
 @extends('layouts.master')

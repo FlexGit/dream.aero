@@ -2,28 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bill;
 use App\Models\City;
 use App\Models\Content;
 use App\Models\Deal;
-use App\Models\DealPosition;
 use App\Models\Event;
-use App\Models\EventComment;
-use App\Models\FlightSimulator;
 use App\Models\Location;
-use App\Models\PaymentMethod;
-use App\Models\Product;
-use App\Models\ProductType;
-use App\Models\Status;
 use App\Models\User;
 use App\Services\HelpFunctions;
 use Auth;
 use Carbon\Carbon;
-use Doctrine\DBAL\Events;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use PhpParser\Comment;
+use Mail;
 use Throwable;
 use Validator;
 
@@ -46,7 +37,7 @@ class EventController extends Controller
 	 */
 	public function index()
 	{
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		$cities = $user->city
 			? new Collection([$user->city])
@@ -77,7 +68,7 @@ class EventController extends Controller
 	 */
 	public function getListAjax()
 	{
-		$user = \Auth::user();
+		$user = Auth::user();
 		$city = $user->city;
 		
 		$locations = Location::where('is_active', true)
@@ -110,8 +101,7 @@ class EventController extends Controller
 		if ($simulatorId) {
 			$events = $events->where('flight_simulator_id', $simulatorId);
 		}
-		$events = $events
-			->with(['dealPosition', 'user'])
+		$events = $events->with(['user'])
 			->get();
 
 		$eventData = [];
@@ -126,9 +116,8 @@ class EventController extends Controller
 				case Event::EVENT_TYPE_DEAL:
 					$deal = $event->deal;
 					$balance = $deal ? $deal->balance() : 0;
-					$position = $event->dealPosition;
-					$product = $position ? $position->product : null;
-					$certificate = $position ? $position->certificate : null;
+					$product = $deal ? $deal->product : null;
+					$certificate = $deal ? $deal->certificate : null;
 					
 					// контактное лицо
 					$title = $deal ? $deal->name . ' ' . HelpFunctions::formatPhone($deal->phone) : '';
@@ -141,31 +130,23 @@ class EventController extends Controller
 					
 					$amount = 0;
 					$paymentMethodNames = [];
-					$promo = $promocode = null;
 					
 					if ($certificate) {
 						$certificateData = $certificate->data_json;
 
-						// Сертификаты из старой системы
-						if (isset($certificateData['amount'])) {
-							$amount = $certificateData['amount'];
-						} else {
-							$certificatePurchasePosition = DealPosition::where('is_certificate_purchase', true)
-								->where('certificate_id', $certificate->id)
-								->first();
-							if ($certificatePurchasePosition) {
-								$amount = $certificatePurchasePosition->total_amount;
-							}
+						$certificatePurchaseDeal = Deal::where('is_certificate_purchase', true)
+							->where('certificate_id', $certificate->id)
+							->first();
+						if ($certificatePurchaseDeal) {
+							$amount = $certificatePurchaseDeal->total_amount;
 						}
 						
 						// инфа о Сертификате
-						$title .= ' | Voucher: ' . $certificate->number . ' ' . Carbon::parse($certificate->created_at)->format('d.m.Y') . ' = ' . ($amount ?? '-') . '$' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
+						$title .= ' | ' . $certificate->number . ' ' . Carbon::parse($certificate->created_at)->format('d.m.Y') . ' = ' . ($amount ?? '-') . '$' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
 					}
 					
-					if ($position) {
-						$promo = $position->promo;
-						$promocode = $position->promocode;
-					}
+					$promo = $deal->promo;
+					$promocode = $deal->promocode;
 					
 					$bills = $deal->bills;
 					foreach ($bills as $bill) {
@@ -175,10 +156,8 @@ class EventController extends Controller
 						}
 					}
 					
-					// сумма Позиции сделки
-					if ($position) {
-						$title .= ' | Amount ' . ($position->currency ? $position->currency->name : '') . $position->total_amount;
-					}
+					// сумма сделки
+					$title .= ' | ' . ($deal->currency ? $deal->currency->name : '') . $deal->total_amount;
 					
 					// способы оплаты
 					if ($paymentMethodNames) {
@@ -187,31 +166,31 @@ class EventController extends Controller
 					
 					// инфа об акции
 					if (isset($promo)) {
-						$title .= ' | Promo: ' . $promo->name . ' (' . ($promo->discount ? $promo->discount->valueFormatted() : '') . ')';
+						$title .= ' | ' . $promo->name . ' (' . ($promo->discount ? $promo->discount->valueFormatted() : '') . ')';
 					}
+					
 					// инфа о промокоде
 					if (isset($promocode)) {
-						$title .= ' | Promo code: ' . $promocode->number . ' (' . ($promocode->discount ? $promocode->discount->valueFormatted() : '') . ')';
+						$title .= ' | ' . $promocode->number . ' (' . ($promocode->discount ? $promocode->discount->valueFormatted() : '') . ')';
 					}
-					// время работы платформы от админа
-					/*if ($event->simulator_up_at || $event->simulator_down_at) {
-						$title .= '. Платформа: ' . ($event->simulator_up_at ? Carbon::parse($event->simulator_up_at)->format('H:i') : '') . ' - ' . ($event->simulator_down_at ? Carbon::parse($event->simulator_down_at)->format('H:i') : '');
-					}*/
+
 					// спонтанный полет
 					if ($event->is_unexpected_flight) {
-						$title .= ' | Spontaneous';
+						$title .= ' | SF';
 					}
 					// повторный полет
 					if ($event->is_repeated_flight) {
-						$title .= ' | Repeated';
+						$title .= ' | RF';
 					}
+
 					// описание
-					if ($event->description) {
+					/*if ($event->description) {
 						$title .= ' | ' . $event->description;
-					}
+					}*/
+
 					// инфа о прикрепленном к событию документе
 					if (is_array($event->data_json) && array_key_exists('doc_file_path', $event->data_json) && $event->data_json['doc_file_path']) {
-						$title .= ' | Document attached';
+						$title .= ' | Attachment';
 					}
 					
 					$allDay = false;
@@ -221,14 +200,14 @@ class EventController extends Controller
 					}
 				break;
 				case Event::EVENT_TYPE_SHIFT_ADMIN:
-					$title = $event->start_at->format('H:i') . '-' . $event->stop_at->format('H:i') . ' ' . $event->user->fioFormatted();
+					$title = $event->start_at->format('g:i A') . '-' . $event->stop_at->format('g:i A') . ' ' . $event->user->fio();
 					$allDay = true;
 					if ($data && isset($data['shift_admin'])) {
 						$color = $data['shift_admin'];
 					}
 				break;
 				case Event::EVENT_TYPE_SHIFT_PILOT:
-					$title = $event->start_at->format('H:i') . '-' . $event->stop_at->format('H:i') . ' ' . $event->user->fioFormatted();
+					$title = $event->start_at->format('g:i A') . '-' . $event->stop_at->format('g:i A') . ' ' . $event->user->fio();
 					$allDay = true;
 					if ($data && isset($data['shift_pilot'])) {
 						$color = $data['shift_pilot'];
@@ -250,7 +229,7 @@ class EventController extends Controller
 				break;
 				case Event::EVENT_TYPE_TEST_FLIGHT:
 					$title = Event::EVENT_TYPES[Event::EVENT_TYPE_TEST_FLIGHT];
-					$title .= $event->testPilot ? ' ' . $event->testPilot->fioFormatted() : '';
+					$title .= $event->testPilot ? ' ' . $event->testPilot->fio() : '';
 					$allDay = false;
 					if ($data && isset($data[Event::EVENT_TYPE_TEST_FLIGHT])) {
 						$color = $data[Event::EVENT_TYPE_TEST_FLIGHT];
@@ -258,7 +237,7 @@ class EventController extends Controller
 				break;
 				case Event::EVENT_TYPE_USER_FLIGHT:
 					$title = Event::EVENT_TYPES[Event::EVENT_TYPE_USER_FLIGHT];
-					$title .= $event->employee ? ' ' . $event->employee->fioFormatted() : '';
+					$title .= $event->employee ? ' ' . $event->employee->fio() : '';
 					$allDay = false;
 					if ($data && isset($data[Event::EVENT_TYPE_USER_FLIGHT])) {
 						$color = $data[Event::EVENT_TYPE_USER_FLIGHT];
@@ -277,7 +256,7 @@ class EventController extends Controller
 				$commentData[] = [
 					'name' => $comment->name,
 					'user' => $userName,
-					'date' => $comment->updated_at->format('d.m.Y H:i'),
+					'date' => $comment->updated_at->format('d.m.Y g:i A'),
 					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'edited' : 'created',
 				];
 			}
@@ -304,50 +283,67 @@ class EventController extends Controller
 	}
 	
 	/**
-	 * @param $positionId
+	 * @param $dealId
 	 * @param null $eventType
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function add($positionId, $eventType = null)
+	public function add($dealId, $eventType = null)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		$city = $user->city;
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$cities = City::orderBy('name')
-			->get();
-
 		switch ($eventType) {
 			case 'shift':
 				$users = User::where('enable', true)
+					->where('city_id', $city->id)
 					->orderBy('lastname')
 					->orderBy('name')
 					->get();
 				
+				$weekDay = Carbon::parse($this->request->event_date)->dayOfWeek;
+				
+				// ToDo вынести в модель Локации
+				switch ($weekDay) {
+					case 0:
+						$startAt = '11:00';
+						$stopAt = '19:00';
+					break;
+					case 5:
+					case 6:
+						$startAt = '11:00';
+						$stopAt = '20:00';
+					break;
+					default:
+						$startAt = '12:00';
+						$stopAt = '20:00';
+					break;
+				}
+				
 				$VIEW = view('admin.event.modal.shift_add', [
 					'users' => $users,
-					'cities' => $cities,
 					'cityId' => $city->id,
 					'locationId' => $this->request->location_id,
 					'simulatorId' => $this->request->simulator_id,
 					'eventType' => $eventType,
 					'eventDate' => $this->request->event_date,
+					'startAt' => $startAt,
+					'stopAt' => $stopAt,
 				]);
 			break;
 			default:
-				$position = DealPosition::find($positionId);
-				if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
+				$deal = Deal::find($dealId);
+				if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 				
 				$VIEW = view('admin.event.modal.add', [
-					'position' => $position,
-					'cities' => $cities,
+					'deal' => $deal,
 				]);
 			break;
 		}
@@ -366,7 +362,8 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
+		$city = $user->city;
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -392,14 +389,10 @@ class EventController extends Controller
 					'id' => $comment->id,
 					'name' => $comment->name,
 					'user' => $userName,
-					'date' => $comment->updated_at->format('d.m.Y H:i'),
+					'date' => $comment->updated_at->format('d.m.Y g:i A'),
 					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'edited' : 'created',
 				];
 			}
-			
-			$productTypes = ProductType::orderBy('name')
-				->whereNotIn('alias', ['services'])
-				->get();
 			
 			$shifts = Event::where('event_type', Event::EVENT_TYPE_SHIFT_PILOT)
 				->where('city_id', $event->city_id)
@@ -411,11 +404,13 @@ class EventController extends Controller
 				->get();
 
 			$pilots = User::where('role', User::ROLE_PILOT)
+				->where('city_id', $city->id)
 				->orderBy('lastname')
 				->orderBy('name')
 				->get();
 			
 			$employees = User::where('enable', true)
+				->where('city_id', $city->id)
 				->orderBy('lastname')
 				->orderBy('name')
 				->get();
@@ -423,8 +418,6 @@ class EventController extends Controller
 			$VIEW = view('admin.event.modal.edit', [
 				'event' => $event,
 				'comments' => $commentData,
-				'productTypes' => $productTypes,
-				'cities' => $cities,
 				'pilots' => $pilots,
 				'employees' => $employees,
 				'shifts' => $shifts,
@@ -432,6 +425,7 @@ class EventController extends Controller
 			]);
 		} else {
 			$users = User::where('enable', true)
+				->where('city_id', $city->id)
 				->orderBy('lastname')
 				->orderBy('name')
 				->get();
@@ -456,7 +450,7 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		$city = $user->city;
 		
 		if (!$user->isAdminOrHigher()) {
@@ -530,24 +524,24 @@ class EventController extends Controller
 					return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 				}
 				
-				$position = DealPosition::find($this->request->position_id);
-				if (!$position) {
+				$deal = Deal::find($this->request->deal_id);
+				if (!$deal) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 				}
 				
-				if (!$product = $position->product) {
+				if (!$product = $deal->product) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 				}
 				
-				if (!$location = $position->location) {
+				if (!$location = $deal->location) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 				}
 				
-				if (!$city = $position->city) {
+				if (!$city = $deal->city) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 				}
 				
-				if (!$simulator = $position->simulator) {
+				if (!$simulator = $deal->simulator) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 				}
 				
@@ -583,9 +577,8 @@ class EventController extends Controller
 					
 					$event = new Event();
 					$event->event_type = Event::EVENT_TYPE_DEAL;
-					$event->contractor_id = ($position->deal && $position->deal->contractor) ? $position->deal->contractor->id : 0;
-					$event->deal_id = $position->deal ? $position->deal->id : 0;
-					$event->deal_position_id = $position->id ?? 0;
+					$event->contractor_id = $deal->contractor ? $deal->contractor->id : 0;
+					$event->deal_id = $deal->id ?? 0;
 					$event->city_id = $city->id ?? 0;
 					$event->location_id = $location->id ?? 0;
 					$event->flight_simulator_id = $simulator->id ?? 0;
@@ -619,8 +612,8 @@ class EventController extends Controller
 			
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Event was successfully created']);
 	}
 	
 	/**
@@ -668,16 +661,16 @@ class EventController extends Controller
 		$employeeId = $this->request->employee_id ?? 0;
 		$locationId = $this->request->location_id ?? 0;
 		$simulatorId = $this->request->flight_simulator_id ?? 0;
-		$position = null;
+		$deal = null;
 
 		switch ($event->event_type) {
 			case Event::EVENT_TYPE_DEAL:
-				$position = DealPosition::find($event->deal_position_id);
-				if (!$position) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
+				$deal = Deal::find($event->deal_id);
+				if (!$deal) {
+					return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 				}
 				
-				if (!$product = $position->product) {
+				if (!$product = $deal->product) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 				}
 			break;
@@ -693,10 +686,6 @@ class EventController extends Controller
 			break;
 			case Event::EVENT_TYPE_SHIFT_ADMIN:
 			case Event::EVENT_TYPE_SHIFT_PILOT:
-				/*if (!$event->user) {
-					return response()->json(['status' => 'error', 'reason' => 'Пользователь не найден']);
-				}*/
-			
 				$shiftUser = 'shift_' . $this->request->shift_user;
 				$startAt = Carbon::parse($event->start_at)->format('Y-m-d') . ' ' . $this->request->start_at_time;
 				$stopAt = Carbon::parse($event->stop_at)->format('Y-m-d') . ' ' . $this->request->stop_at_time;
@@ -719,16 +708,16 @@ class EventController extends Controller
 			break;
 		}
 		
-		if ($this->request->source == Event::EVENT_SOURCE_DEAL && $position) {
-			if (!$location = $position->location) {
+		if ($this->request->source == Event::EVENT_SOURCE_DEAL && $deal) {
+			if (!$location = $deal->location) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.локация-не-найдена')]);
 			}
 			
-			if (!$city = $position->city) {
+			if (!$city = $deal->city) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			}
 			
-			if (!$simulator = $position->simulator) {
+			if (!$simulator = $deal->simulator) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.авиатренажер-не-найден')]);
 			}
 		}
@@ -739,7 +728,7 @@ class EventController extends Controller
 				case Event::EVENT_TYPE_DEAL:
 					if ($this->request->source == Event::EVENT_SOURCE_DEAL) {
 						$startAt = Carbon::parse($this->request->start_at_date . ' ' . $this->request->start_at_time)->format('Y-m-d H:i');
-						$stopAt = Carbon::parse($this->request->stop_at_date . ' ' . $this->request->stop_at_time)/*->addMinutes($product->duration ?? 0)*/->format('Y-m-d H:i');
+						$stopAt = Carbon::parse($this->request->stop_at_date . ' ' . $this->request->stop_at_time)->format('Y-m-d H:i');
 						
 						/*if (!$product->validateFlightDate($startAt)) {
 							return response()->json(['status' => 'error', 'reason' => 'Для бронирования полета по тарифу Regular доступны только будние дни']);
@@ -855,8 +844,8 @@ class EventController extends Controller
 
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Event was successfully saved']);
 	}
 	
 	/**
@@ -870,7 +859,7 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -881,12 +870,12 @@ class EventController extends Controller
 		
 		switch ($event->event_type) {
 			case Event::EVENT_TYPE_DEAL:
-				$position = DealPosition::find($event->deal_position_id);
-				if (!$position) {
+				$deal = Deal::find($event->deal_id);
+				if (!$deal) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 				}
 				
-				if (!$product = $position->product) {
+				if (!$product = $deal->product) {
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 				}
 			break;
@@ -1003,7 +992,7 @@ class EventController extends Controller
 			Storage::disk('private')->delete($docFilePath);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Event was successfully deleted']);
 	}
 	
 	/**
@@ -1017,7 +1006,7 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -1033,7 +1022,7 @@ class EventController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'msg' => trans('main.success.комментарий-успешно-удален.')]);
+		return response()->json(['status' => 'success', 'message' => trans('main.success.комментарий-успешно-удален.')]);
 	}
 	
 	/**
@@ -1066,7 +1055,7 @@ class EventController extends Controller
 			
 			Storage::disk('private')->delete($docFilePath);
 			
-			return response()->json(['status' => 'success', 'msg' => trans('main.success.файл-успешно-удален')]);
+			return response()->json(['status' => 'success', 'message' => trans('main.success.файл-успешно-удален')]);
 		}
 		
 		return response()->json(['status' => 'error', 'reason' => trans('main.error.файл-не-найден')]);
@@ -1081,7 +1070,7 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -1102,7 +1091,7 @@ class EventController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'msg' => trans('main.success.уведомление-по-событию-успешно-сохранено')]);
+		return response()->json(['status' => 'success', 'message' => trans('main.success.уведомление-по-событию-успешно-сохранено')]);
 	}
 	
 	/**
@@ -1114,7 +1103,7 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -1127,49 +1116,81 @@ class EventController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'id' => 'Deal item',
+				'id' => 'Deal',
 				'event_id' => 'Event',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
-		$position = DealPosition::find($this->request->id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
-		
-		/** @var Deal $deal */
-		$deal = $position->deal;
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
+		$deal = Deal::find($this->request->id);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
-		/** @var Bill $bill */
-		/*$bill = $position->bill;
-		if ($bill) {
-			// если к позиции привязан счет, то он должен быть оплачен
-			if ($bill->status->alias != Bill::PAYED_STATUS) {
-				return response()->json(['status' => 'error', 'reason' => 'Счет ' . $bill->number . ' не оплачен']);
-			}
-			$amount = $bill->amount;
-			if ($amount <= 0) {
-				return response()->json(['status' => 'error', 'reason' => 'Некорректная сумма Счета ' . $bill->number]);
-			}
-		} else {
-			// если к позиции не привязан счет, то проверяем чтобы вся сделка была оплачена
-			$balance = $deal->balance();
-			if ($balance < 0) return response()->json(['status' => 'error', 'reason' => 'Сделка не оплачена']);
-		}*/
-		
 		$event = Event::find($this->request->event_id);
 		if (!$event) return response()->json(['status' => 'error', 'reason' => trans('main.error.событие-не-найдено')]);
 		
-		//dispatch(new \App\Jobs\SendFlightInvitationEmail($event));
-		$job = new \App\Jobs\SendFlightInvitationEmail($event);
-		$job->handle();
+		/*$job = new \App\Jobs\SendFlightInvitationEmail($event);
+		$job->handle();*/
 		
-		return response()->json(['status' => 'success', 'message' => trans('main.success.задание-на-отправку-приглашения-на-полет-принято')]);
+		if ($deal->balance() < 0) return response()->json(['status' => 'error', 'reason' => 'Deal balance should not be negative']);
+		
+		$city = $event->city;
+		if (!$city) return response()->json(['status' => 'error', 'reason' => 'Event city not found']);
+		
+		$contractor = $event->contractor;
+		if (!$contractor) return response()->json(['status' => 'error', 'reason' => 'Event contractor not found']);
+		
+		$location = $event->location;
+		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Event location not found']);
+		
+		$simulator = $event->simulator;
+		if (!$simulator) return response()->json(['status' => 'error', 'reason' => 'Event simulator not found']);
+		
+		$dealEmail = $deal->email ?? '';
+		$dealName = $deal->name ?? '';
+		$contractorEmail = $contractor->email ?? '';
+		$contractorName = $contractor->name ?? '';
+		if (!$dealEmail && !$contractorEmail) return response()->json(['status' => 'error', 'reason' => 'Deal or Contractor E-mail not found']);
+		
+		$messageData = [
+			'name' => $dealName ?: $contractorName,
+			'flightDate' => $event->start_at ?? '',
+			'location' => $location,
+			'simulator' => $simulator,
+			'city' => $city,
+		];
+		
+		$recipients = $bcc = [];
+		$recipients[] = $dealEmail ?: $contractorEmail;
+		if ($city->email) {
+			$bcc[] = $city->email;
+		}
+		
+		$subject = env('APP_NAME') . ': Flight Invitation';
+		
+		Mail::send(['html' => "admin.emails.send_flight_invitation"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
+			/** @var \Illuminate\Mail\Message $message */
+			$message->subject($subject);
+			$message->to($recipients);
+			$message->bcc($bcc);
+		});
+		
+		$failures = Mail::failures();
+		if ($failures) {
+			\Log::debug($failures);
+			return null;
+		}
+		
+		$sentAt = Carbon::now()->format('Y-m-d H:i:s');
+		
+		$event->flight_invitation_sent_at = $sentAt;
+		$event->save();
+		
+		return response()->json(['status' => 'success', 'message' => 'Flight Invitation was successfully sent', 'sent_at' => $sentAt]);
 	}
 	
 	/**
@@ -1183,22 +1204,16 @@ class EventController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		/*$flightInvitationFilePath = (is_array($event->data_json) && array_key_exists('flight_invitation_file_path', $event->data_json)) ? $event->data_json['flight_invitation_file_path'] : '';
-		
-		// если файла приглашения на полет по какой-то причине не оказалось, генерим его
-		$flightInvitationFileExists = Storage::disk('private')->exists($flightInvitationFilePath);
-		if (!isset($flightInvitationFilePath) || !$flightInvitationFileExists) {*/
-			$event = $event->generateFile();
-			if (!$event) {
-				abort(404);
-			}
-		/*}*/
+		$event = $event->generateFile();
+		if (!$event) {
+			abort(404);
+		}
 		
 		$flightInvitationFilePath = (is_array($event->data_json) && array_key_exists('flight_invitation_file_path', $event->data_json)) ? $event->data_json['flight_invitation_file_path'] : '';
 		
@@ -1211,7 +1226,7 @@ class EventController extends Controller
 	 */
 	public function getDocFile($uuid)
 	{
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);

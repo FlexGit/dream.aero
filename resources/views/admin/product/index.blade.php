@@ -172,18 +172,9 @@
 							return;
 						}
 
-						var msg = 'Product successfully ';
-						if (method === 'POST') {
-							msg += 'added';
-						} else if (method === 'PUT') {
-							msg += 'saved';
-						} else if (method === 'DELETE') {
-							msg += 'deleted';
-						}
-
 						$('#modal').modal('hide');
 						getList();
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});
@@ -252,7 +243,7 @@
 						}
 
 						$div.hide();
-						toastr.success('File successfully deleted');
+						toastr.success(result.message);
 					}
 				});
 			});

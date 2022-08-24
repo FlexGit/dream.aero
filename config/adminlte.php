@@ -272,18 +272,6 @@ return [
 			'label'       => '',
 			'label_color' => '',
 		],
-        /*[
-            'text' => 'Профиль',
-            'url'  => 'admin/profile',
-            'icon' => 'far fa-fw fa-user',
-			'topnav_user' => true,
-        ],*/
-        /*[
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-			'topnav_user' => true,
-        ],*/
 		[
 			'text'    => 'Pricing',
 			'icon'    => 'fas fa-fw fa-dollar-sign',
@@ -304,7 +292,7 @@ return [
 				[
 					'text' => 'Promos',
 					'url'  => '/promo',
-					'icon'    => 'fas fa-fw fa-exclamation',
+					'icon' => 'fas fa-fw fa-exclamation',
 				],
 				[
 					'text' => 'Discount types',
@@ -313,6 +301,14 @@ return [
 					'can'  => 'is_superadmin',
 				],
 			],
+		],
+		[
+			'text'        => 'Tips',
+			'url'         => '/tip',
+			'icon'        => 'fas fa-fw fa-coins',
+			'can'	  	  => 'is_admin',
+			'label'       => '',
+			'label_color' => '',
 		],
 		[
 			'text'    => 'Lists',
@@ -331,18 +327,6 @@ return [
 					'icon' => 'fas fa-fw fa-map-marker-alt',
 					'can'  => 'is_superadmin',
 				],
-				/*[
-					'text' => 'Legal entities',
-					'url'  => '/legal_entity',
-					'icon' => 'far fa-fw fa-id-card',
-					'can'  => 'is_superadmin',
-				],
-				[
-					'text' => 'Flight simulators',
-					'url'  => '/flight_simulator',
-					'icon' => 'fas fa-fw fa-plane',
-					'can'  => 'is_superadmin',
-				],*/
 				[
 					'text' => 'Product types',
 					'url'  => '/product_type',
@@ -355,12 +339,6 @@ return [
 					'icon' => 'fas fa-fw fa-grip-horizontal',
 					'can'  => 'is_superadmin',
 				],
-				/*[
-					'text' => 'Statuses',
-					'url'  => '/status',
-					'icon' => 'fas fa-fw fa-project-diagram',
-					'can'  => 'is_superadmin',
-				],*/
 				[
 					'text' => 'Payment methods',
 					'url'  => '/payment_method',
@@ -379,7 +357,7 @@ return [
 			'text'        => 'Log',
 			'url'         => '/log',
 			'icon'        => 'fas fa-fw fa-history',
-			'can'	  => 'is_superadmin',
+			'can'	  	  => 'is_superadmin',
 			'label'       => '',
 			'label_color' => '',
 		],

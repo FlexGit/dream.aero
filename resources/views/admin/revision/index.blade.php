@@ -40,13 +40,13 @@
 						<thead>
 						<tr class="text-center">
 							<th class="align-middle">Entity</th>
-							<th class="align-middle d-none d-sm-table-cell">Object</th>
-							<th class="align-middle d-none d-md-table-cell">Linked object</th>
-							<th class="align-middle d-none d-md-table-cell">Attribute</th>
-							<th class="align-middle d-none d-md-table-cell">Was</th>
-							<th class="align-middle d-none d-md-table-cell">No</th>
-							<th class="align-middle d-none d-md-table-cell">User</th>
-							<th class="align-middle d-none d-xl-table-cell">Date</th>
+							<th class="align-middle">Object</th>
+							<th class="align-middle">Linked object</th>
+							<th class="align-middle">Attribute</th>
+							<th class="align-middle">Was</th>
+							<th class="align-middle">No</th>
+							<th class="align-middle">User</th>
+							<th class="align-middle">Date</th>
 						</tr>
 						</thead>
 						<tbody>

@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Bill;
 use App\Models\Certificate;
 use App\Models\Deal;
-use App\Models\DealPosition;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Throwable;
@@ -49,16 +48,12 @@ class SendCertificateEmail extends Command
 			->get();
     	/** @var Certificate[] $certificates */
 		foreach ($certificates as $certificate) {
-			/** @var DealPosition $position */
-			$position = $certificate->position;
-			if (!$position) continue;
-		
 			/** @var Deal $deal */
-			$deal = $position->deal;
+			$deal = $certificate->deal;
 			if (!$deal) continue;
 		
 			/** @var Bill $bill */
-			$bill = $position->bill;
+			$bill = $deal->bill;
 			if ($bill) {
 				$status = $bill->status;
 				if (!$status) continue;
@@ -72,7 +67,6 @@ class SendCertificateEmail extends Command
 			}
    
 			try {
-				//dispatch(new \App\Jobs\SendCertificateEmail($certificate));
 				$job = new \App\Jobs\SendCertificateEmail($certificate);
 				$job->handle();
 			} catch (Throwable $e) {

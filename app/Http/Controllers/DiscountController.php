@@ -168,7 +168,7 @@ class DiscountController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'id' => $discount->id]);
+		return response()->json(['status' => 'success', 'message' => 'Discount type was successfully created', 'id' => $discount->id]);
 	}
 	
 	/**
@@ -223,7 +223,7 @@ class DiscountController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'id' => $discount->id]);
+		return response()->json(['status' => 'success', 'message' => 'Discount type was successfully saved', 'id' => $discount->id]);
 	}
 	
 	/**
@@ -247,6 +247,6 @@ class DiscountController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'id' => $discount->id]);
+		return response()->json(['status' => 'success', 'message' => 'Discount type was successfully deleted', 'id' => $discount->id]);
 	}
 }

@@ -41,10 +41,10 @@
 						<thead>
 						<tr>
 							<th class="text-center">Full name</th>
-							<th class="text-center d-none d-sm-table-cell">E-mail</th>
-							<th class="text-center d-none d-md-table-cell">Role</th>
-							<th class="text-center d-none d-xl-table-cell">Location</th>
-							<th class="text-center d-none d-xl-table-cell">Is active</th>
+							<th class="text-center">E-mail</th>
+							<th class="text-center">Role</th>
+							<th class="text-center">Location</th>
+							<th class="text-center">Is active</th>
 							<th class="text-center">Action</th>
 						</tr>
 						</thead>
@@ -194,18 +194,9 @@
 							return;
 						}
 
-						var msg = 'User successfully ';
-						if (method === 'POST') {
-							msg += 'added';
-						} else if (method === 'PUT') {
-							msg += 'saved';
-						} else if (method === 'DELETE') {
-							msg += 'deleted';
-						}
-
 						$('#modal').modal('hide');
 						getList(false);
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});

@@ -23,10 +23,10 @@
 				<div class="card-body">
 					<div class="table-filter mb-2">
 						<div class="d-sm-flex">
-							<div class="col-6">
+							<div class="col-4">
 								<div class="form-group">
 									<label for="search_contractor">Search</label>
-									<input type="text" class="form-control" id="search_contractor" name="search_contractor" placeholder="Full name, E-mail, Phone">
+									<input type="text" class="form-control" id="search_contractor" name="search_contractor" placeholder="">
 								</div>
 							</div>
 							<div class="form-group align-self-end ml-auto pl-2">
@@ -43,7 +43,6 @@
 							<th class="text-center">Phone</th>
 							<th class="text-center">Birthdate</th>
 							<th class="text-center">Discount</th>
-							<th class="text-center">Flight time</th>
 							<th class="text-center">Is active</th>
 							{{--<th class="text-center">Last auth</th>--}}
 							<th class="text-center">Create date</th>
@@ -196,26 +195,9 @@
 							return;
 						}
 
-						var msg = '';
-						if (formId === 'score') {
-							msg = 'Flight time successfully ';
-							if (method === 'POST') {
-								msg += 'added';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							}
-						} else if (formId === 'contractor') {
-							msg = 'Client successfully ';
-							if (method === 'POST') {
-								msg += 'added';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							}
-						}
-
 						$('#modal').modal('hide');
 						getList(false);
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});

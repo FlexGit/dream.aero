@@ -182,7 +182,6 @@ class PromocodeController extends Controller
 			'number' => [
 				'required',
 				'max:255',
-				/*'unique:promocodes,number',*/
 			],
 			'discount_id' => [
 				'required',
@@ -201,11 +200,8 @@ class PromocodeController extends Controller
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
-		//$data = [];
-		
 		$promocode = new Promocode();
 		$promocode->number = $this->request->number;
-		/*$promocode->location_id = $this->request->location_id;*/
 		$promocode->discount_id = $this->request->discount_id;
 		$promocode->is_active = $this->request->is_active;
 		if ($this->request->active_from_at_date) {
@@ -215,8 +211,6 @@ class PromocodeController extends Controller
 			$promocode->active_to_at = Carbon::parse($this->request->active_to_at_date . ' ' . $this->request->active_to_at_time)->format('Y-m-d H:i:s');
 		}
 		$data = $promocode->data_json;
-		/*$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;*/
-		$data['is_discount_certificate_purchase_allow'] = /*(bool)$this->request->is_discount_certificate_purchase_allow*/true;
 		$promocode->data_json = $data;
 		if (!$promocode->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
@@ -224,7 +218,7 @@ class PromocodeController extends Controller
 		
 		$promocode->cities()->sync((array)$city->id);
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Promocode was successfully created']);
 	}
 	
 	/**
@@ -251,7 +245,6 @@ class PromocodeController extends Controller
 			'number' => [
 				'required',
 				'max:255',
-				/*'unique:promocodes,number,' . $id,*/
 			],
 			'discount_id' => [
 				'required',
@@ -273,7 +266,6 @@ class PromocodeController extends Controller
 		//$data = [];
 		
 		$promocode->number = $this->request->number;
-		/*$promocode->location_id = $this->request->location_id;*/
 		$promocode->discount_id = $this->request->discount_id;
 		$promocode->is_active = $this->request->is_active;
 		if ($this->request->active_from_at_date) {
@@ -283,16 +275,14 @@ class PromocodeController extends Controller
 			$promocode->active_to_at = Carbon::parse($this->request->active_to_at_date . ' ' . $this->request->active_to_at_time)->format('Y-m-d H:i:s');
 		}
 		$data = $promocode->data_json;
-		/*$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;*/
-		$data['is_discount_certificate_purchase_allow'] = /*(bool)$this->request->is_discount_certificate_purchase_allow*/true;
 		$promocode->data_json = $data;
 		if (!$promocode->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		$promocode->cities()->sync((array)$city->id);
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Promocode was successfully saved']);
 	}
 	
 	/**
@@ -318,6 +308,6 @@ class PromocodeController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Promocode was successfully deleted']);
 	}
 }

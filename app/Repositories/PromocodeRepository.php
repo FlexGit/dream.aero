@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Models\City;
 use App\Models\Promocode;
-use App\Models\User;
 
 class PromocodeRepository {
 	
@@ -14,14 +14,15 @@ class PromocodeRepository {
 	}
 	
 	/**
-	 * @param User $user
+	 * @param City $city
 	 * @param bool $onlyActive
 	 * @param bool $onlyNoPersonal
 	 * @return \Illuminate\Support\Collection
 	 */
-	public function getList(User $user, $onlyActive = true, $onlyNoPersonal = true, $contractorId = 0)
+	public function getList(City $city, $onlyActive = true, $onlyNoPersonal = true, $contractorId = 0)
 	{
-		$promocodes = $this->model->orderBy('number');
+		$promocodes = $this->model->whereRelation('cities', 'cities.id', '=', $city->id)
+			->orderBy('number');
 		if ($onlyActive) {
 			$date = date('Y-m-d H:i:s');
 			$promocodes = $promocodes->where('is_active', true)
@@ -40,9 +41,6 @@ class PromocodeRepository {
 		if ($contractorId) {
 			$promocodes = $promocodes->whereIn('contractor_id', [$contractorId, 0]);
 		}
-		/*if (!$user->isSuperAdmin() && $user->city) {
-			$promocodes = $promocodes->whereRelation('cities', 'cities.id', '=', $user->city_id);
-		}*/
 		$promocodes = $promocodes->get();
 		
 		return $promocodes;

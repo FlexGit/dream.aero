@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string $name наименование
  * @property string $alias alias
- * @property int $legal_entity_id юр.лицо, на которое оформлена локация
  * @property int $city_id город, в котором находится локация
  * @property int $sort сортировка
  * @property array|null $data_json дополнительная информация
@@ -25,7 +24,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\City $city
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $user
  * @property-read int|null $user_count
- * @property-read \App\Models\LegalEntity $legalEntity
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read int|null $revision_history_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\FlightSimulator[] $simulator
@@ -41,7 +39,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Location whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Location whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Location whereIsActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Location whereLegalEntityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Location whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Location whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Location whereUpdatedAt($value)
@@ -68,9 +65,7 @@ class Location extends Model
 	protected $fillable = [
 		'name',
 		'alias',
-		'legal_entity_id',
 		'city_id',
-		'pay_account_number',
 		'sort',
 		'data_json',
 		'is_active',
@@ -94,11 +89,6 @@ class Location extends Model
 		return $this->belongsTo(City::class, 'city_id', 'id');
 	}
 	
-	public function legalEntity()
-	{
-		return $this->belongsTo(LegalEntity::class, 'legal_entity_id', 'id');
-	}
-
 	public function simulators()
 	{
 		return $this->belongsToMany(FlightSimulator::class, 'locations_flight_simulators', 'location_id', 'flight_simulator_id')
@@ -109,30 +99,6 @@ class Location extends Model
 	public function user()
 	{
 		return $this->hasMany(User::class, 'location_id', 'id');
-	}
-	
-	public function format()
-	{
-		$data = $this->data_json ?? [];
-
-		$simulators = [];
-		foreach ($this->simulators ?? [] as $simulator) {
-			$simulators[] = $simulator->format();
-		}
-
-		return [
-			'id' => $this->id,
-			'name' => $this->name,
-			'address' => array_key_exists('address', $data) ? $data['address'] : null,
-			'working_hours' => array_key_exists('working_hours', $data) ? $data['working_hours'] : null,
-			'phone' => array_key_exists('phone', $data) ? $data['phone'] : null,
-			'email' => array_key_exists('email', $data) ? $data['email'] : null,
-			'skype' => array_key_exists('skype', $data) ? $data['skype'] : null,
-			'whatsapp' => array_key_exists('whatsapp', $data) ? $data['whatsapp'] : null,
-			'map_link' => array_key_exists('map_link', $data) ? $data['map_link'] : null,
-			'scheme_file_path' => array_key_exists('scheme_file_path', $data) ? \URL::to('/upload/' . $data['scheme_file_path']) : null,
-			'flight_simulators' => $simulators,
-		];
 	}
 	
 	/**

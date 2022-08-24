@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\HelpFunctions;
+use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -78,14 +79,26 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereFlightSimulatorId($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Event[] $events
  * @property-read int|null $events_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\DealPosition[] $positions
- * @property-read int|null $positions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Score[] $scores
- * @property-read int|null $scores_count
  * @property string|null $uuid
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereUuid($value)
  * @property string|null $roistat номер визита Roistat
  * @method static \Illuminate\Database\Eloquent\Builder|Deal whereRoistat($value)
+ * @property int $location_id
+ * @property int $product_id
+ * @property int $certificate_id
+ * @property float $amount
+ * @property float $tax
+ * @property float $total_amount
+ * @property int $currency_id
+ * @property int $promo_id
+ * @property int $promocode_id
+ * @property bool $is_certificate_purchase
+ * @property string|null $invite_sent_at
+ * @property string|null $certificate_sent_at
+ * @property-read \App\Models\Currency|null $currency
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereCurrencyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Deal whereTotalAmount($value)
  */
 class Deal extends Model
 {
@@ -96,17 +109,28 @@ class Deal extends Model
 		'status_id' => 'Status',
 		'contractor_id' => 'Contractor',
 		'city_id' => 'City',
+		'location_id' => 'Location',
+		'flight_simulator_id' => 'Simulator',
 		'name' => 'Name',
 		'phone' => 'Phone',
 		'email' => 'E-mail',
+		'product_id' => 'Product',
+		'certificate_id' => 'Certificate',
+		'amount' => 'Amount',
+		'tax' => 'Tax',
+		'total_amount' => 'Total amount',
+		'currency_id' => 'Currency',
+		'promo_id' => 'Promo',
+		'promocode_id' => 'Promocode',
+		'is_certificate_purchase' => 'Is certificate purchase',
 		'source' => 'Source',
 		'user_id' => 'User',
-		'data_json' => 'Extra info',
+		/*'data_json' => 'Extra info',*/
 		'created_at' => 'Created',
 		'updated_at' => 'Updated',
 		'deleted_at' => 'Deleted',
 		'comment' => 'Comment',
-		'uuid' => 'Uuid',
+		/*'uuid' => 'Uuid',*/
 	];
 	
 	const CREATED_STATUS = 'deal_created';
@@ -127,12 +151,10 @@ class Deal extends Model
 	const ADMIN_SOURCE = 'admin';
 	const CALENDAR_SOURCE = 'calendar';
 	const WEB_SOURCE = 'web';
-	const MOB_SOURCE = 'api';
 	const SOURCES = [
 		self::ADMIN_SOURCE => 'Admin',
 		self::CALENDAR_SOURCE => 'Calendar',
-		self::WEB_SOURCE => 'Web',
-		self::MOB_SOURCE => 'Mob',
+		self::WEB_SOURCE => 'Site',
 	];
 	
 	const HOLIDAYS = [
@@ -187,10 +209,21 @@ class Deal extends Model
 		'number',
 		'status_id',
 		'contractor_id',
+		'product_id',
+		'certificate_id',
 		'city_id',
+		'location_id',
+		'flight_simulator_id',
 		'name',
 		'phone',
 		'email',
+		'amount',
+		'tax',
+		'total_amount',
+		'currency_id',
+		'promo_id',
+		'promocode_id',
+		'is_certificate_purchase',
 		'user_id',
 		'source',
 		'uuid',
@@ -207,6 +240,7 @@ class Deal extends Model
 		'updated_at' => 'datetime:Y-m-d H:i:s',
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
 		'data_json' => 'array',
+		'is_certificate_purchase' => 'boolean',
 	];
 	
 	public static function boot() {
@@ -228,15 +262,9 @@ class Deal extends Model
 
 		Deal::saved(function (Deal $deal) {
 			if (!$deal->user_id && $deal->source == Deal::ADMIN_SOURCE) {
-				$deal->user_id = \Auth::user()->id;
+				$deal->user_id = Auth::user()->id;
 				$deal->save();
 			}
-		});
-
-		Deal::deleting(function(Deal $deal) {
-			$deal->positions()->delete();
-			$deal->bills()->delete();
-			$deal->events()->delete();
 		});
 	}
 	
@@ -244,25 +272,50 @@ class Deal extends Model
 	{
 		return $this->hasOne(Contractor::class, 'id', 'contractor_id');
 	}
-
-	public function positions()
+	
+	public function product()
 	{
-		return $this->hasMany(DealPosition::class);
+		return $this->hasOne(Product::class, 'id', 'product_id');
 	}
-
+	
+	public function currency()
+	{
+		return $this->hasOne(Currency::class, 'id', 'currency_id');
+	}
+	
+	public function certificate()
+	{
+		return $this->hasOne(Certificate::class, 'id', 'certificate_id');
+	}
+	
 	public function bills()
 	{
 		return $this->hasMany(Bill::class, 'deal_id', 'id');
 	}
-
+	
+	public function firstBill()
+	{
+		return $this->hasMany(Bill::class, 'deal_id', 'id')
+			->oldest()
+			->first();
+	}
+	
+	public function lastPaidBill()
+	{
+		return $this->hasMany(Bill::class, 'deal_id', 'id')
+			->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
+			->latest()
+			->first();
+	}
+	
 	public function status()
 	{
 		return $this->hasOne(Status::class, 'id', 'status_id');
 	}
 	
-	public function events()
+	public function event()
 	{
-		return $this->hasMany(Event::class, 'deal_id', 'id');
+		return $this->hasOne(Event::class, 'deal_id', 'id');
 	}
 	
 	public function user()
@@ -274,12 +327,27 @@ class Deal extends Model
 	{
 		return $this->hasOne(City::class, 'id', 'city_id');
 	}
-
-	/*public function scores()
+	
+	public function location()
 	{
-		return $this->hasMany(Score::class, 'deal_id', 'id');
-	}*/
-
+		return $this->hasOne(Location::class, 'id', 'location_id');
+	}
+	
+	public function simulator()
+	{
+		return $this->hasOne(FlightSimulator::class, 'id', 'flight_simulator_id');
+	}
+	
+	public function promocode()
+	{
+		return $this->hasOne(Promocode::class, 'id', 'promocode_id');
+	}
+	
+	public function promo()
+	{
+		return $this->hasOne(Promo::class, 'id', 'promo_id');
+	}
+	
 	/**
 	 * @return string
 	 */
@@ -289,48 +357,20 @@ class Deal extends Model
 	}
 	
 	/**
-	 * @return array
-	 */
-	public function format()
-	{
-		return [
-			'id' => $this->id,
-			'number' => $this->number,
-			'status' => $this->status ? $this->status->name : null,
-		];
-	}
-	
-	/**
 	 * @return int
 	 */
 	public function amount()
 	{
-		$amount = 0;
-		foreach ($this->positions ?? [] as $position) {
-			if ($position->certificate && $position->certificate->status && in_array($position->certificate->status->alias, [Certificate::CANCELED_STATUS, Certificate::RETURNED_STATUS])) continue;
-			
-			$amount += $position->total_amount;
-		}
-		
-		return $amount;
+		return $this->amount;
 	}
-	
+
 	/**
-	 * @return float|int
+	 * @return int
 	 */
-	/*public function scoreAmount()
+	public function totalAmount()
 	{
-		$scoreAmount = 0;
-		if ($this->scores) {
-			foreach ($this->scores ?? [] as $score) {
-				if ($score->type != Score::USED_TYPE) continue;
-				
-				$scoreAmount += abs($score->score);
-			}
-		}
-		
-		return $scoreAmount;
-	}*/
+		return $this->total_amount;
+	}
 	
 	/**
 	 * @return int
@@ -342,21 +382,78 @@ class Deal extends Model
 			$status = $bill->status;
 			if (!$status) continue;
 			if ($bill->status->alias != Bill::PAYED_STATUS) continue;
+			
+			$amount += $bill->amount;
+		}
+		
+		return round($amount, 2);
+	}
 
-			//\Log::debug($bill->number . ' - ' . $bill->total_amount);
+	/**
+	 * @return int
+	 */
+	public function billPayedTotalAmount()
+	{
+		$amount = 0;
+		foreach ($this->bills ?? [] as $bill) {
+			$status = $bill->status;
+			if (!$status) continue;
+			if ($bill->status->alias != Bill::PAYED_STATUS) continue;
+
 			$amount += $bill->total_amount;
 		}
 
-		return $amount;
+		return round($amount, 2);
 	}
 	
 	/**
 	 * @return int
 	 */
+	public function billAmount()
+	{
+		$amount = 0;
+		foreach ($this->bills ?? [] as $bill) {
+			$status = $bill->status;
+			if (!$status) continue;
+			if ($bill->status->alias == Bill::CANCELED_STATUS) continue;
+			
+			$amount += $bill->amount;
+		}
+		
+		return round($amount, 2);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function billTotalAmount()
+	{
+		$amount = 0;
+		foreach ($this->bills ?? [] as $bill) {
+			$status = $bill->status;
+			if (!$status) continue;
+			if ($bill->status->alias == Bill::CANCELED_STATUS) continue;
+			
+			$amount += $bill->total_amount;
+		}
+		
+		return round($amount, 2);
+	}
+
+	/**
+	 * @return int
+	 */
 	public function balance()
 	{
-		//\Log::debug($this->billPayedAmount() . ' - ' . $this->amount());
-		return $this->billPayedAmount() - $this->amount();
+		return round($this->billPayedTotalAmount() - $this->totalAmount(), 2);
+	}
+	
+	/**
+	 * @return int
+	 */
+	public function passiveBalance()
+	{
+		return round($this->billTotalAmount() - $this->totalAmount(), 2);
 	}
 	
 	/**

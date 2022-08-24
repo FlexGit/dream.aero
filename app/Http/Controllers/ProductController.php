@@ -240,7 +240,7 @@ class ProductController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Product was successfully created']);
 	}
 	
 	/**
@@ -304,7 +304,7 @@ class ProductController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Product was successfully saved']);
 	}
 	
 	/**
@@ -330,7 +330,7 @@ class ProductController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Product was successfully deleted']);
 	}
 
 	/**
@@ -359,7 +359,7 @@ class ProductController extends Controller
 		if (!$product->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Product icon was successfully deleted']);
 	}
 }

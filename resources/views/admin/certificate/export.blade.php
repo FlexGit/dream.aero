@@ -27,19 +27,19 @@
 				</td>
 				<td class="align-middle text-center">
 					{{ $certificateItem['certificate_product_name'] }}
-					@if($certificateItem['certificate_product_name'] != $certificateItem['position_product_name'])
+					@if($certificateItem['certificate_product_name'] != $certificateItem['deal_product_name'])
 						<br>
-						Product was changed to {{ $certificateItem['position_product_name'] }}
+						Product was changed to {{ $certificateItem['deal_product_name'] }}
 					@endif
 				</td>
 				<td class="align-middle text-right">
-					{{ number_format($certificateItem['position_amount'], 2, '.', ' ') }}
+					{{ number_format($certificateItem['deal_amount'], 2, '.', ' ') }}
 				</td>
 				<td class="align-middle text-right">
-					{{ number_format($certificateItem['position_tax'], 2, '.', ' ') }}
+					{{ number_format($certificateItem['deal_tax'], 2, '.', ' ') }}
 				</td>
 				<td class="align-middle text-right">
-					{{ number_format($certificateItem['position_total_amount'], 2, '.', ' ') }}
+					{{ number_format($certificateItem['deal_total_amount'], 2, '.', ' ') }}
 				</td>
 				<td class="align-middle text-center">
 					{{ $certificateItem['certificate_status_name'] }}

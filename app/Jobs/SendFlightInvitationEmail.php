@@ -38,9 +38,6 @@ class SendFlightInvitationEmail extends Job implements ShouldQueue {
 		$simulator = $this->event->simulator;
 		if (!$simulator) return null;
 		
-		$position = $this->event->dealPosition;
-		if (!$position) return null;
-		
 		$dealEmail = $deal->email ?? '';
 		$dealName = $deal->name ?? '';
 		$contractorEmail = $contractor->email ?? '';
@@ -66,7 +63,7 @@ class SendFlightInvitationEmail extends Job implements ShouldQueue {
 			$bcc[] = $city->email;
 		}
 		
-		$subject = env('APP_NAME') . ': Flight invitation';
+		$subject = env('APP_NAME') . ': Flight Invitation';
 
 		Mail::send(['html' => "admin.emails.send_flight_invitation"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
 			/** @var \Illuminate\Mail\Message $message */

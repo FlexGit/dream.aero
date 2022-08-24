@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\HelpFunctions;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property string $event_type тип события
  * @property int $contractor_id Контрагент
  * @property int $deal_id сделка
- * @property int $deal_position_id позиция сделки
  * @property int $city_id город, в котором будет осуществлен полет
  * @property int $location_id локация, на которой будет осуществлен полет
  * @property int $flight_simulator_id авиатренажер, на котором будет осуществлен полет
@@ -43,7 +43,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property-read int|null $comments_count
  * @property-read \App\Models\Contractor|null $contractor
  * @property-read \App\Models\Deal|null $deal
- * @property-read \App\Models\DealPosition|null $dealPosition
  * @property-read \App\Models\Location|null $location
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read int|null $revision_history_count
@@ -59,7 +58,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereDataJson($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereDealId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Event whereDealPositionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereEventType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereExtraTime($value)
@@ -113,7 +111,6 @@ class Event extends Model
 		'event_type' => 'Event type',
 		'contractor_id' => 'Contractor',
 		'deal_id' => 'Deal',
-		'deal_position_id' => 'Deal position',
 		'city_id' => 'City',
 		'location_id' => 'Location',
 		'flight_simulator_id' => 'Simulator',
@@ -177,7 +174,6 @@ class Event extends Model
 		'event_type',
 		'contractor_id',
 		'deal_id',
-		'deal_position_id',
 		'user_id',
 		'extra_time',
 		'city_id',
@@ -227,7 +223,7 @@ class Event extends Model
 		Event::created(function (Event $event) {
 			$event->uuid = $event->generateUuid();
 			if (!in_array($event->event_type, [Event::EVENT_TYPE_SHIFT_PILOT, Event::EVENT_TYPE_SHIFT_ADMIN])) {
-				$user = \Auth::user();
+				$user = Auth::user();
 				$event->user_id = $user ? $user->id : 0;
 			}
 			$event->save();
@@ -257,10 +253,10 @@ class Event extends Model
 		
 		Event::saved(function (Event $event) {
 			if (($event->getOriginal('start_at') && $event->start_at != $event->getOriginal('start_at')) || ($event->getOriginal('stop_at') && $event->stop_at != $event->getOriginal('stop_at'))) {
-				$user = \Auth::user();
+				$user = Auth::user();
 				
 				$eventComment = new EventComment();
-				$eventComment->name = 'Moved from ' . Carbon::parse($event->getOriginal('start_at'))->format('d.m.Y H:i') . ' - ' . Carbon::parse($event->getOriginal('stop_at'))->format('d.m.Y H:i') . ' to ' . Carbon::parse($event->start_at)->format('d.m.Y H:i') . ' - ' . Carbon::parse($event->stop_at)->format('d.m.Y H:i');
+				$eventComment->name = 'Moved from ' . Carbon::parse($event->getOriginal('start_at'))->format('d.m.Y g:i A') . ' - ' . Carbon::parse($event->getOriginal('stop_at'))->format('d.m.Y g:i A') . ' to ' . Carbon::parse($event->start_at)->format('d.m.Y g:i A') . ' - ' . Carbon::parse($event->stop_at)->format('d.m.Y g:i A');
 				$eventComment->event_id = $event->id;
 				$eventComment->created_by = $user ? $user->id : 0;
 				$eventComment->save();
@@ -295,11 +291,6 @@ class Event extends Model
 	public function deal()
 	{
 		return $this->belongsTo(Deal::class, 'deal_id', 'id');
-	}
-
-	public function dealPosition()
-	{
-		return $this->belongsTo(DealPosition::class, 'deal_position_id', 'id');
 	}
 
 	public function user()
@@ -345,7 +336,7 @@ class Event extends Model
 		$simulatorAlias = $this->simulator->alias ?? '';
 		if (!$simulatorAlias) return null;
 
-		$product = $this->dealPosition->product;
+		$product = $this->deal->product;
 		if (!$product) return null;
 		
 		$productType = $product->productType;
@@ -368,7 +359,7 @@ class Event extends Model
 		$flightInvitationFile = Image::make($flightInvitationTemplateFilePath)->encode('jpg');
 		$fontPath = public_path('assets/fonts/GothamProRegular/GothamProRegular.ttf');
 		
-		$flightInvitationFile->text($this->start_at->format('d.m.Y H:i'), 840, 100, function ($font) use ($fontPath) {
+		$flightInvitationFile->text($this->start_at->format('d.m.Y g:i A'), 840, 100, function ($font) use ($fontPath) {
 			$font->file($fontPath);
 			$font->size(24);
 			$font->color('#000000');
@@ -459,6 +450,6 @@ class Event extends Model
 	 */
 	public function getInterval()
 	{
-		return Carbon::parse($this->start_at)->format('Y-m-d H:i') . ' - ' .Carbon::parse($this->stop_at)->format('H:i');
+		return Carbon::parse($this->start_at)->format('Y-m-d g:i A') . ' - ' .Carbon::parse($this->stop_at)->format('g:i A');
 	}
 }

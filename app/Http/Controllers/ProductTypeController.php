@@ -154,7 +154,7 @@ class ProductTypeController extends Controller
 			->setAttributeNames([
 				'name' => 'Name',
 				'alias' => 'Alias',
-				'tax' => 'Tax',
+				'tax' => 'Tax Rate',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -172,7 +172,7 @@ class ProductTypeController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Product Type was successfully created']);
 	}
 	
 	/**
@@ -202,7 +202,7 @@ class ProductTypeController extends Controller
 			->setAttributeNames([
 				'name' => 'Name',
 				'alias' => 'Alias',
-				'tax' => 'Tax',
+				'tax' => 'Tax Rate',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -220,7 +220,7 @@ class ProductTypeController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Product Type was successfully saved']);
 	}
 	
 	/**
@@ -244,6 +244,6 @@ class ProductTypeController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Product Type was successfully deleted']);
 	}
 }

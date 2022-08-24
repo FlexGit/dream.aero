@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\City;
 use App\Models\Contractor;
-use App\Models\Score;
 use App\Services\HelpFunctions;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
@@ -47,13 +46,6 @@ class ContractorImport implements OnEachRow, WithProgressBar
 			$contractor->city_id = $cityId;
 			$contractor->is_subscribed = !(bool)($row[5] ?? 0);
 			$contractor->save();
-
-			if ((int)$row[2] > 0) {
-				$score = new Score();
-				$score->contractor_id = $contractor->id;
-				$score->duration = (int)trim($row[2]);
-				$score->save();
-			}
 
 			\DB::commit();
 		} catch (Throwable $e) {

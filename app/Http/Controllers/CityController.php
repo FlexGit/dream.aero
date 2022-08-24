@@ -59,11 +59,11 @@ class CityController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$city = City::find($id);
-		if (!$city) return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+		if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 
 		$VIEW = view('admin.city.modal.edit', [
 			'city' => $city,
@@ -83,7 +83,7 @@ class CityController extends Controller
 		}
 
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$VIEW = view('admin.city.modal.add', [
@@ -103,7 +103,7 @@ class CityController extends Controller
 		}
 		
 		$city = City::find($id);
-		if (!$city) return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+		if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		
 		$VIEW = view('admin.city.modal.show', [
 			'city' => $city,
@@ -123,11 +123,11 @@ class CityController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$city = City::find($id);
-		if (!$city) return response()->json(['status' => 'error', 'reason' => 'Город не найден']);
+		if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		
 		$VIEW = view('admin.city.modal.delete', [
 			'city' => $city,
@@ -146,7 +146,7 @@ class CityController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
@@ -174,10 +174,10 @@ class CityController extends Controller
 		$city->phone = $this->request->phone;
 		$city->is_active = $this->request->is_active;
 		if (!$city->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'City was successfully created']);
 	}
 	
 	/**
@@ -191,11 +191,11 @@ class CityController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$city = City::find($id);
-		if (!$city) return response()->json(['status' => 'error', 'reason' => 'Нет данных']);
+		if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 
 		$rules = [
 			'name' => 'required|max:255|unique:cities,name,' . $id,
@@ -206,10 +206,10 @@ class CityController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Наименование',
-				'alias' => 'Алиас',
+				'name' => 'Name',
+				'alias' => 'Alias',
 				'email' => 'E-mail',
-				'phone' => 'Телефон',
+				'phone' => 'Phone number',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -221,10 +221,10 @@ class CityController extends Controller
 		$city->phone = $this->request->phone;
 		$city->is_active = $this->request->is_active;
 		if (!$city->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'City was successfully updated']);
 	}
 	
 	/**
@@ -238,14 +238,14 @@ class CityController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$city = City::find($id);
-		if (!$city) return response()->json(['status' => 'error', 'reason' => 'Нет данных']);
+		if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		
 		if (!$city->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
 		return response()->json(['status' => 'success']);
@@ -261,16 +261,14 @@ class CityController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$userData = [];
 
 		if ($this->request->cityId) {
 			$city = City::find($this->request->cityId);
-			if (!$city) {
-				return response()->json(['status' => 'error', 'reason' => 'Нет данных']);
-			}
+			if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 			
 			foreach ($city->location ?? [] as $location) {
 				$users = $location->user;

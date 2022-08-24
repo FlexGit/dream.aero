@@ -93,7 +93,7 @@ class ContractorController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		$contractor = Contractor::find($id);
 		if (!$contractor) return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
@@ -119,7 +119,7 @@ class ContractorController extends Controller
 			abort(404);
 		}
 
-		$user = \Auth::user();
+		$user = Auth::user();
 
 		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -148,7 +148,7 @@ class ContractorController extends Controller
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		$cities = City::orderBy('name');
 		$cities = $cities->get();
@@ -175,16 +175,12 @@ class ContractorController extends Controller
 		$rules = [
 			'name' => 'required',
 			'email' => 'required|email|unique_email',
-			/*'phone' => 'sometimes|required|valid_phone',*/
-			/*'city_id' => 'required|numeric|min:0|not_in:0|valid_city',*/
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'name' => 'Name',
 				'email' => 'E-mail',
-				/*'phone' => 'Телефон',*/
-				/*'city_id' => 'Город',*/
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -192,8 +188,6 @@ class ContractorController extends Controller
 
 		$birthdate = $this->request->birthdate ?? '';
 
-		/*$data = [];*/
-		
 		$contractor = new Contractor();
 		$contractor->name = $this->request->name;
 		$contractor->lastname = $this->request->lastname;
@@ -203,14 +197,12 @@ class ContractorController extends Controller
 		$contractor->birthdate = $birthdate ? Carbon::parse($birthdate)->format('Y-m-d') : null;
 		$contractor->source = Contractor::ADMIN_SOURCE;
 		$contractor->is_active = (bool)$this->request->is_active;
-		/*$contractor->is_subscribed = (bool)$this->request->is_subscribed;*/
 		$contractor->user_id = $user->id;
-		/*$contractor->data_json = $data;*/
 		if (!$contractor->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Contractor was successfully created']);
 	}
 	
 	/**
@@ -233,16 +225,12 @@ class ContractorController extends Controller
 		$rules = [
 			'name' => 'required',
 			'email' => 'required|email|unique_email',
-			/*'phone' => 'sometimes|required|valid_phone',*/
-			/*'city_id' => 'required|numeric|min:0|not_in:0|valid_city',*/
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'name' => 'Name',
 				'email' => 'E-mail',
-				/*'phone' => 'Телефон',*/
-				/*'city_id' => 'Город',*/
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -250,22 +238,17 @@ class ContractorController extends Controller
 
 		$birthdate = $this->request->birthdate ?? '';
 
-		/*$data = [];*/
-		
 		$contractor->name = $this->request->name;
 		$contractor->lastname = $this->request->lastname ?? null;
 		$contractor->email = $this->request->email;
 		$contractor->phone = $this->request->phone ?? null;
-		/*$contractor->city_id = $this->request->city_id;*/
 		$contractor->birthdate = $birthdate ? Carbon::parse($birthdate)->format('Y-m-d') : null;
 		$contractor->is_active = (bool)$this->request->is_active;
-		/*$contractor->is_subscribed = (bool)$this->request->is_subscribed;*/
-		/*$contractor->data_json = $data;*/
 		if (!$contractor->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Contractor was successfully saved']);
 	}
 	
 	public function search() {
@@ -305,118 +288,4 @@ class ContractorController extends Controller
 		
 		return response()->json(['suggestions' => $suggestions]);
 	}
-
-	/**
-	 * @param $contractorId
-	 *
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	/*public function addScore($contractorId)
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-
-		$productTypes = ProductType::where('is_active', true)
-			->whereIn('alias', [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS, ProductType::COURSES_ALIAS])
-			->orderBy('name')
-			->get();
-		
-		$scores = Score::where('contractor_id', $contractorId)
-			->latest()
-			->get();
-
-		$VIEW = view('admin.contractor.modal.add_score', [
-			'productTypes' => $productTypes,
-			'scores' => $scores,
-			'contractorId' => $contractorId,
-			'user' => $this->request->user(),
-		]);
-
-		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
-	}*/
-
-	/**
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	/*public function storeScore()
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-
-		$rules = [
-			'product_id' => 'required|numeric|min:0|not_in:0',
-			'contractor_id' => 'required|numeric|min:0|not_in:0',
-		];
-
-		$validator = Validator::make($this->request->all(), $rules)
-			->setAttributeNames([
-				'product_id' => 'Продукт',
-				'contractor_id' => 'Контрагент',
-			]);
-		if (!$validator->passes()) {
-			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
-		}
-
-		$product = Product::find($this->request->product_id);
-		if (!$product) {
-			return response()->json(['status' => 'error', 'reason' => 'Продукт не найден']);
-		}
-
-		if (!$product->duration) {
-			return response()->json(['status' => 'error', 'reason' => 'Длительность полета в продукте не указана']);
-		}
-
-		$contractor = Contractor::find($this->request->contractor_id);
-		if (!$contractor) {
-			return response()->json(['status' => 'error', 'reason' => 'Контрагент не найден']);
-		}
-
-		if (!$contractor->city) {
-			return response()->json(['status' => 'error', 'reason' => 'Город контрагента не указан']);
-		}
-
-		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($contractor->city->id);
-		if (!$cityProduct || !$cityProduct->pivot) {
-			return response()->json(['status' => 'error', 'reason' => 'Цены продукта ' . $product->name . ' для города ' . $contractor->city->name . ' не назначены']);
-		}
-
-		if (!$cityProduct->pivot->score) {
-			return response()->json(['status' => 'error', 'reason' => 'Баллы для продукта ' . $product->name . ' и города ' . $contractor->city->name . ' не указаны']);
-		}
-		
-		$scoreValue = $flightTime = 0;
-		if ($this->request->operation_type == 'minus') {
-			if ($this->request->is_minus_score) {
-				$scoreValue = -1 * $cityProduct->pivot->score;
-			}
-			if ($this->request->is_minus_flight_time) {
-				$flightTime = -1 * $product->duration;
-			}
-		} else {
-			if ($this->request->is_minus_score) {
-				$scoreValue = $cityProduct->pivot->score;
-			}
-			if ($this->request->is_minus_flight_time) {
-				$flightTime = $product->duration;
-			}
-		}
-		
-		if (!$scoreValue && !$flightTime) {
-			return response()->json(['status' => 'error', 'reason' => 'Необходимо выбрать баллы или время налета']);
-		}
-
-		$score = new Score();
-		$score->contractor_id = $contractor->id;
-		$score->score = $scoreValue ?? 0;
-		$score->duration = $flightTime ?? 0;
-		$score->user_id = $this->request->user()->id;
-		$score->type = Score::SCORING_TYPE;
-		if (!$score->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
-		}
-
-		return response()->json(['status' => 'success']);
-	}*/
 }

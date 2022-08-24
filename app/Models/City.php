@@ -109,7 +109,7 @@ class City extends Model
 	{
 		return $this->belongsToMany(Product::class, 'cities_products', 'city_id', 'product_id')
 			->using(CityProduct::class)
-			->withPivot(['price', 'currency_id', 'discount_id', 'is_hit', 'score', 'is_active', 'data_json'])
+			->withPivot(['availability', 'purchase_price', 'price', 'currency_id', 'discount_id', 'is_hit', 'is_active', 'data_json'])
 			->withTimestamps();
 	}
 	
@@ -125,17 +125,6 @@ class City extends Model
 		return $this->hasOne(Currency::class, 'id', 'currency_id');
 	}
 	
-	/**
-	 * @return array
-	 */
-	public function format()
-	{
-		return [
-			'id' => $this->id,
-			'name' => $this->name,
-		];
-	}
-
 	public function phoneFormatted()
 	{
 		$phoneCleared = preg_replace( '/[^0-9]/', '', $this->phone);
@@ -152,7 +141,6 @@ class City extends Model
 	{
 		$locations = $this->locations()
 			->where('is_active', true)
-			/*->whereNotNull('pay_account_number')*/
 			->orderby('id')
 			->get();
 		if ($locations->isEmpty()) return null;
@@ -165,7 +153,6 @@ class City extends Model
 			$lastTwoBillsLocationIds = Bill::whereIn('location_id', $locationids)
 				->where('payment_method_id', $onlinePaymentMethod->id)
 				->where('user_id', 0)
-				/*->whereRelation('contractor', 'contractors.email', '!=', env('DEV_EMAIL'))*/
 				->latest()->take(2)->pluck('location_id')->all();
 			
 			// если это город Москва

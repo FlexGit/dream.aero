@@ -9,6 +9,7 @@ use App\Http\Controllers\PositionController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TipController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
@@ -144,22 +145,6 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('deal/product/add', [DealController::class, 'addProduct']);
 		Route::get('deal/{id}/edit', [DealController::class, 'edit']);
 		
-		// Позиции сделки
-		Route::post('deal_position/certificate', [PositionController::class, 'storeCertificate']);
-		Route::put('deal_position/certificate/{id}', [PositionController::class, 'updateCertificate']);
-		Route::post('deal_position/booking', [PositionController::class, 'storeBooking']);
-		Route::put('deal_position/booking/{id}', [PositionController::class, 'updateBooking']);
-		Route::post('deal_position/product', [PositionController::class, 'storeProduct']);
-		Route::put('deal_position/product/{id}', [PositionController::class, 'updateProduct']);
-		Route::delete('deal_position/{id}', [PositionController::class, 'delete']);
-
-		Route::get('deal_position/certificate/add/{deal_id}', [PositionController::class, 'addCertificate']);
-		Route::get('deal_position/certificate/{id}/edit', [PositionController::class, 'editCertificate']);
-		Route::get('deal_position/booking/add/{deal_id}', [PositionController::class, 'addBooking']);
-		Route::get('deal_position/booking/{id}/edit', [PositionController::class, 'editBooking']);
-		Route::get('deal_position/product/add/{deal_id}', [PositionController::class, 'addProduct']);
-		Route::get('deal_position/product/{id}/edit', [PositionController::class, 'editProduct']);
-
 		// Сертификаты
 		Route::post('certificate', [CertificateController::class, 'store']);
 		Route::put('certificate/{id}', [CertificateController::class, 'update']);
@@ -186,6 +171,20 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('bill/{id}/edit', [BillController::class, 'edit']);
 
 		Route::post('bill/paylink/send', [BillController::class, 'sendPayLink'])->name('sendPayLink');
+		
+		Route::get('receipt/{uuid}/file/{print?}', [BillController::class, 'getReceiptFile'])->name('getReceipt');
+		Route::post('receipt/send', [BillController::class, 'sendReceipt'])->name('sendReceipt');
+
+		// Чаевые
+		Route::get('tip/add', [TipController::class, 'add']);
+		Route::get('tip/{id}/edit', [TipController::class, 'edit']);
+		Route::get('tip/{id}/delete', [TipController::class, 'confirm']);
+
+		Route::get('tip/{id?}', [TipController::class, 'index'])->name('tipIndex');
+		Route::get('tip/list/ajax', [TipController::class, 'getListAjax'])->name('tipList');
+		Route::post('tip', [TipController::class, 'store']);
+		Route::put('tip/{id}', [TipController::class, 'update']);
+		Route::delete('tip/{id}', [TipController::class, 'delete']);
 		
 		// Скидки
 		Route::get('discount', [DiscountController::class, 'index'])->name('discountIndex');

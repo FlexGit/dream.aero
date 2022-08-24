@@ -26,9 +26,7 @@
 						<tr>
 							<th class="text-center">Name</th>
 							<th class="text-center">Alias</th>
-{{--							<th class="text-center">Is tariff</th>--}}
-							<th class="text-center">Vat</th>
-							{{--<th class="text-center">Is active</th>--}}
+							<th class="text-center">Tax Rate</th>
 							<th class="text-center">Action</th>
 						</tr>
 						</thead>
@@ -154,18 +152,9 @@
 							return;
 						}
 
-						var msg = 'Product type successful ';
-						if (method === 'POST') {
-							msg += 'added';
-						} else if (method === 'PUT') {
-							msg += 'saved';
-						} else if (method === 'DELETE') {
-							msg += 'deleted';
-						}
-
 						$('#modal').modal('hide');
 						getList();
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});

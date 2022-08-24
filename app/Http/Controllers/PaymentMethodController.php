@@ -164,7 +164,7 @@ class PaymentMethodController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Payment method was successfully created']);
 	}
 	
 	/**
@@ -205,7 +205,7 @@ class PaymentMethodController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Payment method was successfully saved']);
 	}
 	
 	/**
@@ -229,6 +229,6 @@ class PaymentMethodController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Payment method was successfully deleted']);
 	}
 }

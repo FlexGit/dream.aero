@@ -8,11 +8,11 @@
 
 @if($source)
 	<div class="row">
-		<div class="col-3">
+		<div class="col-3 text-nowrap">
 			<div class="form-group">
 				<div class="custom-control">
 					<input type="radio" class="custom-control-input" id="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_DEAL }}" name="event_type" value="{{ app('\App\Models\Event')::EVENT_TYPE_DEAL }}" checked>
-					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_DEAL }}">Сlient flight</label>
+					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_DEAL }}">Сlient Flight</label>
 				</div>
 			</div>
 		</div>
@@ -28,23 +28,23 @@
 			<div class="form-group">
 				<div class="custom-control">
 					<input type="radio" class="custom-control-input" id="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_CLEANING }}" name="event_type" value="{{ app('\App\Models\Event')::EVENT_TYPE_CLEANING }}">
-					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_CLEANING }}">Cabin cleaning</label>
+					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_CLEANING }}">Cleaning</label>
 				</div>
 			</div>
 		</div>
-		<div class="col-2">
+		<div class="col-2 text-nowrap">
 			<div class="form-group">
 				<div class="custom-control">
 					<input type="radio" class="custom-control-input" id="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_TEST_FLIGHT }}" name="event_type" value="{{ app('\App\Models\Event')::EVENT_TYPE_TEST_FLIGHT }}">
-					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_TEST_FLIGHT }}">Test flight</label>
+					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_TEST_FLIGHT }}">Test Flight</label>
 				</div>
 			</div>
 		</div>
-		<div class="col-2">
+		<div class="col-2 text-nowrap">
 			<div class="form-group">
 				<div class="custom-control">
 					<input type="radio" class="custom-control-input" id="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_USER_FLIGHT }}" name="event_type" value="{{ app('\App\Models\Event')::EVENT_TYPE_USER_FLIGHT }}">
-					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_USER_FLIGHT }}">Employee flight</label>
+					<label class="custom-control-label" for="event_type_{{ app('\App\Models\Event')::EVENT_TYPE_USER_FLIGHT }}">Employee Flight</label>
 				</div>
 			</div>
 		</div>
@@ -57,7 +57,7 @@
 	<div class="col-6">
 		<div class="form-group">
 			<label for="contractor_search">Client search</label>
-			<input type="email" class="form-control" id="contractor_search" name="email" placeholder="Search by name, lastname, e-mail, phone number">
+			<input type="email" class="form-control" id="contractor_search" name="email" placeholder="">
 			<div class="js-contractor-container hidden">
 				<span class="js-contractor"></span> <i class="fas fa-times js-contractor-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 			</div>
@@ -87,48 +87,29 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="email">E-mail</label>
-			<input type="email" class="form-control" id="email" name="email" placeholder="E-mail">
+			<input type="email" class="form-control" id="email" name="email" placeholder="">
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
 			<label for="phone">Phone</label>
-			<input type="text" class="form-control" id="phone" name="phone" placeholder="+12345678901">
+			<input type="text" class="form-control" id="phone" name="phone" placeholder="">
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
 			<label for="name">Name</label>
-			<input type="text" class="form-control" id="name" name="name" placeholder="Name">
+			<input type="text" class="form-control" id="name" name="name" placeholder="">
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
 			<label for="lastname">Lastname</label>
-			<input type="text" class="form-control" id="lastname" name="lastname" placeholder="Lastname">
+			<input type="text" class="form-control" id="lastname" name="lastname" placeholder="">
 		</div>
 	</div>
 </div>
 <div class="row">
-	{{--@if($user->isSuperAdmin())--}}
-	{{--<div class="col">
-		<div class="form-group">
-			<label for="location_id">Location</label>
-			<select class="form-control" id="location_id" name="location_id">
-				--}}{{--<option value="0">---</option>--}}{{--
-				@foreach($cities ?? [] as $city)
-					<optgroup label="{{ $city->name }}">
-						@foreach($city->locations ?? [] as $location)
-							@foreach($location->simulators ?? [] as $simulator)
-								<option value="{{ $location->id }}" data-simulator_id="{{ $simulator->id }}" @if($locationId && $locationId == $location->id) selected @endif>{{ $location->name }} ({{ $simulator->name }})</option>
-							@endforeach
-						@endforeach
-					</optgroup>
-				@endforeach
-			</select>
-		</div>
-	</div>--}}
-	{{--@endif--}}
 	<div class="col">
 		<div class="form-group">
 			<label for="product_id">Product</label>
@@ -146,18 +127,6 @@
 	</div>
 	<div class="col">
 		<div class="form-group">
-			<label for="extra_product_id">Good / Service</label>
-			<select class="form-control js-extra-product" id="extra_product_id" name="extra_product_id[]" multiple="multiple">
-				@foreach($extraProducts ?? [] as $productTypeName => $productId)
-					@foreach($productId as $product)
-						<option value="{{ $product->id }}" data-product_type_id="{{ $product->product_type_id }}" data-currency="{{ $product->currency ? $product->currency->alias : '' }}">{{ $product->name }}</option>
-					@endforeach
-				@endforeach
-			</select>
-		</div>
-	</div>
-	<div class="col">
-		<div class="form-group">
 			<label for="promo_id">Promo</label>
 			<select class="form-control" id="promo_id" name="promo_id">
 				<option value="0">---</option>
@@ -168,22 +137,24 @@
 		</div>
 	</div>
 	<div class="col">
-		<div class="form-group">
-			<label for="promocode_id">Promocode</label>
-			<select class="form-control" id="promocode_id" name="promocode_id">
-				<option value="0">---</option>
-				@foreach($promocodes ?? [] as $promocode)
-					<option value="{{ $promocode->id }}">{{ $promocode->valueFormatted() }}</option>
-				@endforeach
-			</select>
-		</div>
+		@if($promocodes->count())
+			<div class="form-group">
+				<label for="promocode_id">Promocode</label>
+				<select class="form-control" id="promocode_id" name="promocode_id">
+					<option value="0">---</option>
+					@foreach($promocodes ?? [] as $promocode)
+						<option value="{{ $promocode->id }}">{{ $promocode->valueFormatted() }}</option>
+					@endforeach
+				</select>
+			</div>
+		@endif
 	</div>
 </div>
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="certificate_number">Search by Voucher #</label>
-			<input type="text" class="form-control" id="certificate_number" name="certificate_number" placeholder="Voucher #">
+			<label for="certificate_number">Flight with Voucher</label>
+			<input type="text" class="form-control" id="certificate_number" name="certificate_number" placeholder="">
 			<div class="js-certificate-container hidden">
 				<span class="js-certificate"></span> <i class="fas fa-times js-certificate-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 				<div class="custom-control custom-switch custom-control js-is-indefinitely hidden">
@@ -197,10 +168,10 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="flight_date_at">Flight start</label>
+			<label for="start_date_at">Flight start</label>
 			<div class="d-flex">
-				<input type="date" class="form-control" id="flight_date_at" name="flight_date_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('Y-m-d') : '' }}">
-				<input type="time" class="form-control ml-2" id="flight_time_at" name="flight_time_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('H:i') : '' }}">
+				<input type="date" class="form-control" id="start_date_at" name="start_date_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('Y-m-d') : '' }}">
+				<input type="time" class="form-control ml-2" id="start_time_at" name="start_time_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('H:i') : '' }}">
 			</div>
 			<div>
 				<input type="hidden" id="is_valid_flight_date" name="is_valid_flight_date">
@@ -210,10 +181,10 @@
 	</div>
 	<div class="col js-duration hidden">
 		<div class="form-group">
-			<label for="flight_date_stop_at">Flight end</label>
+			<label for="stop_date_at">Flight stop</label>
 			<div class="d-flex">
-				<input type="date" class="form-control" id="flight_date_stop_at" name="flight_date_stop_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('Y-m-d') : '' }}">
-				<input type="time" class="form-control ml-2" id="flight_time_stop_at" name="flight_time_stop_at">
+				<input type="date" class="form-control" id="stop_date_at" name="stop_date_at" value="{{ $flightAt ? \Carbon\Carbon::parse($flightAt)->format('Y-m-d') : '' }}">
+				<input type="time" class="form-control ml-2" id="stop_time_at" name="stop_time_at">
 			</div>
 		</div>
 	</div>

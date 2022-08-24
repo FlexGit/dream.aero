@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Certificate;
 use App\Models\City;
 use App\Models\Content;
 use App\Models\Deal;
-use App\Models\DealPosition;
 use App\Models\PaymentMethod;
-use App\Models\Product;
 use App\Models\Status;
 use App\Services\AuthorizeNetService;
 use App\Services\HelpFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Bill;
-use Log;
 use LVR\CreditCard\CardCvc;
 use LVR\CreditCard\CardExpirationDate;
 use LVR\CreditCard\CardNumber;
@@ -140,23 +136,22 @@ class PaymentController extends Controller
 			return response()->json(['status' => 'error', 'reason' => 'Invoice has already been paid']);
 		}
 		
-		$position = $bill->position;
-		$description = '';
-		if ($position) {
-			$product = $position->product;
-			if ($product) {
-				$description = $product->name;
-			}
-		}
-		
 		$deal = $bill->deal;
 		if (!$deal) {
 			return response()->json(['status' => 'error', 'reason' => 'Deal not found']);
 		}
 
+		$description = '';
+		if ($deal) {
+			$product = $deal->product;
+			if ($product) {
+				$description = $product->name;
+			}
+		}
+		
 		$paymentResponse = AuthorizeNetService::payment($bill, $cardNumber, $expirationDate, $cardCode, $deal->email, $description);
 		
-		Log::channel('authorize')->info($paymentResponse);
+		\Log::channel('authorize')->info($paymentResponse);
 		
 		if ($paymentResponse['status'] == 'error') {
 			return response()->json(['status' => 'error', 'reason' => isset($paymentResponse['original']) ? $paymentResponse['original']['error_code'] . ': ' . $paymentResponse['original']['error_message'] : trans('main.error.повторите-позже') ]);

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Validator;
 use App\Models\FlightSimulator;
 
@@ -54,11 +53,11 @@ class FlightSimulatorController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$flightSimulator = FlightSimulator::find($id);
-		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Simulator not found']);
 		
 		$VIEW = view('admin.flightSimulator.modal.edit', [
 			'flightSimulator' => $flightSimulator,
@@ -77,7 +76,7 @@ class FlightSimulatorController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
 		$VIEW = view('admin.flightSimulator.modal.add', [
@@ -97,7 +96,7 @@ class FlightSimulatorController extends Controller
 		}
 		
 		$flightSimulator = FlightSimulator::find($id);
-		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Simulator not found']);
 		
 		$VIEW = view('admin.flightSimulator.modal.show', [
 			'flightSimulator' => $flightSimulator,
@@ -117,11 +116,11 @@ class FlightSimulatorController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$flightSimulator = FlightSimulator::find($id);
-		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Simulator not found']);
 		
 		$VIEW = view('admin.flightSimulator.modal.delete', [
 			'flightSimulator' => $flightSimulator,
@@ -140,7 +139,7 @@ class FlightSimulatorController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
@@ -150,8 +149,8 @@ class FlightSimulatorController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Наименование',
-				'alias' => 'Алиас',
+				'name' => 'Name',
+				'alias' => 'Alias',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -162,10 +161,10 @@ class FlightSimulatorController extends Controller
 		$flightSimulator->alias = $this->request->alias;
 		$flightSimulator->is_active = $this->request->is_active;
 		if (!$flightSimulator->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Simulator was successfully created']);
 	}
 	
 	/**
@@ -179,11 +178,11 @@ class FlightSimulatorController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$flightSimulator = FlightSimulator::find($id);
-		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Simulator not found']);
 		
 		$rules = [
 			'name' => ['required', 'max:255', 'unique:flight_simulators,name,' . $id],
@@ -192,8 +191,8 @@ class FlightSimulatorController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Наименование',
-				'alias' => 'Алиас',
+				'name' => 'Name',
+				'alias' => 'Alias',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -203,10 +202,10 @@ class FlightSimulatorController extends Controller
 		$flightSimulator->alias = $this->request->alias;
 		$flightSimulator->is_active = $this->request->is_active;
 		if (!$flightSimulator->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Simulator was successfully saved']);
 	}
 	
 	/**
@@ -220,16 +219,16 @@ class FlightSimulatorController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$flightSimulator = FlightSimulator::find($id);
-		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Авиатренажер не найден']);
+		if (!$flightSimulator) return response()->json(['status' => 'error', 'reason' => 'Simulator not found']);
 		
 		if (!$flightSimulator->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Simulator was successfully deleted']);
 	}
 }

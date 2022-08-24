@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Services\HelpFunctions;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 use \Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -61,13 +62,9 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property-read \App\Models\Deal|null $deal
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereCurrencyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereDealId($value)
- * @property int $deal_position_id
  * @property int $location_id локация, по которой был выставлен счет
  * @property-read \App\Models\Location|null $location
- * @property-read \App\Models\DealPosition|null $position
- * @method static \Illuminate\Database\Eloquent\Builder|Bill whereDealPositionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereLocationId($value)
- * @property \Illuminate\Support\Carbon|null $success_payment_sent_at дата и время отправки уведомления об успешной оплате
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereAeroflotBonusAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereAeroflotCardNumber($value)
@@ -85,6 +82,8 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereCityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereTax($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereTotalAmount($value)
+ * @property \Illuminate\Support\Carbon|null $receipt_sent_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Bill whereReceiptSentAt($value)
  */
 class Bill extends Model
 {
@@ -94,7 +93,6 @@ class Bill extends Model
 		'number' => 'Bill number',
 		'contractor_id' => 'Contractor',
 		'deal_id' => 'Deal',
-		'deal_position_id' => 'Deal position',
 		'payment_method_id' => 'Payment method',
 		'status_id' => 'Bill status',
 		'amount' => 'Amount',
@@ -108,7 +106,7 @@ class Bill extends Model
 		'user_id' => 'User',
 		'payed_at' => 'Paid',
 		'link_sent_at' => 'Paylink sent at',
-		'success_payment_sent_at' => 'Successful payment notification sent at',
+		'receipt_sent_at' => 'Receipt sent at',
 		'created_at' => 'Created',
 		'updated_at' => 'Updated',
 		'deleted_at' => 'Deleted',
@@ -143,7 +141,6 @@ class Bill extends Model
 		'number',
 		'contractor_id',
 		'deal_id',
-		'deal_position_id',
 		'payment_method_id',
 		'status_id',
 		'amount',
@@ -155,7 +152,7 @@ class Bill extends Model
 		'uuid',
 		'payed_at',
 		'link_sent_at',
-		'success_payment_sent_at',
+		'receipt_sent_at',
 		'user_id',
 		'data_json',
 	];
@@ -168,7 +165,7 @@ class Bill extends Model
 	protected $casts = [
 		'payed_at' => 'datetime:Y-m-d H:i:s',
 		'link_sent_at' => 'datetime:Y-m-d H:i:s',
-		'success_payment_sent_at' => 'datetime:Y-m-d H:i:s',
+		'receipt_sent_at' => 'datetime:Y-m-d H:i:s',
 		'created_at' => 'datetime:Y-m-d H:i:s',
 		'updated_at' => 'datetime:Y-m-d H:i:s',
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
@@ -259,11 +256,6 @@ class Bill extends Model
 		return $this->hasOne(PaymentMethod::class, 'id', 'payment_method_id');
 	}
 	
-	public function position()
-	{
-		return $this->hasOne(DealPosition::class, 'id', 'deal_position_id');
-	}
-
 	public function currency()
 	{
 		return $this->hasOne(Currency::class, 'id', 'currency_id');
@@ -284,7 +276,7 @@ class Bill extends Model
 	 */
 	public function generateNumber()
 	{
-		return 'B' . date('y') . sprintf('%05d', $this->id);
+		return /*'B' . */date('y') . sprintf('%05d', $this->id);
 	}
 	
 	/**
@@ -294,5 +286,48 @@ class Bill extends Model
 	public function generateUuid()
 	{
 		return (string)\Webpatser\Uuid\Uuid::generate();
+	}
+	
+	/**
+	 * @param $receiptFileName
+	 * @return mixed
+	 */
+	public function generateReceiptFile($receiptFileName)
+	{
+		$user = Auth::user();
+		
+		$deal = $this->deal;
+		$product = $deal ? $deal->product : null;
+		$paymentMethod = $this->paymentMethod;
+		
+		$taxRate = '';
+		if ($product) {
+			if ($deal->is_certificate_purchase) {
+				$productName = $product->name . ' Flight Voucher';
+			} elseif ($deal->location_id) {
+				$productName = $product->name . ' Flight';
+			} else {
+				$productName = $product->name;
+			}
+			
+			$productType = $product->productType;
+			$taxRate = $productType->tax;
+		} else {
+			$productName = '-';
+		}
+		
+		$data = [
+			'bill' => $this,
+			'currencyName' => $this->currency ? $this->currency->name : '$',
+			'deal' => $deal,
+			'productName' => $productName,
+			'user' => $user,
+			'taxRate' => $taxRate,
+			'paymentMethodName' => $paymentMethod ? $paymentMethod->name : '-',
+		];
+		
+		$pdf = PDF::loadView('admin.bill.receipt', $data)->save(storage_path('app/private/receipt/' . $receiptFileName));
+		
+		return $pdf;
 	}
 }

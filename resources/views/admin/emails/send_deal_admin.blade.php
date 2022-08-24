@@ -3,7 +3,6 @@
 <p>Phone #: {{ $dealPhone ?? '' }}</p>
 <p>E-mail: {{ $dealEmail ?? '' }}</p>
 <p>Deal #: {{ $dealNumber ?? '' }}</p>
-{{--<p>Номер позиции сделки: {{ $positionNumber ?? '' }}</p>--}}
 {{--<p>Тип сделки: {{ $isCertificatePurchase ? 'покупка сертификата' : 'бронирование' }}</p>--}}
 {{--<p>Статус сделки: {{ $statusName ?? '' }}</p>--}}
 <p>Voucher #: {{ $certificateNumber ?? '' }}</p>

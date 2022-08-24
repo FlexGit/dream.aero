@@ -1,4 +1,4 @@
-@extends('admin/layouts.master')
+@extends('admin.layouts.master')
 
 @section('content_header')
 	<div class="row mb-2">
@@ -23,11 +23,11 @@
 				<div class="card-body">
 					<div class="table-filter mb-2">
 						<div class="d-sm-flex">
-							<div class="form-group" style="width: 350px;">
+							<div class="form-group" style="width: 300px;">
 								<div>
 									<label for="search_doc">Search</label>
 								</div>
-								<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="Doc #, Name, E-mail, Phone number">
+								<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="">
 							</div>
 							<div class="form-group ml-2">
 								<div>
@@ -43,24 +43,6 @@
 									@endforeach
 								</select>
 							</div>
-							{{--@if($cities)
-								<div class="form-group ml-2">
-									<div>
-										<label for="filter_location_id">Location</label>
-									</div>
-									<select class="form-control" id="filter_location_id" name="filter_location_id[]" multiple="multiple">
-										@foreach($cities ?? [] as $city)
-											<optgroup label="{{ $city->name }}">
-												@foreach($city->locations ?? [] as $location)
-													@foreach($location->simulators ?? [] as $simulator)
-														<option value="{{ $location->id }}" data-city_id="{{ $location->city_id }}" data-simulator_id="{{ $simulator->id }}">{{ $location->name }} ({{ $simulator->name }})</option>
-													@endforeach
-												@endforeach
-											</optgroup>
-										@endforeach
-									</select>
-								</div>
-							@endif--}}
 							<div class="form-group ml-2 text-nowrap">
 								<div>
 									<label for="filter_product_id">Product</label>
@@ -72,6 +54,16 @@
 												<option value="{{ $product->id }}" data-product_type_id="{{ $product->product_type_id }}">{{ $product->name }}</option>
 											@endforeach
 										</optgroup>
+									@endforeach
+								</select>
+							</div>
+							<div class="form-group ml-2 text-nowrap">
+								<div>
+									<label for="filter_payment_method_id">Payment method</label>
+								</div>
+								<select class="form-control" id="filter_payment_method_id" name="filter_payment_method_id[]" multiple="multiple">
+									@foreach($paymentMethods as $paymentMethod)
+										<option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
 									@endforeach
 								</select>
 							</div>
@@ -91,33 +83,13 @@
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="z-index: 9999;">
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="Create Voucher purchase Deal" class="btn btn-secondary btn-sm dropdown-item">Voucher</a>
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="Create Booking Deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create Good / Service Deal" class="btn btn-secondary btn-sm dropdown-item">Good / service</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create Good / Service Deal" class="btn btn-secondary btn-sm dropdown-item">Good / Service</a>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<table id="dealTable" class="table table-hover table-sm table-bordered table-striped table-data">
-						<thead>
-						<tr>
-							<th class="text-center">Contact person</th>
-							<th class="text-center d-none d-sm-table-cell">Deal</th>
-							<th class="text-center d-none d-xl-table-cell">Invoice</th>
-							<th class="d-none d-xl-table-cell">
-								<div class="d-sm-flex justify-content-between">
-									<div></div>
-									<div>
-										Items
-									</div>
-									<div>
-										<a href="javascript:void(0)" class="js-reload" title="Deal list refresh">
-											<i class="fas fa-redo"></i>
-										</a>
-									</div>
-								</div>
-							</th>
-						</tr>
-						</thead>
 						<tbody class="body">
 						</tbody>
 					</table>
@@ -184,6 +156,7 @@
 						"filter_status_id": $('#filter_status_id').val(),
 						"filter_location_id": $('#filter_location_id').val(),
 						"filter_product_id": $('#filter_product_id').val(),
+						"filter_payment_method_id": $('#filter_payment_method_id').val(),
 						"filter_advanced": $('#filter_advanced').val(),
 						"search_contractor": $('#search_contractor').val(),
 						"search_doc": $('#search_doc').val(),
@@ -268,7 +241,6 @@
 
 				var action = $(this).attr('action'),
 					method = $(this).attr('method'),
-					formId = $(this).attr('id'),
 					data = $(this).serializeArray();
 
 				$.ajax({
@@ -281,49 +253,9 @@
 							return;
 						}
 
-						var msg = '';
-						if (formId === 'deal') {
-							msg = 'Deal was successful ';
-							if (method === 'POST') {
-								msg += 'created';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							}
-						} else if (formId === 'position') {
-							msg = 'Item was successful ';
-							if (method === 'POST') {
-								msg += 'created';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							} else if (method === 'DELETE') {
-								msg += 'deleted';
-							}
-						} else if (formId === 'bill') {
-							msg = 'Invoice was successful ';
-							if (method === 'POST') {
-								msg += 'created';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							}
-						} else if (formId === 'certificate') {
-							msg = 'Voucher was successful ';
-							if (method === 'POST') {
-								msg += 'created';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							}
-						} else if (formId === 'event') {
-							msg = 'Event was successful ';
-							if (method === 'POST') {
-								msg += 'created';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							}
-						}
-
 						$('#modal').modal('hide');
 						getList(false);
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});
@@ -443,28 +375,24 @@
 				calcProductAmount();
 			});
 
-			$(document).on('change', '#product_id, #promo_id, #promocode_id, #city_id, #location_id, #is_free, #flight_date_at, #flight_time_at, #is_indefinitely, #extra_product_id', function() {
+			$(document).on('change', '#product_id, #promo_id, #promocode_id, #city_id, #location_id, #is_free, #start_date_at, #start_time_at, #is_indefinitely, #extra_product_id', function() {
 				calcProductAmount();
 
-				if ($.inArray($(this).attr('id'), ['product_id', 'flight_date_at', 'flight_time_at']) !== -1) {
+				if ($.inArray($(this).attr('id'), ['product_id', 'start_date_at', 'start_time_at']) !== -1) {
 					validateFlightDate();
 				}
 			});
 
-			$(document).on('keyup', '#product_id, #flight_date_at, #flight_time_at', function() {
+			$(document).on('keyup', '#product_id, #start_date_at, #start_time_at', function() {
 				validateFlightDate();
 			});
-
-			/*$(document).on('keyup', '#certificate', function() {
-				calcProductAmount();
-			});*/
 
 			function validateFlightDate() {
 				var $eventStopElement = $('.js-event-stop-at'),
 					$isValidFlightDate = $('#is_valid_flight_date'),
 					$product = $('#product_id'),
-					$flightDate = $('#flight_date_at'),
-					$flightTime = $('#flight_time_at'),
+					$flightDate = $('#start_date_at'),
+					$flightTime = $('#start_time_at'),
 					duration = $product.find(':selected').data('duration');
 
 				if (($product.val() > 0) && duration && $flightDate.val().length && $flightTime.val().length) {
@@ -473,7 +401,7 @@
 
 					if (!flightStopAt.isAfter($flightDate.val(), 'day')) {
 						$isValidFlightDate.val(1);
-						$eventStopElement.text('End of flight: ' + flightStopAt.format('DD.MM.YYYY HH:mm'));
+						$eventStopElement.text('Flight stop: ' + flightStopAt.format('DD.MM.YYYY HH:mm'));
 					} else {
 						$isValidFlightDate.val(0);
 						$eventStopElement.text('Incorrect flight start');
@@ -494,32 +422,29 @@
 						'contractor_id': $('#contractor_id').val(),
 						'promo_id': $('#promo_id').val(),
 						'promocode_id': $('#promocode_id').val(),
-						/*'payment_method_id': $('#payment_method_id').val(),*/
 						'city_id': $('#city_id').val(),
 						'location_id': $('#location_id').val(),
 						'certificate_uuid': $('#certificate_uuid').val(),
 						'is_free': ($('#is_free').is(':checked') || $('#is_indefinitely').is(':checked')) ? 1 : 0,
-						'score': $('#score').val(),
 						'is_certificate_purchase': $('#is_certificate_purchase').val(),
-						'extra_product_id': $('#extra_product_id').val(),
 					},
 					success: function(result) {
 						console.log(result);
+
+						if (result.status !== 'success') {
+							toastr.error(result.reason);
+							return;
+						}
 
 						$('#amount').val(result.productAmount);
 						$('#amount-text span').text(result.amount);
 						$('#tax-text span').text(result.tax);
 						$('#total-amount-text span').text(result.totalAmount);
-
-						if (result.status !== 'success') {
-							toastr.error(result.reason);
-							//return;
-						}
 					}
 				});
 			}
 
-			$(document).on('change', '#filter_status_id, #filter_product_id, #filter_advanced, #filter_location_id', function(e) {
+			$(document).on('change', '#filter_status_id, #filter_product_id, #filter_payment_method_id, #filter_advanced, #filter_location_id', function(e) {
 				getList(false);
 			});
 
@@ -529,22 +454,12 @@
 				getList(false);
 			});
 
-			$(document).on('change', '#payment_method_id', function(e) {
+			/*$(document).on('change', '#payment_method_id', function(e) {
 				var $isPaid = $('#is_paid');
 				if ($(this).find(':selected').data('alias') === 'online') {
 					$isPaid.prop('checked', false).prop('disabled', true);
 				} else {
 					$isPaid.prop('disabled', false);
-				}
-			});
-
-			/*$(document).on('change', '.js-product', function(e) {
-				if ($(this).data('currency') == 'USD') {
-					$('.fa-dollar-sign').removeClass('hidden');
-					$('.fa-ruble-sign').addClass('hidden');
-				} else {
-					$('.fa-ruble-sign').removeClass('hidden');
-					$('.fa-dollar-sign').addClass('hidden');
 				}
 			});*/
 
@@ -602,7 +517,7 @@
 				});
 			});
 
-			$('#filter_status_id, #filter_location_id, #filter_product_id, #filter_advanced').multiselect({
+			$('#filter_status_id, #filter_location_id, #filter_product_id, #filter_payment_method_id, #filter_advanced').multiselect({
 				includeSelectAllOption: true,
 				selectAllText: 'All',
 				buttonWidth: '200px',
@@ -635,7 +550,7 @@
 			$(document).on('click', '.js-send-pay-link', function(e) {
 				if (!confirm('Are you sure you want to send the Invoice paylink?')) return;
 
-				var $payLink = $(this);
+				var $el = $(this);
 
 				$.ajax({
 					url: "{{ route('sendPayLink') }}",
@@ -645,24 +560,27 @@
 						'bill_id': $(this).data('id'),
 					},
 					success: function(result) {
+						//console.log(result);
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
 							return;
 						}
 
-						$payLink.attr('title', 'Paylink sent ' + result.link_sent_at);
-						$i = $payLink.find('i');
+						$el.attr('title', result.sent_at);
+						$i = $el.find('i');
 						$i.addClass('fa-envelope-open');
 						if ($i.hasClass('fa-envelope')) {
 							$i.removeClass('fa-envelope');
 						}
-						toastr.success('Paylink sent successfully');
+						toastr.success(result.message);
 					}
 				});
 			});
 
 			$(document).on('click', '.js-send-certificate-link', function() {
-				if (!confirm('Are you sure you want to send the voucher?')) return;
+				if (!confirm('Are you sure you want to send the Flight Voucher?')) return;
+
+				var $el = $(this);
 
 				$.ajax({
 					url: "{{ route('sendCertificate') }}",
@@ -678,13 +596,21 @@
 							return;
 						}
 
+						$el.attr('title', result.sent_at);
+						$i = $el.find('i');
+						$i.addClass('fa-envelope-open');
+						if ($i.hasClass('fa-envelope')) {
+							$i.removeClass('fa-envelope');
+						}
 						toastr.success(result.message);
 					}
 				});
 			});
 
 			$(document).on('click', '.js-send-flight-invitation-link', function() {
-				if (!confirm('Are you sure you want to send a flight invitation?')) return;
+				if (!confirm('Are you sure you want to send the Flight Invitation?')) return;
+
+				var $el = $(this);
 
 				$.ajax({
 					url: "{{ route('sendFlightInvitation') }}",
@@ -700,6 +626,41 @@
 							return;
 						}
 
+						$el.attr('title', result.sent_at);
+						$i = $el.find('i');
+						$i.addClass('fa-envelope-open');
+						if ($i.hasClass('fa-envelope')) {
+							$i.removeClass('fa-envelope');
+						}
+						toastr.success(result.message);
+					}
+				});
+			});
+
+			$(document).on('click', '.js-send-receipt-link', function() {
+				if (!confirm('Are you sure you want to send the Invoice Receipt?')) return;
+
+				var $el = $(this);
+
+				$.ajax({
+					url: "{{ route('sendReceipt') }}",
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						'id': $(this).data('id'),
+					},
+					success: function(result) {
+						if (result.status !== 'success') {
+							toastr.error(result.reason);
+							return;
+						}
+
+						$el.attr('title', result.sent_at);
+						$i = $el.find('i');
+						$i.addClass('fa-envelope-open');
+						if ($i.hasClass('fa-envelope')) {
+							$i.removeClass('fa-envelope');
+						}
 						toastr.success(result.message);
 					}
 				});

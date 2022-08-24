@@ -2,9 +2,6 @@
 	$isActive = $isHit = $isBookingAllow = $isCertificatePurchaseAllow = $isDiscountBookingAllow = $isDiscountCertificatePurchaseAllow = 0;
 	if($cityProduct) {
 		$isActive = $cityProduct->is_active;
-		$data = $cityProduct ? (is_array($cityProduct->data_json) ? $cityProduct->data_json : json_decode($cityProduct->data_json, true)) : [];
-		$isCertificatePurchaseAllow = array_key_exists('is_certificate_purchase_allow', $data) ? $data['is_certificate_purchase_allow'] : 0;
-		$certificatePeriod = array_key_exists('certificate_period', $data) ? $data['certificate_period'] : 0;
 	}
 @endphp
 
@@ -14,8 +11,20 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="price">Amount</label>
-			<input type="number" class="form-control" id="price" name="price" value="{{ $cityProduct ? $cityProduct->price : '' }}" placeholder="Amount">
+			<label for="availability">Availability</label>
+			<input type="number" class="form-control" id="availability" name="availability" value="{{ $cityProduct ? $cityProduct->availability : '' }}" placeholder="Availability">
+		</div>
+	</div>
+	<div class="col">
+		<div class="form-group">
+			<label for="purchase_price">Purchase price</label>
+			<input type="number" class="form-control" id="purchase_price" name="purchase_price" value="{{ $cityProduct ? $cityProduct->purchase_price : '' }}" placeholder="Purchase price">
+		</div>
+	</div>
+	<div class="col">
+		<div class="form-group">
+			<label for="price">Selling price</label>
+			<input type="number" class="form-control" id="price" name="price" value="{{ $cityProduct ? $cityProduct->price : '' }}" placeholder="Selling price">
 		</div>
 	</div>
 	<div class="col">
@@ -38,16 +47,4 @@
 			</select>
 		</div>
 	</div>
-	{{--@if(!in_array($product->productType->alias, [app('\App\Models\ProductType')::SERVICES_ALIAS]))
-		<div class="col">
-			<div class="form-group">
-				<label for="certificate_period">Validity</label>
-				<select class="form-control" id="certificate_period" name="certificate_period">
-					<option value="6" @if($cityProduct && $certificatePeriod == 6) selected @endif>6 months</option>
-					<option value="12" @if($cityProduct && $certificatePeriod == 12) selected @endif>1 year</option>
-					<option value="0" @if($cityProduct && !$certificatePeriod) selected @endif>termless</option>
-				</select>
-			</div>
-		</div>
-	@endif--}}
 </div>

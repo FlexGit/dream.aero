@@ -213,7 +213,7 @@ class UserController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'User was successfully created']);
 	}
 	
 	/**
@@ -263,7 +263,7 @@ class UserController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'User was successfully saved']);
 	}
 	
 	public function passwordResetNotification($id)
@@ -281,32 +281,4 @@ class UserController extends Controller
 		
 		return response()->json(['status' => 'success']);
 	}
-	
-	/**
-	 * @param $id
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	/*public function delete($id)
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-		
-		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
-		}
-		
-		$user = User::find($id);
-		if (!$user) return response()->json(['status' => 'error', 'reason' => trans('main.error.пользователь-не-найден')]);
-
-		if (in_array($user->id, [1])) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.запрещено-удаление-данного-пользователя')]);
-		}
-		
-		if (!$user->delete()) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
-		}
-		
-		return response()->json(['status' => 'success']);
-	}*/
 }

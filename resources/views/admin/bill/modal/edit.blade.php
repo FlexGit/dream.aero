@@ -1,32 +1,7 @@
 <input type="hidden" id="id" name="id" value="{{ $bill->id }}">
-<input type="hidden" id="currency_id" name="currency_id" value="1">
 
 <div class="row">
-	<div class="col">
-		<div class="form-group">
-			<label for="number">Number</label>
-			<input type="text" class="form-control" id="number" name="number" value="{{ $bill->number }}" placeholder="Number" readonly>
-		</div>
-	</div>
-	<div class="col">
-		<div class="form-group">
-			<label for="status_id">Status</label>
-			<select class="form-control" id="status_id" name="status_id">
-				<option value=""></option>
-				@foreach($statuses ?? [] as $status)
-					<option value="{{ $status->id }}" @if($status->id == $bill->status_id) selected @endif>{{ $status->name }}</option>
-				@endforeach
-			</select>
-			@if($bill->payed_at)
-				<div>
-					<small>Payment date: {{ \Carbon\Carbon::parse($bill->payed_at)->format('Y-m-d H:i:s') }}</small>
-				</div>
-			@endif
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col">
+	<div class="col-3">
 		<div class="form-group">
 			<label for="payment_method_id">Payment method</label>
 			<select class="form-control" id="payment_method_id" name="payment_method_id">
@@ -37,25 +12,37 @@
 			</select>
 		</div>
 	</div>
-	<div class="col">
+	<div class="col-3">
 		<div class="form-group">
-			<label for="amount">Amount</label>
-			<input type="number" class="form-control" id="amount" name="amount" value="{{ $bill->total_amount }}" placeholder="Amount">
+			<label for="status_id">Status</label>
+			<select class="form-control" id="status_id" name="status_id">
+				<option value=""></option>
+				@foreach($statuses ?? [] as $status)
+					<option value="{{ $status->id }}" @if($status->id == $bill->status_id) selected @endif>{{ $status->name }}</option>
+				@endforeach
+			</select>
+			@if($bill->payed_at)
+				<div>
+					<small>{{ \Carbon\Carbon::parse($bill->payed_at)->format('Y-m-d g:i A') }}</small>
+				</div>
+			@endif
+		</div>
+	</div>
+	<div class="col-6 text-right">
+		<div class="form-group">
+			<div id="amount-text" style="font-size: 30px;">
+				Subtotal: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->amount }}</span>
+			</div>
+			<div id="tax-text" style="font-size: 18px;">
+				Tax: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->tax }}</span>
+			</div>
+			<div id="total-amount-text" style="font-size: 18px;">
+				Total: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->total_amount }}</span>
+			</div>
 		</div>
 	</div>
 </div>
 <div class="row">
-	{{--<div class="col">
-		<div class="form-group">
-			<label for="position_id">Item</label>
-			<select class="form-control" id="position_id" name="position_id">
-				<option value=""></option>
-				@foreach($positions as $position)
-					<option value="{{ $position->id }}" @if($position->id == $bill->deal_position_id) selected @endif>{{ $position->number }}</option>
-				@endforeach
-			</select>
-		</div>
-	</div>--}}
 	<div class="col">
 		@if ($bill->paymentMethod)
 			@if ($bill->paymentMethod->alias == app('\App\Models\PaymentMethod')::ONLINE_ALIAS)
@@ -67,13 +54,13 @@
 					@if($bill->link_sent_at)
 						<div>
 							payment link sent:<br>
-							{{ \Carbon\Carbon::parse($bill->link_sent_at)->format('Y-m-d H:i:s') }}
+							{{ \Carbon\Carbon::parse($bill->link_sent_at)->format('Y-m-d g:i A') }}
 						</div>
 					@endif
 					@if($bill->success_payment_sent_at)
 						<div>
 							payment notification sent:<br>
-							{{ \Carbon\Carbon::parse($bill->success_payment_sent_at)->format('Y-m-d H:i:s') }}
+							{{ \Carbon\Carbon::parse($bill->success_payment_sent_at)->format('Y-m-d g:i A') }}
 						</div>
 					@endif
 				</div>

@@ -86,15 +86,17 @@
 		</div>
 	</div>
 	<div class="col">
-		<div class="form-group">
-			<label for="promocode_id">Promocode</label>
-			<select class="form-control" id="promocode_id" name="promocode_id">
-				<option value="">---</option>
-				@foreach($promocodes ?? [] as $promocode)
-					<option value="{{ $promocode->id }}">{{ $promocode->valueFormatted() }}</option>
-				@endforeach
-			</select>
-		</div>
+		@if($promocodes->count())
+			<div class="form-group">
+				<label for="promocode_id">Promocode</label>
+				<select class="form-control" id="promocode_id" name="promocode_id">
+					<option value="">---</option>
+					@foreach($promocodes ?? [] as $promocode)
+						<option value="{{ $promocode->id }}">{{ $promocode->valueFormatted() }}</option>
+					@endforeach
+				</select>
+			</div>
+		@endif
 	</div>
 	<div class="col">
 	</div>

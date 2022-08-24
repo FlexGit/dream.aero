@@ -62,11 +62,11 @@ class LocationController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$location = Location::find($id);
-		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Location not found']);
 		
 		$simulators = FlightSimulator::get();
 		
@@ -88,7 +88,7 @@ class LocationController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$VIEW = view('admin.location.modal.add', [
@@ -108,7 +108,7 @@ class LocationController extends Controller
 		}
 		
 		$location = Location::find($id);
-		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Location not found']);
 		
 		$VIEW = view('admin.location.modal.show', [
 			'location' => $location,
@@ -128,11 +128,11 @@ class LocationController extends Controller
 		}
 
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$location = Location::find($id);
-		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Location not found']);
 		
 		$VIEW = view('admin.location.modal.delete', [
 			'location' => $location,
@@ -151,7 +151,7 @@ class LocationController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$rules = [
@@ -202,10 +202,10 @@ class LocationController extends Controller
 			'scheme_file_path' => $isFileUploaded ? 'scheme/' . $file->getClientOriginalName() : '',
 		];
 		if (!$location->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'id' => $location->id]);
+		return response()->json(['status' => 'success', 'message' => 'Location was successfully created', 'id' => $location->id]);
 	}
 	
 	/**
@@ -219,11 +219,11 @@ class LocationController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$location = Location::find($id);
-		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Location not found']);
 		
 		$rules = [
 			'name' => 'required|max:255|unique:locations,name,' . $id,
@@ -274,7 +274,7 @@ class LocationController extends Controller
 		$location->data_json = $data;
 
 		if (!$location->save()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 
 		if ($this->request->simulator) {
@@ -293,7 +293,7 @@ class LocationController extends Controller
 			$location->simulators()->sync($locationSimulatorData);
 		}
 		
-		return response()->json(['status' => 'success', 'id' => $location->id]);
+		return response()->json(['status' => 'success', 'message' => 'Location was successfully saved', 'id' => $location->id]);
 	}
 	
 	/**
@@ -307,16 +307,16 @@ class LocationController extends Controller
 		}
 		
 		if (!$this->request->user()->isSuperAdmin()) {
-			return response()->json(['status' => 'error', 'reason' => 'Недостаточно прав доступа']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
 		$location = Location::find($id);
-		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Локация не найдена']);
+		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Location not found']);
 		
 		if (!$location->delete()) {
-			return response()->json(['status' => 'error', 'reason' => 'В данный момент невозможно выполнить операцию, повторите попытку позже!']);
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'id' => $location->id]);
+		return response()->json(['status' => 'success', 'message' => 'Location was successfully deleted', 'id' => $location->id]);
 	}
 }

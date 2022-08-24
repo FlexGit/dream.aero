@@ -25,10 +25,10 @@
 						<thead>
 							<tr>
 								<th class="text-center">Name</th>
-								<th class="text-center d-none d-sm-table-cell">Alias</th>
-								<th class="text-center d-none d-md-table-cell">E-mail</th>
-								<th class="text-center d-none d-lg-table-cell">Phone</th>
-								<th class="text-center d-none d-xl-table-cell">Is active</th>
+								<th class="text-center">Alias</th>
+								<th class="text-center">E-mail</th>
+								<th class="text-center">Phone</th>
+								<th class="text-center">Is active</th>
 								<th class="text-center">Action</th>
 							</tr>
 						</thead>
@@ -152,18 +152,9 @@
 							return;
 						}
 
-						var msg = 'City successful ';
-						if (method === 'POST') {
-							msg += 'added';
-						} else if (method === 'PUT') {
-							msg += 'saved';
-						} else if (method === 'DELETE') {
-							msg += 'deleted';
-						}
-
 						$('#modal').modal('hide');
 						getList();
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});

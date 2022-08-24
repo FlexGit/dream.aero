@@ -53,7 +53,7 @@ class ReportController extends Controller {
 			abort(404);
 		}
 		
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		$dateFromAt = $this->request->filter_date_from_at ?? '';
 		$dateToAt = $this->request->filter_date_to_at ?? '';
@@ -110,7 +110,7 @@ class ReportController extends Controller {
 				// кол-во сделок
 				++$billItems[$bill->location_id][$bill->user_id]['deal_count'];
 				// сумма сделок
-				$billItems[$bill->location_id][$bill->user_id]['deal_sum'] += $deal->amount();
+				$billItems[$bill->location_id][$bill->user_id]['deal_sum'] += $deal->totalAmount();
 			}
 		}
 		
@@ -172,7 +172,7 @@ class ReportController extends Controller {
 	
 	public function unexpectedRepeatedIndex()
 	{
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isSuperAdmin()) {
 			abort(404);
@@ -257,7 +257,7 @@ class ReportController extends Controller {
 	 */
 	public function contractorSelfMadePayedDealsIndex()
 	{
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isSuperAdmin()) {
 			abort(404);
@@ -346,7 +346,7 @@ class ReportController extends Controller {
 	 */
 	public function getExportFile($fileName)
 	{
-		$user = \Auth::user();
+		$user = Auth::user();
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);

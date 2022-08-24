@@ -13,23 +13,9 @@ class RevisionController extends Controller
 	const ENTITIES = [
 		'Contractor' => 'Client',
 		'Deal' => 'Deal',
-		'DealPosition' => 'Item',
-		/*'Score' => 'Баллы',*/
 		'Bill' => 'Invoice',
 		'Certificate' => 'Voucher',
 		'Event' => 'Event',
-		/*'City' => 'Город',
-		'Role' => 'Роль',
-		'FlightSimulator' => 'Авиатренажер',
-		'LegalEntity' => 'Юр.лицо',
-		'Location' => 'Локация',
-		'Promo' => 'Акция',
-		'Promocode' => 'Промокод',
-		'Status' => 'Статус',
-		'Product' => 'Продукт',
-		'ProductType' => 'Тип продукта',
-		'User' => 'Пользователь',
-		'Discount' => 'Скидка',*/
 	];
 	
 	/**
@@ -74,18 +60,10 @@ class RevisionController extends Controller
 		$table = $this->request->filter_entity_alias ? app('App\Models\\' . $this->request->filter_entity_alias)->getTable() : '';
 		switch ($table) {
 			case 'deals':
-			case 'deal_positions':
 			case 'certificates':
 			case 'bills':
-			/*case 'promocodes':*/
 				$field = 'number';
 			break;
-			/*case 'discounts':
-				$field = 'value';
-			break;*/
-			/*case 'scores':
-				$field = 'score';
-			break;*/
 			case 'events':
 				$field = 'start_at';
 			break;
@@ -125,9 +103,6 @@ class RevisionController extends Controller
 					$object = $model->number;
 				} else if ($model->value) {
 					$object = $model->value;
-				/*} else if ($model->score) {
-					$object = $model->score;
-					$linkedObject = $model->contractor ? ($model->contractor->fio() . ' <small>[' . $model->contractor->id . ']</small>') : '';*/
 				} else if ($model->title) {
 					$object = $model->title;
 				} else if ($model->name) {
@@ -153,8 +128,6 @@ class RevisionController extends Controller
 						$newValue = $model->number;
 					} elseif ($model->value) {
 						$newValue = $model->value;
-					/*} elseif ($model->score) {
-						$newValue = $model->score;*/
 					} elseif ($model->title) {
 						$newValue = $model->title;
 					} else {

@@ -4,10 +4,10 @@
 		{{--<a href="javascript:void(0)" data-toggle="modal" data-url="/content/{{ $content->id }}/edit" data-action="/content/{{ $content->id }}" data-method="PUT" data-type="content" data-title="Редактирование" title="Редактировать">--}}{{ $content->title }}{{--</a>--}}
 	</td>
 	@if($type != app('\App\Models\Content')::PAGES_TYPE) {
-		<td class="text-center align-middle d-none d-xl-table-cell">
+		<td class="text-center align-middle">
 			{{ $content->published_at ? $content->published_at->format('Y-m-d') : '' }}
 		</td>
-		<td class="text-center align-middle d-none d-xl-table-cell">
+		<td class="text-center align-middle">
 			{{ $content->is_active ? 'Yes' : 'no' }}
 		</td>
 	@endif

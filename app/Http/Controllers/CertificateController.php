@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Exports\CertificateExport;
 use App\Models\Content;
-use App\Models\DealPosition;
+use App\Models\Deal;
 use App\Models\PaymentMethod;
 use App\Services\HelpFunctions;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Mail;
 use Validator;
 use App\Models\Certificate;
 use App\Models\City;
@@ -100,50 +101,36 @@ class CertificateController extends Controller
 		$certificateItems = [];
 		/** @var Certificate[] $certificates */
 		foreach ($certificates as $certificate) {
-			$position = $certificate->position;
-			$positionBill = $position ? $position->bill : null;
-			if ($filterPaymentType && $positionBill) {
-				if ($filterPaymentType == 'self_made' && $positionBill->user_id) continue;
-				elseif ($filterPaymentType == 'admin_made' && !$positionBill->user_id) continue;
+			$deal = $certificate->deal;
+			$dealBill = $deal ? $deal->firstBill : null;
+			if ($filterPaymentType && $dealBill) {
+				if ($filterPaymentType == 'self_made' && $dealBill->user_id) continue;
+				elseif ($filterPaymentType == 'admin_made' && !$dealBill->user_id) continue;
 			}
 			
-			$positionProduct = $position ? $position->product : null;
-			$positionBillStatus = ($positionBill && $positionBill->status) ? $positionBill->status : null;
-			$positionBillPaymentMethod = ($positionBill && $positionBill->paymentMethod) ? $positionBill->paymentMethod : null;
+			$dealProduct = $deal ? $deal->product : null;
+			$dealBillStatus = ($dealBill && $dealBill->status) ? $dealBill->status : null;
+			$dealBillPaymentMethod = ($dealBill && $dealBill->paymentMethod) ? $dealBill->paymentMethod : null;
 			$certificateProduct = $certificate->product;
-			/*$certificateCity = $certificate->city;*/
 			$certificateStatus = $certificate->status ?? null;
-			/*$currency = $position ? $position->currency : null;*/
 			
-			$comment = ($position && isset($position->data_json['comment']) && $position->data_json['comment']) ? $position->data_json['comment'] : '';
-			/*$certificateWhom = ($position && isset($position->data_json['certificate_whom']) && $position->data_json['certificate_whom']) ? $position->data_json['certificate_whom'] : '';
-			$certificateWhomPhone = ($position && isset($position->data_json['certificate_whom_phone']) && $position->data_json['certificate_whom_phone']) ? $position->data_json['certificate_whom_phone'] : '';
-			$deliveryAddress = ($position && isset($position->data_json['delivery_address']) && $position->data_json['delivery_address']) ? $position->data_json['delivery_address'] : '';*/
-			
-			$oldData = '';
-			$oldData .= (isset($certificate->data_json['sell_date']) && $certificate->data_json['sell_date']) ? 'Date of sale: ' . $certificate->data_json['sell_date'] : '';
-			$oldData .= (isset($certificate->data_json['duration']) && $certificate->data_json['duration']) ? ', duration: ' . $certificate->data_json['duration'] : '';
-			$oldData .= (isset($certificate->data_json['amount']) && $certificate->data_json['amount']) ? ', amount: ' . $certificate->data_json['amount'] : '';
-			$oldData .= (isset($certificate->data_json['location']) && $certificate->data_json['location']) ? ', location: ' . $certificate->data_json['location'] : '';
-			$oldData .= (isset($certificate->data_json['payment_method']) && $certificate->data_json['payment_method']) ? ', payment method: ' . $certificate->data_json['payment_method'] : '';
-			$oldData .= (isset($certificate->data_json['status']) && $certificate->data_json['status']) ? ', status: ' . $certificate->data_json['status'] : '';
-			$oldData .= (isset($certificate->data_json['comment']) && $certificate->data_json['comment']) ? ', comment: ' . $certificate->data_json['comment'] : '';
+			$comment = ($deal && isset($deal->data_json['comment']) && $deal->data_json['comment']) ? $deal->data_json['comment'] : '';
 			
 			$certificateItems[$certificate->id] = [
 				'number' => $certificate->number,
 				'created_at' => $certificate->created_at,
 				'certificate_product_name' => $certificateProduct ? $certificateProduct->name : '',
-				'position_product_name' => $positionProduct ? $positionProduct->name : '',
-				'position_amount' => $position ? $position->amount : 0,
-				'position_tax' => $position ? $position->tax : 0,
-				'position_total_amount' => $position ? $position->total_amount : 0,
-				'comment' => $comment . ($oldData ? ' Old CRM info: ' . $oldData : ''),
+				'deal_product_name' => $dealProduct ? $dealProduct->name : '',
+				'deal_amount' => $deal ? $deal->amount : 0,
+				'deal_tax' => $deal ? $deal->tax : 0,
+				'deal_total_amount' => $deal ? $deal->total_amount : 0,
+				'comment' => $comment,
 				'expire_at' => $certificate->expire_at ? Carbon::parse($certificate->expire_at)->format('Y-m-d') : 'termless',
 				'certificate_status_name' => $certificateStatus ? $certificateStatus->name : '',
-				'bill_number' => $positionBill ? $positionBill->number : '',
-				'bill_status_alias' => $positionBillStatus ? $positionBillStatus->alias : '',
-				'bill_status_name' => $positionBillStatus ? $positionBillStatus->name : '',
-				'bill_payment_method_name' => $positionBillPaymentMethod ? $positionBillPaymentMethod->name : '',
+				'bill_number' => $dealBill ? $dealBill->number : '',
+				'bill_status_alias' => $dealBillStatus ? $dealBillStatus->alias : '',
+				'bill_status_name' => $dealBillStatus ? $dealBillStatus->name : '',
+				'bill_payment_method_name' => $dealBillPaymentMethod ? $dealBillPaymentMethod->name : '',
 			];
 		}
 		
@@ -329,7 +316,7 @@ class CertificateController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Voucher was successfully created']);
 	}
 	
 	/**
@@ -362,7 +349,7 @@ class CertificateController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Voucher was successfully saved']);
 	}
 	
 	/**
@@ -380,35 +367,86 @@ class CertificateController extends Controller
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'id' => 'Deal item',
+				'id' => 'Deal',
 				'certificate_id' => 'Voucher',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
-		$position = DealPosition::find($this->request->id);
-		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
-		
-		$deal = $position->deal;
+		$deal = Deal::find($this->request->id);
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$contractor = $deal->contractor;
 		if (!$contractor) return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
 		
-		$dealEmail = $deal->email ?? '';
-		$contractorEmail = $contractor->email ?? '';
-		if (!$dealEmail && !$contractorEmail) {
-			return null;
-		}
+		if (!$deal->email && !$contractor->email) return response()->json(['status' => 'error', 'reason' => 'Deal or Contractor E-mail not found']);
 		
+		if ($deal->balance() < 0) return response()->json(['status' => 'error', 'reason' => 'Deal balance should not be negative']);
+
 		$certificate = Certificate::find($this->request->certificate_id);
 		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
-		$job = new \App\Jobs\SendCertificateEmail($certificate);
-		$job->handle();
+		/*$job = new \App\Jobs\SendCertificateEmail($certificate);
+		$job->handle();*/
 		
-		return response()->json(['status' => 'success', 'message' => trans('main.success.задание-на-отправку-сертификата-принято')]);
+		$certificateFilePath = isset($certificate->data_json['certificate_file_path']) ? $certificate->data_json['certificate_file_path'] : '';
+		$certificateFileExists = Storage::disk('private')->exists($certificateFilePath);
+		
+		// если файла сертификата по какой-то причине не оказалось, генерим его
+		if (!$certificateFilePath || !$certificateFileExists) {
+			$certificate = $certificate->generateFile();
+			if (!$certificate) return response()->json(['status' => 'error', 'reason' => 'Certificate File generation failed']);
+		}
+		
+		$contractor = $deal->contractor;
+		if (!$contractor) return null;
+		
+		$dealEmail = $deal->email ?? '';
+		$dealName = $deal->name ?? '';
+		$dealCity = $deal->city;
+		$contractorEmail = $contractor->email ?? '';
+		$contractorName = $contractor->name ?? '';
+		if (!$dealEmail && !$contractorEmail) return response()->json(['status' => 'error', 'reason' => 'Deal or Contractor E-mail not found']);
+		
+		$city = $certificate->city;
+		$certificateRulesFileName = 'RULES_' . mb_strtoupper($city->alias) . '.jpg';
+		
+		$messageData = [
+			'certificate' => $certificate,
+			'name' => $dealName ?: $contractorName,
+			'city' => $dealCity ?? null,
+		];
+		
+		$recipients = $bcc = [];
+		$recipients[] = $dealEmail ?: $contractorEmail;
+		if ($dealCity && $dealCity->email) {
+			$bcc[] = $dealCity->email;
+		}
+		
+		$subject = env('APP_NAME') . ': Flight Voucher';
+		
+		Mail::send(['html' => "admin.emails.send_certificate"], $messageData, function ($message) use ($subject, $recipients, $certificateRulesFileName, $bcc, $certificateFilePath) {
+			/** @var \Illuminate\Mail\Message $message */
+			$message->subject($subject);
+			$message->attach(Storage::disk('private')->path($certificateFilePath));
+			$message->attach(Storage::disk('private')->path('rule/' . $certificateRulesFileName));
+			$message->attach(Storage::disk('private')->path('rule/RULES_MAIN.jpg'));
+			$message->to($recipients);
+			$message->bcc($bcc);
+		});
+		
+		$failures = Mail::failures();
+		if ($failures) {
+			\Log::debug($failures);
+			return null;
+		}
+		
+		$sentAt = Carbon::now()->format('Y-m-d H:i:s');
+		$certificate->sent_at = $sentAt;
+		$certificate->save();
+		
+		return response()->json(['status' => 'success', 'message' => 'Flight Voucher was successfully sent', 'sent_at' => $sentAt]);
 	}
 	
 	/**
@@ -445,8 +483,6 @@ class CertificateController extends Controller
 		$q = $this->request->post('query');
 		if (!$q) return response()->json(['status' => 'error', 'reason' => trans('main.error.нет-данных')]);
 		
-		$user = \Auth::user();
-		
 		$certificates = Certificate::where('number', 'like', '%' . $q . '%')
 			->orderBy('number')
 			->limit(env('LIST_LIMIT'))
@@ -455,23 +491,11 @@ class CertificateController extends Controller
 		$suggestions = [];
 		/** @var Certificate[] $certificates */
 		foreach ($certificates as $certificate) {
-			$data = $certificate->data_json;
+			$product = $certificate->product;
+			$city = $certificate->city;
+			$status = $certificate->status;
 			
-			$position = $certificate->position;
-			if ($position) {
-				$dataPosition = $position->data_json;
-			}
-			
-			if (!$certificate->product_id) {
-				$certificateInfo = (isset($data['sell_date']) ? '' . $data['sell_date'] : '') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('d.m.Y') : ' - termless') . (isset($data['duration']) ? ' - ' . $data['duration'] . ' min' : '') . (isset($data['amount']) ? ' = ' . $data['amount'] . '$' : '') . (isset($data['payment_method']) ? ' (' . $data['payment_method'] . ')' : '') . (isset($data['location']) ? '. ' . $data['location'] : '') . (isset($data['status']) ? '. ' . $data['status'] : '') . ((isset($data['comment']) && $data['comment']) ? ', ' . $data['comment'] : '');
-			} else {
-				//$position = $certificate->position()->where('is_certificate_purchase', true)->first();
-				$product = $certificate->product;
-				$city = $certificate->city;
-				$status = $certificate->status;
-				
-				$certificateInfo = $certificate->created_at->format('m-d-Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('m-d-Y') : ' - termless') . (isset($dataPosition['certificate_whom']) ? ' (' . $dataPosition['certificate_whom'] : '') . (isset($dataPosition['certificate_whom_phone']) ? ', ' . $dataPosition['certificate_whom_phone'] : '') . ')' . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
-			}
+			$certificateInfo = $certificate->created_at->format('m-d-Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('m-d-Y') : ' - termless') . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
 			
 			$date = date('Y-m-d');
 			

@@ -18,10 +18,7 @@
 	<td class="text-center">
 		{{ $contractor->discount()->valueFormatted() }}
 	</td>
-	<td class="text-center">
-		{{ $contractor->getFlightTime() }} min
-	</td>
-	<td class="text-center align-middle d-none d-lg-table-cell">
+	<td class="text-center align-middle">
 		{{ $contractor->is_active ? 'Yes' : 'No' }}
 	</td>
 	{{--<td class="text-center">

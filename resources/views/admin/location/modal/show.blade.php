@@ -12,14 +12,6 @@
 			<td>Alias</td>
 			<td>{{ $location->alias }}</td>
 		</tr>
-		{{--<tr class="odd">
-			<td>Юридическое лицо</td>
-			<td>{{ $location->legalEntity ? $location->legalEntity->name : '' }}</td>
-		</tr>--}}
-		{{--<tr class="odd">
-			<td>City</td>
-			<td>{{ $location->city ? $location->city->name : '' }}</td>
-		</tr>--}}
 		<tr class="odd">
 			<td>Is active</td>
 			<td>{{ $location->is_active ? 'Yes' : 'No' }}</td>

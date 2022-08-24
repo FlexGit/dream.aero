@@ -23,11 +23,11 @@
 									</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Please use <a href="https://{{ env('DOMAIN_SITE') }}/payment/{{ $bill->uuid }}" target="_blank">this payment link</a>
-										@if($bill->position && $bill->position->product)
-											@if($bill->position->product->productType->alias == 'courses')
-												for a "{{ $bill->position->product->productType->name }}" flight voucher
+										@if($bill->deal && $bill->deal->product)
+											@if($bill->deal->product->productType->alias == 'courses')
+												for a "{{ $bill->deal->product->productType->name }}" flight voucher
 											@else
-												for a {{ $bill->position->product->duration }}-minutes flight voucher
+												for a {{ $bill->deal->product->duration }}-minutes flight voucher
 											@endif
 										@endif
 										.

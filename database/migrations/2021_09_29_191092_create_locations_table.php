@@ -21,9 +21,7 @@ class CreateLocationsTable extends Migration
             $table->id();
             $table->string('name')->nullable()->comment('наименование локации');
 			$table->string('alias', 50)->comment('alias');
-			$table->integer('legal_entity_id')->default(0)->index()->comment('юр.лицо, на которое оформлена локация');
 			$table->integer('city_id')->default(0)->index()->comment('город, в котором находится локация');
-			$table->string('pay_account_number')->nullable()->comment('номер счета платежной системы');
 			$table->integer('sort')->default(0)->comment('сортировка');
 			$table->text('data_json')->nullable()->comment('дополнительная информация');
 			$table->boolean('is_active')->default(true)->index()->comment('признак активности');

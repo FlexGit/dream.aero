@@ -16962,6 +16962,55 @@
      
 }
 
+    namespace niklasravnsborg\LaravelPdf\Facades { 
+            /**
+     * 
+     *
+     */ 
+        class Pdf {
+                    /**
+         * Load a HTML string
+         *
+         * @param string $html
+         * @return \Pdf 
+         * @static 
+         */ 
+        public static function loadHTML($html, $config = [])
+        {
+                        /** @var \niklasravnsborg\LaravelPdf\PdfWrapper $instance */
+                        return $instance->loadHTML($html, $config);
+        }
+                    /**
+         * Load a HTML file
+         *
+         * @param string $file
+         * @return \Pdf 
+         * @static 
+         */ 
+        public static function loadFile($file, $config = [])
+        {
+                        /** @var \niklasravnsborg\LaravelPdf\PdfWrapper $instance */
+                        return $instance->loadFile($file, $config);
+        }
+                    /**
+         * Load a View and convert to HTML
+         *
+         * @param string $view
+         * @param array $data
+         * @param array $mergeData
+         * @return \Pdf 
+         * @static 
+         */ 
+        public static function loadView($view, $data = [], $mergeData = [], $config = [])
+        {
+                        /** @var \niklasravnsborg\LaravelPdf\PdfWrapper $instance */
+                        return $instance->loadView($view, $data, $mergeData, $config);
+        }
+         
+    }
+     
+}
+
     namespace Webpatser\Uuid { 
             /**
      * Class Uuid
@@ -20754,6 +20803,7 @@ namespace  {
             class Image extends \Intervention\Image\Facades\Image {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
             class Excel extends \Maatwebsite\Excel\Facades\Excel {}
+            class PDF extends \niklasravnsborg\LaravelPdf\Facades\Pdf {}
             class Uuid extends \Webpatser\Uuid\Uuid {}
             class DataTables extends \Yajra\DataTables\Facades\DataTables {}
      

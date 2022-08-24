@@ -18,7 +18,6 @@ class CreateBillsTable extends Migration
 			$table->string('number')->nullable()->comment('номер счета');
 			$table->integer('contractor_id')->default(0)->index()->comment('контрагент');
 			$table->integer('deal_id')->default(0)->index()->comment('сделка');
-			$table->integer('deal_position_id')->default(0)->index()->comment('позиция сделки');
 			$table->integer('payment_method_id')->default(0)->index()->comment('способ оплаты');
 			$table->integer('status_id')->default(0)->index()->comment('статус');
 			$table->float('amount')->default(0)->comment('сумма счета');
@@ -30,7 +29,7 @@ class CreateBillsTable extends Migration
 			$table->string('uuid')->nullable()->comment('uuid');
 			$table->timestamp('payed_at')->nullable()->comment('дата проведения платежа');
 			$table->timestamp('link_sent_at')->nullable()->comment('дата отправки ссылки на оплату');
-			$table->timestamp('success_payment_sent_at')->nullable()->comment('дата отправки уведомления об успешной оплате');
+			$table->timestamp('receipt_sent_at')->nullable()->comment('дата отправки чека');
 			$table->integer('user_id')->default(0)->index()->comment('пользователь');
 			$table->text('data_json')->nullable()->comment('дополнительная информация');
             $table->timestamps();

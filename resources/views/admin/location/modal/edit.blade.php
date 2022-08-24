@@ -54,24 +54,6 @@
 		</div>
 	@endforeach
 </div>
-{{--<div class="form-group">
-	<label for="legal_entity_id">Юридическое лицо</label>
-	<select id="legal_entity_id" name="legal_entity_id" class="form-control form-control-sm">
-		<option></option>
-		@foreach($legalEntities as $legalEntity)
-			<option value="{{ $legalEntity->id }}" @if($legalEntity->id == $location->legal_entity_id) selected @endif>{{ $legalEntity->name }}</option>
-		@endforeach
-	</select>
-</div>--}}
-{{--<div class="form-group">
-	<label for="city_id">City</label>
-	<select id="city_id" name="city_id" class="form-control form-control-sm">
-		<option></option>
-		@foreach($cities as $city)
-			<option value="{{ $city->id }}" @if($city->id == $location->city_id) selected @endif>{{ $city->name }}</option>
-		@endforeach
-	</select>
-</div>--}}
 <div class="form-group">
 	<label for="address">Address</label>
 	<textarea class="form-control form-control-sm" id="address" name="address" rows="2">{{ array_key_exists('address', $location->data_json) ? $location->data_json['address'] : '' }}</textarea>

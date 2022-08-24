@@ -3,20 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bill;
-use App\Models\City;
-use App\Models\Currency;
-use App\Models\DealPosition;
 use App\Models\PaymentMethod;
 use App\Models\Deal;
+use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\Status;
 use App\Services\HelpFunctions;
-use App\Services\AuthorizeNetService;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Mail;
+use Storage;
 use Validator;
 use Throwable;
 
@@ -52,17 +50,10 @@ class BillController extends Controller
 			->orderBy('name')
 			->get();
 
-		$currencies = Currency::get();
-		
-		$deal = $bill->deal;
-		$positions = $deal->positions;
-
 		$VIEW = view('admin.bill.modal.edit', [
 			'bill' => $bill,
 			'paymentMethods' => $paymentMethods,
 			'statuses' => $statuses,
-			'currencies' => $currencies,
-			'positions' => $positions,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -79,10 +70,27 @@ class BillController extends Controller
 		}
 		
 		$deal = Deal::find($dealId);
-		if (!$deal) return response()->json(['status' => 'error', 'reason' => 'Сделка не найдена']);
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
+		$city = $deal->city;
+		if (!$city) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
+		}
 		
-		$amount = $deal->amount() - $deal->billPayedAmount();
+		$product = $deal->product;
+		if (!$product) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$productType = $product->productType;
+		if (!$productType) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$amount = $deal->amount() - $deal->billAmount();
+		$tax = round($amount * $productType->tax / 100, 2);
+		$totalAmount = round($amount + $tax, 2);
+		$currency = $city->currency;
 		
 		$statuses = Status::where('type', Status::STATUS_TYPE_BILL)
 			->where('alias', '!=', Bill::PAYED_PROCESSING_STATUS)
@@ -93,17 +101,14 @@ class BillController extends Controller
 			->orderBy('name')
 			->get();
 
-		$currencies = Currency::get();
-		
-		$positions = $deal->positions;
-
 		$VIEW = view('admin.bill.modal.add', [
 			'deal' => $deal,
-			'amount' => ($amount > 0) ? $amount : 0,
+			'amount' => $amount,
+			'tax' => $tax,
+			'totalAmount' => $totalAmount,
+			'currency' => $currency,
 			'paymentMethods' => $paymentMethods,
 			'statuses' => $statuses,
-			'currencies' => $currencies,
-			'positions' => $positions,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -119,21 +124,16 @@ class BillController extends Controller
 		}
 		
 		$user = Auth::user();
-		$city = $user->city;
 
 		$rules = [
-			'deal_id' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 			'status_id' => 'required|numeric|min:0|not_in:0',
-			'amount' => 'required|numeric|min:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'deal_id' => 'Deal',
 				'payment_method_id' => 'Payment method',
 				'status_id' => 'Status',
-				'amount' => 'Amount',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -147,20 +147,30 @@ class BillController extends Controller
 		$deal = Deal::find($this->request->deal_id);
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
-		$position = DealPosition::where('deal_id', $this->request->deal_id)
-			->first();
-		if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
-		
 		if (!$deal->contractor) return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
 		
 		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
 		}
 		
-		$positionId = $this->request->position_id ?? 0;
-		if ($positionId) {
-			$position = DealPosition::find($positionId);
-			if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
+		$product = $deal->product;
+		if (!$product) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$productType = $product->productType;
+		if (!$productType) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$city = $deal->city;
+		if (!$city) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
+		}
+
+		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
+		if (!$cityProduct) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
@@ -171,12 +181,13 @@ class BillController extends Controller
 			$bill = new Bill();
 			$bill->contractor_id = $deal->contractor->id ?? 0;
 			$bill->deal_id = $deal->id ?? 0;
-			$bill->deal_position_id = $position->id ?? 0;
 			$bill->city_id = $city->id ?? 0;
 			$bill->location_id = $this->request->user()->location_id ?? 0;
 			$bill->payment_method_id = $paymentMethodId;
 			$bill->status_id = $this->request->status_id ?? 0;
-			$bill->total_amount = $this->request->amount ?? 0;
+			$bill->amount = $this->request->amount ?? 0;
+			$bill->tax = $this->request->tax ?? 0;
+			$bill->total_amount = $this->request->total_amount ?? 0;
 			$bill->currency_id = $this->request->currency_id ?? 0;
 			$bill->user_id = $this->request->user()->id;
 			if ($status->alias == Bill::PAYED_STATUS) {
@@ -184,7 +195,7 @@ class BillController extends Controller
 				
 				// при выставлении даты оплаты генерим и дату окончания срока действия сертификата,
 				// если это счет на позицию покупки сертификата
-				$certificate = $position ? $position->certificate : null;
+				$certificate = $deal->certificate;
 				if ($certificate) {
 					$product = $certificate->product;
 					$productType = $product->productType;
@@ -196,6 +207,12 @@ class BillController extends Controller
 			$bill->save();
 			$deal->bills()->save($bill);
 			
+			if ($productType->alias == ProductType::SERVICES_ALIAS && $cityProduct && $deal->balance() >= 0) {
+				$city->products()->updateExistingPivot($product->id, [
+					'availability' =>  --$cityProduct->pivot->availability,
+				]);
+			}
+			
 			\DB::commit();
 		} catch (Throwable $e) {
 			\DB::rollback();
@@ -205,7 +222,7 @@ class BillController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Invoice was successfully created']);
 	}
 	
 	/**
@@ -219,7 +236,6 @@ class BillController extends Controller
 		}
 		
 		$user = Auth::user();
-		$city = $user->city;
 
 		$bill = Bill::find($id);
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
@@ -239,14 +255,12 @@ class BillController extends Controller
 		$rules = [
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 			'status_id' => 'required|numeric|min:0|not_in:0',
-			'amount' => 'required|numeric|min:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'payment_method_id' => 'Payment method',
 				'status_id' => 'Status',
-				'amount' => 'Amount',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -257,44 +271,67 @@ class BillController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.статус-не-найден')]);
 		}
 		
-		$positionId = $this->request->position_id ?? 0;
-		if ($positionId) {
-			$position = DealPosition::find($positionId);
-			if (!$position) return response()->json(['status' => 'error', 'reason' => trans('main.error.позиция-сделки-не-найдена')]);
-		}
-		
 		if (in_array($bill->status->alias, [Bill::PAYED_STATUS, Bill::PAYED_PROCESSING_STATUS]) && in_array($bill->paymentMethod->alias, [PaymentMethod::ONLINE_ALIAS]) /*&& !$user->isSuperAdmin()*/) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.оплаченный-счет-со-способом-оплаты-онлайн-недоступен-для-редактирования')]);
 		}
-
-		$paymentMethodId = $this->request->payment_method_id ?? 0;
-		$amount = $this->request->amount ?? 0;
 		
-		$bill->deal_position_id = $position->id ?? 0;
-		$bill->payment_method_id = $paymentMethodId;
-		$bill->status_id = $this->request->status_id ?? 0;
-		$bill->total_amount = $amount;
-		/*$bill->currency_id = $this->request->currency_id ?? 0;*/
-		if ($status->alias == Bill::PAYED_STATUS && !$bill->payed_at) {
-			$bill->payed_at = Carbon::now()->format('Y-m-d H:i:s');
-			
-			// при выставлении даты оплаты генерим и дату окончания срока действия сертификата,
-			// если это счет на позицию покупки сертификата
-			$position = $bill->position;
-			$certificate = $position ? $position->certificate : null;
-			if ($certificate) {
-				$product = $certificate ? $certificate->product : null;
-				$productType = $product->productType;
-				$certificatePeriod = ($productType->alias == ProductType::COURSES_ALIAS) ? 12 : 6;
-				$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
-				$certificate->save();
-			}
+		$product = $deal->product;
+		if (!$product) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
-		if (!$bill->save()) {
+		
+		$productType = $product->productType;
+		if (!$productType) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$city = $deal->city;
+		if (!$city) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
+		}
+
+		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
+		if (!$cityProduct) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$certificate = $deal->certificate;
+		
+		try {
+			\DB::beginTransaction();
+			
+			$bill->payment_method_id = $this->request->payment_method_id ?? 0;
+			$bill->status_id = $this->request->status_id ?? 0;
+			if ($status->alias == Bill::PAYED_STATUS && !$bill->payed_at) {
+				$bill->payed_at = Carbon::now()->format('Y-m-d H:i:s');
+				
+				// при выставлении даты оплаты генерим и дату окончания срока действия сертификата,
+				// если это счет на позицию покупки сертификата
+				if ($certificate) {
+					$certificatePeriod = ($productType->alias == ProductType::COURSES_ALIAS) ? 12 : 6;
+					$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
+					$certificate->save();
+				}
+			}
+			$bill->save();
+			
+			if ($productType->alias == ProductType::SERVICES_ALIAS && $cityProduct && $deal->balance() >= 0) {
+				$city->products()->updateExistingPivot($product->id, [
+					'availability' =>  --$cityProduct->pivot->availability,
+				]);
+			}
+
+			\DB::commit();
+		} catch (Throwable $e) {
+			\DB::rollback();
+			
+			Log::debug('500 - Bill Update: ' . $e->getMessage());
+			
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Invoice was successfully saved']);
 	}
 
 	/**
@@ -302,7 +339,7 @@ class BillController extends Controller
 	 *
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function delete($id)
+	/*public function delete($id)
 	{
 		if (!$this->request->ajax()) {
 			abort(404);
@@ -312,7 +349,7 @@ class BillController extends Controller
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
 		
 		$billStatus = $bill->status;
-		if ($billStatus && $billStatus->alias == Bill::CANCELED_STATUS/* && !$user->isSuperAdmin()*/) {
+		if ($billStatus && $billStatus->alias == Bill::CANCELED_STATUS) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-в-текущем-статусе-недоступен-для-редактирования')]);
 		}
 		
@@ -336,9 +373,9 @@ class BillController extends Controller
 		if (!$bill->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
-	}
+		
+		return response()->json(['status' => 'success', 'message' => 'Invoice was successfully deleted']);
+	}*/
 
 	public function sendPayLink() {
 		if (!$this->request->ajax()) {
@@ -378,9 +415,151 @@ class BillController extends Controller
 		$email = $deal->email ?: $contractor->email;
 		if (!$email) return response()->json(['status' => 'error', 'reason' => trans('main.error.e-mail-не-найден')]);
 		
-		$job = new \App\Jobs\SendPayLinkEmail($bill);
-		$job->handle();
+		/*$job = new \App\Jobs\SendPayLinkEmail($bill);
+		$job->handle();*/
 		
-		return response()->json(['status' => 'success', 'message' => trans('main.success.задание-на-отправку-ссылки-на-оплату-принято')]);
+		$name = $deal->name ?: $contractor->name;
+		$dealCity = $deal->city;
+		
+		$messageData = [
+			'name' => $name,
+			'city' => $city ?? null,
+			'bill' => $bill,
+		];
+		
+		$recipients = $bcc = [];
+		$recipients[] = $email;
+		if ($dealCity && $dealCity->email) {
+			$bcc[] = $dealCity->email;
+		}
+		//$bcc[] = env('DEV_EMAIL');
+		
+		$subject = env('APP_NAME') . ': paylink';
+		
+		Mail::send('admin.emails.send_paylink', $messageData, function ($message) use ($recipients, $subject, $bcc) {
+			/** @var \Illuminate\Mail\Message $message */
+			$message->subject($subject);
+			$message->to($recipients);
+			$message->bcc($bcc);
+		});
+		
+		$failures = Mail::failures();
+		if ($failures) {
+			return null;
+		}
+		
+		$sentAt = Carbon::now()->format('Y-m-d H:i:s');
+		
+		$bill->link_sent_at = $sentAt;
+		$bill->save();
+		
+		return response()->json(['status' => 'success', 'message' => 'Paylink was successfully sent', 'sent_at' => $sentAt]);
+	}
+	
+	/**
+	 * @param $uuid
+	 * @param bool $print
+	 * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Symfony\Component\HttpFoundation\StreamedResponse
+	 */
+	public function getReceiptFile($uuid, $print = false)
+	{
+		$bill = HelpFunctions::getEntityByUuid(Bill::class, $uuid);
+		if (!$bill) {
+			abort(404);
+		}
+		
+		$receiptFileName = $bill->number . '.pdf';
+
+		$pdf = $bill->generateReceiptFile($receiptFileName);
+		
+		if ($print) {
+			return response()->file(storage_path('app/private/receipt/' . $receiptFileName));
+		}
+		
+		return Storage::disk('private')->download('receipt/' . $receiptFileName);
+	}
+	
+	/**
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function sendReceipt()
+	{
+		if (!$this->request->ajax()) {
+			abort(404);
+		}
+		
+		$user = Auth::user();
+		
+		if (!$user->isAdminOrHigher()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
+		}
+		
+		$rules = [
+			'id' => 'required|numeric|min:0|not_in:0',
+		];
+		
+		$validator = Validator::make($this->request->all(), $rules)
+			->setAttributeNames([
+				'id' => 'Deal',
+			]);
+		if (!$validator->passes()) {
+			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
+		}
+		
+		$bill = Bill::find($this->request->id);
+		if (!$bill) return response()->json(['status' => 'error', 'reason' => 'Invoice not found']);
+		
+		$deal = $bill->deal;
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
+		
+		if (in_array($deal->status->alias, [Deal::CANCELED_STATUS, Deal::RETURNED_STATUS])) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-недоступна-для-редактирования')]);
+		}
+		
+		$city = $bill->city;
+		if (!$city) return response()->json(['status' => 'error', 'reason' => 'Invoice city not found']);
+		
+		$contractor = $bill->contractor;
+		if (!$contractor) return response()->json(['status' => 'error', 'reason' => 'Invoice contractor not found']);
+		
+		$dealEmail = $deal->email ?? '';
+		$dealName = $deal->name ?? '';
+		$contractorEmail = $contractor->email ?? '';
+		$contractorName = $contractor->name ?? '';
+		if (!$dealEmail && !$contractorEmail) return response()->json(['status' => 'error', 'reason' => 'Deal or Contractor E-mail not found']);
+		
+		$messageData = [
+			'bill' => $bill,
+			'name' => $dealName ?: $contractorName,
+			'city' => $city,
+		];
+		
+		$recipients = $bcc = [];
+		$recipients[] = $dealEmail ?: $contractorEmail;
+		if ($city->email) {
+			$bcc[] = $city->email;
+		}
+		
+		$subject = env('APP_NAME') . ': Invoice #' . $bill->number . ' Receipt';
+		
+		Mail::send(['html' => "admin.emails.send_invoice_receipt"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
+			/** @var \Illuminate\Mail\Message $message */
+			$message->subject($subject);
+			$message->to($recipients);
+			$message->bcc($bcc);
+		});
+		
+		$failures = Mail::failures();
+		if ($failures) {
+			\Log::debug($failures);
+			return null;
+		}
+		
+		$sentAt = Carbon::now()->format('Y-m-d H:i:s');
+		
+		$bill->receipt_sent_at = $sentAt;
+		$bill->save();
+		
+		return response()->json(['status' => 'success', 'message' => 'Invoice Receipt was successfully sent', 'sent_at' => $sentAt]);
 	}
 }

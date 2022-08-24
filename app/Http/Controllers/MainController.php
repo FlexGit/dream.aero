@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deal;
-use App\Models\LegalEntity;
 use App\Models\Promo;
 use App\Models\Promocode;
 use App\Services\HelpFunctions;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use App\Models\City;
 use App\Models\Content;
@@ -18,17 +16,20 @@ use App\Models\ProductType;
 use App\Models\Product;
 use App\Models\User;
 use Validator;
+use App\Repositories\PromocodeRepository;
 
 class MainController extends Controller
 {
 	private $request;
+	private $promocodeRepo;
 	
 	/**
 	 * @param Request $request
 	 */
-	public function __construct(Request $request)
+	public function __construct(Request $request, PromocodeRepository $promocodeRepo)
 	{
 		$this->request = $request;
+		$this->promocodeRepo = $promocodeRepo;
 	}
 	
 	/**
@@ -138,19 +139,7 @@ class MainController extends Controller
 				->get();
 		}
 		
-		$date = date('Y-m-d H:i:s');
-		
-		$activePromocodes = Promocode::whereRelation('cities', 'cities.id', '=', $city->id)
-			->where('is_active', true)
-			->where(function ($query) use ($date) {
-				$query->where('active_from_at', '<=', $date)
-					->orWhereNull('active_from_at');
-			})
-			->where(function ($query) use ($date) {
-				$query->where('active_to_at', '>=', $date)
-					->orWhereNull('active_to_at');
-			})
-			->get();
+		$activePromocodes = $this->promocodeRepo->getList($city, true, false);
 		
 		$VIEW = view('modal.certificate', [
 			'city' => $city,
@@ -227,20 +216,6 @@ class MainController extends Controller
 		if (!$promocode) {
 			return response()->json(['status' => 'error', 'reason' => 'Please enter a valid promo code']);
 		}
-		
-		// для неперсональных промокодов проверяем доступность для Бронирования или Покупки Сертификата
-		/*if (!$promocode->contractor_id) {
-			$dataJson = $promocode->data_json ? (array)$promocode->data_json : [];
-			if (!$locationId) {
-				$isDiscountAllow = array_key_exists('is_discount_certificate_purchase_allow', $dataJson) ? (bool)$dataJson['is_discount_certificate_purchase_allow'] : false;
-			}
-			else {
-				$isDiscountAllow = array_key_exists('is_discount_booking_allow', $dataJson) ? (bool)$dataJson['is_discount_booking_allow'] : false;
-			}
-			if (!$isDiscountAllow) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
-			}
-		}*/
 		
 		return response()->json(['status' => 'success', 'message' => trans('main.modal-booking.промокод-применен'), 'uuid' => $promocode->uuid]);
 	}
@@ -610,23 +585,11 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$legalEntityIds = Location::where('city_id', $city->id)
-			->where('is_active', true)
-			->pluck('legal_entity_id')
-			->all();
-		
-		$legalEntityIds = array_unique($legalEntityIds);
-		
-		$legalEntities = LegalEntity::whereIn('id', $legalEntityIds)
-			->where('is_active', true)
-			->get();
-		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'oferta');
 		
 		return view('oferta', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
-			'legalEntities' => $legalEntities,
 			'page' => $page ?? new Content,
 		]);
 	}

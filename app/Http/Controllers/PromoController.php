@@ -207,12 +207,6 @@ class PromoController extends Controller
 		$promo->active_from_at = $this->request->active_from_at ? Carbon::parse($this->request->active_from_at)->format('Y-m-d') : null;
 		$promo->active_to_at = $this->request->active_to_at ? Carbon::parse($this->request->active_to_at)->format('Y-m-d') : null;
 		$data = $promo->data_json;
-		if ($this->request->is_discount_booking_allow) {
-			$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;
-		}
-		if ($this->request->is_discount_certificate_purchase_allow) {
-			$data['is_discount_certificate_purchase_allow'] = (bool)$this->request->is_discount_certificate_purchase_allow;
-		}
 		if ($isImageFileUploaded) {
 			$data['image_file_path'] = 'promo/' . $imageFile->getClientOriginalName();
 		}
@@ -221,7 +215,7 @@ class PromoController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Promo was successfully created']);
 	}
 	
 	/**
@@ -246,14 +240,14 @@ class PromoController extends Controller
 		$rules = [
 			'name' => ['required', 'max:255'],
 			'alias' => ['required', 'max:255'],
-			'image_file' => 'sometimes|image|max:512',
+			'image_file' => 'sometimes|image|max:5120',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Имя',
-				'alias' => 'Алиас',
-				'image_file' => 'Изображение',
+				'name' => 'Name',
+				'alias' => 'Alias',
+				'image_file' => 'Image',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -281,12 +275,6 @@ class PromoController extends Controller
 		$promo->active_from_at = $this->request->active_from_at ? Carbon::parse($this->request->active_from_at)->format('Y-m-d') : null;
 		$promo->active_to_at = $this->request->active_to_at ? Carbon::parse($this->request->active_to_at)->format('Y-m-d') : null;
 		$data = $promo->data_json;
-		/*if ($this->request->is_discount_booking_allow) {*/
-			$data['is_discount_booking_allow'] = (bool)$this->request->is_discount_booking_allow;
-		/*}
-		if ($this->request->is_discount_certificate_purchase_allow) {*/
-			$data['is_discount_certificate_purchase_allow'] = (bool)$this->request->is_discount_certificate_purchase_allow;
-		/*}*/
 		if ($isImageFileUploaded) {
 			$data['image_file_path'] = 'promo/' . $imageFile->getClientOriginalName();
 		}
@@ -294,8 +282,8 @@ class PromoController extends Controller
 		if (!$promo->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Promo was successfully saved']);
 	}
 	
 	/**
@@ -323,8 +311,8 @@ class PromoController extends Controller
 		if (!$promo->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Promo was successfully deleted']);
 	}
 
 	/**
@@ -356,8 +344,8 @@ class PromoController extends Controller
 		if (!$promo->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Promo image was successfully deleted']);
 	}
 	
 	/**

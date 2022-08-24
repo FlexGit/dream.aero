@@ -30,10 +30,10 @@
 						<thead>
 							<tr>
 								<th class="text-center">Number</th>
-								<th class="text-center d-none d-md-table-cell">Discount</th>
-								<th class="text-center d-none d-md-table-cell">Is active</th>
-								<th class="text-center d-none d-xl-table-cell">Activity start date</th>
-								<th class="text-center d-none d-xl-table-cell">Activity end date</th>
+								<th class="text-center">Discount</th>
+								<th class="text-center">Is active</th>
+								<th class="text-center">Activity start date</th>
+								<th class="text-center">Activity end date</th>
 								<th class="text-center">Action</th>
 							</tr>
 						</thead>
@@ -157,18 +157,9 @@
 							return;
 						}
 
-						var msg = 'Promo code successfully ';
-						if (method === 'POST') {
-							msg += 'added';
-						} else if (method === 'PUT') {
-							msg += 'saved';
-						} else if (method === 'DELETE') {
-							msg += 'deleted';
-						}
-
 						$('#modal').modal('hide');
 						getList();
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});

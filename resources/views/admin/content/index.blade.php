@@ -54,10 +54,10 @@
 						<tr>
 							<th class="text-center">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name @else Title @endif</th>
 							@if($type != app('\App\Models\Content')::PAGES_TYPE)
-								<th class="text-center d-none d-xl-table-cell">Publication Date</th>
-								<th class="text-center d-none d-xl-table-cell">Is active</th>
+								<th class="text-center">Publication Date</th>
+								<th class="text-center">Is active</th>
 							@endif
-							<th class="text-center d-none d-xl-table-cell"></th>
+							<th class="text-center"></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -214,19 +214,9 @@
 							return;
 						}
 
-						var msg = '';
-						if (formId === 'content') {
-							msg = 'Content successfully ';
-							if (method === 'POST') {
-								msg += 'added';
-							} else if (method === 'PUT') {
-								msg += 'saved';
-							}
-						}
-
 						$('#modal').modal('hide');
 						getList(false);
-						toastr.success(msg);
+						toastr.success(result.message);
 					}
 				});
 			});

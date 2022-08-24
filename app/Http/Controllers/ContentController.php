@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\City;
 use App\Models\Content;
 use App\Services\HelpFunctions;
 use Auth;
@@ -47,10 +46,8 @@ class ContentController extends Controller
 		$city = $user->city;
 		
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
-		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
-		}
-		
+		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
+	
 		$id = $this->request->id ?? 0;
 
 		$contents = Content::orderByDesc('id')
@@ -94,9 +91,7 @@ class ContentController extends Controller
 		}
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
-		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
-		}
+		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
@@ -122,9 +117,7 @@ class ContentController extends Controller
 		}
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
-		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
-		}
+		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$VIEW = view('admin.content.modal.add', [
 			'type' => $type,
@@ -150,9 +143,7 @@ class ContentController extends Controller
 		}
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
-		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
-		}
+		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
@@ -245,7 +236,7 @@ class ContentController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Content was successfully created']);
 	}
 
 	/**
@@ -264,9 +255,7 @@ class ContentController extends Controller
 		$city = $user->city;
 		
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
-		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
-		}
+		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
@@ -320,7 +309,7 @@ class ContentController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success']);
+		return response()->json(['status' => 'success', 'message' => 'Content was successfully saved']);
 	}
 
 	/**
@@ -340,9 +329,7 @@ class ContentController extends Controller
 		}
 
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
-		if (!$parentContent) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
-		}
+		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
@@ -351,8 +338,8 @@ class ContentController extends Controller
 		if (!$content->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
-
-		return response()->json(['status' => 'success']);
+		
+		return response()->json(['status' => 'success', 'message' => 'Content was successfully deleted']);
 	}
 
 	/**

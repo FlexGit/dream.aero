@@ -5,7 +5,6 @@
 		<div class="form-group">
 			<label for="user_id">User</label>
 			<select class="form-control js-shift-user" id="user_id" name="user_id">
-				{{--<option></option>--}}
 				@foreach($users as $user)
 					@if($user->role == app('\App\Models\User')::ROLE_SUPERADMIN)
 						@continue

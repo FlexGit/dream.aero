@@ -25,7 +25,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property \datetime|null $updated_at
  * @property \datetime|null $deleted_at
  * @property-read \App\Models\City|null $city
- * @property-read \App\Models\DealPosition|null $position
  * @property-read \App\Models\Product|null $product
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read int|null $revision_history_count
@@ -52,6 +51,7 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate whereSentAt($value)
  * @property string|null $certificate_sent_at время последней отправки Сертификата контрагенту
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate whereCertificateSentAt($value)
+ * @property-read \App\Models\Deal|null $deal
  */
 class Certificate extends Model
 {
@@ -141,9 +141,9 @@ class Certificate extends Model
 		return $this->hasOne(Product::class, 'id', 'product_id');
 	}
 
-	public function position()
+	public function deal()
 	{
-		return $this->belongsTo(DealPosition::class, 'id', 'certificate_id');
+		return $this->belongsTo(Deal::class, 'id', 'certificate_id');
 	}
 	
 	/**
@@ -156,7 +156,7 @@ class Certificate extends Model
 		$productTypeAlias = ($this->product && $this->product->productType) ? mb_strtoupper(substr($this->product->productType->alias, 0, 1)) : '';
 		$productDuration = $this->product ? $this->product->duration : '';
 		
-		return 'V' . date('y') . $cityAlias . (!in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productTypeAlias : '') . $productAlias  . (in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productDuration : '') . sprintf('%05d', $this->id);
+		return /*'V' . */date('y') . $cityAlias . (!in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productTypeAlias : '') . $productAlias  . (in_array($this->product->productType->alias, [ProductType::REGULAR_ALIAS, ProductType::ULTIMATE_ALIAS]) ? $productDuration : '') . sprintf('%05d', $this->id);
 	}
 	
 	/**
@@ -173,10 +173,7 @@ class Certificate extends Model
 	 */
 	public function generateFile()
 	{
-		$position = $this->position;
-		if (!$position) return null;
-		
-		$deal = $position->deal;
+		$deal = $this->deal;
 		if (!$deal) return null;
 		
 		if ($deal->balance() < 0) return null;
@@ -187,7 +184,7 @@ class Certificate extends Model
 		$productType = $product->productType;
 		if (!$productType) return null;
 		
-		$bill = $position->bill;
+		$bill = $deal->lastPaidBill();
 		if (!$bill) return null;
 		
 		$city = $this->city;

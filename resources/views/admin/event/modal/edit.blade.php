@@ -1,6 +1,5 @@
 <input type="hidden" id="id" name="id" value="{{ $event->id }}">
 <input type="hidden" id="comment_id" name="comment_id">
-{{--<input type="hidden" id="position_id" name="position_id" value="{{ $event->deal_position_id }}">--}}
 <input type="hidden" id="flight_simulator_id" name="flight_simulator_id" value="{{ $event->flight_simulator_id ?? 0 }}">
 <input type="hidden" id="source" name="source" value="{{ app('\App\Models\Event')::EVENT_SOURCE_DEAL }}">
 
@@ -59,13 +58,15 @@
 					</div>
 					<div class="col">
 						<div class="form-group">
-							<label>Flight end</label>
+							<label>Flight stop</label>
 							<div class="d-flex">
 								<input type="date" class="form-control" name="stop_at_date" value="{{ $event->stop_at ? \Carbon\Carbon::parse($event->stop_at)->format('Y-m-d') : '' }}" placeholder="">
 								<input type="time" class="form-control ml-2" name="stop_at_time" value="{{ $event->stop_at ? \Carbon\Carbon::parse($event->stop_at)->format('H:i') : '' }}" placeholder="">
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="row">
 					<div class="col">
 						<div class="form-group">
 							<label for="extra_time">Extra time</label>
@@ -75,9 +76,7 @@
 							</select>
 						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-4">
+					<div class="col">
 						<div class="form-group">
 							<label for="is_repeated_flight">Repeated flight</label>
 							<select class="form-control" id="is_repeated_flight" name="is_repeated_flight">
@@ -86,7 +85,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-4">
+					<div class="col">
 						<div class="form-group">
 							<label for="is_unexpected_flight">Spontaneous flight</label>
 							<select class="form-control" id="is_unexpected_flight" name="is_unexpected_flight">
@@ -95,260 +94,8 @@
 							</select>
 						</div>
 					</div>
-					@if($event->city && $event->city->locations->count() > 1)
-						<div class="col-4">
-							<div class="form-group">
-								<label for="location_id">Location</label>
-								<select class="form-control" id="location_id" name="location_id">
-									@foreach($event->city->locations as $location)
-										@foreach($location->simulators as $simulator)
-											<option value="{{ $location->id }}" data-simulator_id="{{ $simulator->id }}" @if($event->location_id == $location->id && $event->flight_simulator_id == $simulator->id) selected @endif>{{ $location->name }} ({{ $simulator->name }})</option>
-										@endforeach
-									@endforeach
-								</select>
-							</div>
-						</div>
-					@endif
-				</div>
-				<div class="row">
-					<div class="col-8">
-						<div class="form-group">
-							<label for="description">Description</label>
-							<textarea class="form-control" id="description" name="description" rows="3" placeholder="">{{ $event->description ?? '' }}</textarea>
-						</div>
-					</div>
 				</div>
 			</div>
-			{{--<div class="tab-pane fade" id="deal-info">
-				<div class="row mt-3">
-					<div class="col">
-						<div class="text-center font-weight-bold">Client</div>
-						@if($event->contractor)
-							<div>{{ $event->contractor->fio() }}</div>
-							<div><i class="fas fa-mobile-alt"></i> {{ $event->contractor->phoneFormatted() }}</div>
-							<div><i class="far fa-envelope"></i> {{ $event->contractor->email }}</div>
-						@endif
-						<hr>
-						<div class="text-center font-weight-bold">Contact person</div>
-						@if($event->deal)
-							<div>{{ $event->deal->name }}</div>
-							<div><i class="fas fa-mobile-alt"></i> {{ $event->deal->phoneFormatted() }}</div>
-							<div><i class="far fa-envelope"></i> {{ $event->deal->email }}</div>
-						@endif
-					</div>
-					<div class="col">
-						<div class="text-center font-weight-bold">Deal</div>
-						@if($event->deal)
-							<div>
-								<a href="/deal/{{ $event->deal->id }}">{{ $event->deal->number ?? '' }}</a> от {{ $event->deal->created_at ? $event->deal->created_at->format('Y-m-d H:i') : '' }}
-							</div>
-							<div class="d-inline-block">
-								@if($event->city)
-									<i class="fas fa-dollar-sign"></i>
-								@endif
-								{{ number_format($event->deal->amount(), 0, '.', ' ') }}
-							</div>
-							--}}{{--@if($event->deal->scores)
-								@php($scoreAmount = 0)
-								@foreach($event->deal->scores ?? [] as $score)
-									@if($score->type != app('\App\Models\Score')::USED_TYPE)
-										@continue
-									@endif
-									@php($scoreAmount += abs($score->score))
-								@endforeach
-								@if($scoreAmount)
-									<div class="d-inline-block" title="Оплачено баллами">
-										<i class="far fa-star"></i> {{ number_format($scoreAmount, 0, '.', ' ') }}
-									</div>
-								@endif
-							@endif--}}{{--
-							<div class="d-inline-block" title="Итого к оплате">
-								@php($balance = $event->deal->balance())
-								@if($balance < 0)
-									<span class="pl-2 pr-2" style="background-color: #ffbdba;">{{ number_format($balance, 0, '.', ' ') }}</span>
-								@elseif($balance > 0)
-									<span class="pl-2 pr-2" style="background-color: #e9ffc9;">+{{ number_format($balance, 0, '.', ' ') }}</span>
-								@else
-									<span class="pl-2 pr-2" style="background-color: #e9ffc9;">paid</span>
-								@endif
-							</div>
-							@if($event->deal->status)
-								<div class="text-center">
-									<div class="p-0 pl-2 pr-2" style="background-color: {{ array_key_exists('color', $event->deal->status->data_json ?? []) ? $event->deal->status->data_json['color'] : 'none' }};">
-										{{ $event->deal->status->name }}
-									</div>
-								</div>
-							@endif
-							@if(is_array($event->deal->data_json) && array_key_exists('comment', $event->deal->data_json) && $event->deal->data_json['comment'])
-								<div class="text-left mt-2">
-									<div style="line-height: 0.8em;border: 1px solid;border-radius: 10px;padding: 4px 8px;background-color: #fff;">
-										<i class="far fa-comment-dots"></i> <i>{{ $event->deal->data_json['comment'] }}</i>
-									</div>
-								</div>
-							@endif
-							<div class="d-flex justify-content-between mt-2">
-								<div>
-									{{ isset(\App\Models\Deal::SOURCES[$event->deal->source]) ? \App\Models\Deal::SOURCES[$event->deal->source] : '' }}
-								</div>
-								<div>
-									@if($event->deal->user)
-										{{ $event->deal->user->name }}
-									@endif
-								</div>
-							</div>
-							<hr>
-							<div class="text-center font-weight-bold">Invoices</div>
-							@foreach($event->deal->bills ?? [] as $bill)
-								<div># {{ $bill->number ?? '' }}, {{ $bill->created_at ? $bill->created_at->format('Y-m-d H:i') : '' }}</div>
-								<div>
-									@if($bill->currency)
-										@if($bill->currency->alias == app('\App\Models\Currency')::USD_ALIAS)
-											<i class="fas fa-dollar-sign"></i>
-										@endif
-									@endif
-									{{ number_format($bill->amount, 0, '.', ' ') }}
-									@if($bill->paymentMethod)
-										[{{ $bill->paymentMethod->name }}]
-										@if ($bill->paymentMethod->alias == app('\App\Models\PaymentMethod')::ONLINE_ALIAS)
-											@if ($bill->link_sent_at)
-												<i class="far fa-envelope-open"></i>
-											@else
-												<i class="far fa-envelope"></i>
-											@endif
-										@endif
-									@endif
-								</div>
-								@if ($bill->status)
-									<div class="text-center p-0 pl-2 pr-2" style="background-color: {{ array_key_exists('color', $bill->status->data_json ?? []) ? $bill->status->data_json['color'] : 'none' }};">
-										{{ $bill->status->name }}
-									</div>
-								@endif
-							@endforeach
-						@endif
-					</div>
-					<div class="col">
-						@if($event->dealPosition)
-							<div class="text-center font-weight-bold">
-								@if($event->dealPosition->certificate)
-									Booking by voucher
-								@else
-									Booking
-								@endif
-							</div>
-							<div>{{ $event->dealPosition->number ?? '' }}, {{ $event->dealPosition->created_at ? $event->dealPosition->created_at->format('Y-m-d H:i') : '' }}</div>
-							--}}{{--@if($event->city)
-								<div>
-									<i class="fas fa-map-marker-alt"></i>
-									{{ $event->city->name }}
-									@if($event->location)
-										{{ $event->location->name }}
-									@endif
-									@if($event->simulator)
-										{{ $event->simulator->name }}
-									@endif
-								</div>
-							@endif--}}{{--
-							<div class="d-inline-block">
-								@if($event->city)
-									<i class="fas fa-dollar-sign"></i>
-								@endif
-								{{ number_format($event->dealPosition->amount, 0, '.', ' ') }} [{{ $event->dealPosition->bill->number ?? '' }}]
-							</div>
-							<div>
-								<i class="far fa-calendar-alt" title="Desired flight time"></i> {{ \Carbon\Carbon::parse($event->dealPosition->flight_at)->format('Y-m-d H:i') }}
-							</div>
-							@if($event->dealPosition->promo)
-								<div>
-									<i class="fas fa-percent" title="Promo"></i> {{ $event->dealPosition->promo->name }}
-								</div>
-							@endif
-							@if($event->dealPosition->promocode)
-								<div>
-									<i class="fas fa-tag" title="Promocode"></i> {{ $event->dealPosition->promocode->number ?? '' }}
-								</div>
-							@endif
-							@if($event->dealPosition->product)
-								<hr>
-								<div class="text-center font-weight-bold">Product</div>
-								<div>
-									{{ $event->dealPosition->product->name }}
-									[
-									@if($event->dealPosition->currency)
-										<i class="fas fa-dollar-sign"></i>
-									@endif
-									{{ $event->dealPosition->amount ? number_format($event->dealPosition->amount, 0, '.', ' ') : 'бесплатно' }}
-									]
-								</div>
-							@endif
-							@if($event->dealPosition->certificate)
-								<hr>
-								<div class="text-center font-weight-bold">Voucher</div>
-								<a href="{{ route('getCertificate', ['uuid' => $event->dealPosition->certificate->uuid]) }}" target="_blank">
-									<i class="far fa-file-alt" title="Voucher file"></i>
-								</a>
-								{{ $event->dealPosition->certificate->number ?: 'no number' }}
-								@if ($event->dealPosition->certificate->sent_at)
-									<i class="far fa-envelope-open" title="{{ $event->dealPosition->certificate->sent_at }}"></i>
-								@else
-									<i class="far fa-envelope" title="Voucher not sent yet"></i>
-								@endif
-								@if ($event->dealPosition->certificate->status)
-									<div class="text-center p-0 pl-2 pr-2" style="background-color: {{ array_key_exists('color', $event->dealPosition->certificate->status->data_json ?? []) ? $event->dealPosition->certificate->status->data_json['color'] : 'none' }};">
-										{{ $event->dealPosition->certificate->status->name }}
-									</div>
-								@endif
-							@endif
-							--}}{{--@if($event->deal->roistat)
-								<hr>
-								<div class="text-center font-weight-bold">Номер визита Roistat</div>
-								<div>{{ $event->deal->roistat }}</div>
-							@endif--}}{{--
-						@endif
-					</div>
-				</div>
-			</div>--}}
-			{{--<div class="tab-pane fade" id="simulator">
-				<div class="row mt-3">
-					<div class="col-4">
-						<div class="form-group">
-							<label for="simulator_up_at">Platform lifting time</label>
-							<input type="time" class="form-control" id="simulator_up_at" name="simulator_up_at" value="{{ $event->simulator_up_at ? $event->simulator_up_at->format('H:i') : '' }}">
-						</div>
-					</div>
-					<div class="col-4">
-						<div class="form-group">
-							<label for="simulator_down_at">Platform lowering time</label>
-							<input type="time" class="form-control" id="simulator_down_at" name="simulator_down_at" value="{{ $event->simulator_down_at ? $event->simulator_down_at->format('H:i') : '' }}">
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="tab-pane fade" id="assessment">
-				<div class="row mt-3">
-					<div class="col-4">
-						<div class="form-group">
-							<label for="pilot_assessment">Оценка пилота</label>
-							<select class="form-control" id="pilot_assessment" name="pilot_assessment">
-								<option>---</option>
-								@for($i=10;$i>0;$i--)
-									<option value="{{ $i }}" @if($i == $event->pilot_assessment) selected @endif>{{ $i }}</option>
-								@endfor
-							</select>
-						</div>
-					</div>
-					<div class="col-4">
-						<div class="form-group">
-							<label for="admin_assessment">Оценка админа</label>
-							<select class="form-control" id="admin_assessment" name="admin_assessment">
-								<option>---</option>
-								@for($i=10;$i>0;$i--)
-									<option value="{{ $i }}" @if($i == $event->admin_assessment) selected @endif>{{ $i }}</option>
-								@endfor
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>--}}
 			<div class="tab-pane fade" id="comments">
 				<div class="pl-2 pr-2" style="line-height: 1.1em;">
 					@foreach($comments ?? [] as $comment)
@@ -404,7 +151,7 @@
 						<div>
 							@foreach ($shifts as $shift)
 								<div>
-									{{ $shift->start_at->format('H:i') }} - {{ $shift->stop_at->format('H:i') }} - {{ $shift->user->fio() }}
+									{{ $shift->start_at->format('g:i A') }} - {{ $shift->stop_at->format('g:i A') }} - {{ $shift->user->fio() }}
 								</div>
 							@endforeach
 						</div>
@@ -424,7 +171,7 @@
 			</div>
 			<div class="tab-pane fade" id="doc">
 				<div class="row pl-3 pr-3 mt-4">
-					<div class="col-6">
+					<div class="col">
 						<div class="form-group">
 							<label for="doc_file">Document photo</label>
 							<div class="custom-file">
@@ -447,9 +194,9 @@
 		<li class="nav-item">
 			<a class="nav-link active" data-toggle="tab" href="{{ asset('#flight') }}">Flight</a>
 		</li>
-		<li class="nav-item">
+		{{--<li class="nav-item">
 			<a class="nav-link" data-toggle="tab" href="{{ asset('#simulator') }}">Platform</a>
-		</li>
+		</li>--}}
 	</ul>
 
 	<div class="tab-content">
@@ -478,7 +225,7 @@
 				</div>
 				<div class="col">
 					<div class="form-group">
-						<label>Flight end</label>
+						<label>Flight stop</label>
 						<div class="d-flex">
 							<input type="date" class="form-control" name="stop_at_date" value="{{ $event->stop_at ? \Carbon\Carbon::parse($event->stop_at)->format('Y-m-d') : '' }}" placeholder="">
 							<input type="time" class="form-control ml-2" name="stop_at_time" value="{{ $event->stop_at ? \Carbon\Carbon::parse($event->stop_at)->format('H:i') : '' }}" placeholder="">
@@ -551,7 +298,7 @@
 					</div>
 					<div class="col">
 						<div class="form-group">
-							<label>Flight end</label>
+							<label>Flight stop</label>
 							<div class="d-flex">
 								<input type="date" class="form-control" name="stop_at_date" value="{{ $event->stop_at ? \Carbon\Carbon::parse($event->stop_at)->format('Y-m-d') : '' }}" placeholder="">
 								<input type="time" class="form-control ml-2" name="stop_at_time" value="{{ $event->stop_at ? \Carbon\Carbon::parse($event->stop_at)->format('H:i') : '' }}" placeholder="">

@@ -5,7 +5,6 @@
 		<div class="calendars-container" data-holidays="{{ json_encode(app('\App\Models\Deal')::HOLIDAYS) }}">
 			@foreach($cities ?? [] as $city)
 				@php
-					// для Мск и Сбп название города не выводим
 					$cityName = ($city->locations->count() > 1) ? '' : $city->name;
 				@endphp
 
@@ -15,7 +14,6 @@
 							if ($user->city && $user->city->id != $city->id) {
 								continue;
 							}
-							// только для Мск и Спб выводим название локации
 							$locationName = ($city->locations->count() > 1) ? $location->name : '';
 						@endphp
 
@@ -41,7 +39,6 @@
 						if ($user->city && $user->city->id != $city->id) {
 							continue;
 						}
-						// только для Мск и Спб выводим название локации
 						$locationName = ($city->locations->count() > 1) ? $location->name : '';
 					@endphp
 
@@ -65,7 +62,7 @@
 	</div>
 
 	<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" data-backdrop="static">
-		<div class="modal-dialog modal-xl">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalLabel">Event</h5>
@@ -76,7 +73,6 @@
 				<form id="event">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
-						{{--<button type="button" class="btn btn-default js-reset mr-5">Сбросить</button>--}}
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
@@ -216,19 +212,16 @@
 				var timezone = $(calendarEl).data('timezone') ? $(calendarEl).data('timezone') : 'Europe/Moscow';
 
 				var calendar = new FullCalendar.Calendar(calendarEl, {
-					//aspectRatio: 0.8,
 					stickyHeaderDates: true,
 					initialView: calendarViewType,
-					/*locale: 'en',*/
 					editable: true,
 					selectable: true,
-					//height: '100%',
 					contentHeight: 'auto',
 					droppable: true,
 					headerToolbar: {
-						left: /*'title'*/'',
+						left: '',
 						center: '',
-						right: /*'prev,next today *//*'timeGridDay,timeGridWeek'*//*dayGridMonth*/''
+						right: ''
 					},
 					dayHeaderFormat: {
 						weekday: 'short',
@@ -242,16 +235,19 @@
 					slotLabelInterval: '01:00',
 					nowIndicator: true,
 					now: convertUTCDateToLocalDate(Date.now(), timezone),
-					/*timeZone: 'local',*/
-					/*timeZone: 'America/New_York',*/
 					dayMaxEvents: true,
 					firstDay: 1,
 					allDayText: 'Shift',
 					slotLabelFormat: {
 						hour: 'numeric',
 						minute: '2-digit',
-						omitZeroMinute: false,
+						meridiem: 'short',
 					},
+					/*eventTimeFormat: {
+						hour: 'numeric',
+						minute: '2-digit',
+						meridiem: 'short',
+					},*/
 					eventTextColor: '#000',
 					events: {
 						url: '{{ route('eventList') }}',
@@ -280,14 +276,13 @@
 							url = info.allDay ? '/event/0/add/shift' : '/deal/booking/add',
 							$modalDialog = $('.modal').find('.modal-dialog');
 
-						//$(info.el).tooltip('hide');
 						tippy.hideAll();
 
 						$modalDialog.find('form').attr('id', type);
-						$modalDialog.addClass('modal-lg');
+						//$modalDialog.addClass('modal-lg');
 
 						$('.modal .modal-title, .modal .modal-body').empty();
-						//console.log(info);
+
 						$.ajax({
 							url: url,
 							type: 'GET',
@@ -297,7 +292,7 @@
 								'method': method,
 								'event_type': type,
 								'source': 'calendar',
-								'flight_at': moment($(info.date)[0])/*.utc()*/.format('YYYY-MM-DD hh:mm A'),
+								'flight_at': moment($(info.date)[0]).format('YYYY-MM-DD hh:mm A'),
 								'city_id': cityId,
 								'location_id': locationId,
 								'simulator_id': simulatorId,
@@ -335,23 +330,11 @@
 							type = $(this).data('event_type'),
 							$modalDialog = $('.modal').find('.modal-dialog');
 
-						//console.log(title);
-						/*if ((title.indexOf('Тестовый') !== -1)
-							|| (title.indexOf('Уборка') !== -1)
-							|| (title.indexOf('Перерыв') !== -1)
-							|| (title.indexOf('Сотрудник') !== -1)
-						) {
-							return;
-						}*/
-
 						$modalDialog.find('form').attr('id', type);
-						//$modalDialog.removeClass('modal-lg');
 
 						var $submit = $('button[type="submit"]');
 
 						$('.modal .modal-title, .modal .modal-body').empty();
-
-						//console.log(title);
 
 						$.ajax({
 							url: url,
@@ -369,32 +352,20 @@
 								} else {
 									$submit.addClass('hidden');
 								}
-								//$('#modal .modal-title').text((allDay ? 'Смена' : 'Событие') + ' "' + title + '"');
 								$('#modal .modal-title').text('Event "' + title + '"');
 								$('#modal .modal-body').html(result.html);
 								$('#modal').modal('show');
 							}
 						});
 					},
-					/*eventLeave: function(info) {
-						console.log('event left!', $(info.draggedEl).closest('.calendar').data());
-					},
-					eventReceive: function(info) {
-						console.log('event received!', info);
-					},*/
-					/*eventAdd: function(info) {
-						console.log('event add!', info);
-					},*/
 					eventDrop: function (info) {
 						var id = $(info.event)[0]._def.publicId,
 							/*title = $(info.event)[0]._def.title,*/
 							start = $(info.event)[0]._instance.range.start,
 							end = $(info.event)[0]._instance.range.end;
 
-						//$(info.el).tooltip('hide');
 						tippy.hideAll();
 
-						//console.log($(info.event)[0]._def.extendedProps);
 						$.ajax({
 							url: '/event/drag_drop/' + id,
 							type: 'PUT',
@@ -427,7 +398,6 @@
 							start = $(info.event)[0]._instance.range.start,
 							end = $(info.event)[0]._instance.range.end;
 
-						//$(info.el).tooltip('hide');
 						tippy.hideAll();
 
 						$.ajax({
@@ -459,7 +429,7 @@
 
 						var content = '<div class="fc-event-main">' +
 							'<div class="fc-event-main-frame" data-toggle="modal" data-id="' + id + '" data-title="' + title + '">' +
-							(!allDay ? '<div class="fc-event-time">' + moment(start).utc().format('H:mm') + ' - ' + moment(end).utc().format('H:mm') + '<div class="fc-icons">' + (notificationType ? '<i class="material-icons" title="Notified">' + notificationType + '</i>' : '') + (comments.length ? '<i class="material-icons" title="Comment">bookmark_border</i>' : '') + '</div></div>' : '') +
+							(!allDay ? '<div class="fc-event-time">' + moment(start).utc().format('h:mm A') + ' - ' + moment(end).utc().format('h:mm A') + '<div class="fc-icons">' + (notificationType ? '<i class="material-icons" title="Notified">' + notificationType + '</i>' : '') + (comments.length ? '<i class="material-icons" title="Comment">bookmark_border</i>' : '') + '</div></div>' : '') +
 							'<div class="fc-event-title-container">' +
 							'<div class="fc-event-title fc-sticky">' + title + '</div>' +
 							'</div>' +
@@ -573,7 +543,7 @@
 						});
 
 						$('#modal').modal('hide');
-						toastr.success('Event successful ' + ((method === 'POST') ? 'created' : 'saved'));
+						toastr.success(result.message);
 					}
 				});
 			});
@@ -658,6 +628,7 @@
 				$('.js-contractor').text('').closest('.js-contractor-container').addClass('hidden');
 				$('#contractor_search').val('').attr('disabled', false).focus();
 				$('#contractor_id, #city_id').val('');
+				calcProductAmount();
 			});
 
 			$(document).on('click', '.js-certificate-delete', function() {
@@ -665,15 +636,15 @@
 				$('.js-is-indefinitely').addClass('hidden');
 				$('#certificate_number').val('').attr('disabled', false).focus();
 				$('#certificate_uuid').val('');
-				//$('#is_indefinitely')
+				calcProductAmount();
 			});
 
-			$(document).on('change', '#product_id, #promo_id, #promocode_id, #city_id, #location_id, #is_free, #flight_date_at, #flight_time_at, #is_indefinitely', function() {
+			$(document).on('change', '#product_id, #promo_id, #promocode_id, #city_id, #location_id, #is_free, #start_date_at, #start_time_at, #is_indefinitely', function() {
 				if ($('input[name="event_type"]:checked').attr('id') !== 'event_type_deal') return false;
 
 				calcProductAmount();
 
-				if ($.inArray($(this).attr('id'), ['product_id', 'flight_date_at', 'flight_time_at']) !== -1) {
+				if ($.inArray($(this).attr('id'), ['product_id', 'start_date_at', 'start_time_at']) !== -1) {
 					validateFlightDate();
 				}
 			});
@@ -686,8 +657,8 @@
 				var $eventStopElement = $('.js-event-stop-at'),
 					$isValidFlightDate = $('#is_valid_flight_date'),
 					$product = $('#product_id'),
-					$flightDate = $('#flight_date_at'),
-					$flightTime = $('#flight_time_at'),
+					$flightDate = $('#start_date_at'),
+					$flightTime = $('#start_time_at'),
 					duration = $product.find(':selected').data('duration');
 
 				if (($product.val() > 0) && duration && $flightDate.val().length && $flightTime.val().length) {
@@ -716,22 +687,26 @@
 						'product_id': $('#product_id').val(),
 						'contractor_id': $('#contractor_id').val(),
 						'promo_id': $('#promo_id').val(),
-						/*'promocode_id': $('#promocode_id').val(),*/
-						'payment_method_id': $('#payment_method_id').val(),
+						'promocode_id': $('#promocode_id').val(),
+						/*'payment_method_id': $('#payment_method_id').val(),*/
 						'city_id': $('#city_id').val(),
 						'location_id': $('#location_id').val(),
 						'certificate_uuid': $('#certificate_uuid').val(),
 						'is_free': ($('#is_free').is(':checked') || $('#is_indefinitely').is(':checked')) ? 1 : 0,
+						'is_certificate_purchase': $('#is_certificate_purchase').val(),
 					},
 					success: function(result) {
-						//console.log(result);
+						console.log(result);
+
+						$('#amount').val(result.productAmount);
+						$('#amount-text span').text(result.amount);
+						$('#tax-text span').text(result.tax);
+						$('#total-amount-text span').text(result.totalAmount);
+
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
-							return;
+							//return;
 						}
-
-						$('#amount').val(result.amount);
-						$('#amount-text h1').text(result.amount);
 					}
 				});
 			}
@@ -766,7 +741,7 @@
 							//calendarArr[locationId][simulatorId].gotoDate(e.date);
 							calendarArr[locationId][simulatorId].refetchEvents();
 
-							toastr.success('Event successful deleted');
+							toastr.success(result.message);
 						}
 					});
 				}
@@ -969,7 +944,7 @@
 							return null;
 						}
 
-						toastr.success(result.msg);
+						toastr.success(result.message);
 
 						$commentContainer.remove();
 
@@ -1000,7 +975,7 @@
 						}
 
 						$container.html('');
-						toastr.success(result.msg);
+						toastr.success(result.message);
 
 						calendarArr.forEach(function (element, locationId) {
 							element.forEach(function (calendar, simulatorId) {
@@ -1034,7 +1009,7 @@
 						$form.find('#product_id').closest('.row').hide();
 						$form.find('#comment').closest('.row').hide();
 						$form.find('#extra_time').closest('.row').hide();
-						$form.find('#flight_date_stop_at').closest('.js-duration').removeClass('hidden');
+						$form.find('#stop_date_at').closest('.js-duration').removeClass('hidden');
 						$form.find('#employee_id').closest('.js-employee').addClass('hidden');
 						$form.find('#pilot_id').closest('.js-pilot').removeClass('hidden');
 						$form.find('.js-event-stop-at').text('');
@@ -1046,7 +1021,7 @@
 						$form.find('#product_id').closest('.row').hide();
 						$form.find('#comment').closest('.row').hide();
 						$form.find('#extra_time').closest('.row').hide();
-						$form.find('#flight_date_stop_at').closest('.js-duration').removeClass('hidden');
+						$form.find('#stop_date_at').closest('.js-duration').removeClass('hidden');
 						$form.find('#pilot_id').closest('.js-pilot').addClass('hidden');
 						$form.find('#employee_id').closest('.js-employee').removeClass('hidden');
 						$form.find('.js-event-stop-at').text('');
@@ -1058,7 +1033,7 @@
 						$form.find('#product_id').closest('.row').hide();
 						$form.find('#comment').closest('.row').hide();
 						$form.find('#extra_time').closest('.row').hide();
-						$form.find('#flight_date_stop_at').closest('.js-duration').removeClass('hidden');
+						$form.find('#stop_date_at').closest('.js-duration').removeClass('hidden');
 						$form.find('#pilot_id').closest('.js-pilot').addClass('hidden');
 						$form.find('#employee_id').closest('.js-employee').addClass('hidden');
 						$form.find('.js-event-stop-at').text('');
@@ -1070,7 +1045,7 @@
 						$form.find('#product_id').closest('.row').hide();
 						$form.find('#comment').closest('.row').hide();
 						$form.find('#extra_time').closest('.row').hide();
-						$form.find('#flight_date_stop_at').closest('.js-duration').removeClass('hidden');
+						$form.find('#stop_date_at').closest('.js-duration').removeClass('hidden');
 						$form.find('#pilot_id').closest('.js-pilot').addClass('hidden');
 						$form.find('#employee_id').closest('.js-employee').addClass('hidden');
 						$form.find('.js-event-stop-at').text('');
@@ -1082,7 +1057,7 @@
 						$form.find('#product_id').closest('.row').show();
 						$form.find('#comment').closest('.row').show();
 						$form.find('#extra_time').closest('.row').show();
-						$form.find('#flight_date_stop_at').closest('.js-duration').addClass('hidden');
+						$form.find('#stop_date_at').closest('.js-duration').addClass('hidden');
 						$form.find('#pilot_id').closest('.js-pilot').addClass('hidden');
 						$form.find('#employee_id').closest('.js-employee').addClass('hidden');
 
@@ -1154,12 +1129,16 @@
 
 						$container.remove();
 
-						toastr.success(result.msg);
+						toastr.success(result.message);
 					}
 				});
 			});
 
-			setInterval(refetch, 60 * 1000);
+			$(document).on('change', '.custom-file-input', function() {
+				$(this).next('.custom-file-label').html($(this).val());
+			});
+
+			/*setInterval(refetch, 60 * 1000);
 
 			function refetch() {
 				calendarArr.forEach(function (element, locationId) {
@@ -1169,7 +1148,7 @@
 						}
 					});
 				});
-			}
+			}*/
 
 			/*$(document).on('shown.lte.pushmenu', function() {
 				$('#datepicker').show(100);

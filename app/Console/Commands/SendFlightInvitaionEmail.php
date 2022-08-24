@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Bill;
 use App\Models\Deal;
-use App\Models\DealPosition;
 use App\Models\Event;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -53,34 +52,14 @@ class SendFlightInvitationEmail extends Command
 		foreach ($events as $event) {
 			if (!$event->uuid) continue;
 			
-			/** @var DealPosition $position */
-			$position = $event->dealPosition;
-			if (!$position) continue;
-			
-			if (!$position->is_certificate_purchase && $position->certificate) continue;
-		
 			/** @var Deal $deal */
-			$deal = $position->deal;
+			$deal = $event->deal;
 			if (!$deal) continue;
-		
-			/** @var Bill $bill */
-			$bill = $position->bill;
-			if ($bill) {
-				$billStatus = $bill->status;
-				// если к позиции привязан счет, то он должен быть оплачен
-				if ($billStatus && $billStatus->alias != Bill::PAYED_STATUS) continue;
-				
-				$paymentMethod = $bill->paymentMethod;
-				// и со способом оплаты "Онлайн"
-				if ($paymentMethod && $paymentMethod->alias != Bill::ONLINE_PAYMENT_METHOD) continue;
-			} else {
-				// если к позиции не привязан счет, то вся сделка должна быть оплачена
-				$balance = $deal->balance();
-				if ($balance < 0) continue;
-			}
+			if (!$deal->is_certificate_purchase && $deal->certificate) continue;
+			
+			if ($deal->balance() < 0) continue;
    
 			try {
-				//dispatch(new \App\Jobs\SendFlightInvitationEmail($event));
 				$job = new \App\Jobs\SendFlightInvitationEmail($event);
 				$job->handle();
 			} catch (Throwable $e) {
