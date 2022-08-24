@@ -102,7 +102,7 @@ class CertificateController extends Controller
 		/** @var Certificate[] $certificates */
 		foreach ($certificates as $certificate) {
 			$deal = $certificate->deal;
-			$dealBill = $deal ? $deal->firstBill : null;
+			$dealBill = $deal ? $deal->firstBill() : null;
 			if ($filterPaymentType && $dealBill) {
 				if ($filterPaymentType == 'self_made' && $dealBill->user_id) continue;
 				elseif ($filterPaymentType == 'admin_made' && !$dealBill->user_id) continue;
