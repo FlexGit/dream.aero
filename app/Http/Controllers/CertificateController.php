@@ -166,33 +166,16 @@ class CertificateController extends Controller
 		$certificate = Certificate::find($id);
 		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
-		$cities = City::orderBy('name')
-			->get();
+		$deal = $certificate->deal;
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
-		$locations = Location::orderBy('name')
-			->get();
-		
-		$productTypes = ProductType::with(['products'])
-			->orderBy('name')
-			->get();
-		
-		$products = Product::orderBy('name')
-			->get();
-		
-		$paymentMethods = PaymentMethod::orderBy('name')
-			->get();
-
 		$statuses = Status::where('type', Status::STATUS_TYPE_CERTIFICATE)
 			->orderBy('sort')
 			->get();
 		
 		$VIEW = view('admin.certificate.modal.edit', [
 			'certificate' => $certificate,
-			'cities' => $cities,
-			'locations' => $locations,
-			'productTypes' => $productTypes,
-			'products' => $products,
-			'paymentMethods' => $paymentMethods,
+			'deal' => $deal,
 			'statuses' => $statuses,
 		]);
 		
@@ -208,115 +191,16 @@ class CertificateController extends Controller
 		$certificate = Certificate::find($id);
 		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
-		$cities = City::orderBy('name')
-			->get();
-		
-		$locations = Location::orderBy('name')
-			->get();
-		
-		$products = Product::orderBy('name')
-			->get();
-		
-		$paymentMethods = PaymentMethod::orderBy('name')
-			->get();
-
 		$statuses = Status::where('type', Status::STATUS_TYPE_CERTIFICATE)
 			->orderBy('sort')
 			->get();
 		
 		$VIEW = view('admin.certificate.modal.show', [
 			'certificate' => $certificate,
-			'cities' => $cities,
-			'locations' => $locations,
-			'products' => $products,
-			'paymentMethods' => $paymentMethods,
 			'statuses' => $statuses,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
-	}
-	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function add()
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-		
-		$cities = City::where('is_active', true)
-			->orderBy('name')
-			->get();
-		
-		$locations = Location::where('is_active', true)
-			->orderBy('name')
-			->get();
-		
-		$productTypes = ProductType::where('is_active', true)
-			->with(['products'])
-			->orderBy('name')
-			->get();
-		
-		$paymentMethods = PaymentMethod::orderBy('name')
-			->get();
-
-		$VIEW = view('admin.deal.modal.add', [
-			'cities' => $cities,
-			'locations' => $locations,
-			'productTypes' => $productTypes,
-			'paymentMethods' => $paymentMethods,
-		]);
-		
-		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
-	}
-	
-	/**
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	public function store()
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-		
-		$rules = [
-			'product_id' => 'required|numeric|min:0|not_in:0',
-			'city_id' => 'required|numeric|min:0|not_in:0',
-			'location_id' => 'required|numeric|min:0|not_in:0',
-			'contractor_id' => 'required|numeric|min:0|not_in:0',
-			'payment_method_id' => 'required|numeric|min:0|not_in:0',
-		];
-		
-		$validator = Validator::make($this->request->all(), $rules)
-			->setAttributeNames([
-				'product_id' => 'Product',
-				'city_id' => 'City',
-				'location_id' => 'Location',
-				'contractor_id' => 'Client',
-				'payment_method_id' => 'Payment method',
-			]);
-		if (!$validator->passes()) {
-			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
-		}
-		
-		$data = [];
-		
-		$certificate = new Certificate();
-		$certificate->number = $certificate->generateNumber();
-		$certificate->status_id = '';
-		$certificate->contractor_id = $this->request->contractor_id;
-		$certificate->city_id = $this->request->city_id;
-		$certificate->location_id = $this->request->location_id;
-		$certificate->product_id = $this->request->product_id;
-		$certificate->payment_method_id = $this->request->payment_method_id;
-		$certificate->data_json = $data;
-		$certificate->expire_at = $this->request->expire_at;
-		if (!$certificate->save()) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
-		}
-		
-		return response()->json(['status' => 'success', 'message' => 'Voucher was successfully created']);
 	}
 	
 	/**

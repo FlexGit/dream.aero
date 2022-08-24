@@ -5,7 +5,6 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
-use App\Http\Controllers\PositionController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\ReportController;
@@ -146,10 +145,8 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('deal/{id}/edit', [DealController::class, 'edit']);
 		
 		// Сертификаты
-		Route::post('certificate', [CertificateController::class, 'store']);
 		Route::put('certificate/{id}', [CertificateController::class, 'update']);
 		
-		Route::get('certificate/{deal_id}/add', [CertificateController::class, 'add']);
 		Route::get('certificate/{id}/edit', [CertificateController::class, 'edit']);
 		Route::post('certificate/search', [CertificateController::class, 'search'])->name('certificateSearch');
 		

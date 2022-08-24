@@ -20,7 +20,11 @@
 			<div class="form-group">
 				<label for="file">File</label>
 				<div>
-					[ <a href="{{ route('getCertificate', ['uuid' => $certificate->uuid]) }}">download</a> ]
+					@if($deal->balance() >= 0)
+						[ <a href="{{ route('getCertificate', ['uuid' => $certificate->uuid]) }}">download</a> ]
+					@else
+						<i>Deal is not paid</i>
+					@endif
 				</div>
 			</div>
 		</div>
