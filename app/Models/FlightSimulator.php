@@ -71,12 +71,4 @@ class FlightSimulator extends Model
 			->withPivot('data_json')
 			->withTimestamps();
 	}
-
-	public function format()
-	{
-		return [
-			'id' => $this->id,
-			'name' => $this->name,
-		];
-	}
 }

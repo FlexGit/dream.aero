@@ -100,19 +100,4 @@ class ProductType extends Model
 			->orderBy('product_type_id')
 			->orderBy('duration');
 	}
-	
-	/**
-	 * @return array
-	 */
-	/*public function format()
-	{
-		$data = $this->data_json ?? [];
-		
-		return [
-			'id' => $this->id,
-			'name' => $this->name,
-			'alias' => $this->alias,
-			'description' => array_key_exists('description', $data) ? $data['description'] : null,
-		];
-	}*/
 }

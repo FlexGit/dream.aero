@@ -1134,10 +1134,6 @@
 				});
 			});
 
-			$(document).on('change', '.custom-file-input', function() {
-				$(this).next('.custom-file-label').html($(this).val());
-			});
-
 			/*setInterval(refetch, 60 * 1000);
 
 			function refetch() {

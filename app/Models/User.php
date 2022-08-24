@@ -186,18 +186,4 @@ class User extends Authenticatable
 		
 		return ($this->name ? ' ' . mb_substr($this->name, 0, 1) . '.' : '') . $this->lastname;
 	}
-	
-	/**
-	 * @return array
-	 */
-	public function format()
-	{
-		$data = $this->data_json ?? [];
-
-		return [
-			'id' => $this->id,
-			'fullname' => $this->fio(),
-			'instagram' => array_key_exists('instagram', $data) ? $data['instagram'] : null,
-		];
-	}
 }

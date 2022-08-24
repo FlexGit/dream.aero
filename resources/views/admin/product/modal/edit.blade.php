@@ -17,7 +17,7 @@
 	<select class="form-control" id="product_type_id" name="product_type_id">
 		<option></option>
 		@foreach($productTypes ?? [] as $productType)
-			<option value="{{ $productType->id }}" data-duration="{{ array_key_exists('duration', $productType->data_json) ? json_encode($productType->data_json['duration']) : json_encode([]) }}" data-with_user="{{ ($productType->alias == app('\App\Models\ProductType')::VIP_ALIAS) ? true : false }}" @if($productType->id == $product->product_type_id) selected @endif>{{ $productType->name }}</option>
+			<option value="{{ $productType->id }}" data-duration="{{ isset($productType->data_json['duration']) ? json_encode($productType->data_json['duration']) : json_encode([]) }}" data-with_user="{{ ($productType->alias == app('\App\Models\ProductType')::VIP_ALIAS) ? true : false }}" @if($productType->id == $product->product_type_id) selected @endif>{{ $productType->name }}</option>
 		@endforeach
 	</select>
 </div>
@@ -43,7 +43,7 @@
 		<input type="file" class="custom-file-input" id="icon_file" name="icon_file">
 		<label class="custom-file-label" for="icon_file">Choose a file</label>
 	</div>
-	@if($product->data_json && array_key_exists('icon_file_path', $product->data_json) && $product->data_json['icon_file_path'])
+	@if($product->data_json && isset($product->data_json['icon_file_path']) && $product->data_json['icon_file_path'])
 		<div>
 			<img src="/upload/{{ $product->data_json['icon_file_path'] }}" width="150" alt="">
 			<br>

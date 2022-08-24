@@ -294,7 +294,7 @@ class ProductController extends Controller
 		$product->user_id = $this->request->user_id ?? 0;
 		$product->duration = $this->request->duration ?? 0;
 		$product->is_active = $this->request->is_active;
-		$data = $product->data_json;
+		$data = is_array($product->data_json) ? $product->data_json : json_decode($product->data_json, true);
 		$data['description'] = $this->request->description ?? null;
 		if ($isIconFileUploaded) {
 			$data['icon_file_path'] = 'product/icon/' . $iconFile->getClientOriginalName();

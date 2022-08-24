@@ -174,10 +174,6 @@
 				});
 			});
 
-			$(document).on('change', '.custom-file-input', function() {
-				$(this).next('.custom-file-label').html($(this).val());
-			});
-
 			$(document).on('change', '.js-simulator', function(e) {
 				var disabled = true;
 				if ($(this).is(':checked')) {

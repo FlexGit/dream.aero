@@ -83,13 +83,6 @@ class Discount extends Model
 		return $this->hasOne(Currency::class, 'id', 'currency_id');
 	}
 
-	public function format() {
-		return [
-			'value' => $this->value,
-			'is_fixed' => $this->is_fixed,
-		];
-	}
-	
 	public function valueFormatted() {
 		return number_format($this->value, 0, '.', ' ') . ($this->is_fixed ? ($this->currency ? ' ' . $this->currency->name : '') : '%');
 	}

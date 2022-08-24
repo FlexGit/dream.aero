@@ -65,16 +65,4 @@ class LegalEntity extends Model
 		'is_active' => 'boolean',
 		'data_json' => 'array',
 	];
-	
-	/**
-	 * @return array
-	 */
-	public function format()
-	{
-		return [
-			'id' => $this->id,
-			'name' => $this->name,
-			'public_offer_file_path' => (is_array($this->data_json) && array_key_exists('public_offer_file_path', $this->data_json)) ? \URL::to('/upload/' . $this->data_json['public_offer_file_path']) : null,
-		];
-	}
 }

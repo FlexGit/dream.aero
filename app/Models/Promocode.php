@@ -139,13 +139,6 @@ class Promocode extends Model
 			->withTimestamps();
 	}
 	
-	public function format() {
-		return [
-			'id' => $this->id,
-			'name' => $this->name,
-		];
-	}
-
 	public function valueFormatted() {
 		$value = $this->number;
 		$value .= $this->discount ? ' (-' . $this->discount->valueFormatted() . ')' : '';
