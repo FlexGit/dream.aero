@@ -5,7 +5,7 @@
 	</td>
 	@if($type != app('\App\Models\Content')::PAGES_TYPE) {
 		<td class="text-center align-middle">
-			{{ $content->published_at ? $content->published_at->format('Y-m-d') : '' }}
+			{{ $content->published_at ? $content->published_at->format('m/d/Y') : '' }}
 		</td>
 		<td class="text-center align-middle">
 			{{ $content->is_active ? 'Yes' : 'no' }}

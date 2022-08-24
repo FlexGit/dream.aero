@@ -16,7 +16,7 @@
 @if($promocodeNumber)
 	<p>Промокод: {{ $promocodeNumber }}</p>
 @endif--}}
-<p>Дата заявки: {{ $updatedAt ? Carbon\Carbon::parse($updatedAt)->format('m-d-Y g:i A') : '' }}</p>
+<p>Дата заявки: {{ $updatedAt ? Carbon\Carbon::parse($updatedAt)->format('m/d/Y g:i A') : '' }}</p>
 <br>
 <p>Если у Вас возникнут вопросы, мы будем рады Вам помочь! Наши контакты для связи:</p>
 @if($phone) <p>Тел.: {{ $phone }}</p>@endif

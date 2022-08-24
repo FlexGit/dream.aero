@@ -361,7 +361,7 @@ class DealController extends Controller
 					'id' => $comment->id,
 					'name' => $comment->name,
 					'user' => $userName,
-					'date' => $comment->updated_at->format('d.m.Y g:i A'),
+					'date' => $comment->updated_at->format('m/d/Y g:i A'),
 					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'edited' : 'created',
 				];
 			}

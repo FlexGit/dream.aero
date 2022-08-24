@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Exports\CertificateExport;
 use App\Models\Content;
 use App\Models\Deal;
-use App\Models\PaymentMethod;
 use App\Services\HelpFunctions;
 use Auth;
 use Carbon\Carbon;
@@ -14,10 +13,6 @@ use Illuminate\Support\Facades\Storage;
 use Mail;
 use Validator;
 use App\Models\Certificate;
-use App\Models\City;
-use App\Models\Location;
-use App\Models\Product;
-use App\Models\ProductType;
 use App\Models\Status;
 use App\Repositories\CityRepository;
 use Maatwebsite\Excel\Facades\Excel;
@@ -125,7 +120,7 @@ class CertificateController extends Controller
 				'deal_tax' => $deal ? $deal->tax : 0,
 				'deal_total_amount' => $deal ? $deal->total_amount : 0,
 				'comment' => $comment,
-				'expire_at' => $certificate->expire_at ? Carbon::parse($certificate->expire_at)->format('Y-m-d') : 'termless',
+				'expire_at' => $certificate->expire_at ? Carbon::parse($certificate->expire_at)->format('m/d/Y') : 'termless',
 				'certificate_status_name' => $certificateStatus ? $certificateStatus->name : '',
 				'bill_number' => $dealBill ? $dealBill->number : '',
 				'bill_status_alias' => $dealBillStatus ? $dealBillStatus->alias : '',
@@ -379,7 +374,7 @@ class CertificateController extends Controller
 			$city = $certificate->city;
 			$status = $certificate->status;
 			
-			$certificateInfo = $certificate->created_at->format('m-d-Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('m-d-Y') : ' - termless') . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
+			$certificateInfo = $certificate->created_at->format('m/d/Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('m/d/Y') : ' - termless') . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
 			
 			$date = date('Y-m-d');
 			

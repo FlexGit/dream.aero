@@ -8,7 +8,7 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="received_at">Receiving date</label>
-			<input type="date" class="form-control" id="received_at" name="received_at" value="{{ $tip->received_at->format('Y-m-d') }}" placeholder="Receiving date">
+			<input type="date" class="form-control" id="received_at" name="received_at" value="{{ $tip->received_at->format('m/d/Y') }}" placeholder="Receiving date">
 		</div>
 	</div>
 </div>

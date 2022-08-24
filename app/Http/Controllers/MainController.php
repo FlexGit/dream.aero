@@ -563,8 +563,8 @@ class MainController extends Controller
 		$content->preview_text = $body ?? '';
 		$content->parent_id = $reviewParentContent->id;
 		$content->city_id = $city->id;
-		$content->meta_title = 'Review by ' . $name . ' from ' . $city->name . ' | ' . Carbon::now()->format('m-d-Y');
-		$content->meta_description = 'Review by ' . $name . ' from ' . $city->name . ' | ' . Carbon::now()->format('m-d-Y');
+		$content->meta_title = 'Review by ' . $name . ' from ' . $city->name . ' | ' . Carbon::now()->format('m/d/Y');
+		$content->meta_description = 'Review by ' . $name . ' from ' . $city->name . ' | ' . Carbon::now()->format('m/d/Y');
 		$content->is_active = 0;
 		if (!$content->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);

@@ -211,7 +211,7 @@
 												<div class="text-nowrap">
 													<div class="d-inline-block" title="Flight date and time">
 														<i class="far fa-calendar-alt"></i>
-														{{ \Carbon\Carbon::parse($deal->event->start_at)->format('Y-m-d') }}
+														{{ \Carbon\Carbon::parse($deal->event->start_at)->format('m/d/Y') }}
 														{{ \Carbon\Carbon::parse($deal->event->start_at)->format('g:i A') }} - {{ \Carbon\Carbon::parse($deal->event->stop_at)->format('g:i A') }}
 														@if($deal->event->extra_time)
 															<small class="text-danger">+{{ $deal->event->extra_time }} min</small>
@@ -239,11 +239,11 @@
 																</div>
 																@if ($comment->updatedUser)
 																	<div class="text-right text-nowrap mb-2">
-																		<small>Edited: {{ $comment->updatedUser->name }} {{ \Carbon\Carbon::parse($comment->updated_at)->format('Y-m-d g:i A') }}</small>
+																		<small>Edited: {{ $comment->updatedUser->name }} {{ \Carbon\Carbon::parse($comment->updated_at)->format('m/d/Y g:i A') }}</small>
 																	</div>
 																@elseif ($comment->createdUser)
 																	<div class="text-right text-nowrap mb-2">
-																		<small>Created: {{ $comment->createdUser->name }} {{ \Carbon\Carbon::parse($comment->created_at)->format('Y-m-d g:i A') }}</small>
+																		<small>Created: {{ $comment->createdUser->name }} {{ \Carbon\Carbon::parse($comment->created_at)->format('m/d/Y g:i A') }}</small>
 																	</div>
 																@endif
 															@endforeach
@@ -300,7 +300,7 @@
 									@if ($bill->status)
 										<div class="p-0 pl-2 pr-2" style="background-color: {{ array_key_exists('color', $bill->status->data_json ?? []) ? $bill->status->data_json['color'] : 'none' }};">
 											<span title="Bill status">{{ $bill->status->name }}</span>
-											<span title="Payment date">{{ $bill->payed_at ? '[' . $bill->payed_at->format('Y-m-d g:i A') . ']' : '' }}</span>
+											<span title="Payment date">{{ $bill->payed_at ? '[' . $bill->payed_at->format('m/d/Y g:i A') . ']' : '' }}</span>
 										</div>
 										<div class="text-nowrap">
 											@if($bill->status->alias == app('\App\Models\Bill')::PAYED_STATUS)

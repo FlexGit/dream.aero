@@ -256,7 +256,7 @@ class Event extends Model
 				$user = Auth::user();
 				
 				$eventComment = new EventComment();
-				$eventComment->name = 'Moved from ' . Carbon::parse($event->getOriginal('start_at'))->format('d.m.Y g:i A') . ' - ' . Carbon::parse($event->getOriginal('stop_at'))->format('d.m.Y g:i A') . ' to ' . Carbon::parse($event->start_at)->format('d.m.Y g:i A') . ' - ' . Carbon::parse($event->stop_at)->format('d.m.Y g:i A');
+				$eventComment->name = 'Moved from ' . Carbon::parse($event->getOriginal('start_at'))->format('m/d/Y g:i A') . ' - ' . Carbon::parse($event->getOriginal('stop_at'))->format('m/d/Y g:i A') . ' to ' . Carbon::parse($event->start_at)->format('m/d/Y g:i A') . ' - ' . Carbon::parse($event->stop_at)->format('m/d/Y g:i A');
 				$eventComment->event_id = $event->id;
 				$eventComment->created_by = $user ? $user->id : 0;
 				$eventComment->save();
@@ -359,7 +359,7 @@ class Event extends Model
 		$flightInvitationFile = Image::make($flightInvitationTemplateFilePath)->encode('jpg');
 		$fontPath = public_path('assets/fonts/GothamProRegular/GothamProRegular.ttf');
 		
-		$flightInvitationFile->text($this->start_at->format('d.m.Y g:i A'), 840, 100, function ($font) use ($fontPath) {
+		$flightInvitationFile->text($this->start_at->format('m/d/Y g:i A'), 840, 100, function ($font) use ($fontPath) {
 			$font->file($fontPath);
 			$font->size(24);
 			$font->color('#000000');

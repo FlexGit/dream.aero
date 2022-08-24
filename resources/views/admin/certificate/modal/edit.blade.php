@@ -11,7 +11,7 @@
 				@endforeach
 			</select>
 			<div>
-				Validity: {{ \Carbon\Carbon::parse($certificate->expire_at)->format('Y-m-d g:i A') }}
+				Validity: {{ \Carbon\Carbon::parse($certificate->expire_at)->format('m/d/Y g:i A') }}
 			</div>
 		</div>
 	</div>

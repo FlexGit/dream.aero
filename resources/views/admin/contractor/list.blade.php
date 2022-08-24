@@ -13,7 +13,7 @@
 		{{ $contractor->phone }}
 	</td>
 	<td class="text-center">
-		{{ $contractor->birthdate ? $contractor->birthdate->format('Y-m-d') : '' }}
+		{{ $contractor->birthdate ? $contractor->birthdate->format('m/d/Y') : '' }}
 	</td>
 	<td class="text-center">
 		{{ $contractor->discount()->valueFormatted() }}

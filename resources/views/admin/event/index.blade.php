@@ -109,7 +109,7 @@
 					@foreach($upcomingEvents as $upcomingEvent)
 						<div class="upcomming-event pt-1 pb-1" data-location-id="{{ $upcomingEvent->location_id }}" data-simulator-id="{{ $upcomingEvent->flight_simulator_id }}">
 							<div class="text-right">
-								<span>{{ $upcomingEvent->start_at->format('Y-m-d') }} {{ $upcomingEvent->start_at->format('g:i A') }} - {{ $upcomingEvent->stop_at->format('g:i A') }}</span><i class="js-event-notified fas fa-times ml-2 hidden" data-event-id="{{ $upcomingEvent->id }}" style="color: red;cursor: pointer;" title="Delete"></i>
+								<span>{{ $upcomingEvent->start_at->format('m/d/Y') }} {{ $upcomingEvent->start_at->format('g:i A') }} - {{ $upcomingEvent->stop_at->format('g:i A') }}</span><i class="js-event-notified fas fa-times ml-2 hidden" data-event-id="{{ $upcomingEvent->id }}" style="color: red;cursor: pointer;" title="Delete"></i>
 							</div>
 							<div>
 								<span>{{ $upcomingEvent->deal->name ?? '' }} {{ $upcomingEvent->deal->phone ?? '' }}</span>

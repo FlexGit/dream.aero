@@ -209,7 +209,7 @@ class Certificate extends Model
 							$font->size(20);
 							$font->color('#000000');
 						});
-						$certificateFile->text($bill->payed_at->format('m-d-Y'), 1035, 83, function ($font) use ($fontPath) {
+						$certificateFile->text($bill->payed_at->format('m/d/Y'), 1035, 83, function ($font) use ($fontPath) {
 							$font->file($fontPath);
 							$font->size(20);
 							$font->color('#000000');
@@ -230,7 +230,7 @@ class Certificate extends Model
 							$font->size(20);
 							$font->color('#000000');
 						});
-						$certificateFile->text($bill->payed_at->format('m-d-Y'), 1035, 83, function ($font) use ($fontPath) {
+						$certificateFile->text($bill->payed_at->format('m/d/Y'), 1035, 83, function ($font) use ($fontPath) {
 							$font->file($fontPath);
 							$font->size(20);
 							$font->color('#000000');
@@ -249,7 +249,7 @@ class Certificate extends Model
 					$font->size(20);
 					$font->color('#000000');
 				});
-				$certificateFile->text($bill->payed_at->format('m-d-Y'), 1510, 758, function($font) use ($fontPath) {
+				$certificateFile->text($bill->payed_at->format('m/d/Y'), 1510, 758, function($font) use ($fontPath) {
 					$font->file($fontPath);
 					$font->size(20);
 					$font->color('#000000');

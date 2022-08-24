@@ -23,7 +23,7 @@
 			</select>
 			@if($bill->payed_at)
 				<div>
-					<small>{{ \Carbon\Carbon::parse($bill->payed_at)->format('Y-m-d g:i A') }}</small>
+					<small>{{ \Carbon\Carbon::parse($bill->payed_at)->format('m/d/Y g:i A') }}</small>
 				</div>
 			@endif
 		</div>
@@ -54,13 +54,13 @@
 					@if($bill->link_sent_at)
 						<div>
 							payment link sent:<br>
-							{{ \Carbon\Carbon::parse($bill->link_sent_at)->format('Y-m-d g:i A') }}
+							{{ \Carbon\Carbon::parse($bill->link_sent_at)->format('m/d/Y g:i A') }}
 						</div>
 					@endif
 					@if($bill->success_payment_sent_at)
 						<div>
 							payment notification sent:<br>
-							{{ \Carbon\Carbon::parse($bill->success_payment_sent_at)->format('Y-m-d g:i A') }}
+							{{ \Carbon\Carbon::parse($bill->success_payment_sent_at)->format('m/d/Y g:i A') }}
 						</div>
 					@endif
 				</div>

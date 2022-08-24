@@ -142,7 +142,7 @@ class EventController extends Controller
 						}
 						
 						// инфа о Сертификате
-						$title .= ' | ' . $certificate->number . ' ' . Carbon::parse($certificate->created_at)->format('d.m.Y') . ' = ' . ($amount ?? '-') . '$' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
+						$title .= ' | ' . $certificate->number . ' ' . Carbon::parse($certificate->created_at)->format('m/d/Y') . ' = ' . ($amount ?? '-') . '$' . (isset($certificateData['payment_method']) ? ' (' . $certificateData['payment_method'] . ')' : '');
 					}
 					
 					$promo = $deal->promo;
@@ -256,7 +256,7 @@ class EventController extends Controller
 				$commentData[] = [
 					'name' => $comment->name,
 					'user' => $userName,
-					'date' => $comment->updated_at->format('d.m.Y g:i A'),
+					'date' => $comment->updated_at->format('m/d/Y g:i A'),
 					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'edited' : 'created',
 				];
 			}
@@ -389,7 +389,7 @@ class EventController extends Controller
 					'id' => $comment->id,
 					'name' => $comment->name,
 					'user' => $userName,
-					'date' => $comment->updated_at->format('d.m.Y g:i A'),
+					'date' => $comment->updated_at->format('m/d/Y g:i A'),
 					'wasUpdated' => ($comment->created_at != $comment->updated_at) ? 'edited' : 'created',
 				];
 			}
