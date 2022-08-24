@@ -44,7 +44,7 @@ class SendCertificateEmail extends Command
     {
     	$certificates = Certificate::whereNull('sent_at')
 			->where('expire_at', '>=', Carbon::now()->format('Y-m-d H:i:s'))
-			->where('created_at', '>=', '2022-08-09 00:00:00')
+			->where('created_at', '>=', '2022-08-26 00:00:00')
 			->get();
     	/** @var Certificate[] $certificates */
 		foreach ($certificates as $certificate) {
