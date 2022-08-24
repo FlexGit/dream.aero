@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Bill;
 use App\Models\PaymentMethod;
 use App\Models\Deal;
-use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\Status;
 use App\Services\HelpFunctions;

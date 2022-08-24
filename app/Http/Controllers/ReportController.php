@@ -94,15 +94,15 @@ class ReportController extends Controller {
 			// кол-во счетов
 			++$billItems[$bill->location_id][$bill->user_id]['bill_count'];
 			// сумма счетов
-			$billItems[$bill->location_id][$bill->user_id]['bill_sum'] += $bill->amount;
+			$billItems[$bill->location_id][$bill->user_id]['bill_sum'] += $bill->total_amount;
 			if ($bill->status && $bill->status->alias == Bill::PAYED_STATUS) {
 				// кол-во оплаченных счетов
 				++$billItems[$bill->location_id][$bill->user_id]['payed_bill_count'];
 				// сумма оплаченных счетов
-				$billItems[$bill->location_id][$bill->user_id]['payed_bill_sum'] += $bill->amount;
+				$billItems[$bill->location_id][$bill->user_id]['payed_bill_sum'] += $bill->total_amount;
 				// сумма оплаченных счетов конкретного способа оплаты
-				$paymentMethodSumItems[$bill->payment_method_id] += $bill->amount;
-				$totalSum += $bill->amount;
+				$paymentMethodSumItems[$bill->payment_method_id] += $bill->total_amount;
+				$totalSum += $bill->total_amount;
 			}
 			$deal = $bill->deal;
 			if ($deal && !in_array($bill->deal_id, $billItems[$bill->location_id][$bill->user_id]['deal_ids'])) {
@@ -315,7 +315,7 @@ class ReportController extends Controller {
 				];
 			}
 			++$items[$bill->location_id]['bill_count'];
-			$items[$bill->location_id]['bill_amount_sum'] += $bill->amount;
+			$items[$bill->location_id]['bill_amount_sum'] += $bill->total_amount;
 		}
 
 		$cities = City::where('id', $city->id)
