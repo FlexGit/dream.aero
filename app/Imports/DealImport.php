@@ -130,7 +130,7 @@ class DealImport implements OnEachRow, WithProgressBar
 		$bill->deal_id = $deal ? $deal->id : 0;
 		$bill->payment_method_id = 4;
 		$bill->status_id = $isPaid ? 11 : 10;
-		$bill->amount = $amount;
+		$bill->total_amount = $amount;
 		$bill->currency_id = $currencyId;
 		$bill->city_id = $cityId;
 		$bill->location_id = $locationId;

@@ -39,7 +39,7 @@ class CertificateImport implements OnEachRow, WithProgressBar
 				'comment' => strip_tags(trim($row[7])),
 			];
 			
-			\Log::debug($data);
+			//\Log::debug($data);
 
 			$certificate = new Certificate();
 			$certificate->expire_at = (trim($row[8]) == 'Бессрочный') ? null : Carbon::parse($row[8])->format('Y-m-d H:i:s');
