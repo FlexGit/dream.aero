@@ -527,6 +527,11 @@ class BillController extends Controller
 		$contractorName = $contractor->name ?? '';
 		if (!$dealEmail && !$contractorEmail) return response()->json(['status' => 'error', 'reason' => 'Deal or Contractor E-mail not found']);
 		
+		$receiptFileName = $bill->number . '.pdf';
+		if (!Storage::disk('private')->exists('/receipt/' . $receiptFileName)) {
+			$pdf = $bill->generateReceiptFile($receiptFileName);
+		}
+		
 		$messageData = [
 			'bill' => $bill,
 			'name' => $dealName ?: $contractorName,
@@ -541,9 +546,10 @@ class BillController extends Controller
 		
 		$subject = env('APP_NAME') . ': Invoice #' . $bill->number . ' Receipt';
 		
-		Mail::send(['html' => "admin.emails.send_invoice_receipt"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
+		Mail::send(['html' => "admin.emails.send_invoice_receipt"], $messageData, function ($message) use ($subject, $recipients, $bcc, $receiptFileName) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
+			$message->attach(Storage::disk('private')->path('/receipt/' . $receiptFileName));
 			$message->to($recipients);
 			$message->bcc($bcc);
 		});

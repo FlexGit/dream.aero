@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Services\HelpFunctions;
 use Auth;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
