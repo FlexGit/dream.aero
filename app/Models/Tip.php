@@ -93,11 +93,15 @@ class Tip extends Model
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
 	];
 	
-	const DEAL = 'deal';
-	const GROUPON = 'groupon';
+	const CARD = 'card';
+	const CASH = 'cash';
+	const VENMO = 'venmo';
+	const ETIP = 'etip';
 	const SOURCES = [
-		self::DEAL => 'Deal',
-		self::GROUPON => 'Groupon',
+		self::CARD => 'Credit card',
+		self::CASH => 'Cash',
+		self::VENMO => 'Venmo',
+		self::ETIP => 'eTip',
 	];
 	
 	public function deal()
