@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Deal;
 use App\Models\Tip;
+use App\Models\User;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,10 +26,19 @@ class TipController extends Controller
 	 */
 	public function index()
 	{
+		$user = Auth::user();
+		$city = $user->city;
+		
 		$sources = Tip::SOURCES;
+		
+		$users = User::where('enable', true)
+			->where('city_id', $city->id)
+			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
+			->get();
 
 		return view('admin.tip.index', [
 			'sources' => $sources,
+			'users' => $users,
 		]);
 	}
 	
@@ -41,18 +51,23 @@ class TipController extends Controller
 			abort(404);
 		}
 		
-		$receivedAtFrom = $this->request->filter_received_at_from ?? '';
-		$receivedAtTo = $this->request->filter_received_at_to ?? '';
+		$filterReceivedAtFrom = $this->request->filter_received_at_from ?? '';
+		$filterReceivedAtTo = $this->request->filter_received_at_to ?? '';
+		$filterUserId = $this->request->filter_user_id ?? 0;
 		
-		if (!$receivedAtFrom && !$receivedAtTo) {
-			$receivedAtFrom = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
-			$receivedAtTo = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
+		if (!$filterReceivedAtFrom && !$filterReceivedAtTo) {
+			$filterReceivedAtFrom = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
+			$filterReceivedAtTo = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
 		
 		$tips = Tip::orderBy('received_at', 'desc')
-			->where('received_at', '>=', Carbon::parse($receivedAtFrom)->startOfDay()->format('Y-m-d H:i:s'))
-			->where('received_at', '<=', Carbon::parse($receivedAtTo)->endOfDay()->format('Y-m-d H:i:s'))
-			->get();
+			->where('received_at', '>=', Carbon::parse($filterReceivedAtFrom)->startOfDay()->format('Y-m-d H:i:s'))
+			->where('received_at', '<=', Carbon::parse($filterReceivedAtTo)->endOfDay()->format('Y-m-d H:i:s'));
+		if ($filterUserId) {
+			$tips = $tips->where('admin_id', $filterUserId)
+				->orWhere('pilot_id', $filterUserId);
+		}
+		$tips = $tips->get();
 		
 		$sources = Tip::SOURCES;
 		
@@ -75,6 +90,7 @@ class TipController extends Controller
 		}
 		
 		$user = Auth::user();
+		$city = $user->city;
 		
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -85,9 +101,16 @@ class TipController extends Controller
 		
 		$sources = Tip::SOURCES;
 		
+		$users = User::where('enable', true)
+			->where('city_id', $city->id)
+			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
+			->get();
+		
+		
 		$VIEW = view('admin.tip.modal.edit', [
 			'tip' => $tip,
 			'sources' => $sources,
+			'users' => $users,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -103,6 +126,7 @@ class TipController extends Controller
 		}
 		
 		$user = Auth::user();
+		$city = $user->city;
 
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -110,8 +134,14 @@ class TipController extends Controller
 
 		$sources = Tip::SOURCES;
 		
+		$users = User::where('enable', true)
+			->where('city_id', $city->id)
+			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
+			->get();
+		
 		$VIEW = view('admin.tip.modal.add', [
 			'sources' => $sources,
+			'users' => $users,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -158,6 +188,8 @@ class TipController extends Controller
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
 			'received_at' => 'required|date',
+			'admin_id' => 'required|numeric|min:0|not_in:0',
+			'pilot_id' => 'required|numeric|min:0|not_in:0',
 			'source' => 'required',
 		];
 		
@@ -165,6 +197,8 @@ class TipController extends Controller
 			->setAttributeNames([
 				'amount' => 'Amount',
 				'received_at' => 'Receiving date',
+				'admin_id' => 'Admin',
+				'pilot_id' => 'Pilot',
 				'source' => 'Source',
 			]);
 		if (!$validator->passes()) {
@@ -173,6 +207,8 @@ class TipController extends Controller
 
 		$amount = $this->request->amount ?? 0;
 		$receivedAt = $this->request->received_at ?? null;
+		$adminId = $this->request->admin_id ?? 0;
+		$pilotId = $this->request->pilot_id ?? 0;
 		$source = $this->request->source ?? null;
 		$dealNumber = $this->request->deal_number ?? '';
 		
@@ -188,6 +224,8 @@ class TipController extends Controller
 		$tip = new Tip();
 		$tip->amount = $amount;
 		$tip->received_at = Carbon::parse($receivedAt)->format('Y-m-d');
+		$tip->admin_id = $adminId;
+		$tip->pilot_id = $pilotId;
 		$tip->source = $source;
 		$tip->deal_id = $deal ? $deal->id : 0;
 		$tip->currency_id = $currency->id ?? 0;
@@ -218,6 +256,8 @@ class TipController extends Controller
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
 			'received_at' => 'required|date',
+			'admin_id' => 'required|numeric|min:0|not_in:0',
+			'pilot_id' => 'required|numeric|min:0|not_in:0',
 			'source' => 'required',
 		];
 		
@@ -225,6 +265,8 @@ class TipController extends Controller
 			->setAttributeNames([
 				'amount' => 'Amount',
 				'received_at' => 'Receiving date',
+				'admin_id' => 'Admin',
+				'pilot_id' => 'Pilot',
 				'source' => 'Source',
 			]);
 		if (!$validator->passes()) {
@@ -233,6 +275,8 @@ class TipController extends Controller
 		
 		$amount = $this->request->amount ?? 0;
 		$receivedAt = $this->request->received_at ?? null;
+		$adminId = $this->request->admin_id ?? 0;
+		$pilotId = $this->request->pilot_id ?? 0;
 		$source = $this->request->source ?? null;
 		$dealNumber = $this->request->deal_number ?? '';
 		
@@ -245,6 +289,8 @@ class TipController extends Controller
 		
 		$tip->amount = $amount;
 		$tip->received_at = Carbon::parse($receivedAt)->format('Y-m-d');
+		$tip->admin_id = $adminId;
+		$tip->pilot_id = $pilotId;
 		$tip->source = $source;
 		$tip->deal_id = $deal ? $deal->id : 0;
 		$tip->user_id = $user->id ?? 0;

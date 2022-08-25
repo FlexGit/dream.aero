@@ -38,6 +38,19 @@
 								<input type="date" class="form-control" id="filter_received_at_to" name="filter_received_at_to" placeholder="" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
 							</div>
 						</div>
+						<div class="form-group ml-3">
+							<div>
+								<label for="filter_user_id">Employee</label>
+							</div>
+							<div>
+								<select class="form-control" id="filter_user_id" name="filter_user_id">
+									<option value=""></option>
+									@foreach($users as $user)
+										<option value="{{ $user->id }}">{{ $user->fio() }}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
 						<div class="form-group align-self-end text-right ml-auto">
 							<a href="javascript:void(0)" data-toggle="modal" data-url="/tip/add" data-action="/tip" data-method="POST" data-title="Add Tips" class="btn btn-secondary btn-sm" title="Add">Add</a>
 						</div>
@@ -46,6 +59,8 @@
 						<thead>
 							<tr>
 								<th class="text-center">Receiving Date</th>
+								<th class="text-center">Admin</th>
+								<th class="text-center">Pilot</th>
 								<th class="text-center">Source</th>
 								<th class="text-center">Deal #</th>
 								<th class="text-center">Amount</th>
@@ -101,6 +116,7 @@
 					data: {
 						"filter_received_at_from": $('#filter_received_at_from').val(),
 						"filter_received_at_to": $('#filter_received_at_to').val(),
+						"filter_user_id": $('#filter_user_id').val(),
 					},
 					success: function(result) {
 						if (result.status !== 'success') {
@@ -181,11 +197,7 @@
 				});
 			});
 
-			$(document).on('change', '#filter_received_at_from', function(e) {
-				getList();
-			});
-
-			$(document).on('change', '#filter_received_at_to', function(e) {
+			$(document).on('change', '#filter_received_at_from, #filter_received_at_to, #filter_user_id', function(e) {
 				getList();
 			});
 		});

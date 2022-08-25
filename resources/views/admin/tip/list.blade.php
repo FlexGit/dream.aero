@@ -1,6 +1,8 @@
 @foreach ($tips as $tip)
 	<tr class="odd">
 		<td class="text-center">{{ $tip->received_at->format('m/d/Y') }}</td>
+		<td class="text-center">{{ $tip->admin ? $tip->admin->fio() : '' }}</td>
+		<td class="text-center">{{ $tip->pilot ? $tip->pilot->fio() : '' }}</td>
 		<td class="text-center">{{ isset($sources[$tip->source]) ? $sources[$tip->source] : $tip->source }}</td>
 		<td class="text-center">{{ $tip->deal ? $tip->deal->number : '' }}</td>
 		<td class="text-right">{{ number_format($tip->amount, 2, '.', ' ') }}</td>
