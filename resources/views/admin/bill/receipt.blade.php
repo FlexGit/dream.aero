@@ -30,7 +30,7 @@
 		</div>
 	</div>
 	<div style="margin-top: 10px;">
-		Ticket: {{ $bill->number }}
+		Invoice: {{ $bill->number }}
 	</div>
 	<div>
 		Employee: {{ $user->name }}
@@ -65,16 +65,16 @@
 		</tr>
 		<tr>
 			<td style="text-align: right;white-space: nowrap;">
-				Tax ({{ $currencyName }}{{ number_format($bill->amount, 2, '.', ' ') }} @ {{ $taxRate }}%)
+				Tax
 			</td>
 			<td style="text-align: right;">
 				{{ $currencyName }}{{ number_format($bill->tax, 2, '.', ' ') }}
 			</td>
 		</tr>
-		<tr>
+		{{--<tr>
 			<td style="text-align: right;">Total Tax</td>
 			<td style="text-align: right;">{{ $currencyName }}{{ number_format($bill->tax, 2, '.', ' ') }}</td>
-		</tr>
+		</tr>--}}
 		<tr>
 			<td style="text-align: right;font-weight: bold;">Total</td>
 			<td style="text-align: right;font-weight: bold;">{{ $currencyName }}{{ number_format($bill->total_amount, 2, '.', ' ') }}</td>
@@ -82,7 +82,7 @@
 	</table>
 	<table cellspacing="0" cellpadding="0" style="margin-top: 10px;width: 100%;">
 		<tr>
-			<td colspan="2" style="height: 25px;border-bottom: 1pt solid #000;font-size: 14px;font-weight: bold;">Payments</td>
+			<td colspan="2" style="height: 25px;border-bottom: 1pt solid #000;font-weight: bold;">Payments</td>
 		</tr>
 		<tr>
 			<td style="width: 200px;padding-top: 3px;text-align: right;">{{ $paymentMethodName }}</td>
