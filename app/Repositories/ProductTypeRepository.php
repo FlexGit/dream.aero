@@ -21,7 +21,7 @@ class ProductTypeRepository {
 	 * @param bool $onlyTax
 	 * @return array
 	 */
-	public function getActualProductList(User $user, $onlyActive = true, $onlyTariff = true, $onlyNotTariff = false, $onlyTax = true)
+	public function getActualProductList(User $user, $onlyActive = true, $onlyTariff = true, $onlyNotTariff = false, $onlyTax = false)
 	{
 		$productTypes = $this->model->orderBy('name')
 			->get();
