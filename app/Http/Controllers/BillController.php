@@ -528,9 +528,9 @@ class BillController extends Controller
 		if (!$dealEmail && !$contractorEmail) return response()->json(['status' => 'error', 'reason' => 'Deal or Contractor E-mail not found']);
 		
 		$receiptFileName = $bill->number . '.pdf';
-		if (!Storage::disk('private')->exists('/receipt/' . $receiptFileName)) {
+		/*if (!Storage::disk('private')->exists('/receipt/' . $receiptFileName)) {*/
 			$pdf = $bill->generateReceiptFile($receiptFileName);
-		}
+		/*}*/
 		
 		$messageData = [
 			'bill' => $bill,
