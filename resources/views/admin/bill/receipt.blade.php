@@ -13,8 +13,6 @@
 			<div>
 				7101 Democracy Boulevard
 				<br>
-				Dream Aero store
-				<br>
 				Bethesda
 				<br>
 				MD 20817
