@@ -36,7 +36,7 @@ class ReportController extends Controller {
 	{
 		$user = Auth::user();
 		
-		if (!$user->isSuperAdmin()) {
+		if (!$user->isAdminOrHigher()) {
 			abort(404);
 		}
 		
