@@ -199,7 +199,6 @@ class ProductController extends Controller
 
 		$rules = [
 			'name' => 'required|max:255|unique:products,name',
-			'public_name' => 'required|max:255',
 			'alias' => 'required|max:255|unique:products,alias',
 			'product_type_id' => 'required|numeric|min:0|not_in:0',
 			'icon_file' => 'sometimes|image|max:512',
@@ -208,7 +207,6 @@ class ProductController extends Controller
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'name' => 'Name',
-				'public_name' => 'Public name',
 				'alias' => 'Alias',
 				'product_type_id' => 'Product type',
 				'icon_file' => 'Icon',
@@ -224,7 +222,7 @@ class ProductController extends Controller
 
 		$product = new Product();
 		$product->name = $this->request->name;
-		$product->public_name = $this->request->public_name;
+		$product->public_name = $this->request->public_name ?? '';
 		$product->alias = $this->request->alias;
 		$product->product_type_id = $this->request->product_type_id;
 		$product->user_id = $this->request->user_id ?? 0;

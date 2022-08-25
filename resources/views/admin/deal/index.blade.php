@@ -84,6 +84,7 @@
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="Create Voucher purchase Deal" class="btn btn-secondary btn-sm dropdown-item">Voucher</a>
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="Create Booking Deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create Good / Service Deal" class="btn btn-secondary btn-sm dropdown-item">Good / Service</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/tax/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create Tax Deal" class="btn btn-secondary btn-sm dropdown-item">Tax</a>
 									</div>
 								</div>
 							</div>

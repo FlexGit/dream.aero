@@ -142,6 +142,7 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('deal/certificate/add', [DealController::class, 'addCertificate']);
 		Route::get('deal/booking/add', [DealController::class, 'addBooking']);
 		Route::get('deal/product/add', [DealController::class, 'addProduct']);
+		Route::get('deal/tax/add', [DealController::class, 'addTax']);
 		Route::get('deal/{id}/edit', [DealController::class, 'edit']);
 		
 		// Сертификаты

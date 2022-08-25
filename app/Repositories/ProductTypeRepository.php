@@ -18,9 +18,10 @@ class ProductTypeRepository {
 	 * @param bool $onlyActive
 	 * @param bool $onlyTariff
 	 * @param bool $onlyNotTariff
+	 * @param bool $onlyTax
 	 * @return array
 	 */
-	public function getActualProductList(User $user, $onlyActive = true, $onlyTariff = true, $onlyNotTariff = false)
+	public function getActualProductList(User $user, $onlyActive = true, $onlyTariff = true, $onlyNotTariff = false, $onlyTax = true)
 	{
 		$productTypes = $this->model->orderBy('name')
 			->get();
@@ -32,6 +33,9 @@ class ProductTypeRepository {
 		}
 		if ($onlyActive) {
 			$productTypes = $productTypes->where('is_active', true);
+		}
+		if ($onlyTax) {
+			$productTypes = $productTypes->where('alias', 'tax');
 		}
 		
 		$products = [];

@@ -315,6 +315,34 @@ class DealController extends Controller
 
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
 	}
+	
+	/**
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function addTax()
+	{
+		if (!$this->request->ajax()) {
+			abort(404);
+		}
+		
+		$user = Auth::user();
+		
+		if (!$user->isAdminOrHigher()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
+		}
+		
+		$cities = $this->cityRepo->getList($user);
+		$products = $this->productTypeRepo->getActualProductList($user, true, false, false, true);
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList();
+		
+		$VIEW = view('admin.deal.modal.product.add', [
+			'cities' => $cities,
+			'products' => $products,
+			'paymentMethods' => $paymentMethods,
+		]);
+		
+		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
+	}
 
 	/**
 	 * @param $id
@@ -1198,7 +1226,6 @@ class DealController extends Controller
 			$deal->save();
 			
 			if ($amount) {
-				$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, Bill::ONLINE_PAYMENT_METHOD);
 				$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
 				$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
 				
