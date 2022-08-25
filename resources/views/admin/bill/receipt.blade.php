@@ -8,16 +8,16 @@
 	<div style="text-align: center;">
 		<div>
 			<div>
-				<span style="font-size: 14px;font-weight: bold;">Dream Aero DC</span>
+				<span style="font-size: 14px;font-weight: bold;">Dream Aero</span>
 			</div>
 			<div>
 				7101 Democracy Boulevard
 				<br>
 				Dream Aero store
 				<br>
-				Bethesda, Maryland,	20817
+				Bethesda
 				<br>
-				United States
+				MD 20817
 				<br>
 				(240) 224-4885
 			</div>
@@ -91,7 +91,7 @@
 	</table>
 
 	<div style="margin-top: 20px;text-align: center;">
-		Thank You !
+		Thank You!
 	</div>
 @stop
 
