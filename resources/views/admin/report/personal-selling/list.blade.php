@@ -11,7 +11,7 @@
 			<tbody>
 			<tr>
 				<td class="text-right">
-					{{ number_format($totalSum, 0, '.', ' ') }}
+				{{ $currencyName }}{{ number_format($totalSum, 0, '.', ' ') }}
 				</td>
 			</tr>
 			</tbody>
@@ -36,7 +36,7 @@
 						{{ $paymentMethod->name }}
 					</td>
 					<td class="text-right">
-						{{ isset($paymentMethodSumItems[$paymentMethod->id]) ? number_format($paymentMethodSumItems[$paymentMethod->id], 0, '.', ' ') : 0 }}
+						{{ $currencyName }}{{ isset($paymentMethodSumItems[$paymentMethod->id]) ? number_format($paymentMethodSumItems[$paymentMethod->id], 0, '.', ' ') : 0 }}
 					</td>
 				</tr>
 			@endforeach
@@ -77,7 +77,7 @@
 										{{ $billItem['bill_status'] }}
 									</td>
 									<td class="align-top text-right">
-										{{ number_format($billItem['bill_amount'], 0, '.', ' ') }}
+										{{ $currencyName }}{{ number_format($billItem['bill_amount'], 0, '.', ' ') }}
 									</td>
 									<td class="align-top text-center">
 										{{ $billItem['bill_payed_at'] }}
@@ -107,19 +107,19 @@
 									{{ isset($totalItems[$userItem['id']]) ? $totalItems[$userItem['id']]['deal_count'] : 0 }}
 								</td>
 								<td class="align-top text-right">
-									{{ isset($totalItems[$userItem['id']]) ? number_format($totalItems[$userItem['id']]['deal_sum'], 0, '.', ' ') : 0 }}
+									{{ $currencyName }}{{ isset($totalItems[$userItem['id']]) ? number_format($totalItems[$userItem['id']]['deal_sum'], 0, '.', ' ') : 0 }}
 								</td>
 								<td class="align-top text-right">
 									{{ isset($totalItems[$userItem['id']]) ? $totalItems[$userItem['id']]['bill_count'] : 0 }}
 								</td>
 								<td class="align-top text-right">
-									{{ isset($totalItems[$userItem['id']]) ? number_format($totalItems[$userItem['id']]['bill_sum'], 0, '.', ' ') : 0 }}
+									{{ $currencyName }}{{ isset($totalItems[$userItem['id']]) ? number_format($totalItems[$userItem['id']]['bill_sum'], 0, '.', ' ') : 0 }}
 								</td>
 								<td class="align-top text-right">
 									{{ isset($totalItems[$userItem['id']]) ? $totalItems[$userItem['id']]['payed_bill_count'] : 0 }}
 								</td>
 								<td class="align-top text-right">
-									{{ isset($totalItems[$userItem['id']]) ? number_format($totalItems[$userItem['id']]['payed_bill_sum'], 0, '.', ' ') : 0 }}
+									{{ $currencyName }}{{ isset($totalItems[$userItem['id']]) ? number_format($totalItems[$userItem['id']]['payed_bill_sum'], 0, '.', ' ') : 0 }}
 								</td>
 								<td class="align-top text-right">
 									{{ isset($shiftItems[$userItem['id']]) ? $shiftItems[$userItem['id']] : 0 }}

@@ -54,6 +54,7 @@ class ReportController extends Controller {
 		}
 		
 		$user = Auth::user();
+		$city = $user->city;
 		
 		$dateFromAt = $this->request->filter_date_from_at ?? '';
 		$dateToAt = $this->request->filter_date_to_at ?? '';
@@ -154,6 +155,7 @@ class ReportController extends Controller {
 			'userItems' => $userItems,
 			'cities' => $cities,
 			'paymentMethods' => $paymentMethods,
+			'currencyName' => $city->currency ? $city->currency->name : '',
 		];
 		
 		/*$reportFileName = '';

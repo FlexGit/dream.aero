@@ -21,7 +21,7 @@
 					{{ isset($items[$location->id]['bill_count']) ? number_format($items[$location->id]['bill_count'], 0, '.', ' ') : 0 }}
 				</td>
 				<td class="align-middle text-right" style="text-align: right;vertical-align: middle;">
-					{{ isset($items[$location->id]['bill_amount_sum']) ? number_format($items[$location->id]['bill_amount_sum'], 0, '.', ' ') : 0 }}
+{{ $city->currency ? $city->currency->name : '' }}{{ isset($items[$location->id]['bill_amount_sum']) ? number_format($items[$location->id]['bill_amount_sum'], 0, '.', ' ') : 0 }}
 				</td>
 			</tr>
 		@endforeach
