@@ -131,9 +131,11 @@ class MainController extends Controller
 		
 		if ($productAlias) {
 			$product = Product::where('alias', $productAlias)
+				->where('is_active', true)
 				->first();
 		} else {
 			$products = $city->products()
+				->where('is_active', true)
 				->orderBy('product_type_id')
 				->orderBy('duration')
 				->get();
@@ -369,16 +371,18 @@ class MainController extends Controller
 		foreach ($productTypes as $productType) {
 			$products[mb_strtoupper($productType->alias)] = [];
 			
-			foreach ($productType->products ?? [] as $product) {
+			foreach ($productType->products as $product) {
+				if (!$product->is_active) continue;
+				
 				foreach ($cityProducts ?? [] as $cityProduct) {
 					if ($product->id != $cityProduct->id) continue;
+					if (!$cityProduct->pivot) continue;
+					if (!$cityProduct->pivot->is_active) continue;
 					
 					$basePrice = $price = $cityProduct->pivot->price;
 					if ($cityProduct->pivot->discount) {
 						$price = $cityProduct->pivot->discount->is_fixed ? ($basePrice - $cityProduct->pivot->discount->value) : ($basePrice - $basePrice * $cityProduct->pivot->discount->value / 100);
 					}
-					
-					$pivotData = json_decode($cityProduct->pivot->data_json, true);
 					
 					$products[mb_strtoupper($productType->alias)][$product->alias] = [
 						'id' => $product->id,
@@ -407,6 +411,9 @@ class MainController extends Controller
 		]);
 	}
 	
+	/**
+	 * @return \Illuminate\Http\JsonResponse
+	 */
 	public function getCityListAjax()
 	{
 		if (!$this->request->ajax()) {
