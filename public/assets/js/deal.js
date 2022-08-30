@@ -45,7 +45,7 @@ $(function() {
 						product_alias: (t.data('product-alias') !== undefined) ? t.data('product-alias') : '',
 					},
 					success: function (result) {
-						console.log(result);
+						//console.log(result);
 						if (result.status !== 'success') {
 							return;
 						}
@@ -232,7 +232,7 @@ $(function() {
 			data: data,
 			dataType: 'json',
 			success: function (result) {
-				console.log(result);
+				//console.log(result);
 
 				if (result.status !== 'success') {
 					if (result.reason) {
@@ -253,9 +253,9 @@ $(function() {
 					return;
 				}
 
-				$popup.find('#product_id, #name, #email, #phone, #card_number, #card_name, #expiration_date, #card_code').val('');
-				$('#product_id').niceSelect('update');
-				$popup.find('.js-amount, .js-tax, .js-total-amount').text(0);
+				$popup.find('#name, #email, #phone, #card_number, #card_name, #expiration_date, #card_code').val('');
+				//$('#product_id').niceSelect('update');
+				//$popup.find('.js-amount, .js-tax, .js-total-amount').text(0);
 				$alertSuccess.html(result.message).removeClass('hidden');
 			}
 		});
