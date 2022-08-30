@@ -145,7 +145,7 @@
 			</div>
 
 			<div class="consent-container hidden" style="display: flex; justify-content: center;">
-				<div class="col-md-8 text-left">
+				<div class="col-md-6 text-left">
 					<label class="cont text-nowrap">
 						I agree with <a href="{{ url(($city ? $city->alias : '') . '/rules') }}" target="_blank">the rules</a> for using the flight simulator
 						<input type="checkbox" id="rules-consent" name="rules-consent" value="1">
