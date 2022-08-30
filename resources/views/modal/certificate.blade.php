@@ -39,10 +39,10 @@
 			@endif
 
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-6 col-xs-12">
 					<input type="text" id="name" name="name" class="popup-input" placeholder="@lang('main.modal-certificate.имя')">
 				</div>
-				<div class="col-md-6">
+				<div class="col-md-6 col-xs-12">
 					<input type="tel" id="phone" name="phone" class="popup-input" placeholder="YOUR PHONE NUMBER">
 				</div>
 			</div>

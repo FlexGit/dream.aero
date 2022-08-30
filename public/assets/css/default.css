@@ -378,3 +378,6 @@ h1.block-title:after {
 .switch {
 	margin-top: 5px;
 }
+.col-xs-12 {
+	padding: 0;
+}
