@@ -43,7 +43,7 @@
 @push('css')
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
-	{{--<style>
+	<style>
 		.relax h2.block-title {
 			margin: 90px 0 70px;
 		}
@@ -286,7 +286,7 @@
 			margin-bottom: 45px;
 			display: block;
 		}
-	</style>--}}
+	</style>
 @endpush
 
 @push('scripts')

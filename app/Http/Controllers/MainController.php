@@ -611,6 +611,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'impressions_' . $city->alias);
 		
+		
 		return view('impressions', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
