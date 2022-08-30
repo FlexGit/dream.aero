@@ -224,7 +224,7 @@ class Product extends Model
 				$discount = $promo->discount ?? null;
 				if ($discount) {
 					$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
-					\Log::debug($amount . ' - ' . $discount->is_fixed . ' - ' . $discount->value);
+					//\Log::debug($amount . ' - ' . $discount->is_fixed . ' - ' . $discount->value);
 					
 					return ($amount > 0) ? round($amount, 2) : 0;
 				}
