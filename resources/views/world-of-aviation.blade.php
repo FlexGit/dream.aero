@@ -8,276 +8,45 @@
 @section('content')
 	<div class="breadcrumbs container"><a href="{{ url($cityAlias ?? '/') }}">@lang('main.home.title')</a> <span>@lang('main.o-trenazhere.title')</span></div>
 
-	<article class="article">
+	<div class="about simul" id="about">
 		<div class="container">
-			<div class="relax corp">
-				<div class="container">
-					<h1 class="article-title">FLIGHT BRIEFING</h1>
-					<div class="article-content">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="item">
-									<p>For your convenience and to save time, learn the basics of the Boeing 737 NG and complete your briefing before your flight.</p>
-									<p>&nbsp;</p>
-									<div id="youtuber"><iframe class="youvideo" src="https://www.youtube.com/embed/IDBDqMvlvcI?rel=0&amp;autoplay=1&amp;mute=1" width="300" height="150" frameborder="0" allowfullscreen="allowfullscreen"></iframe></div>
-									<div class="block-break" style="height: 30px; clear: both;">&nbsp;</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<h2 class="block-title">Immersion in the World of Aviation</h2>
+			<div class="text-block wow fadeInRight simul" data-wow-delay="0.5s" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-delay: 0.5s; animation-name: fadeInRight;">
+				<p>Are you open to new experiences? If so, then why not try piloting a passenger airliner? Dream Aero offers you a virtual trip in the cockpit of our flight simulator.</p>
 			</div>
 		</div>
-	</article>
+		<div class="image wow fadeInLeft" data-wow-delay="1s" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-delay: 1s; animation-name: fadeInLeft;">
+			<iframe width="100%" src="{{ asset('img/visual.jpg') }}" frameborder="0" scrolling="no" allowfullscreen=""></iframe>
+		</div>
+		<div class="container">
+			<br>
+			<br>
+			<br>
+			<br>
+			<div class="about-simulator">
+				<h2>Accurate and true-to-life visualization</h2>
+				<p>Visual effects and tactile impressions combine to provide a very authentic flight experience. Behind the panoramic glass of the cockpit is a state-of-the-art video display system.</p>
+				<ul>
+					<li>Sitting in the captain’s seat, the pilot sees what a pilot would see during a real flight.</li>
+					<li>The image on the screen will change as the aircraft changes its position.</li>
+					<li>The system includes a complete geographic model of the globe, with all rivers, lakes, seas, and mountain ranges held in the computer’s memory. The approach zones of all major airports are accurately represented in our system.</li>
+					<li>Choose& any place you wish to visit. You can choose locations you’ve never been to, or places where you’ll recognize every building or bush. Choose any destination in the world!</li>
+				</ul>
+				<p>Flying above mountains or flying over seas can differ greatly, both in optics and in how you pilot the aircraft. In the first officer’s seat, your instructor will help you navigate the plane safely above mountain tops. When flying over seas, you will need to fly at a certain altitude and be prepared for frequently changing air flows.</p>
+				<p>A half hour or even a full hour of training is not enough to become a real pilot, but you will certainly learn to appreciate the complexities and nature of a pilot’s work. Piloting the plane will help many people deal with aerophobia and any travel-related anxiety. After your simulation experience, you will at least get a general idea of what a pilot does when the plane takes off, when you experience turbulence, sharp turns, and when landing the plane.</p>
+				<p>Share the joy of this new experience with your family and friends. Take two friends along in the passenger seats behind you, so they can enjoy all the visual and sound effects of your flight. They may by all means take a turn at the wheel themselves and learn to fly the aircraft!</p>
+				<p>Book a session on our simulator and enjoy the romantic spirit of flying from the captain’s perspective.</p>
+				<h2>True-to-life, without limitations</h2>
+				<p>Our flight simulators fly in all weather conditions. Thunderstorms, hurricanes, thick fog or heavy snow will not be an obstacle. There are no delays when flying with Dream Aero - our airline arrives at any location, precisely on time.</p>
+				<p>&nbsp;</p>
+			</div>
+		</div>
+	</div>
 @endsection
 
 @push('css')
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
-	<style>
-		.relax h2.block-title {
-			margin: 90px 0 70px;
-		}
-
-		.relax .col-md-4.wow.fadeInRight span,.corp span,.corp .span {
-			font-size: 22px;
-			font-weight: bold;
-			margin-bottom: 45px;
-			display: block;
-		}
-		.relax .col-md-4 li {
-			padding-bottom: 20px;
-		}
-		.relax .col-md-4 p{
-			width:90%;
-		}
-		.relax .col-md-4 p {
-			font-size: 16px;
-
-		}
-		.relax i{
-			color:white;
-		}
-		.relax .col-md-4.wow.fadeInRight a,.corp a {
-			font-size: 16px;
-			color: #FF8200;
-			text-decoration: none;
-
-		}
-		.corp a {
-			display: block;
-			width: 70%;
-			text-align: center;
-			margin: 0 auto;
-		}
-		.relax {
-			overflow: hidden;
-		}
-		.relax .col-md-4{
-			padding: 100px 0px 100px 41px;
-			margin: 50px 0px 0px;
-			background: #f7f7f9;
-		}
-
-		.relax ul {
-			padding: 0 15px 0px;
-		}
-		.relax .col-md-4:after, .relax .kids:after {
-			content: '';
-			width: 100%;
-			height: 100%;
-			position: absolute;
-
-			top: 0;
-			background: #f7f7f9;
-
-		}
-		.relax .col-md-4.fadeInLeft:after{
-			left: -100%;
-		}
-		.relax .col-md-4.fadeInRight:after{
-			right: -100%;
-		}
-		.stock.under {
-			margin-top: 0;
-		}
-		.relax .col-md-8 .text p {
-			margin-bottom: 30px;
-		}
-		.relax .col-md-8 .text {
-			padding: 0 30px 0 0;
-		}
-		.relax .col-md-8 {
-			padding: 0;
-		}
-		.corp,.corp .row{
-			margin-bottom:50px;
-		}
-		.relax .col-md-8 .text a, .corp a {
-			padding: 20px;
-			text-transform: uppercase;
-			top: 25px;
-		}
-
-		.wrapper,.wrapper1 {
-			height: 550px;
-			margin: 0px auto;
-			position: relative;
-			width: 100%;
-		}
-		@media screen and (max-width: 692px){
-			.wrapper1{
-				height:350px;
-			}
-		}
-		@media screen and (max-width: 500px){
-			.wrapper1{
-				height:250px;
-			}
-		}
-		.slider,.slider1 {
-
-			height: inherit;
-			overflow: hidden;
-			position: relative;
-			width: inherit;
-
-		}
-		.wrapper > input,.wrapper1 > input {
-			display: none;
-		}
-		.slides,.slides1 {
-			height: inherit;
-			position: absolute;
-			width: inherit;
-			background-size: contain;
-			background-repeat: no-repeat;
-			background-position: center;
-		}
-
-		.slide1 { background-image: url({{ asset('img/NIK_4441.JPG') }}); }
-		.slide2 { background-image: url({{ asset('img/2.jpg') }}); }
-		.slide3 { background-image: url({{ asset('img/adultparty.jpg') }}); }
-		.slide4 { background-image: url({{ asset('img/kidsparty.jpg') }}); }
-		.slide5 { background-image: url({{ asset('img/kid.jpg') }}); }
-		.wrapper .controls,.wrapper1 .controls1 {
-			text-align: center;
-		}
-
-		.wrapper label,.wrapper1 label {
-			cursor: pointer;
-			display: inline-block;
-			height: 8px;
-			margin: 25px 12px 0 16px;
-			position: relative;
-			width: 8px;
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			-o-border-radius: 50%;
-			border-radius: 50%;
-		}
-
-		.wrapper label:after,.wrapper1 label:after {
-			border: 2px solid #FF8200;
-			content: " ";
-			display: block;
-			height: 12px;
-			left: -1.7px;
-			position: absolute;
-			top: -2.3px;
-			width: 12px;
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			-o-border-radius: 50%;
-			border-radius: 50%;
-		}
-		.wrapper label,.wrapper1 label {
-			cursor: pointer;
-			display: inline-block;
-			height: 8px;
-			margin: 25px 12px 0 16px;
-			position: relative;
-			width: 8px;
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			-o-border-radius: 50%;
-			border-radius: 50%;
-			-webkit-transition: background ease-in-out .5s;
-			-moz-transition: background ease-in-out .5s;
-			-o-transition: background ease-in-out .5s;
-			transition: background ease-in-out .5s;
-		}
-
-		#slide3:checked ~ .controls1 label:nth-of-type(1),
-		#slide4:checked ~ .controls1 label:nth-of-type(2),
-		#slide5:checked ~ .controls1 label:nth-of-type(3){
-			background: #FF8200;
-		}
-		.wrapper label:hover, .wrapper1 label:hover,
-		#slide1:checked ~ .controls label:nth-of-type(1),
-		#slide2:checked ~ .controls label:nth-of-type(2)
-		{
-			background: #FF8200;
-		}
-		.slides,.slides1 {
-			height: inherit;
-			opacity: 0;
-			position: absolute;
-			width: inherit;
-			z-index: 0;
-			-webkit-transform: scale(1.5);
-			-moz-transform: scale(1.5);
-			-o-transform: scale(1.5);
-			transform: scale(1.5);
-			-webkit-transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-			-moz-transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-			-o-transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-			transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-		}
-		#slide3:checked ~ .slider1 > .slide3,
-		#slide4:checked ~ .slider1 > .slide4,
-		#slide5:checked ~ .slider1 > .slide5{
-			opacity: 1;
-			z-index: 1;
-			-webkit-transform: scale(1);
-			-moz-transform: scale(1);
-			-o-transform: scale(1);
-			transform: scale(1);
-		}
-		#slide1:checked ~ .slider > .slide1,
-		#slide2:checked ~ .slider > .slide2{
-			opacity: 1;
-			z-index: 1;
-			-webkit-transform: scale(1);
-			-moz-transform: scale(1);
-			-o-transform: scale(1);
-			transform: scale(1);
-		}
-		form#popup-call-back-new .block {
-			width: 400px;
-			margin: auto;
-		}
-		input[type="radio"], input[type="checkbox"] {
-			margin: 4px 0 0;
-			margin-top: 1px;
-			line-height: normal;
-		}
-		form#popup-call-back-new .block span {
-			padding-bottom: 0;
-		}
-		.popup .nice-select-label {
-			display: inline;
-			font-family: "GothamProMedium";
-			font-size: 13px;
-			color: #4d4d51;
-		}
-		.relax .col-md-4.wow.fadeInRight span, .corp span, .corp .span {
-			font-size: 22px;
-			font-weight: bold;
-			margin-bottom: 45px;
-			display: block;
-		}
-	</style>
 @endpush
 
 @push('scripts')
