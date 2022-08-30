@@ -56,6 +56,7 @@ class MainController extends Controller
 		if ($reviewParentContent) {
 			$reviews = Content::where('is_active', true)
 				->where('parent_id', $reviewParentContent->id)
+				->where('city_id', $city->id)
 				->latest()
 				->limit(10)
 				->get();
