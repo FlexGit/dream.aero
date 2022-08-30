@@ -318,65 +318,6 @@ class MainController extends Controller
 		]);
 	}
 
-	public function flyNoFear()
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'lechenie-aerofobii');
-		
-		$productTypes = ProductType::where('is_active', true)
-			->orderBy('name')
-			->get();
-		
-		$cityProducts = $city->products;
-		
-		$products = [];
-		foreach ($productTypes as $productType) {
-			$products[mb_strtoupper($productType->alias)] = [];
-			
-			foreach ($productType->products ?? [] as $product) {
-				foreach ($cityProducts ?? [] as $cityProduct) {
-					if ($product->id != $cityProduct->id) continue;
-					
-					$price = $cityProduct->pivot->price;
-					if ($cityProduct->pivot->discount) {
-						$price = $cityProduct->pivot->discount->is_fixed ? ($price - $cityProduct->pivot->discount->value) : ($price - $price * $cityProduct->pivot->discount->value / 100);
-					}
-					
-					$pivotData = json_decode($cityProduct->pivot->data_json, true);
-					
-					$products[mb_strtoupper($productType->alias)][$product->alias] = [
-						'id' => $product->id,
-						'name' => $product->name,
-						'alias' => $product->alias,
-						'duration' => $product->duration,
-						'price' => round($price),
-						'currency' => $cityProduct->pivot->currency ? $cityProduct->pivot->currency->name : 'руб',
-						'is_hit' => (bool)$cityProduct->pivot->is_hit,
-						'is_booking_allow' => false,
-						'is_certificate_purchase_allow' => false,
-						'icon_file_path' => (is_array($product->data_json) && array_key_exists('icon_file_path', $product->data_json)) ? $product->data_json['icon_file_path'] : '',
-					];
-					
-					if (array_key_exists('is_booking_allow', $pivotData) && $pivotData['is_booking_allow']) {
-						$products[mb_strtoupper($productType->alias)][$product->alias]['is_booking_allow'] = true;
-					}
-					if (array_key_exists('is_certificate_purchase_allow', $pivotData) && $pivotData['is_certificate_purchase_allow']) {
-						$products[mb_strtoupper($productType->alias)][$product->alias]['is_certificate_purchase_allow'] = true;
-					}
-				}
-			}
-		}
-		
-		return view('lechenie-aerofobii', [
-			'page' => $page ?? new Content,
-			'city' => $city,
-			'cityAlias' => $cityAlias,
-			'productTypes' => $productTypes,
-			'products' => $products,
-		]);
-	}
-
 	/**
 	 * @param null $cityAlias
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
@@ -449,17 +390,8 @@ class MainController extends Controller
 						'price' => $price,
 						'currency' => $cityProduct->pivot->currency ? $cityProduct->pivot->currency->name : '$',
 						'is_hit' => (bool)$cityProduct->pivot->is_hit,
-						'is_booking_allow' => false,
-						'is_certificate_purchase_allow' => false,
 						'icon_file_path' => (is_array($product->data_json) && array_key_exists('icon_file_path', $product->data_json)) ? $product->data_json['icon_file_path'] : '',
 					];
-					
-					if (array_key_exists('is_booking_allow', $pivotData) && $pivotData['is_booking_allow']) {
-						$products[mb_strtoupper($productType->alias)][$product->alias]['is_booking_allow'] = true;
-					}
-					if (array_key_exists('is_certificate_purchase_allow', $pivotData) && $pivotData['is_certificate_purchase_allow']) {
-						$products[mb_strtoupper($productType->alias)][$product->alias]['is_certificate_purchase_allow'] = true;
-					}
 				}
 			}
 		}
