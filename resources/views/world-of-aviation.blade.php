@@ -23,7 +23,7 @@
 			<br>
 			<br>
 			<br>
-			<div class="about-simulator">
+			<div class="about-simulator" style="margin-top: 50px;">
 				<h2>Accurate and true-to-life visualization</h2>
 				<p>Visual effects and tactile impressions combine to provide a very authentic flight experience. Behind the panoramic glass of the cockpit is a state-of-the-art video display system.</p>
 				<ul>
