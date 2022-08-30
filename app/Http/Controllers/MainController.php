@@ -566,7 +566,10 @@ class MainController extends Controller
 			'page' => $page ?? new Content,
 		]);
 	}
-
+	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
 	public function privateEvents()
 	{
 		$cityAlias = $this->request->session()->get('cityAlias');
@@ -581,6 +584,9 @@ class MainController extends Controller
 		]);
 	}
 	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
 	public function flightBriefing()
 	{
 		$cityAlias = $this->request->session()->get('cityAlias');
@@ -589,6 +595,74 @@ class MainController extends Controller
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-briefing_' . $city->alias);
 		
 		return view('flight-briefing', [
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
+		]);
+	}
+	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
+	public function impressions()
+	{
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'impressions_' . $city->alias);
+		
+		return view('impressions', [
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
+		]);
+	}
+	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
+	public function profAssistance()
+	{
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'prof-assistance_' . $city->alias);
+		
+		return view('prof-assistance', [
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
+		]);
+	}
+	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
+	public function worldAviation()
+	{
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'world-of-aviation_' . $city->alias);
+		
+		return view('world-of-aviation', [
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
+		]);
+	}
+	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
+	public function flyNoFear()
+	{
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'treating-aerophobia_' . $city->alias);
+		
+		return view('treating-aerophobia', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
