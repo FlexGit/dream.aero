@@ -407,7 +407,7 @@ return [
 	'pay.не-указан-номер-счета' => 'For the selected city, the account number of the payment system is not specified',
 	'pay.счет-не-найден' => 'Invoice number not found',
 	'pay.счет-способ-оплаты' => 'Incorrect payment method for the specified Invoice',
-	'pay.счет-оплачен' => 'Invoice has ben already paid',
+	'pay.счет-оплачен' => 'Invoice has been already paid',
 	'pay.redirect' => 'Redirecting to payment page...',
 	'payment.счет-успешно-оплачен' => 'Invoice # :number paid successfully!',
 	'payment.cертификат-не-найден' => 'Flight certificate not found. Please call us at: :phone.',
