@@ -252,7 +252,7 @@
 			background-position: center;
 		}
 
-		.slide1 { background-image: url({{ asset('img/NIK_4441.JPG') }}); }
+		.slide1 { background-image: url({{ asset('img/NIK_4441.jpg') }}); }
 		.slide2 { background-image: url({{ asset('img/2.jpg') }}); }
 		.slide3 { background-image: url({{ asset('img/adultparty.jpg') }}); }
 		.slide4 { background-image: url({{ asset('img/kidsparty.jpg') }}); }
