@@ -37,13 +37,15 @@
 				<p>Flying over clouds is a dream that many people cherish. Turn your childhood dreams into reality with our flight simulator. A gift certificate is an excellent way to share a lasting experience with your friends and loved ones. You will see how easy it is to make dreams come true. Book a flight session with Dream Aero and experience the thrill of flying.</p>
 			</div>
 		</div>
+		<p></p>
+		<p></p>
 	</div>
 @endsection
 
 @push('css')
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
-	<style>
+	{{--<style>
 		.relax h2.block-title {
 			margin: 90px 0 70px;
 		}
@@ -286,7 +288,7 @@
 			margin-bottom: 45px;
 			display: block;
 		}
-	</style>
+	</style>--}}
 @endpush
 
 @push('scripts')
