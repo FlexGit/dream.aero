@@ -378,6 +378,8 @@ h1.block-title:after {
 .switch {
 	margin-top: 5px;
 }
-.col-xs-12 {
-	padding: 0;
+@media screen and (max-width:450px) {
+	.col-xs-12 {
+		padding: 0;
+	}
 }
