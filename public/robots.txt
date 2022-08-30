@@ -1,4 +1,6 @@
 User-agent: *
+disallow: /payment
+disallow: /modal
 
 Sitemap: https://dream.aero/sitemap.xml
 Host: dream.aero
