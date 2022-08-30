@@ -136,7 +136,7 @@ class MainController extends Controller
 				->first();
 		} else {
 			$products = $city->products()
-				->where('is_active', true)
+				->where('products.is_active', true)
 				->orderBy('product_type_id')
 				->orderBy('duration')
 				->get();
