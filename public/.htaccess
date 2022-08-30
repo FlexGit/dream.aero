@@ -4,7 +4,6 @@
     </IfModule>
 
     RewriteEngine On
-    #RewriteBase /
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -22,4 +21,30 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    # 301 Redirects from old CRM
+    Redirect 301 /conditions https://dream.aero/about-simulator
+    Redirect 301 /aerofobia.html https://dream.aero/treating-aerophobia
+    Redirect 301 /links/vkgroup/ https://vk.com/dream.aero
+    Redirect 301 /find-us.html https://dream.aero/contacts
+    Redirect 301 /links/contacts/ https://dream.aero/contacts
+    Redirect 301 /terms.html https://dream.aero/rules
+    Redirect 301 /links/youtubvideo https://www.youtube.com/watch?v=lifbJ-35Obg&feature=youtu.be
+    Redirect 301 /about/movable_base.html https://dream.aero/about-simulator
+    Redirect 301 /reviews.html https://dream.aero/reviews
+    Redirect 301 /about.html https://dream.aero/about-simulator
+    Redirect 301 /study https://dream.aero/gift-sertificates
+    Redirect 301 /about/visualization.html https://dream.aero/about-simulator
+    Redirect 301 /about/cockpit.html https://dream.aero/about-simulator
+    Redirect 301 /brief-instruction.html https://dream.aero/about-simulator
+    Redirect 301 /about/professional_assistance https://dream.aero/about-simulator
+    Redirect 301 /oplata-online https://dream.aero/prices
+    Redirect 301 /video.html https://dream.aero/video
+    Redirect 301 /links/damarket https://vk.com/market-65405270
+    Redirect 301 /links/onlinepay https://dream.aero/prices
+    Redirect 301 /links/instruktazh https://dream.aero
+    Redirect 301 /booking.html https://dream.aero/about-simulator
+    Redirect 301 /links/virttour https://dream.aero
+    Redirect 301 /links/dreamaeroclub https://vk.com/dreamaeroclub
+    Redirect 301 /links/bookaflight https://dream.aero/prices
 </IfModule>
