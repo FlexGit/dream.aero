@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Certificate;
 use Carbon\Carbon;
 use App\Models\Bill;
 use net\authorize\api\contract\v1 as AnetAPI;
@@ -12,8 +11,8 @@ use net\authorize\api\controller as AnetController;
 
 class AuthorizeNetService {
 
-	const MERCHANT_LOGIN_ID = '59WuQWQpc4Cd'; //5mq44GLqW
-	const MERCHANT_TRANSACTION_KEY = "72Yr9Jx9P62DynDT"; //732Czn387zUKh472
+	const MERCHANT_LOGIN_ID = '5mq44GLqW'; //59WuQWQpc4Cd - test
+	const MERCHANT_TRANSACTION_KEY = '732Czn387zUKh472'; //72Yr9Jx9P62DynDT - test
 	
 	public static function payment(Bill $bill, $cardNumber, $expirationDate, $cardCode, $email = '', $description = '')
 	{
