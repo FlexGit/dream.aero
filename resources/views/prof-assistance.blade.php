@@ -6,278 +6,43 @@
 @section('description', $page->meta_description)
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url($cityAlias ?? '/') }}">@lang('main.home.title')</a> <span>@lang('main.o-trenazhere.title')</span></div>
+	<div class="breadcrumbs container"><a href="{{ url($cityAlias ?? '/') }}">@lang('main.home.title')</a> <span>PROFESSIONAL ASSISTANCE</span></div>
 
-	<article class="article">
+	<div class="about simul" id="about">
 		<div class="container">
-			<div class="relax corp">
-				<div class="container">
-					<h1 class="article-title">FLIGHT BRIEFING</h1>
-					<div class="article-content">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="item">
-									<p>For your convenience and to save time, learn the basics of the Boeing 737 NG and complete your briefing before your flight.</p>
-									<p>&nbsp;</p>
-									<div id="youtuber"><iframe class="youvideo" src="https://www.youtube.com/embed/IDBDqMvlvcI?rel=0&amp;autoplay=1&amp;mute=1" width="300" height="150" frameborder="0" allowfullscreen="allowfullscreen"></iframe></div>
-									<div class="block-break" style="height: 30px; clear: both;">&nbsp;</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<h2 class="block-title">Professional assistance</h2>
+			<div class="text-block wow fadeInRight simul" data-wow-delay="0.5s" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-delay: 0.5s; animation-name: fadeInRight;">
+				<p>Enjoy a safe and fascinating flight aboard our flight simulator while accompanied by one of our experienced instructors. Our instructors have extensive piloting experience and know all the nuances of safely flying a large aircraft.</p>
 			</div>
 		</div>
-	</article>
+		<div class="image wow fadeInLeft" data-wow-delay="1s" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-delay: 1s; animation-name: fadeInLeft;">
+			<iframe width="100%" src="{{ asset('img/prof-help2-min.jpg') }}" frameborder="0" scrolling="no" allowfullscreen=""></iframe>
+		</div>
+		<div class="container">
+			<br>
+			<br>
+			<br>
+			<br>
+			<div class="about-simulator">
+				<h2>Flight Simulator / Cockpit Environment</h2>
+				<p>The cockpit simulator is equipped just like the cockpit of a real aircraft. The pilot seats, control panels, displays, panoramic glass and steering wheel create the impression of a real flight. You will take the captain’s seat, while your instructor will serves as your first officer.</p>
+				<p>The seats in the second row are for your friends or family. A maximum of 4 people may be present in the cockpit at a time: 3 guests and 1 instructor. Do not worry; you will do all the flying. Our pilot instructor will correct your actions ever so slightly and intervene only in the event of a mishap or hazard. When we say “hazard”, we mean only virtual hazards, of course. Your life will not be in danger at any time throughout your simulation experience.</p>
+				<h2>Piloting Challenges</h2>
+				<p>You will learn to appreciate how difficult a pilot’s job is. The sheer number of instruments and all the flickering lights will make your head spin. Every instrument on the panel in front of you will need a share of your attention. Add to that, our dynamic and moving platform, which imitates the vibration of the aircraft, every twist and turn, acceleration during takeoff and deceleration when landing.</p>
+				<p>The panoramic display will show real-life landscapes that a pilot would see while up in the sky. Pilots who use the simulator to train for their flights say that the simulator’s visual experience is very similar to that of flying in real life.</p>
+				<p>When you fly for the first time, you may be too occupied with controlling the aircraft and therefore won’t find the time to take in the scenery. In these situations, the guidance of a pilot instructor will be most valuable.</p>
+				<h2>Professional Adviсe</h2>
+				<p>Your instructor will adviсe you on flight sequences as well as the logic of piloting an aircraft. You will learn why you must warm up the engines, monitor your plane’s flaps, when you should switch on autopilot, and much more. By the end of your first session, you will have an understanding of what the crew of a passenger airliner does in various situations.</p>
+				<p>Understanding the essence of piloting operations helps many people cope with aerophobia and uncontrollable panic attacks. Our pilot instructors are calm, collect, and a symbol of real professionalism. Visitors will feel confident in the presence of our pilot instructors and support staff. We pride ourselves on being role models for everyone, inside and outside of aviation.</p>
+				<p>&nbsp;</p>
+			</div>
+		</div>
+	</div>
 @endsection
 
 @push('css')
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
-	<style>
-		.relax h2.block-title {
-			margin: 90px 0 70px;
-		}
-
-		.relax .col-md-4.wow.fadeInRight span,.corp span,.corp .span {
-			font-size: 22px;
-			font-weight: bold;
-			margin-bottom: 45px;
-			display: block;
-		}
-		.relax .col-md-4 li {
-			padding-bottom: 20px;
-		}
-		.relax .col-md-4 p{
-			width:90%;
-		}
-		.relax .col-md-4 p {
-			font-size: 16px;
-
-		}
-		.relax i{
-			color:white;
-		}
-		.relax .col-md-4.wow.fadeInRight a,.corp a {
-			font-size: 16px;
-			color: #FF8200;
-			text-decoration: none;
-
-		}
-		.corp a {
-			display: block;
-			width: 70%;
-			text-align: center;
-			margin: 0 auto;
-		}
-		.relax {
-			overflow: hidden;
-		}
-		.relax .col-md-4{
-			padding: 100px 0px 100px 41px;
-			margin: 50px 0px 0px;
-			background: #f7f7f9;
-		}
-
-		.relax ul {
-			padding: 0 15px 0px;
-		}
-		.relax .col-md-4:after, .relax .kids:after {
-			content: '';
-			width: 100%;
-			height: 100%;
-			position: absolute;
-
-			top: 0;
-			background: #f7f7f9;
-
-		}
-		.relax .col-md-4.fadeInLeft:after{
-			left: -100%;
-		}
-		.relax .col-md-4.fadeInRight:after{
-			right: -100%;
-		}
-		.stock.under {
-			margin-top: 0;
-		}
-		.relax .col-md-8 .text p {
-			margin-bottom: 30px;
-		}
-		.relax .col-md-8 .text {
-			padding: 0 30px 0 0;
-		}
-		.relax .col-md-8 {
-			padding: 0;
-		}
-		.corp,.corp .row{
-			margin-bottom:50px;
-		}
-		.relax .col-md-8 .text a, .corp a {
-			padding: 20px;
-			text-transform: uppercase;
-			top: 25px;
-		}
-
-		.wrapper,.wrapper1 {
-			height: 550px;
-			margin: 0px auto;
-			position: relative;
-			width: 100%;
-		}
-		@media screen and (max-width: 692px){
-			.wrapper1{
-				height:350px;
-			}
-		}
-		@media screen and (max-width: 500px){
-			.wrapper1{
-				height:250px;
-			}
-		}
-		.slider,.slider1 {
-
-			height: inherit;
-			overflow: hidden;
-			position: relative;
-			width: inherit;
-
-		}
-		.wrapper > input,.wrapper1 > input {
-			display: none;
-		}
-		.slides,.slides1 {
-			height: inherit;
-			position: absolute;
-			width: inherit;
-			background-size: contain;
-			background-repeat: no-repeat;
-			background-position: center;
-		}
-
-		.slide1 { background-image: url({{ asset('img/NIK_4441.JPG') }}); }
-		.slide2 { background-image: url({{ asset('img/2.jpg') }}); }
-		.slide3 { background-image: url({{ asset('img/adultparty.jpg') }}); }
-		.slide4 { background-image: url({{ asset('img/kidsparty.jpg') }}); }
-		.slide5 { background-image: url({{ asset('img/kid.jpg') }}); }
-		.wrapper .controls,.wrapper1 .controls1 {
-			text-align: center;
-		}
-
-		.wrapper label,.wrapper1 label {
-			cursor: pointer;
-			display: inline-block;
-			height: 8px;
-			margin: 25px 12px 0 16px;
-			position: relative;
-			width: 8px;
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			-o-border-radius: 50%;
-			border-radius: 50%;
-		}
-
-		.wrapper label:after,.wrapper1 label:after {
-			border: 2px solid #FF8200;
-			content: " ";
-			display: block;
-			height: 12px;
-			left: -1.7px;
-			position: absolute;
-			top: -2.3px;
-			width: 12px;
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			-o-border-radius: 50%;
-			border-radius: 50%;
-		}
-		.wrapper label,.wrapper1 label {
-			cursor: pointer;
-			display: inline-block;
-			height: 8px;
-			margin: 25px 12px 0 16px;
-			position: relative;
-			width: 8px;
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			-o-border-radius: 50%;
-			border-radius: 50%;
-			-webkit-transition: background ease-in-out .5s;
-			-moz-transition: background ease-in-out .5s;
-			-o-transition: background ease-in-out .5s;
-			transition: background ease-in-out .5s;
-		}
-
-		#slide3:checked ~ .controls1 label:nth-of-type(1),
-		#slide4:checked ~ .controls1 label:nth-of-type(2),
-		#slide5:checked ~ .controls1 label:nth-of-type(3){
-			background: #FF8200;
-		}
-		.wrapper label:hover, .wrapper1 label:hover,
-		#slide1:checked ~ .controls label:nth-of-type(1),
-		#slide2:checked ~ .controls label:nth-of-type(2)
-		{
-			background: #FF8200;
-		}
-		.slides,.slides1 {
-			height: inherit;
-			opacity: 0;
-			position: absolute;
-			width: inherit;
-			z-index: 0;
-			-webkit-transform: scale(1.5);
-			-moz-transform: scale(1.5);
-			-o-transform: scale(1.5);
-			transform: scale(1.5);
-			-webkit-transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-			-moz-transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-			-o-transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-			transition: transform ease-in-out .5s, opacity ease-in-out .5s;
-		}
-		#slide3:checked ~ .slider1 > .slide3,
-		#slide4:checked ~ .slider1 > .slide4,
-		#slide5:checked ~ .slider1 > .slide5{
-			opacity: 1;
-			z-index: 1;
-			-webkit-transform: scale(1);
-			-moz-transform: scale(1);
-			-o-transform: scale(1);
-			transform: scale(1);
-		}
-		#slide1:checked ~ .slider > .slide1,
-		#slide2:checked ~ .slider > .slide2{
-			opacity: 1;
-			z-index: 1;
-			-webkit-transform: scale(1);
-			-moz-transform: scale(1);
-			-o-transform: scale(1);
-			transform: scale(1);
-		}
-		form#popup-call-back-new .block {
-			width: 400px;
-			margin: auto;
-		}
-		input[type="radio"], input[type="checkbox"] {
-			margin: 4px 0 0;
-			margin-top: 1px;
-			line-height: normal;
-		}
-		form#popup-call-back-new .block span {
-			padding-bottom: 0;
-		}
-		.popup .nice-select-label {
-			display: inline;
-			font-family: "GothamProMedium";
-			font-size: 13px;
-			color: #4d4d51;
-		}
-		.relax .col-md-4.wow.fadeInRight span, .corp span, .corp .span {
-			font-size: 22px;
-			font-weight: bold;
-			margin-bottom: 45px;
-			display: block;
-		}
-	</style>
 @endpush
 
 @push('scripts')
