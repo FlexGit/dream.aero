@@ -73,6 +73,11 @@
 									</div>
 								</div>
 							@endif
+							@if(!$deal->is_certificate_purchase && $deal->certificate)
+								<div title="Booking by Voucher">
+									{{ $deal->certificate->number ?: '-' }}
+								</div>
+							@endif
 							<div class="d-flex justify-content-between">
 								<div title="Source">
 									{{ isset(\App\Models\Deal::SOURCES[$deal->source]) ? \App\Models\Deal::SOURCES[$deal->source] : '' }}
