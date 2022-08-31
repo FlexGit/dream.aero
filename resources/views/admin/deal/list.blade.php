@@ -63,6 +63,9 @@
 									{{ $deal->number }}
 								</a>
 							</div>
+							<div style="line-height: 0.9em;" title="Create date">
+								{{ $deal->created_at ? $deal->created_at->format('m/d/Y g:i A') : '' }}
+							</div>
 							@if($deal->status)
 								<div title="Deal status">
 									<div class="p-0 pl-2 pr-2" style="background-color: {{ array_key_exists('color', $deal->status->data_json ?? []) ? $deal->status->data_json['color'] : 'none' }};">
@@ -70,9 +73,6 @@
 									</div>
 								</div>
 							@endif
-							{{--<div style="line-height: 0.9em;" title="Create date">
-								{{ $deal->created_at ? $deal->created_at->format('Y-m-d g:i A') : '' }}
-							</div>--}}
 							<div class="d-flex justify-content-between">
 								<div title="Source">
 									{{ isset(\App\Models\Deal::SOURCES[$deal->source]) ? \App\Models\Deal::SOURCES[$deal->source] : '' }}
