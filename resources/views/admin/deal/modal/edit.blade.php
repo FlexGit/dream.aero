@@ -105,7 +105,7 @@
 			<div class="form-group">
 				<label for="certificate_number">Flight with Voucher</label>
 				<input type="text" class="form-control" id="certificate_number" name="certificate_number" value="{{ $deal->certificate ? $deal->certificate->number : '' }}" placeholder="" @if($deal->certificate) disabled @endif>
-				<div class="js-certificate-container hidden">
+				<div class="js-certificate-container @if(!$deal->certificate) hidden @endif">
 					<span class="js-certificate">@if($deal->certificate)Linked Voucher: {{ $deal->certificate->number }}@endif</span> <i class="fas fa-times js-certificate-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 					<div class="custom-control custom-switch custom-control js-is-indefinitely hidden">
 						<input type="checkbox" id="is_indefinitely" name="is_indefinitely" value="1" class="custom-control-input">
