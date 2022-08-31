@@ -24,7 +24,7 @@
 										Hi {{ $name ?? '' }},
 									</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
-										We look forward to welcoming you for your flight on <b>{{ $flightDate->format('m/d/Y') }}</b> at Dream Aero.
+										We look forward to welcoming you for your flight on <b>{{ $flightDate->format('m/d/Y g:i A') }}</b> at Dream Aero.
 									</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
 										Please arrive 10 minutes prior to your scheduled appointment.
