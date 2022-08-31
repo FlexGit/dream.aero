@@ -32,27 +32,14 @@
 			@endif
 		</div>
 	</div>
-	<div class="col-6 text-right">
-		<div class="form-group">
-			<div id="amount-text" style="font-size: 30px;">
-				Subtotal: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->amount }}</span>
-			</div>
-			<div id="tax-text" style="font-size: 18px;">
-				Tax: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->tax }}</span>
-			</div>
-			<div id="total-amount-text" style="font-size: 18px;">
-				Total: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->total_amount }}</span>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
 	<div class="col-3">
 		<div class="form-group">
 			<label for="amount">Amount, {{ $bill->currency ? $bill->currency->name : '' }}</label>
 			<input type="text" class="form-control text-right js-manual-amount" id="manual_amount" name="manual_amount" value="{{ $bill->amount }}" placeholder="">
 		</div>
 	</div>
+</div>
+<div class="row">
 	<div class="col-3">
 		@if ($bill->paymentMethod)
 			@if ($bill->paymentMethod->alias == app('\App\Models\PaymentMethod')::ONLINE_ALIAS)
@@ -76,6 +63,19 @@
 				</div>
 			@endif
 		@endif
+	</div>
+	<div class="col-9 text-right">
+		<div class="form-group">
+			<div id="amount-text" style="font-size: 30px;">
+				Subtotal: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->amount }}</span>
+			</div>
+			<div id="tax-text" style="font-size: 18px;">
+				Tax: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->tax }}</span>
+			</div>
+			<div id="total-amount-text" style="font-size: 18px;">
+				Total: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $bill->total_amount }}</span>
+			</div>
+		</div>
 	</div>
 </div>
 <div class="row">

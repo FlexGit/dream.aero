@@ -28,7 +28,15 @@
 			</select>
 		</div>
 	</div>
-	<div class="col-6 text-right">
+	<div class="col-3">
+		<div class="form-group">
+			<label for="amount">Amount, {{ $currency->name }}</label>
+			<input type="text" class="form-control text-right js-manual-amount" id="manual_amount" name="manual_amount" value="{{ $amount }}" placeholder="">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col text-right">
 		<div class="form-group">
 			<div id="amount-text" style="font-size: 30px;">
 				Subtotal: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $amount }}</span>
@@ -39,14 +47,6 @@
 			<div id="total-amount-text" style="font-size: 18px;">
 				Total: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $totalAmount }}</span>
 			</div>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-3">
-		<div class="form-group">
-			<label for="amount">Amount, {{ $currency->name }}</label>
-			<input type="text" class="form-control text-right js-manual-amount" id="manual_amount" name="manual_amount" value="{{ $amount }}" placeholder="">
 		</div>
 	</div>
 </div>
