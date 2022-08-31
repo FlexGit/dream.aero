@@ -103,6 +103,21 @@
 	<div class="row">
 		<div class="col">
 			<div class="form-group">
+				<label for="certificate_number">Flight with Voucher</label>
+				<input type="text" class="form-control" id="certificate_number" name="certificate_number" value="{{ $deal->certificate ? $deal->certificate->number : '' }}" placeholder="" @if($deal->certificate) disabled @endif>
+				<div class="js-certificate-container hidden">
+					<span class="js-certificate">@if($deal->certificate)Linked Voucher: {{ $deal->certificate->number }}@endif</span> <i class="fas fa-times js-certificate-delete" title="Delete" style="cursor: pointer;color: red;"></i>
+					<div class="custom-control custom-switch custom-control js-is-indefinitely hidden">
+						<input type="checkbox" id="is_indefinitely" name="is_indefinitely" value="1" class="custom-control-input">
+						<label class="custom-control-label font-weight-normal" for="is_indefinitely">Ignore validity</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="form-group">
 				<label>Flight start</label>
 				<div class="d-flex">
 					<input type="date" class="form-control" name="start_at_date" value="{{ ($deal->event && $deal->event->start_at) ? \Carbon\Carbon::parse($deal->event->start_at)->format('Y-m-d') : '' }}" placeholder="">

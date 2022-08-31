@@ -319,7 +319,7 @@
 							}
 							calcProductAmount();
 							$('#certificate_number').attr('disabled', true);
-							$('.js-certificate').text('Linked client: ' + suggestion.data.number).closest('.js-certificate-container').removeClass('hidden');
+							$('.js-certificate').text('Linked Voucher: ' + suggestion.data.number).closest('.js-certificate-container').removeClass('hidden');
 							//console.log(suggestion.data);
 							if (suggestion.data.is_overdue) {
 								$('.js-is-indefinitely').removeClass('hidden');
