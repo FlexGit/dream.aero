@@ -41,6 +41,19 @@ class BillController extends Controller
 		$bill = Bill::find($id);
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
 		
+		$deal = $bill->deal;
+		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
+		
+		$product = $deal->product;
+		if (!$product) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$productType = $product->productType;
+		if (!$productType) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
 		$statuses = Status::where('type', Status::STATUS_TYPE_BILL)
 			->orderBy('sort')
 			->get();
@@ -53,6 +66,7 @@ class BillController extends Controller
 			'bill' => $bill,
 			'paymentMethods' => $paymentMethods,
 			'statuses' => $statuses,
+			'taxRate' => $productType->tax,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -104,6 +118,7 @@ class BillController extends Controller
 			'deal' => $deal,
 			'amount' => $amount,
 			'tax' => $tax,
+			'taxRate' => $productType->tax,
 			'totalAmount' => $totalAmount,
 			'currency' => $currency,
 			'paymentMethods' => $paymentMethods,
@@ -125,12 +140,14 @@ class BillController extends Controller
 		$user = Auth::user();
 
 		$rules = [
+			'manual_amount' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 			'status_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
+				'manual_amount' => 'Amount',
 				'payment_method_id' => 'Payment method',
 				'status_id' => 'Status',
 			]);
@@ -252,12 +269,14 @@ class BillController extends Controller
 		}
 		
 		$rules = [
+			'manual_amount' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 			'status_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
+				'manual_amount' => 'Amount',
 				'payment_method_id' => 'Payment method',
 				'status_id' => 'Status',
 			]);
@@ -300,6 +319,9 @@ class BillController extends Controller
 			\DB::beginTransaction();
 			
 			$bill->payment_method_id = $this->request->payment_method_id ?? 0;
+			$bill->amount = $this->request->amount ?? 0;
+			$bill->tax = $this->request->tax ?? 0;
+			$bill->total_amount = $this->request->total_amount ?? 0;
 			$bill->status_id = $this->request->status_id ?? 0;
 			if ($status->alias == Bill::PAYED_STATUS && !$bill->payed_at) {
 				$bill->payed_at = Carbon::now()->format('Y-m-d H:i:s');

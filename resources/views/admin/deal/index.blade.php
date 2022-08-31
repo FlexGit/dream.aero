@@ -666,6 +666,22 @@
 				});
 			});
 
+			$(document).on('keyup', '.js-manual-amount', function() {
+				var amount = $(this).val().length ? parseFloat($(this).val()) : 0,
+					taxRate = parseFloat($('#tax_rate').val()),
+					tax = amount * taxRate / 100,
+					totalAmount = amount + tax;
+
+				$('#amount').val(amount);
+				$('#amount-text span').text(amount);
+
+				$('#tax').val(tax.toFixed(2));
+				$('#tax-text span').text(tax.toFixed(2));
+
+				$('#total_amount').val(totalAmount.toFixed(2));
+				$('#total-amount-text span').text(totalAmount.toFixed(2));
+			});
+
 			$.fn.isInViewport = function () {
 				let elementTop = $(this).offset().top;
 				let elementBottom = elementTop + $(this).outerHeight();

@@ -1,8 +1,9 @@
 <input type="hidden" id="deal_id" name="deal_id" value="{{ $deal->id }}">
 <input type="hidden" id="amount" name="amount" value="{{ $amount }}">
 <input type="hidden" id="tax" name="tax" value="{{ $tax }}">
+<input type="hidden" id="tax_rate" name="tax_rate" value="{{ $taxRate }}">
 <input type="hidden" id="total_amount" name="total_amount" value="{{ $totalAmount }}">
-<input type="hidden" id="currency_id" name="currency_id" value="{{ $currency->id ?? 0 }}">
+<input type="hidden" id="currency_id" name="currency_id" value="{{ $currency->id }}">
 
 <div class="row">
 	<div class="col-3">
@@ -38,6 +39,14 @@
 			<div id="total-amount-text" style="font-size: 18px;">
 				Total: <i class="fas fa-dollar-sign"></i> <span class="d-inline-block">{{ $totalAmount }}</span>
 			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-3">
+		<div class="form-group">
+			<label for="amount">Amount, {{ $currency->name }}</label>
+			<input type="text" class="form-control text-right js-manual-amount" id="manual_amount" name="manual_amount" value="{{ $amount }}" placeholder="">
 		</div>
 	</div>
 </div>

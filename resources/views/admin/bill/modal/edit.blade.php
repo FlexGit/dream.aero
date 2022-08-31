@@ -1,4 +1,8 @@
 <input type="hidden" id="id" name="id" value="{{ $bill->id }}">
+<input type="hidden" id="amount" name="amount" value="{{ $bill->amount }}">
+<input type="hidden" id="tax" name="tax" value="{{ $bill->tax }}">
+<input type="hidden" id="tax_rate" name="tax_rate" value="{{ $taxRate }}">
+<input type="hidden" id="total_amount" name="total_amount" value="{{ $bill->total_amount }}">
 
 <div class="row">
 	<div class="col-3">
@@ -43,7 +47,13 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col">
+	<div class="col-3">
+		<div class="form-group">
+			<label for="amount">Amount, {{ $bill->currency ? $bill->currency->name : '' }}</label>
+			<input type="text" class="form-control text-right js-manual-amount" id="manual_amount" name="manual_amount" value="{{ $bill->amount }}" placeholder="">
+		</div>
+	</div>
+	<div class="col-3">
 		@if ($bill->paymentMethod)
 			@if ($bill->paymentMethod->alias == app('\App\Models\PaymentMethod')::ONLINE_ALIAS)
 				<div class="form-group">
