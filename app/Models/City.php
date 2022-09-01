@@ -127,8 +127,9 @@ class City extends Model
 	
 	public function phoneFormatted()
 	{
-		$phoneCleared = preg_replace( '/[^0-9]/', '', $this->phone);
-		return '+' . mb_substr($phoneCleared, 0, 1) . ' ' . mb_substr($phoneCleared, 1, 3) . ' ' . mb_substr($phoneCleared, 4, 3) . ' ' . mb_substr($phoneCleared, 7, 2) . ' ' . mb_substr($phoneCleared, 9, 2);
+		/*$phoneCleared = preg_replace( '/[^0-9]/', '', $this->phone);
+		return '+' . mb_substr($phoneCleared, 0, 1) . ' ' . mb_substr($phoneCleared, 1, 3) . ' ' . mb_substr($phoneCleared, 4, 3) . ' ' . mb_substr($phoneCleared, 7, 2) . ' ' . mb_substr($phoneCleared, 9, 2);*/
+		return $this->phone;
 	}
 
 	/**

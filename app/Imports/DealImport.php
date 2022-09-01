@@ -135,7 +135,7 @@ class DealImport implements OnEachRow, WithProgressBar
 		$bill->city_id = $cityId;
 		$bill->location_id = $locationId;
 		$bill->user_id = (trim($row[13]) == '1') ? 1 : 0;
-		$bill->payed_at = $createAt;
+		$bill->payed_at = $isPaid ? $createAt : null;
 		$bill->created_at = $createAt;
 		$bill->updated_at = $createAt;
 		$bill->data_json = [

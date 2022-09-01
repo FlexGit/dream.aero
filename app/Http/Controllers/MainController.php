@@ -15,6 +15,7 @@ use App\Models\FlightSimulator;
 use App\Models\ProductType;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Validator;
 use App\Repositories\PromocodeRepository;
 
@@ -63,57 +64,25 @@ class MainController extends Controller
 		}
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'home_' . $city->alias);
+		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
 
 		return view('home', [
 			'users' => $users,
 			'reviews' => $reviews,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 		]);
-	}
-	
-	/**
-	 * @param null $productAlias
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	public function getBookingModal($productAlias = null)
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		
-		if ($productAlias) {
-			$product = Product::where('alias', $productAlias)
-				->first();
-		} else {
-			// Продукты "Regular"
-			$products = $city->products()
-				->whereHas('productType', function ($query) {
-					return $query->where('alias', ProductType::REGULAR_ALIAS);
-				})
-				->orderBy('duration')
-				->get();
-		}
-		
-		// Локации
-		$locations = $city->locations;
-		
-		// Праздники
-		$holidays = Deal::HOLIDAYS;
-
-		$VIEW = view('modal.booking', [
-			'city' => $city,
-			'product' => $product ?? '',
-			'products' => $products ?? [],
-			'locations' => $locations,
-			'holidays' => $holidays,
-		]);
-
-		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
 	}
 	
 	/**
@@ -151,26 +120,6 @@ class MainController extends Controller
 			'activePromocodes' => $activePromocodes,
 		]);
 		
-		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
-	}
-	
-	/**
-	 * @param $productAlias
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	public function getCertificateBookingModal($productAlias)
-	{
-		if (!$this->request->ajax()) {
-			abort(404);
-		}
-		
-		$product = Product::where('alias', $productAlias)
-			->first();
-		
-		$VIEW = view('modal.certificate-booking', [
-			'product' => $product,
-		]);
-
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
 	}
 	
@@ -240,9 +189,20 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'about-simulator_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+		
 		return view('about', [
 			'flightSimulators' => $flightSimulators,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 		]);
@@ -258,8 +218,19 @@ class MainController extends Controller
 
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'gift-sertificates_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+		
 		return view('gift-flight', [
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 		]);
@@ -275,47 +246,19 @@ class MainController extends Controller
 
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-options_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('flight-types', [
 			'page' => $page ?? new Content,
-			'city' => $city,
-			'cityAlias' => $cityAlias,
-		]);
-	}
-
-	/**
-	 * @param null $simulator
-	 *
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function instruction($simulator = null)
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-
-		if ($simulator && $simulator == 'boeing-737-ng') {
-			$page = HelpFunctions::getEntityByAlias(Content::class, 'instruction-737-ng');
-
-			return view('instruction-737-ng', [
-				'page' => $page ?? new Content,
-				'city' => $city,
-				'cityAlias' => $cityAlias,
-			]);
-		}
-
-		if ($simulator && $simulator == 'airbus-a320') {
-			$page = HelpFunctions::getEntityByAlias(Content::class, 'instruction-a320');
-
-			return view('instruction-a320', [
-				'page' => $page ?? new Content,
-				'city' => $city,
-				'cityAlias' => $cityAlias,
-			]);
-		}
-		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'instruction');
-		
-		return view('instruction', [
-			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 		]);
@@ -342,9 +285,20 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'contacts_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('contacts', [
 			'locations' => $locations,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 		]);
@@ -403,10 +357,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'prices_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('price', [
 			'productTypes' => $productTypes,
 			'products' => $products,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 		]);
@@ -527,10 +492,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'oferta');
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+		
 		return view('oferta', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -544,27 +520,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'rules_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+		
 		return view('rules', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
-		]);
-	}
-	
-	/**
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-	 */
-	public function howToPay()
-	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
-		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'how-to-pay');
-		
-		return view('how-to-pay', [
-			'city' => $city,
-			'cityAlias' => $cityAlias,
-			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -578,10 +548,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'private-events_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('private-events', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -595,10 +576,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-briefing_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('flight-briefing', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -612,11 +604,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'impressions_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
 		
 		return view('impressions', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -630,10 +632,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'prof-assistance_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('prof-assistance', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -647,10 +660,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'world-of-aviation_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('world-of-aviation', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -664,10 +688,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'treating-aerophobia_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('treating-aerophobia', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 
@@ -709,6 +744,16 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+		
 		if ($newsAlias) {
 			$news = Content::where('alias', $newsAlias)
 				->where('is_active', true)
@@ -724,6 +769,7 @@ class MainController extends Controller
 				'news' => $news,
 				'city' => $city,
 				'cityAlias' => $cityAlias,
+				'promobox' => $promobox,
 			]);
 		} else {
 			$parentNews = HelpFunctions::getEntityByAlias(Content::class, 'news');
@@ -742,6 +788,7 @@ class MainController extends Controller
 				'city' => $city,
 				'cityAlias' => $cityAlias,
 				'page' => $page ?? new Content,
+				'promobox' => $promobox,
 			]);
 		}
 	}
@@ -795,6 +842,16 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		$date = date('Y-m-d');
 		
 		if ($alias) {
@@ -820,6 +877,7 @@ class MainController extends Controller
 				'promo' => $promo,
 				'city' => $city,
 				'cityAlias' => $cityAlias,
+				'promobox' => $promobox,
 			]);
 		} else {
 			$promos = Promo::where('is_active', true)
@@ -843,6 +901,7 @@ class MainController extends Controller
 				'city' => $city,
 				'cityAlias' => $cityAlias,
 				'page' => $page ?? new Content,
+				'promobox' => $promobox,
 			]);
 		}
 	}
@@ -869,11 +928,22 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'gallery');
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+		
 		return view('gallery', [
 			'gallery' => $gallery,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -901,11 +971,22 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'reviews');
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+		
 		return view('reviews-list', [
 			'reviews' => $reviews,
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 	
@@ -1019,10 +1100,21 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'privacy-policy_' . $city->alias);
 		
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promobox = null;
+		if ($promoboxParentContent) {
+			$promobox = Content::where('parent_id', $promoboxParentContent->id)
+				->where('is_active', true)
+				->where('city_id', $city->id)
+				->latest()
+				->first();
+		}
+
 		return view('privacy-policy', [
 			'city' => $city,
 			'cityAlias' => $cityAlias,
 			'page' => $page ?? new Content,
+			'promobox' => $promobox,
 		]);
 	}
 }

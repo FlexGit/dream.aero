@@ -68,6 +68,7 @@ class Content extends Model
 	const GALLERY_TYPE = 'gallery';
 	const GUESTS_TYPE = 'guests';
 	const PAGES_TYPE = 'pages';
+	const PROMOBOX_TYPE = 'promoboxes';
 
 	/**
 	 * The attributes that are mass assignable.

@@ -387,7 +387,7 @@ return [
             ],
         ],
 		[
-			'text'    => 'Content',
+			'text'    => 'Site',
 			'icon'    => 'far fa-fw fa-file-image',
 			'can'	  => 'is_superadmin',
 			'submenu' => [
@@ -415,12 +415,12 @@ return [
 					'icon' => '',
 					'can'  => 'is_superadmin',
 				],
-				/*[
-					'text' => 'Промобоксы',
-					'url'  => '/site/promobox',
+				[
+					'text' => 'Promoboxes',
+					'url'  => '/site/promoboxes',
 					'icon' => '',
 					'can'  => 'is_superadmin',
-				],*/
+				],
 			],
 		],
         /*['header' => 'labels'],

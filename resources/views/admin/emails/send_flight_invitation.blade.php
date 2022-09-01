@@ -30,7 +30,10 @@
 										Please arrive 10 minutes prior to your scheduled appointment.
 									</p>
 									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
-										We are located at {!! $address !!}.
+										We are located at WESTFIELD Montgomery Mall, on the 3rd level, next to AMC theater.
+									</p>
+									<p style="margin:15px 30px 33px;text-align:left;font-size:16px;line-height:30px;color:#484a42;">
+										Thanks for booking with Dream Aero. See you soon!
 									</p>
 									<p style="border-top:2px solid #e5e5e5;font-size:5px;line-height:5px;margin:0 30px 29px;">&nbsp;</p>
 									<table cellpadding="0" cellspacing="0" border="0" width="100%">

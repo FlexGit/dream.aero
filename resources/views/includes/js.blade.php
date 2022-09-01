@@ -142,7 +142,7 @@
 			var pathname = window.location.pathname,
 				currentCityAlias = $(this).closest('.uk-modal-dialog').find('[data-current-alias]').data('current-alias');
 
-			console.log(currentCityAlias);
+			//console.log(currentCityAlias);
 			$.ajax({
 				url: '/city/change',
 				type: 'GET',
@@ -151,13 +151,26 @@
 					alias: $(this).data('alias'),
 				},
 				success: function(result) {
-					console.log(result);
+					//console.log(result);
 					if (result.status === 'success') {
 						$('#city_modal').modal('hide');
 						window.location.href = pathname.replace(currentCityAlias, result.cityAlias);
 					}
 				}
 			});
+		});
+
+		var promoboxId = $('#promobox').data('alias'),
+			promobox = localStorage.getItem('promobox-' + promoboxId);
+
+		if (!promobox){
+			setTimeout(function() {
+				$('#promobox').css({'visibility': 'visible', 'opacity': 100});
+			}, 500);
+		}
+
+		$('.popup .close').on('click', function() {
+			$(this).closest('.overlay').css({'visibility': 'hidden', 'opacity': 0});
 		});
 	});
 </script>

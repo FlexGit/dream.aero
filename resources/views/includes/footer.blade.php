@@ -96,3 +96,5 @@
 	<button title="Close (Esc)" type="button" class="mfp-close">×</button>
 	<div class="popup-container"></div>
 </div>
+
+@include('includes.promobox')
