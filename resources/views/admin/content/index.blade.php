@@ -55,6 +55,7 @@
 							<th class="text-center">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name @else Title @endif</th>
 							@switch($type)
 								@case(app('\App\Models\Content')::PROMOBOX_TYPE)
+									<th class="text-center">Is active</th>
 									<th class="text-center">Active start date</th>
 									<th class="text-center">Active end date</th>
 								@break

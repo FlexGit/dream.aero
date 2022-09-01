@@ -6,6 +6,9 @@
 	@switch($type)
 		@case(app('\App\Models\Content')::PROMOBOX_TYPE)
 			<td class="text-center align-middle">
+				{{ $content->is_active ? 'Yes' : 'no' }}
+			</td>
+			<td class="text-center align-middle">
 				{{ $content->published_at ? $content->published_at->format('m/d/Y') : '' }}
 			</td>
 			<td class="text-center align-middle">
