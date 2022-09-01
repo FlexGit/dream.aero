@@ -89,7 +89,11 @@ class ContentController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
+		
+		if (!$this->request->user()->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
+		}
+		
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
@@ -115,7 +119,11 @@ class ContentController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
+		
+		if (!$this->request->user()->isSuperAdmin()) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
+		}
+		
 		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
