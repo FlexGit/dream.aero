@@ -703,7 +703,7 @@ class DealController extends Controller
 		}
 		
 		if ($source == Deal::WEB_SOURCE) {
-			return response()->json(['status' => 'success', 'message' => 'Your transaction has been completed, and your Flight Voucher #<b>' . $certificate->number . '</b> has been emailed to you.', 'paymentResponse' => $paymentResponse]);
+			return response()->json(['status' => 'success', 'message' => 'Your transaction has been completed, and your Flight Voucher #<b>' . $certificate->number . '</b> has been emailed to you.', 'paymentResponse' => $paymentResponse, 'totalAmount' => $totalAmount, 'currencyAlias' => $currency->alias]);
 		}
 		
 		return response()->json(['status' => 'success', 'message' => 'Deal was successfully created']);

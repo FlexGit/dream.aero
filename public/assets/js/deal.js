@@ -202,9 +202,6 @@ $(function() {
 			event_type = $(this).data('event_type'),
 			url = $(this).data('url');
 
-		/*yaCounter46672077.reachGoal('SendOrder');
-		gtag_report_conversion();*/
-
 		$alertSuccess.html('').addClass('hidden');
 		$alertError.text('').addClass('hidden');
 		$('.field-error').removeClass('field-error');
@@ -257,6 +254,8 @@ $(function() {
 				//$('#product_id').niceSelect('update');
 				//$popup.find('.js-amount, .js-tax, .js-total-amount').text(0);
 				$alertSuccess.html(result.message).removeClass('hidden');
+
+				fbq('track', 'Purchase', {value: result.totalAmount, currency: result.currencyAlias});
 			}
 		});
 	});

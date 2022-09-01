@@ -119,7 +119,7 @@
 								</div>
 								<div class="alert alert-danger hidden" role="alert"></div>
 							</div>
-							<button type="button" onclick="fbq('track', 'Purchase');" class="popup-submit button-pipaluk button-pipaluk-grey js-callback-btn" disabled><i>Submit</i></button>
+							<button type="button" class="popup-submit button-pipaluk button-pipaluk-grey js-callback-btn" disabled><i>Submit</i></button>
 						</form>
 					</div>
 				</div>
