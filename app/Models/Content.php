@@ -90,6 +90,7 @@ class Content extends Model
 		'is_active',
 		'data_json',
 		'published_at',
+		'published_end_at',
 	];
 
 	/**
@@ -101,7 +102,8 @@ class Content extends Model
 		'created_at' => 'datetime:Y-m-d H:i:s',
 		'updated_at' => 'datetime:Y-m-d H:i:s',
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
-		'published_at' => 'datetime:Y-m-d H:i:s',
+		'published_at' => 'datetime:Y-m-d',
+		'published_end_at' => 'datetime:Y-m-d',
 		'data_json' => 'array',
 		'rating_ips' => 'array',
 		'is_active' => 'boolean',

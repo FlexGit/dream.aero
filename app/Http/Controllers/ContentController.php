@@ -240,6 +240,7 @@ class ContentController extends Controller
 		$content->is_active = (bool)$this->request->is_active;
 		$content->data_json = $data;
 		$content->published_at = $this->request->published_at;
+		$content->published_end_at = $this->request->published_end_at ?? null;
 		if (!$content->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
@@ -313,6 +314,7 @@ class ContentController extends Controller
 			$content->data_json = $data;
 		}
 		$content->published_at = $this->request->published_at;
+		$content->published_end_at = $this->request->published_end_at ?? null;
 		if (!$content->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}

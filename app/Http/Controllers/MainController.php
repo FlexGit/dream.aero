@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Deal;
 use App\Models\Promo;
 use App\Models\Promocode;
 use App\Services\HelpFunctions;
@@ -15,22 +14,24 @@ use App\Models\FlightSimulator;
 use App\Models\ProductType;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Support\Collection;
 use Validator;
 use App\Repositories\PromocodeRepository;
+use App\Repositories\PromoRepository;
 
 class MainController extends Controller
 {
 	private $request;
 	private $promocodeRepo;
+	private $promoRepo;
 	
 	/**
 	 * @param Request $request
 	 */
-	public function __construct(Request $request, PromocodeRepository $promocodeRepo)
+	public function __construct(Request $request, PromocodeRepository $promocodeRepo, PromoRepository $promoRepo)
 	{
 		$this->request = $request;
 		$this->promocodeRepo = $promocodeRepo;
+		$this->promoRepo = $promoRepo;
 	}
 	
 	/**
@@ -65,17 +66,8 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'home_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
-
+		$promobox = $this->promoRepo->getActivePromobox($city);
+		
 		return view('home', [
 			'users' => $users,
 			'reviews' => $reviews,
@@ -190,16 +182,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'about-simulator_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		return view('about', [
 			'flightSimulators' => $flightSimulators,
@@ -220,16 +203,7 @@ class MainController extends Controller
 
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'gift-sertificates_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		return view('gift-flight', [
 			'page' => $page ?? new Content,
@@ -249,16 +223,7 @@ class MainController extends Controller
 
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-options_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('flight-types', [
 			'page' => $page ?? new Content,
@@ -289,16 +254,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'contacts_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('contacts', [
 			'locations' => $locations,
@@ -362,16 +318,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'prices_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('price', [
 			'productTypes' => $productTypes,
@@ -498,16 +445,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'oferta');
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		return view('oferta', [
 			'city' => $city,
@@ -527,16 +465,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'rules_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		return view('rules', [
 			'city' => $city,
@@ -556,16 +485,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'private-events_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('private-events', [
 			'city' => $city,
@@ -585,16 +505,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'flight-briefing_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('flight-briefing', [
 			'city' => $city,
@@ -614,16 +525,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'impressions_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		return view('impressions', [
 			'city' => $city,
@@ -643,16 +545,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'prof-assistance_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('prof-assistance', [
 			'city' => $city,
@@ -672,16 +565,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'world-of-aviation_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('world-of-aviation', [
 			'city' => $city,
@@ -701,16 +585,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'treating-aerophobia_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('treating-aerophobia', [
 			'city' => $city,
@@ -758,16 +633,7 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		if ($newsAlias) {
 			$news = Content::where('alias', $newsAlias)
@@ -857,16 +723,7 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		$date = date('Y-m-d');
 		
@@ -944,16 +801,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'gallery');
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		return view('gallery', [
 			'gallery' => $gallery,
@@ -988,16 +836,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'reviews');
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 		
 		return view('reviews-list', [
 			'reviews' => $reviews,
@@ -1118,16 +957,7 @@ class MainController extends Controller
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'privacy-policy_' . $city->alias);
 		
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
-		$promobox = null;
-		if ($promoboxParentContent) {
-			$promobox = Content::where('parent_id', $promoboxParentContent->id)
-				->where('is_active', true)
-				->where('published_at', '<=', date('Y-m-d'))
-				->where('city_id', $city->id)
-				->latest()
-				->first();
-		}
+		$promobox = $this->promoRepo->getActivePromobox($city);
 
 		return view('privacy-policy', [
 			'city' => $city,

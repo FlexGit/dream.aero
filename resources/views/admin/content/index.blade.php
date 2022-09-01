@@ -53,10 +53,18 @@
 						<thead>
 						<tr>
 							<th class="text-center">@if($type == app('\App\Models\Content')::REVIEWS_TYPE) Name @else Title @endif</th>
-							@if($type != app('\App\Models\Content')::PAGES_TYPE)
-								<th class="text-center">Publication Date</th>
-								<th class="text-center">Is active</th>
-							@endif
+							@switch($type)
+								@case(app('\App\Models\Content')::PROMOBOX_TYPE)
+									<th class="text-center">Active start date</th>
+									<th class="text-center">Active end date</th>
+								@break
+								@case(app('\App\Models\Content')::PAGES_TYPE)
+								@break
+								@default
+									<th class="text-center">Publication date</th>
+									<th class="text-center">Is active</th>
+								@break
+							@endswitch
 							<th class="text-center"></th>
 						</tr>
 						</thead>
