@@ -235,8 +235,9 @@ class Product extends Model
 			$amounts = [];
 
 			// активные акции для публикации со скидкой
+			//\DB::connection()->enableQueryLog();
 			$promos = Promo::where('is_active', true)
-				->where('is_published', true)
+				/*->where('is_published', true)*/
 				->where('discount_id', '!=', 0)
 				->where('alias', '!=', Promo::BIRTHDAY_ALIAS)
 				->whereIn('city_id', [$cityId, 0])
@@ -250,6 +251,7 @@ class Product extends Model
 				})
 				->orderByDesc('active_from_at')
 				->get();
+			//\Log::debug(\DB::getQueryLog());
 			foreach ($promos as $promo) {
 				$discount = $promo->discount ?? null;
 				if ($discount) {
@@ -258,7 +260,9 @@ class Product extends Model
 					$amounts[] = ($amount > 0) ? round($amount, 2) : 0;
 				}
 			}
-
+			
+			//\Log::debug($amounts);
+			
 			if ($amounts) {
 				// применяем с наибольшей скидкой
 				rsort($amounts);

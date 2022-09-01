@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Deal;
 use App\Models\Promo;
 use App\Models\Promocode;
 use App\Services\HelpFunctions;
@@ -281,8 +282,6 @@ class MainController extends Controller
 			->orderBy('name')
 			->get();
 		
-		$cityProducts = $city->products;
-		
 		$products = [];
 		foreach ($productTypes as $productType) {
 			$products[mb_strtoupper($productType->alias)] = [];
@@ -290,29 +289,25 @@ class MainController extends Controller
 			foreach ($productType->products as $product) {
 				if (!$product->is_active) continue;
 				
-				foreach ($cityProducts ?? [] as $cityProduct) {
-					if ($product->id != $cityProduct->id) continue;
-					if (!$cityProduct->pivot) continue;
-					if (!$cityProduct->pivot->is_active) continue;
-					
-					$basePrice = $price = $cityProduct->pivot->price;
-					if ($cityProduct->pivot->discount) {
-						$price = $cityProduct->pivot->discount->is_fixed ? ($basePrice - $cityProduct->pivot->discount->value) : ($basePrice - $basePrice * $cityProduct->pivot->discount->value / 100);
-					}
-					
-					$products[mb_strtoupper($productType->alias)][$product->alias] = [
-						'id' => $product->id,
-						'name' => $product->name,
-						'public_name' => $product->public_name,
-						'alias' => $product->alias,
-						'duration' => $product->duration,
-						'base_price' => $basePrice,
-						'price' => $price,
-						'currency' => $cityProduct->pivot->currency ? $cityProduct->pivot->currency->name : '$',
-						'is_hit' => (bool)$cityProduct->pivot->is_hit,
-						'icon_file_path' => (is_array($product->data_json) && array_key_exists('icon_file_path', $product->data_json)) ? $product->data_json['icon_file_path'] : '',
-					];
-				}
+				$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
+				if (!$cityProduct->pivot) continue;
+				if (!$cityProduct->pivot->is_active) continue;
+
+				$basePrice = $cityProduct->pivot->price;
+				$price = $product->calcAmount(0, $city->id, Deal::WEB_SOURCE, false, 0, 0, 0, 0, 0, false, false, 0, true);
+				
+				$products[mb_strtoupper($productType->alias)][$product->alias] = [
+					'id' => $product->id,
+					'name' => $product->name,
+					'public_name' => $product->public_name,
+					'alias' => $product->alias,
+					'duration' => $product->duration,
+					'base_price' => $basePrice,
+					'price' => $price,
+					'currency' => $cityProduct->pivot->currency ? $cityProduct->pivot->currency->name : '$',
+					'is_hit' => (bool)$cityProduct->pivot->is_hit,
+					'icon_file_path' => (is_array($product->data_json) && array_key_exists('icon_file_path', $product->data_json)) ? $product->data_json['icon_file_path'] : '',
+				];
 			}
 		}
 		
