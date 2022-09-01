@@ -290,6 +290,7 @@ class MainController extends Controller
 				if (!$product->is_active) continue;
 				
 				$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
+				if (!$cityProduct) continue;
 				if (!$cityProduct->pivot) continue;
 				if (!$cityProduct->pivot->is_active) continue;
 
