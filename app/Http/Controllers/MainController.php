@@ -70,6 +70,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -194,6 +195,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -223,6 +225,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -251,6 +254,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -290,6 +294,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -362,6 +367,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -497,6 +503,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -525,6 +532,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -553,6 +561,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -581,6 +590,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -609,6 +619,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -637,6 +648,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -665,6 +677,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -693,6 +706,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -749,6 +763,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -847,6 +862,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -933,6 +949,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -976,6 +993,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
@@ -1105,6 +1123,7 @@ class MainController extends Controller
 		if ($promoboxParentContent) {
 			$promobox = Content::where('parent_id', $promoboxParentContent->id)
 				->where('is_active', true)
+				->where('published_at', '<=', date('Y-m-d'))
 				->where('city_id', $city->id)
 				->latest()
 				->first();
