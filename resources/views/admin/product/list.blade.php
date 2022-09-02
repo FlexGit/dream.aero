@@ -10,6 +10,9 @@
 		<a href="javascript:void(0)" data-toggle="modal" data-url="/product/{{ $product->id }}/edit" data-action="/product/{{ $product->id }}" data-id="{{ $product->id }}" data-method="PUT" data-title="Edit" title="Edit">
 			<i class="fa fa-edit" aria-hidden="true"></i>
 		</a>
+		<a href="javascript:void(0)" data-toggle="modal" data-target="#modal" data-url="/product/{{ $product->id }}/delete" data-action="/product/{{ $product->id }}" data-method="DELETE" data-title="Delete">
+			<i class="fa fa-trash" aria-hidden="true"></i>
+		</a>
 	</td>
 </tr>
 @endforeach
