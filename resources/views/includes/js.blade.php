@@ -173,8 +173,12 @@
 			}, 500);
 		}
 
-		$('.popup .close, .js-promobox-btn').on('click', function() {
+		$('.popup .close').on('click', function() {
 			$(this).closest('.overlay').css({'visibility': 'hidden', 'opacity': 0});
+		});
+
+		$('.js-promobox-btn').on('click', function() {
+			localStorage.setItem('promobox-' + $('#promobox').data('alias'), true);
 		});
 	});
 </script>
