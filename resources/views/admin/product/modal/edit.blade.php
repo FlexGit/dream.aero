@@ -10,7 +10,7 @@
 </div>
 <div class="form-group">
 	<label for="name">Alias</label>
-	<input type="text" class="form-control" id="alias" name="alias" value="{{ $product->alias }}" placeholder="Alias" readonly>
+	<input type="text" class="form-control" id="alias" name="alias" value="{{ $product->alias }}" placeholder="Alias">
 </div>
 <div class="form-group">
 	<label for="product_type_id">Product type</label>
