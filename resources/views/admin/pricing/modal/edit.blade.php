@@ -18,13 +18,13 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="purchase_price">Purchase price</label>
-			<input type="number" class="form-control" id="purchase_price" name="purchase_price" value="{{ $cityProduct ? $cityProduct->purchase_price : '' }}" placeholder="Purchase price">
+			<input type="number" step="0.01" class="form-control" id="purchase_price" name="purchase_price" value="{{ $cityProduct ? $cityProduct->purchase_price : '' }}" placeholder="Purchase price">
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
 			<label for="price">Selling price</label>
-			<input type="number" class="form-control" id="price" name="price" value="{{ $cityProduct ? $cityProduct->price : '' }}" placeholder="Selling price">
+			<input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ $cityProduct ? $cityProduct->price : '' }}" placeholder="Selling price">
 		</div>
 	</div>
 	<div class="col">
