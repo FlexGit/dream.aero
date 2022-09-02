@@ -173,7 +173,7 @@
 			}, 500);
 		}
 
-		$('.popup .close').on('click', function() {
+		$('.popup .close, .js-promobox-btn').on('click', function() {
 			$(this).closest('.overlay').css({'visibility': 'hidden', 'opacity': 0});
 		});
 	});
