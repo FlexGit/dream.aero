@@ -648,29 +648,27 @@ class MainController extends Controller
 				'cityAlias' => $cityAlias,
 				'promobox' => $promobox,
 			]);
-		} else {
-			$parentNews = Content::where('alias', 'news_' . $city->alias)
-				->where('city_id', $city->id)
-				->where('is_active', true)
-				->first();
-			
-			$news = Content::where('parent_id', $parentNews->id)
-				->where('is_active', true)
-				->whereIn('city_id', [$city->id, 0])
-				->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
-				->orderByDesc('published_at')
-				->get();
-			
-			$page = HelpFunctions::getEntityByAlias(Content::class, 'news');
-			
-			return view('news-list', [
-				'news' => $news,
-				'city' => $city,
-				'cityAlias' => $cityAlias,
-				'page' => $page ?? new Content,
-				'promobox' => $promobox,
-			]);
 		}
+
+		$parentNews = Content::where('alias', 'news_' . $city->alias)
+			->where('is_active', true)
+			->first();
+		
+		$news = Content::where('parent_id', $parentNews->id)
+			->where('is_active', true)
+			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
+			->orderByDesc('published_at')
+			->get();
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'news');
+		
+		return view('news-list', [
+			'news' => $news,
+			'city' => $city,
+			'cityAlias' => $cityAlias,
+			'page' => $page ?? new Content,
+			'promobox' => $promobox,
+		]);
 	}
 	
 	/**
@@ -787,13 +785,11 @@ class MainController extends Controller
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 
 		$parentGallery = Content::where('alias', 'gallery_' . $city->alias)
-			->where('city_id', $city->id)
 			->where('is_active', true)
 			->first();
 		
 		$gallery = Content::where('parent_id', $parentGallery->id)
 			->where('is_active', true)
-			->whereIn('city_id', [$city->id, 0])
 			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
 			->latest()
 			->get();
@@ -820,13 +816,11 @@ class MainController extends Controller
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
 		$parentReviews = Content::where('alias', 'reviews_' . $city->alias)
-			->where('city_id', $city->id)
 			->where('is_active', true)
 			->first();
 		
 		$reviews = Content::where('parent_id', $parentReviews->id)
 			->where('is_active', true)
-			->whereIn('city_id', [$city->id, 0])
 			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
 			->latest()
 			->get();
