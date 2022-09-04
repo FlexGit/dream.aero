@@ -649,7 +649,7 @@ class MainController extends Controller
 				'promobox' => $promobox,
 			]);
 		} else {
-			$parentNews = Content::where('alias', 'news')
+			$parentNews = Content::where('alias', 'news_' . $city->alias)
 				->where('city_id', $city->id)
 				->where('is_active', true)
 				->first();
@@ -786,7 +786,7 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 
-		$parentGallery = Content::where('alias', 'gallery')
+		$parentGallery = Content::where('alias', 'gallery_' . $city->alias)
 			->where('city_id', $city->id)
 			->where('is_active', true)
 			->first();
@@ -819,7 +819,7 @@ class MainController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		$parentReviews = Content::where('alias', 'reviews')
+		$parentReviews = Content::where('alias', 'reviews_' . $city->alias)
 			->where('city_id', $city->id)
 			->where('is_active', true)
 			->first();
