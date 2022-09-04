@@ -10,6 +10,8 @@
 		$title = 'Guests';
 	} elseif($type == app('\App\Models\Content')::PAGES_TYPE) {
 		$title = 'Pages';
+	} elseif($type == app('\App\Models\Content')::PROMOBOX_TYPE) {
+		$title = 'Promoboxes';
 	}
 @endphp
 
