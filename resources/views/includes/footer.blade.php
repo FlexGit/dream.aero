@@ -97,4 +97,6 @@
 	<div class="popup-container"></div>
 </div>
 
-@include('includes.promobox')
+@if(isset($promobox))
+	@include('includes.promobox')
+@endif
