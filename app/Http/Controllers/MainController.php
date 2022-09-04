@@ -59,7 +59,6 @@ class MainController extends Controller
 		if ($reviewParentContent) {
 			$reviews = Content::where('is_active', true)
 				->where('parent_id', $reviewParentContent->id)
-				->where('city_id', $city->id)
 				->latest()
 				->limit(10)
 				->get();
@@ -399,8 +398,11 @@ class MainController extends Controller
 			}
 			return response()->json(['status' => 'error', 'errors' => $errors]);
 		}
-
-		$reviewParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::REVIEWS_TYPE);
+		
+		$cityAlias = $this->request->session()->get('cityAlias');
+		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		
+		$reviewParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::REVIEWS_TYPE . '_' . $city->alias);
 		if (!$reviewParentContent) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
