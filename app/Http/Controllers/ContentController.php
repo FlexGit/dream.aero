@@ -45,7 +45,7 @@ class ContentController extends Controller
 		$user = Auth::user();
 		$city = $user->city;
 		
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 	
 		$id = $this->request->id ?? 0;
@@ -90,11 +90,14 @@ class ContentController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$content = Content::where('parent_id', $parentContent->id)
@@ -120,11 +123,14 @@ class ContentController extends Controller
 			abort(404);
 		}
 		
-		if (!$this->request->user()->isSuperAdmin()) {
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$VIEW = view('admin.content.modal.add', [
@@ -145,12 +151,15 @@ class ContentController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
+		
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$content = Content::where('parent_id', $parentContent->id)
@@ -210,7 +219,7 @@ class ContentController extends Controller
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
@@ -230,7 +239,7 @@ class ContentController extends Controller
 		
 		$content = new Content();
 		$content->title = $this->request->title;
-		$content->alias = ($parentContent->alias == Content::PAGES_TYPE && $city) ? $this->request->alias . '_' . $city->alias : $this->request->alias;
+		$content->alias = ($parentContent->alias == Content::PAGES_TYPE . '_' . $city->alias && $city) ? $this->request->alias . '_' . $city->alias : $this->request->alias;
 		$content->preview_text = $this->request->preview_text;
 		$content->detail_text = $this->request->detail_text;
 		$content->parent_id = $parentContent->id;
@@ -263,7 +272,7 @@ class ContentController extends Controller
 		$user = Auth::user();
 		$city = $user->city;
 		
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		
 		$content = Content::where('parent_id', $parentContent->id)
@@ -333,12 +342,15 @@ class ContentController extends Controller
 		if (!$this->request->ajax()) {
 			abort(404);
 		}
-
-		if (!$this->request->user()->isSuperAdmin()) {
+		
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 
 		$content = Content::where('parent_id', $parentContent->id)
@@ -358,7 +370,10 @@ class ContentController extends Controller
 	 * @return \Illuminate\Http\JsonResponse
 	 */
 	public function imageUpload($type) {
-		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type);
+		$user = Auth::user();
+		$city = $user->city;
+		
+		$parentContent = HelpFunctions::getEntityByAlias(Content::class, $type . '_' . $city->alias);
 		if (!$parentContent) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.некорректные-параметры')]);
 		}
