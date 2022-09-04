@@ -649,8 +649,11 @@ class MainController extends Controller
 				'promobox' => $promobox,
 			]);
 		} else {
-			$parentNews = HelpFunctions::getEntityByAlias(Content::class, 'news');
-		
+			$parentNews = Content::where('alias', 'news')
+				->where('city_id', $city->id)
+				->where('is_active', true)
+				->first();
+			
 			$news = Content::where('parent_id', $parentNews->id)
 				->where('is_active', true)
 				->whereIn('city_id', [$city->id, 0])
@@ -821,14 +824,12 @@ class MainController extends Controller
 			->where('is_active', true)
 			->first();
 		
-		//\DB::connection()->enableQueryLog();
 		$reviews = Content::where('parent_id', $parentReviews->id)
 			->where('is_active', true)
 			->whereIn('city_id', [$city->id, 0])
 			->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
 			->latest()
 			->get();
-		//\Log::debug(\DB::getQueryLog());
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'reviews');
 		
