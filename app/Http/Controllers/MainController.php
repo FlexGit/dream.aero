@@ -660,7 +660,7 @@ class MainController extends Controller
 			->orderByDesc('published_at')
 			->get();
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'news');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'news_' . $city->alias);
 		
 		return view('news-list', [
 			'news' => $news,
@@ -794,7 +794,7 @@ class MainController extends Controller
 			->latest()
 			->get();
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'gallery');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'gallery_' . $city->alias);
 		
 		$promobox = $this->promoRepo->getActivePromobox($city);
 		
@@ -825,7 +825,7 @@ class MainController extends Controller
 			->latest()
 			->get();
 		
-		$page = HelpFunctions::getEntityByAlias(Content::class, 'reviews');
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'reviews_' . $city->alias);
 		
 		$promobox = $this->promoRepo->getActivePromobox($city);
 		
