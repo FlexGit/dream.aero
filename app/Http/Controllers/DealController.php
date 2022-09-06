@@ -671,7 +671,7 @@ class DealController extends Controller
 				if ($paymentResponse['status'] == 'error') {
 					\DB::rollback();
 
-					return response()->json(['status' => 'error', 'reason' => $paymentResponse['original']['error_code'] . ': ' . $paymentResponse['original']['error_message']]);
+					return response()->json(['status' => 'error', 'reason' => isset($paymentResponse['original']) ? $paymentResponse['original']['error_message'] : $paymentResponse['error_message']]);
 				}
 				
 				$billData = [
