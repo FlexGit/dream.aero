@@ -71,7 +71,7 @@ class AuthorizeNetService {
 		
 		// Create the controller and get the response
 		$controller = new AnetController\CreateTransactionController($request);
-		$response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX); //PRODUCTION
+		$response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION); //PRODUCTION OR SANDBOX
 		
 		if ($response == null) {
 			return [
