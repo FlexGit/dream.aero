@@ -154,7 +154,7 @@ class PaymentController extends Controller
 		\Log::channel('authorize')->info($paymentResponse);
 		
 		if ($paymentResponse['status'] == 'error') {
-			return response()->json(['status' => 'error', 'reason' => isset($paymentResponse['original']) ? $paymentResponse['original']['error_code'] . ': ' . $paymentResponse['original']['error_message'] : trans('main.error.повторите-позже') ]);
+			return response()->json(['status' => 'error', 'reason' => isset($paymentResponse['original']) ? $paymentResponse['original']['error_message'] : $paymentResponse['error_message']]);
 		}
 		
 		$billData = $bill->data_json;
