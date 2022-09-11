@@ -662,37 +662,6 @@ class DealController extends Controller
 				$promocode->contractors()->save($contractor);
 			}
 			
-			$paymentResponse = null;
-			if (in_array($source, [Deal::WEB_SOURCE])) {
-				$paymentResponse = AuthorizeNetService::payment($bill, $cardNumber, $expirationDate, $cardCode, $deal->email, $product->name);
-
-				Log::channel('authorize')->info($paymentResponse);
-
-				if ($paymentResponse['status'] == 'error') {
-					\DB::rollback();
-
-					return response()->json(['status' => 'error', 'reason' => isset($paymentResponse['original']) ? $paymentResponse['original']['error_message'] : $paymentResponse['error_message']]);
-				}
-				
-				$billData = [
-					'payment' => [
-						'status' => $paymentResponse['status'],
-						'transaction_id' => $paymentResponse['transaction_id'],
-						'transaction_code' => $paymentResponse['transaction_code'],
-						'message_code' => $paymentResponse['message_code'],
-						'auth_code' => $paymentResponse['auth_code'],
-						'description' => $paymentResponse['description'],
-					],
-				];
-				
-				$bill->status_id = $billPayedStatus->id ?? 0;
-				$bill->payed_at = Carbon::now();
-				$bill->data_json = $billData;
-				$bill->save();
-				
-				$certificate = $certificate->generateFile();
-			}
-			
 			\DB::commit();
 		} catch (Throwable $e) {
 			\DB::rollback();
@@ -703,6 +672,32 @@ class DealController extends Controller
 		}
 		
 		if ($source == Deal::WEB_SOURCE) {
+			$paymentResponse = AuthorizeNetService::payment($bill, $cardNumber, $expirationDate, $cardCode, $deal->email, $product->name);
+			
+			Log::channel('authorize')->info($paymentResponse);
+			
+			if ($paymentResponse['status'] == 'error') {
+				return response()->json(['status' => 'error', 'reason' => isset($paymentResponse['original']) ? $paymentResponse['original']['error_message'] : $paymentResponse['error_message']]);
+			}
+			
+			$billData = [
+				'payment' => [
+					'status' => $paymentResponse['status'],
+					'transaction_id' => $paymentResponse['transaction_id'],
+					'transaction_code' => $paymentResponse['transaction_code'],
+					'message_code' => $paymentResponse['message_code'],
+					'auth_code' => $paymentResponse['auth_code'],
+					'description' => $paymentResponse['description'],
+				],
+			];
+			
+			$bill->status_id = $billPayedStatus->id ?? 0;
+			$bill->payed_at = Carbon::now();
+			$bill->data_json = $billData;
+			$bill->save();
+			
+			$certificate = $certificate->generateFile();
+
 			return response()->json(['status' => 'success', 'message' => 'Your transaction has been completed, and your Flight Voucher #<b>' . $certificate->number . '</b> has been emailed to you.', 'paymentResponse' => $paymentResponse, 'totalAmount' => $totalAmount, 'currencyAlias' => $currency->alias]);
 		}
 		
