@@ -85,6 +85,8 @@ class ReportController extends Controller {
 				continue;
 			}
 			
+			\Log::debug($bill->number . ' - ' . $bill->user_id);
+			
 			$deal = $bill->deal;
 			
 			$billItems[$bill->user_id][$i] = [
