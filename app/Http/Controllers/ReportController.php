@@ -65,6 +65,7 @@ class ReportController extends Controller {
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
 		
+		\DB::connection()->enableQueryLog();
 		$bills = Bill::where('user_id', '!=', 0)
 			->where('city_id', $city->id)
 			->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
@@ -77,6 +78,7 @@ class ReportController extends Controller {
 		if ($user->isAdmin()) {
 			$bills = $bills->where('user_id', $user->id);
 		}
+		\Log::debug(\DB::getQueryLog());
 		
 		$totalItems = $billItems = $paymentMethodSumItems = $dealIds = [];
 		$totalSum = $i = 0;
