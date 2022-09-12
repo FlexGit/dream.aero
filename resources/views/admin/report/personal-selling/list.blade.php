@@ -74,7 +74,7 @@
 								<td class="align-top text-center font-weight-bold">Invoice status</td>
 								<td class="align-top text-center font-weight-bold">Invoice amount</td>
 								<td class="align-top text-center font-weight-bold">Invoice paydate</td>
-								<td class="align-top text-center font-weight-bold">Invoice location</td>
+								<td class="align-top text-center font-weight-bold">Invoice payment method</td>
 								<td class="align-top text-center font-weight-bold">Deal #</td>
 								<td class="align-top text-center font-weight-bold">Deal status</td>
 							</tr>
@@ -93,7 +93,7 @@
 										{{ $billItem['bill_payed_at'] }}
 									</td>
 									<td class="align-top text-center">
-										{{ $billItem['bill_location'] }}
+										{{ $billItem['bill_payment_method'] }}
 									</td>
 									<td class="align-top text-center">
 										{{ $billItem['deal_number'] }}

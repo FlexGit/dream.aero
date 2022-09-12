@@ -65,7 +65,7 @@ class ReportController extends Controller {
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
 		
-		\DB::connection()->enableQueryLog();
+		//\DB::connection()->enableQueryLog();
 		$bills = Bill::where('user_id', '!=', 0)
 			->where('city_id', $city->id)
 			->where(function ($query) use ($dateFromAt, $dateToAt) {
@@ -82,7 +82,7 @@ class ReportController extends Controller {
 		if ($user->isAdmin()) {
 			$bills = $bills->where('user_id', $user->id);
 		}
-		\Log::debug(\DB::getQueryLog());
+		//\Log::debug(\DB::getQueryLog());
 		
 		$totalItems = $billItems = $paymentMethodSumItems = $dealIds = [];
 		$totalSum = $i = 0;
@@ -91,7 +91,7 @@ class ReportController extends Controller {
 				continue;
 			}
 			
-			\Log::debug($bill->number . ' - ' . $bill->user_id);
+			//\Log::debug($bill->number . ' - ' . $bill->user_id);
 			
 			$deal = $bill->deal;
 			
@@ -100,10 +100,10 @@ class ReportController extends Controller {
 				'bill_status' => $bill->status ? $bill->status->name : '-',
 				'bill_amount' => $bill->total_amount,
 				'bill_payed_at' => $bill->payed_at ? $bill->payed_at->format('m/d/Y g:i A') : '-',
-				'bill_location' => $bill->location ? $bill->location->name : '-',
+				/*'bill_location' => $bill->location ? $bill->location->name : '-',*/
 				'deal_number' => $deal->number,
 				'deal_status' => $deal->status ? $deal->status->name : '-',
-				'bill_payment_method' => $bill->payment_method_id,
+				'bill_payment_method' => $bill->paymentMethod ? $bill->paymentMethod->name : '-',
 			];
 			
 			if (!isset($totalItems[$bill->user_id])) {
@@ -145,7 +145,7 @@ class ReportController extends Controller {
 			++$i;
 		}
 		
-		\Log::debug($billItems);
+		//\Log::debug($billItems);
 		
 		$shiftItems = [];
 		$shifts = Event::where('event_type', Event::EVENT_TYPE_SHIFT_ADMIN)
