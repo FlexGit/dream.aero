@@ -66,19 +66,39 @@ class ReportController extends Controller {
 		}
 		
 		$bills = Bill::where('user_id', '!=', 0)
+			->where('city_id', $city->id)
 			->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+			->orWhere('payed_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 			->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
-			//->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
+			->orWhere('payed_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+			->orderBy('created_at')
+			->orderBy('payed_at')
 			->get();
+		if ($user->isAdmin()) {
+			$bills = $bills->where('user_id', $user->id);
+		}
 		
-		$billItems = $paymentMethodSumItems = $dealIds = [];
-		$totalSum = 0;
+		$totalItems = $billItems = $paymentMethodSumItems = $dealIds = [];
+		$totalSum = $i = 0;
 		foreach ($bills as $bill) {
-			if (!isset($billItems[$bill->location_id])) {
-				$billItems[$bill->location_id] = [];
+			if ($bill->payed_at && !Carbon::parse($bill->payed_at)->between(Carbon::parse($dateFromAt)->startOfDay(), Carbon::parse($dateToAt)->endOfDay())) {
+				continue;
 			}
-			if (!isset($billItems[$bill->location_id][$bill->user_id])) {
-				$billItems[$bill->location_id][$bill->user_id] = [
+			
+			$deal = $bill->deal;
+			
+			$billItems[$bill->user_id][$i] = [
+				'bill_number' => $bill->number,
+				'bill_status' => $bill->status ? $bill->status->name : '-',
+				'bill_amount' => $bill->amount,
+				'bill_payed_at' => $bill->payed_at ? $bill->payed_at->format('Y-m-d H:i:s') : '-',
+				'bill_location' => $bill->location ? $bill->location->name : '-',
+				'deal_number' => $deal->number,
+				'deal_status' => $deal->status ? $deal->status->name : '-',
+			];
+			
+			if (!isset($billItems[$bill->user_id])) {
+				$totalItems[$bill->user_id] = [
 					'bill_count' => 0,
 					'bill_sum' => 0,
 					'payed_bill_count' => 0,
@@ -93,25 +113,24 @@ class ReportController extends Controller {
 			}
 			
 			// кол-во счетов
-			++$billItems[$bill->location_id][$bill->user_id]['bill_count'];
+			++$totalItems[$bill->user_id]['bill_count'];
 			// сумма счетов
-			$billItems[$bill->location_id][$bill->user_id]['bill_sum'] += $bill->total_amount;
+			$totalItems[$bill->user_id]['bill_sum'] += $bill->total_amount;
 			if ($bill->status && $bill->status->alias == Bill::PAYED_STATUS) {
 				// кол-во оплаченных счетов
-				++$billItems[$bill->location_id][$bill->user_id]['payed_bill_count'];
+				++$totalItems[$bill->user_id]['payed_bill_count'];
 				// сумма оплаченных счетов
-				$billItems[$bill->location_id][$bill->user_id]['payed_bill_sum'] += $bill->total_amount;
+				$totalItems[$bill->user_id]['payed_bill_sum'] += $bill->total_amount;
 				// сумма оплаченных счетов конкретного способа оплаты
 				$paymentMethodSumItems[$bill->payment_method_id] += $bill->total_amount;
 				$totalSum += $bill->total_amount;
 			}
-			$deal = $bill->deal;
-			if ($deal && !in_array($bill->deal_id, $billItems[$bill->location_id][$bill->user_id]['deal_ids'])) {
-				$billItems[$bill->location_id][$bill->user_id]['deal_ids'][] = $deal->id;
+			if ($deal && !in_array($bill->deal_id, $billItems[$bill->user_id]['deal_ids'])) {
+				$totalItems[$bill->user_id]['deal_ids'][] = $deal->id;
 				// кол-во сделок
-				++$billItems[$bill->location_id][$bill->user_id]['deal_count'];
+				++$totalItems[$bill->user_id]['deal_count'];
 				// сумма сделок
-				$billItems[$bill->location_id][$bill->user_id]['deal_sum'] += $deal->totalAmount();
+				$totalItems[$bill->user_id]['deal_sum'] += $deal->totalAmount();
 			}
 		}
 		
@@ -120,6 +139,9 @@ class ReportController extends Controller {
 			->where('start_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 			->where('start_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
 			->get();
+		if ($user->isAdmin()) {
+			$shifts = $shifts->where('user_id', $user->id);
+		}
 		foreach ($shifts as $shift) {
 			if (!isset($shiftItems[$shift->user_id])) {
 				$shiftItems[$shift->user_id] = 0;
@@ -129,31 +151,33 @@ class ReportController extends Controller {
 		
 		$userItems = [];
 		$users = User::where('enable', true)
-			->where('role', User::ROLE_ADMIN)
+			->where('city_id', $city->id)
+			->where('role', User::ROLE_ADMIN, User::ROLE_SUPERADMIN)
 			->orderBy('lastname')
 			->orderBy('name')
 			->orderBy('middlename')
 			->get();
+		if ($user->isAdmin()) {
+			$users = $users->where('id', $user->id);
+		}
 		foreach ($users as $user) {
-			if (!$user->location_id) continue;
-			
-			$userItems/*[$user->location_id]*/[] = [
+			$userItems[] = [
 				'id' => $user->id,
 				'fio' => $user->fioFormatted(),
 				'role' => User::ROLES[$user->role],
+				'city_name' => $user->city ? $user->city->name : '',
 			];
 		}
 		
-		$cities = $this->cityRepo->getList($this->request->user());
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
 		$data = [
 			'billItems' => $billItems,
+			'totalItems' => $totalItems,
 			'paymentMethodSumItems' => $paymentMethodSumItems,
 			'totalSum' => $totalSum,
 			'shiftItems' => $shiftItems,
 			'userItems' => $userItems,
-			'cities' => $cities,
 			'paymentMethods' => $paymentMethods,
 			'currencyName' => $city->currency ? $city->currency->name : '',
 		];
