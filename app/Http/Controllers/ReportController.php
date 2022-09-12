@@ -97,7 +97,7 @@ class ReportController extends Controller {
 				'deal_status' => $deal->status ? $deal->status->name : '-',
 			];
 			
-			if (!isset($billItems[$bill->user_id])) {
+			if (!isset($totalItems[$bill->user_id])) {
 				$totalItems[$bill->user_id] = [
 					'bill_count' => 0,
 					'bill_sum' => 0,
