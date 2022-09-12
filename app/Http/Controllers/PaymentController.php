@@ -123,6 +123,9 @@ class PaymentController extends Controller
 		$uuid = $this->request->uuid;
 		$cardNumber = $this->request->card_number ?? '';
 		$expirationDate = $this->request->expiration_date ?? '';
+		if ($expirationDate) {
+			$expirationDate = ((strlen($expirationDate) == 4) ? '20' : '') . mb_substr($expirationDate, 2, 4) . '-' . mb_substr($expirationDate, 0, 2);
+		}
 		$cardName = $this->request->card_name ?? '';
 		$cardCode = $this->request->card_code ?? '';
 		
