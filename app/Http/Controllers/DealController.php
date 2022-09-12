@@ -431,7 +431,7 @@ class DealController extends Controller
 				'email' => ['required', 'email'],
 				'phone' => ['required'],
 				'card_number' => ['required', new CardNumber],
-				'expiration_date' => ['required', new CardExpirationDate('mY')],
+				'expiration_date' => ['required', new CardExpirationDate('mY'), 'min:6'],
 				'card_name' => ['required'],
 				'card_code' => ['required', new CardCvc($this->request->card_number)],
 			];
@@ -486,7 +486,6 @@ class DealController extends Controller
 		$isPaid = (bool)$this->request->is_paid;
 		$cardNumber = $this->request->card_number ?? '';
 		$expirationDate = $this->request->expiration_date ?? '';
-		\Log::debug($expirationDate);
 		if ($expirationDate) {
 			$expirationDate = mb_substr($expirationDate, 2, 4) . '-' . mb_substr($expirationDate, 0, 2);
 		}
