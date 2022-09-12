@@ -137,6 +137,8 @@ class ReportController extends Controller {
 			++$i;
 		}
 		
+		\Log::debug($billItems);
+		
 		$shiftItems = [];
 		$shifts = Event::where('event_type', Event::EVENT_TYPE_SHIFT_ADMIN)
 			->where('city_id', $city->id)
