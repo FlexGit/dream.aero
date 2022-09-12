@@ -124,6 +124,7 @@ class ReportController extends Controller {
 				// сумма оплаченных счетов конкретного способа оплаты
 				$paymentMethodSumItems[$bill->payment_method_id] += $bill->total_amount;
 				$totalSum += $bill->total_amount;
+				\Log::debug($bill->total_amount . ' - ' . $bill->number);
 			}
 			if ($deal && !in_array($bill->deal_id, $totalItems[$bill->user_id]['deal_ids'])) {
 				$totalItems[$bill->user_id]['deal_ids'][] = $deal->id;
