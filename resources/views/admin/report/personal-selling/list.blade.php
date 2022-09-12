@@ -42,7 +42,7 @@
 			@endforeach
 			@if(isset($paymentMethodSumItems[0]))
 				<tr>
-					<td>
+					<td class="text-center">
 						-
 					</td>
 					<td class="text-right">
