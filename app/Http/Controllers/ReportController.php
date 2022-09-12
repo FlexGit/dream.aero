@@ -68,14 +68,14 @@ class ReportController extends Controller {
 		\DB::connection()->enableQueryLog();
 		$bills = Bill::where('user_id', '!=', 0)
 			->where('city_id', $city->id)
-			/*->where(function ($query) use ($dateFromAt, $dateToAt) {
-				$query*/->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-					/*->orWhere('payed_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'));
+			->where(function ($query) use ($dateFromAt, $dateToAt) {
+				$query->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+					->orWhere('payed_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'));
 			})
 			->where(function ($query) use ($dateFromAt, $dateToAt) {
-				$query*/->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
-					/*->orWhere('payed_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'));
-			})*/
+				$query->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+					->orWhere('payed_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'));
+			})
 			->orderBy('created_at')
 			->orderBy('payed_at')
 			->get();
