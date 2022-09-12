@@ -125,7 +125,7 @@ class ReportController extends Controller {
 				$paymentMethodSumItems[$bill->payment_method_id] += $bill->total_amount;
 				$totalSum += $bill->total_amount;
 			}
-			if ($deal && !in_array($bill->deal_id, $billItems[$bill->user_id]['deal_ids'])) {
+			if ($deal && !in_array($bill->deal_id, $totalItems[$bill->user_id]['deal_ids'])) {
 				$totalItems[$bill->user_id]['deal_ids'][] = $deal->id;
 				// кол-во сделок
 				++$totalItems[$bill->user_id]['deal_count'];
