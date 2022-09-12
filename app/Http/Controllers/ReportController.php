@@ -132,10 +132,13 @@ class ReportController extends Controller {
 				// сумма сделок
 				$totalItems[$bill->user_id]['deal_sum'] += $deal->totalAmount();
 			}
+			
+			++$i;
 		}
 		
 		$shiftItems = [];
 		$shifts = Event::where('event_type', Event::EVENT_TYPE_SHIFT_ADMIN)
+			->where('city_id', $city->id)
 			->where('start_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 			->where('start_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
 			->get();
