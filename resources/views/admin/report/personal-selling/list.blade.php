@@ -32,7 +32,7 @@
 			<tbody>
 			@foreach($paymentMethods as $paymentMethod)
 				<tr>
-					<td>
+					<td class="text-center">
 						{{ $paymentMethod->name }}
 					</td>
 					<td class="text-right">
