@@ -90,7 +90,7 @@ class ReportController extends Controller {
 			$billItems[$bill->user_id][$i] = [
 				'bill_number' => $bill->number,
 				'bill_status' => $bill->status ? $bill->status->name : '-',
-				'bill_amount' => $bill->amount,
+				'bill_amount' => $bill->total_amount,
 				'bill_payed_at' => $bill->payed_at ? $bill->payed_at->format('Y-m-d H:i:s') : '-',
 				'bill_location' => $bill->location ? $bill->location->name : '-',
 				'deal_number' => $deal->number,
