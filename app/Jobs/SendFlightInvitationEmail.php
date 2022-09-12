@@ -57,19 +57,19 @@ class SendFlightInvitationEmail extends Job implements ShouldQueue {
 			'city' => $city,
 		];
 		
-		$recipients = $bcc = [];
+		$recipients = /*$bcc = */[];
 		$recipients[] = $dealEmail ?: $contractorEmail;
-		if ($city->email) {
+		/*if ($city->email) {
 			$bcc[] = $city->email;
-		}
+		}*/
 		
 		$subject = env('APP_NAME') . ': Flight Invitation';
 
-		Mail::send(['html' => "admin.emails.send_flight_invitation"], $messageData, function ($message) use ($subject, $recipients, $bcc) {
+		Mail::send(['html' => "admin.emails.send_flight_invitation"], $messageData, function ($message) use ($subject, $recipients/*, $bcc*/) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
 			$message->to($recipients);
-			$message->bcc($bcc);
+			/*$message->bcc($bcc);*/
 		});
 		
 		$failures = Mail::failures();

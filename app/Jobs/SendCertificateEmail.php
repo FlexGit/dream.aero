@@ -65,22 +65,22 @@ class SendCertificateEmail extends Job implements ShouldQueue {
 			'city' => $dealCity ?? null,
 		];
 		
-		$recipients = $bcc = [];
+		$recipients = /*$bcc = */[];
 		$recipients[] = $dealEmail ?: $contractorEmail;
-		if ($dealCity && $dealCity->email) {
+		/*if ($dealCity && $dealCity->email) {
 			$bcc[] = $dealCity->email;
-		}
+		}*/
 
 		$subject = env('APP_NAME') . ': Flight Voucher';
 		
-		Mail::send(['html' => "admin.emails.send_certificate"], $messageData, function ($message) use ($subject, $recipients, $certificateRulesFileName, $bcc, $certificateFilePath) {
+		Mail::send(['html' => "admin.emails.send_certificate"], $messageData, function ($message) use ($subject, $recipients, $certificateRulesFileName, /*$bcc, */$certificateFilePath) {
 			/** @var \Illuminate\Mail\Message $message */
 			$message->subject($subject);
 			$message->attach(Storage::disk('private')->path($certificateFilePath));
 			$message->attach(Storage::disk('private')->path('rule/' . $certificateRulesFileName));
 			$message->attach(Storage::disk('private')->path('rule/RULES_MAIN.jpg'));
 			$message->to($recipients);
-			$message->bcc($bcc);
+			/*$message->bcc($bcc);*/
 		});
 		
 		$failures = Mail::failures();
