@@ -486,6 +486,7 @@ class DealController extends Controller
 		$isPaid = (bool)$this->request->is_paid;
 		$cardNumber = $this->request->card_number ?? '';
 		$expirationDate = $this->request->expiration_date ?? '';
+		\Log::debug($expirationDate);
 		if ($expirationDate) {
 			$expirationDate = mb_substr($expirationDate, 2, 4) . '-' . mb_substr($expirationDate, 0, 2);
 		}
