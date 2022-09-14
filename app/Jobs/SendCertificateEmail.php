@@ -33,6 +33,7 @@ class SendCertificateEmail extends Job implements ShouldQueue {
 			if (!$this->certificate) {
 				return null;
 			}
+			$certificateFilePath = isset($this->certificate->data_json['certificate_file_path']) ? $this->certificate->data_json['certificate_file_path'] : '';
 		}
 		
 		$deal = $this->certificate->deal;
