@@ -312,6 +312,10 @@ class Contractor extends Authenticatable
 	 */
 	public function discount()
 	{
+		if ($this->email == self::ANONYM_EMAIL) {
+			return new Discount([]);
+		}
+		
 		$amount = $this->paidBillsAmount();
 		if ($amount >= 500 && $amount < 1000) {
 			return HelpFunctions::getEntityByAlias(Discount::class, Discount::DISCOUNT_5_ALIAS);
