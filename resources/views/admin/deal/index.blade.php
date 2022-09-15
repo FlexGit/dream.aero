@@ -317,7 +317,7 @@
 							//console.log(suggestion);
 							if (suggestion.id) {
 								$('#certificate_uuid').val(suggestion.id);
-								console.log($('#certificate_uuid').val());
+								console.log(suggestion.id + ' - ' + $('#certificate_uuid').val());
 							}
 							calcProductAmount();
 							$('#certificate_number').attr('disabled', true);
