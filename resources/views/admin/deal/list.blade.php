@@ -20,7 +20,11 @@
 									Booking
 								@endif
 							@else
-								Good / Service purchase
+								@if($deal->product && $deal->product->productType && $deal->product->productType->alias == app('\App\Models\ProductType')::TAX_ALIAS)
+									Tax
+								@else
+									Good / Service purchase
+								@endif
 							@endif
 						@endif
 					</th>

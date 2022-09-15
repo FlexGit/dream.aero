@@ -73,6 +73,14 @@
 			</select>
 		</div>
 	</div>
+	@if($deal->product && $deal->product->productType && $deal->product->productType->alias == app('\App\Models\ProductType')::TAX_ALIAS)
+		<div class="col-4">
+			<div class="form-group">
+				<label for="lastname">Amount, $</label>
+				<input type="number" class="form-control" id="product_amount" name="product_amount" value="{{ $deal->amount }}" placeholder="">
+			</div>
+		</div>
+	@endif
 	@if($deal->is_certificate_purchase || (!$deal->is_certificate_purchase && $deal->location_id))
 		<div class="col-4">
 			<div class="form-group">

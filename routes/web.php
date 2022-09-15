@@ -137,6 +137,7 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('deal/list/ajax', [DealController::class, 'getListAjax'])->name('dealList');
 		Route::post('deal/booking', [DealController::class, 'storeBooking'])->name('dealBookingStore');
 		Route::post('deal/product', [DealController::class, 'storeProduct']);
+		Route::post('deal/tax', [DealController::class, 'storeTax']);
 		Route::put('deal/{id}', [DealController::class, 'update']);
 
 		Route::get('deal/certificate/add', [DealController::class, 'addCertificate']);

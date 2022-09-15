@@ -183,10 +183,12 @@ class BillController extends Controller
 		if (!$city) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
-
-		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
-		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		
+		if ($productType->alias != ProductType::TAX_ALIAS) {
+			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
+			if (!$cityProduct) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+			}
 		}
 		
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
@@ -308,9 +310,11 @@ class BillController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		}
 
-		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
-		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		if ($productType->alias != ProductType::TAX_ALIAS) {
+			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
+			if (!$cityProduct) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+			}
 		}
 		
 		$certificate = $deal->certificate;

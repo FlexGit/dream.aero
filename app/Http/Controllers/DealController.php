@@ -335,7 +335,7 @@ class DealController extends Controller
 		$products = $this->productTypeRepo->getActualProductList($user, true, false, false, true);
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList();
 		
-		$VIEW = view('admin.deal.modal.product.add', [
+		$VIEW = view('admin.deal.modal.tax.add', [
 			'cities' => $cities,
 			'products' => $products,
 			'paymentMethods' => $paymentMethods,
@@ -364,13 +364,22 @@ class DealController extends Controller
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
 		
 		$city = $deal->city;
-		
 		$event = $deal->event;
-		if (!$deal->is_certificate_purchase && !$deal->location_id) {
-			$products = $this->productTypeRepo->getActualProductList($user, true, false, true);
-		} else {
-			$products = $this->productTypeRepo->getActualProductList($user, false);
+		$product = $deal->product;
+		$productType = $product ? $product->productType : null;
+		
+		switch($productType->alias) {
+			case ProductType::TAX_ALIAS:
+				$products = $this->productTypeRepo->getActualProductList($user, true, false, false, true);
+			break;
+			case ProductType::SERVICES_ALIAS:
+				$products = $this->productTypeRepo->getActualProductList($user, true, false, true);
+			break;
+			default:
+				$products = $this->productTypeRepo->getActualProductList($user, false);
+			break;
 		}
+		
 		$promos = $this->promoRepo->getList($user, true, true);
 		$promocodes = $this->promocodeRepo->getList($city, true, false, $deal->contractor_id ?? 0);
 		$statuses = $this->statusRepo->getList(Status::STATUS_TYPE_DEAL);
@@ -1123,10 +1132,10 @@ class DealController extends Controller
 
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
-				'name' => 'Имя',
+				'name' => 'Name',
 				'email' => 'E-mail',
-				'phone' => 'Телефон',
-				'product_id' => 'Продукт',
+				'phone' => 'Phone number',
+				'product_id' => 'Product',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -1259,6 +1268,161 @@ class DealController extends Controller
 		
 		return response()->json(['status' => 'success', 'message' => 'Deal was successfully created']);
 	}
+	
+	/**
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function storeTax()
+	{
+		if (!$this->request->ajax()) {
+			abort(404);
+		}
+		
+		$user = Auth::user();
+		$city = $user->city;
+		
+		if ($user) {
+			if (!$user->isAdminOrHigher()) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
+			}
+		}
+		
+		$rules = [
+			'name' => 'required',
+			'email' => 'required|email',
+			'phone' => 'required|valid_phone',
+			'product_id' => 'required|numeric|min:0|not_in:0',
+			'product_amount' => 'required|numeric|min:0|not_in:0',
+		];
+		
+		$validator = Validator::make($this->request->all(), $rules)
+			->setAttributeNames([
+				'name' => 'Name',
+				'email' => 'E-mail',
+				'phone' => 'Phone number',
+				'product_id' => 'Product',
+				'product_amount' => 'Amount',
+			]);
+		if (!$validator->passes()) {
+			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
+		}
+		
+		$productId = $this->request->product_id ?? 0;
+		$comment = $this->request->comment ?? '';
+		$amount = $this->request->product_amount ?? 0;
+		$contractorId = $this->request->contractor_id ?? 0;
+		$paymentMethodId = $this->request->payment_method_id ?? 0;
+		$name = $this->request->name ?? '';
+		$email = $this->request->email ?? '';
+		$phone = $this->request->phone ?? '';
+		$source = $this->request->source ?? '';
+		$isPaid = (bool)$this->request->is_paid;
+		
+		$product = Product::find($productId);
+		if (!$product) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		$productType = $product->productType;
+		if (!$productType) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		}
+		
+		if ($paymentMethodId) {
+			$paymentMethod = PaymentMethod::where('is_active', true)
+				->find($paymentMethodId);
+			if (!$paymentMethod) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
+			}
+		}
+		
+		if ($contractorId) {
+			$contractor = Contractor::find($contractorId);
+			if (!$contractor) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
+			}
+		} elseif ($email) {
+			$contractor = Contractor::whereRaw('LOWER(email) = ?', [mb_strtolower($email)])
+				->first();
+			if ($contractor && !in_array($source, [Contractor::WEB_SOURCE])) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-с-таким-e-mail-уже-существует')]);
+			}
+		}
+		
+		$data = [];
+		if ($comment) {
+			$data['comment'] = $comment;
+		}
+		
+		$tax = round($amount * $productType->tax / 100, 2);
+		$totalAmount = round($amount + $tax, 2);
+		$currency = $city->currency;
+		
+		try {
+			\DB::beginTransaction();
+			
+			if (!$contractor) {
+				$contractor = new Contractor();
+				$contractor->name = $name;
+				$contractor->email = $email;
+				$contractor->phone = $phone;
+				$contractor->city_id = $city ? $city->id : 0;
+				$contractor->source = $source ?: Contractor::ADMIN_SOURCE;
+				$contractor->user_id = $user ? $user->id : 0;
+				$contractor->save();
+			}
+			
+			$deal = new Deal();
+			$dealStatus = HelpFunctions::getEntityByAlias(Status::class, Deal::CONFIRMED_STATUS);
+			$deal->status_id = $dealStatus ? $dealStatus->id : 0;
+			$deal->contractor_id = $contractor ? $contractor->id : 0;
+			$deal->city_id = $city ? $city->id : 0;
+			$deal->name = $name;
+			$deal->phone = $phone;
+			$deal->email = $email;
+			$deal->product_id = $product->id ?? 0;
+			$deal->amount = $amount;
+			$deal->tax = $tax;
+			$deal->total_amount = $totalAmount;
+			$deal->currency_id = $currency ? $currency->id : 0;
+			$deal->user_id = $user ? $user->id : 0;
+			$deal->source = $source ?: Deal::ADMIN_SOURCE;
+			$deal->data_json = !empty($data) ? $data : null;
+			$deal->save();
+			
+			if ($amount) {
+				$billStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::NOT_PAYED_STATUS);
+				$billPayedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::PAYED_STATUS);
+				
+				$bill = new Bill();
+				$bill->contractor_id = $contractor->id;
+				$bill->deal_id = $deal->id;
+				$bill->city_id = $city ? $city->id : 0;
+				$bill->location_id = $user->location_id ?? 0;
+				$bill->payment_method_id = ($source == Deal::WEB_SOURCE) ? 0 : $paymentMethodId;
+				$bill->status_id = $isPaid ? $billPayedStatus->id : $billStatus->id;
+				$bill->payed_at = $isPaid ? Carbon::now()->format('Y-m-d H:i:s') : null;
+				$bill->amount = $amount;
+				$bill->tax = $tax;
+				$bill->total_amount = $totalAmount;
+				$bill->currency_id = $currency ? $currency->id : 0;
+				$bill->user_id = $user ? $user->id : 0;
+				$bill->save();
+				
+				$deal->bills()->save($bill);
+			}
+			
+			\DB::commit();
+		} catch (Throwable $e) {
+			\DB::rollback();
+			
+			Log::debug('500 - Deal Tax Store: ' . $e->getMessage());
+			
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
+		}
+		
+		return response()->json(['status' => 'success', 'message' => 'Deal was successfully created']);
+	}
 
 	/**
 	 * @param $id
@@ -1355,9 +1519,11 @@ class DealController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		}
 		
-		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
-		if (!$cityProduct) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		if ($productType->alias != ProductType::TAX_ALIAS) {
+			$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($city->id);
+			if (!$cityProduct) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+			}
 		}
 		
 		if ($promoId) {
@@ -1386,7 +1552,7 @@ class DealController extends Controller
 			\DB::beginTransaction();
 			
 			// если в Сделке изменили позицию
-			if ($deal->product_id != $product->id) {
+			if ($deal->product_id != $product->id && $productType->alias != ProductType::TAX_ALIAS) {
 				$prevProduct = Product::find($deal->product_id);
 				if ($prevProduct) {
 					$cityPrevProduct = $prevProduct->cities()->where('cities_products.is_active', true)->find($city->id);
@@ -1479,7 +1645,6 @@ class DealController extends Controller
 		}
 		
 		$productId = $this->request->product_id ?? 0;
-		$extraProductIds = $this->request->extra_product_id ?? [];
 		$contractorId = $this->request->contractor_id ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
@@ -1494,6 +1659,7 @@ class DealController extends Controller
 		$isCertificatePurchase = $this->request->is_certificate_purchase ?? 0;
 		$birthday = $this->request->birthday ?? 0;
 		$weekends = $this->request->weekends ?? 0;
+		$productAmount = $this->request->product_amount ?? 0;
 		
 		if ($this->request->city_id) {
 			$cityId = $this->request->city_id ?? 0;
@@ -1556,7 +1722,7 @@ class DealController extends Controller
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId);
-		if (!$cityProduct || !$cityProduct->pivot) {
+		if ($productType->alias != ProductType::TAX_ALIAS && (!$cityProduct || !$cityProduct->pivot)) {
 			return response()->json([
 				'status' => 'error',
 				'amount' => 0,
@@ -1569,7 +1735,11 @@ class DealController extends Controller
 		}
 		
 		// базовая стоимость продукта
-		$baseAmount = $cityProduct->pivot->price ?? 0;
+		$baseAmount = 0;
+		
+		if ($productType->alias != ProductType::TAX_ALIAS) {
+			$baseAmount = $cityProduct->pivot->price;
+		}
 
 		if ($promocodeUuid) {
 			$promocode = HelpFunctions::getEntityByUuid(Promocode::class, $promocodeUuid);
@@ -1593,21 +1763,13 @@ class DealController extends Controller
 			$promoId = $promo->id;
 		}
 
-		$amount = $productAmount = $product->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, $promoId, $promocodeId, $certificateId, false, false, 0, $isCertificatePurchase);
+		if ($productType->alias == ProductType::TAX_ALIAS) {
+			$amount = $productAmount;
+		} else {
+			$amount = $productAmount = $product->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, $promoId, $promocodeId, $certificateId, false, false, 0, $isCertificatePurchase);
+		}
 		$tax = round($amount * $productType->tax / 100, 2);
 		$totalAmount = round($amount + $tax, 2);
-		
-		foreach ($extraProductIds ?? [] as $extraProductId) {
-			$extraProduct = Product::find($extraProductId);
-			$extraProductType = $extraProduct->productType;
-			$extraAmount = $extraProduct->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, 0, 0, 0, false, false, 0, $isCertificatePurchase);
-			$extraTax = round($extraAmount * $extraProductType->tax / 100, 2);
-			$extraTotalAmount = round($extraAmount + $extraTax, 2);
-			
-			$amount += $extraAmount;
-			$tax += $extraTax;
-			$totalAmount += $extraTotalAmount;
-		}
 		
 		return response()->json([
 			'status' => 'success',

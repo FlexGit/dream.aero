@@ -64,6 +64,7 @@ class ProductType extends Model
 	const COURSES_ALIAS = 'courses';
 	const VIP_ALIAS = 'vip';
 	const SERVICES_ALIAS = 'services';
+	const TAX_ALIAS = 'tax';
 
 	/**
 	 * The attributes that are mass assignable.

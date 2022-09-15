@@ -84,7 +84,7 @@
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/certificate/add" data-action="/deal/certificate" data-method="POST" data-type="deal" data-title="Create Voucher purchase Deal" class="btn btn-secondary btn-sm dropdown-item">Voucher</a>
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/booking/add" data-action="/deal/booking" data-method="POST" data-type="deal" data-title="Create Booking Deal" class="btn btn-secondary btn-sm dropdown-item">Booking</a>
 										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/product/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create Good / Service Deal" class="btn btn-secondary btn-sm dropdown-item">Good / Service</a>
-										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/tax/add" data-action="/deal/product" data-method="POST" data-type="deal" data-title="Create Tax Deal" class="btn btn-secondary btn-sm dropdown-item">Tax</a>
+										<a href="javascript:void(0)" data-toggle="modal" data-url="/deal/tax/add" data-action="/deal/tax" data-method="POST" data-type="deal" data-title="Create Tax Deal" class="btn btn-secondary btn-sm dropdown-item">Tax</a>
 									</div>
 								</div>
 							</div>
@@ -327,29 +327,6 @@
 							}
 						}
 					});
-
-					$('#extra_product_id').multiselect({
-						includeSelectAllOption: false,
-						buttonWidth: '200px',
-						selectAllValue: 0,
-						buttonTextAlignment: 'left',
-						maxHeight: 300,
-						buttonText: function (options, select) {
-							if (options.length === 0) {
-								return '---';
-							} else {
-								var labels = [];
-								options.each(function () {
-									if ($(this).attr('label') !== undefined) {
-										labels.push($(this).attr('label'));
-									} else {
-										labels.push($(this).html());
-									}
-								});
-								return labels.join(', ') + '';
-							}
-						},
-					});
 				}
 			});
 
@@ -388,6 +365,10 @@
 				validateFlightDate();
 			});
 
+			$(document).on('keyup', '#product_amount', function() {
+				calcProductAmount();
+			});
+
 			function validateFlightDate() {
 				var $eventStopElement = $('.js-event-stop-at'),
 					$isValidFlightDate = $('#is_valid_flight_date'),
@@ -424,6 +405,7 @@
 					'certificate_uuid': $('#certificate_uuid').val(),
 					'is_free': ($('#is_free').is(':checked') || $('#is_indefinitely').is(':checked')) ? 1 : 0,
 					'is_certificate_purchase': $('#is_certificate_purchase').val(),
+					'product_amount': $('#product_amount').val(),
 				};
 				console.log(data);
 

@@ -43,7 +43,7 @@ class ProductTypeRepository {
 			foreach ($productType->products as $product) {
 				if ($onlyActive && !$product->is_active) continue;
 
-				/*if (!$user->isSuperAdmin() && $user->city) {*/
+				if (!$onlyTax) {
 					if ($onlyActive) {
 						$cityProduct = $product->cities()
 							->where('cities_products.is_active', true)
@@ -52,13 +52,10 @@ class ProductTypeRepository {
 						$cityProduct = $product->cities()
 							->find($user->city->id);
 					}
-					if (!$cityProduct) continue;
-					if (!$cityProduct->pivot) continue;
-
-					$products[$productType->name][$product->id] = $product;
-				/*} else {
-					$products[$productType->name][$product->id] = $product;
-				}*/
+					if (!$cityProduct || !$cityProduct->pivot) continue;
+				}
+				
+				$products[$productType->name][$product->id] = $product;
 			}
 		}
 		

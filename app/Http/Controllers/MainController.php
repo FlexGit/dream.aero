@@ -56,13 +56,11 @@ class MainController extends Controller
 
 		// Отзывы
 		$reviewParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::REVIEWS_TYPE . '_' . $city->alias);
-		if ($reviewParentContent) {
-			$reviews = Content::where('is_active', true)
-				->where('parent_id', $reviewParentContent->id)
-				->latest()
-				->limit(10)
-				->get();
-		}
+		$reviews = Content::where('is_active', true)
+			->where('parent_id', $reviewParentContent->id)
+			->latest()
+			->limit(10)
+			->get();
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'home_' . $city->alias);
 		
