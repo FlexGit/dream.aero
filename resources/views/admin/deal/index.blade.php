@@ -316,7 +316,7 @@
 						onSelect: function (suggestion) {
 							//console.log(suggestion);
 							if (suggestion.id) {
-								$('#certificate_uuid').val(111);
+								$('#certificate_uuid').attr('value', suggestion.id);
 								console.log(suggestion.id + ' - ' + $('#certificate_uuid').val());
 							}
 							calcProductAmount();
