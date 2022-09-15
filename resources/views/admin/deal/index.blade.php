@@ -281,6 +281,7 @@
 						onSelect: function (suggestion) {
 							if (suggestion.id) {
 								$('#contractor_id').val(suggestion.id);
+								console.log($('#contractor_id').val());
 							}
 							if (suggestion.data.city_id) {
 								$('#city_id').val(suggestion.data.city_id);
