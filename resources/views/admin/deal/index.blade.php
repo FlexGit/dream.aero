@@ -314,9 +314,11 @@
 						type: 'POST',
 						dataType: 'json',
 						onSelect: function (suggestion) {
+							console.log(suggestion);
 							if (suggestion.id) {
 								$('#certificate_uuid').val(suggestion.id);
 							}
+							console.log($('#certificate_uuid').val());
 							calcProductAmount();
 							$('#certificate_number').attr('disabled', true);
 							$('.js-certificate').text('Linked Voucher: ' + suggestion.data.number).closest('.js-certificate-container').removeClass('hidden');
