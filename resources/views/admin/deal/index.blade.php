@@ -413,21 +413,24 @@
 			}
 
 			function calcProductAmount() {
+				var data = {
+					'product_id': $('#product_id').val(),
+					'contractor_id': $('#contractor_id').val(),
+					'promo_id': $('#promo_id').val(),
+					'promocode_id': $('#promocode_id').val(),
+					'city_id': $('#city_id').val(),
+					'location_id': $('#location_id').val(),
+					'certificate_uuid': $('#certificate_uuid').val(),
+					'is_free': ($('#is_free').is(':checked') || $('#is_indefinitely').is(':checked')) ? 1 : 0,
+					'is_certificate_purchase': $('#is_certificate_purchase').val(),
+				};
+				console.log(data);
+
 				$.ajax({
 					url: "{{ route('calcProductAmount') }}",
 					type: 'GET',
 					dataType: 'json',
-					data: {
-						'product_id': $('#product_id').val(),
-						'contractor_id': $('#contractor_id').val(),
-						'promo_id': $('#promo_id').val(),
-						'promocode_id': $('#promocode_id').val(),
-						'city_id': $('#city_id').val(),
-						'location_id': $('#location_id').val(),
-						'certificate_uuid': $('#certificate_uuid').val(),
-						'is_free': ($('#is_free').is(':checked') || $('#is_indefinitely').is(':checked')) ? 1 : 0,
-						'is_certificate_purchase': $('#is_certificate_purchase').val(),
-					},
+					data: data,
 					success: function(result) {
 						console.log(result);
 
