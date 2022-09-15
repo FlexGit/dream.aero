@@ -1722,7 +1722,7 @@ class DealController extends Controller
 		}
 		
 		$cityProduct = $product->cities()->where('cities_products.is_active', true)->find($cityId);
-		if ($productType->alias != ProductType::TAX_ALIAS && (!$cityProduct || !$cityProduct->pivot)) {
+		if (!$cityProduct || !$cityProduct->pivot) {
 			return response()->json([
 				'status' => 'error',
 				'amount' => 0,
@@ -1735,11 +1735,7 @@ class DealController extends Controller
 		}
 		
 		// базовая стоимость продукта
-		$baseAmount = 0;
-		
-		if ($productType->alias != ProductType::TAX_ALIAS) {
-			$baseAmount = $cityProduct->pivot->price;
-		}
+		$baseAmount = ($productType->alias == ProductType::TAX_ALIAS && $productAmount) ? $productAmount : ($cityProduct->pivot->price ?? 0);
 
 		if ($promocodeUuid) {
 			$promocode = HelpFunctions::getEntityByUuid(Promocode::class, $promocodeUuid);
@@ -1757,14 +1753,14 @@ class DealController extends Controller
 			$certificate = HelpFunctions::getEntityByUuid(Certificate::class, $certificateUuid);
 			$certificateId = $certificate ? $certificate->id : 0;
 		}
-		
+
 		if ($birthday) {
 			$promo = HelpFunctions::getEntityByAlias(Promo::class, Promo::BIRTHDAY_ALIAS);
 			$promoId = $promo->id;
 		}
 
 		if ($productType->alias == ProductType::TAX_ALIAS) {
-			$amount = $productAmount;
+			$amount = $productAmount = $baseAmount;
 		} else {
 			$amount = $productAmount = $product->calcAmount($contractorId, $cityId, $source, $isFree, $locationId, $paymentMethodId, $promoId, $promocodeId, $certificateId, false, false, 0, $isCertificatePurchase);
 		}
