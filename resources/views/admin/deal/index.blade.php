@@ -281,7 +281,6 @@
 						onSelect: function (suggestion) {
 							if (suggestion.id) {
 								$('#contractor_id').val(suggestion.id);
-								console.log($('#contractor_id').val());
 							}
 							if (suggestion.data.city_id) {
 								$('#city_id').val(suggestion.data.city_id);
@@ -318,7 +317,7 @@
 							//console.log(suggestion);
 							if (suggestion.id) {
 								$('#certificate_uuid').attr('value', suggestion.id);
-								console.log(suggestion.id + ' - ' + $('#certificate_uuid').val());
+								console.log($('#certificate_uuid').val());
 							}
 							calcProductAmount();
 							$('#certificate_number').attr('disabled', true);
