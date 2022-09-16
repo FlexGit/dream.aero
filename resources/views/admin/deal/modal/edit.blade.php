@@ -77,7 +77,7 @@
 		<div class="col-4">
 			<div class="form-group">
 				<label for="lastname">Amount, $</label>
-				<input type="number" class="form-control" id="product_amount" name="product_amount" value="{{ $deal->amount }}" placeholder="">
+				<input type="number" step="0.01" class="form-control" id="product_amount" name="product_amount" value="{{ $deal->amount }}" placeholder="">
 			</div>
 		</div>
 	@endif

@@ -76,7 +76,7 @@
 	<div class="col-3">
 		<div class="form-group">
 			<label for="lastname">Amount, $</label>
-			<input type="number" class="form-control" id="product_amount" name="product_amount" placeholder="">
+			<input type="number" step="0.01" class="form-control" id="product_amount" name="product_amount" placeholder="">
 		</div>
 	</div>
 </div>
