@@ -427,7 +427,7 @@
 						$('#tax-text span').text(result.tax);
 						$('#total-amount-text span').text(result.totalAmount);
 
-						$('#product_amount').val(result.baseAmount);
+						//$('#product_amount').val(result.baseAmount);
 					}
 				});
 			}
