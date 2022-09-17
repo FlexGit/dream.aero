@@ -1,6 +1,6 @@
 <input type="hidden" id="id" name="id" value="{{ $deal->id }}">
 <input type="hidden" id="contractor_id" name="contractor_id" value="{{ $deal->contractor_id }}">
-<input type="hidden" id="certificate_uuid" name="certificate_uuid">
+<input type="hidden" id="certificate_uuid" name="certificate_uuid" value="{{ $deal->certificate ? $deal->certificate->uuid : '' }}">
 <input type="hidden" id="amount" name="amount" value="{{ $deal->amount }}">
 <input type="hidden" id="city_id" name="city_id" value="{{ $deal->city_id }}">
 <input type="hidden" id="tax" name="tax" value="{{ $deal->tax }}">
