@@ -902,7 +902,7 @@ class DealController extends Controller
 			}
 		}
 		
-		$certificateId = $certificateProductAmount = 0;
+		$certificateId = 0;
 		if ($certificateNumber || $certificateUuid) {
 			$date = date('Y-m-d');
 			$certificateStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);
@@ -918,11 +918,8 @@ class DealController extends Controller
 			if (!$certificate) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 			}
-			/*if ($certificate->wasUsed()) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-уже-был-ранее-использован')]);
-			}*/
 			if (in_array($source, [Deal::WEB_SOURCE]) && !in_array($certificate->status_id, [$certificateStatus->id, 0])) {
-				return response()->json(['status' => 'error', 'reason' => trans('main.Incorrect Certificate Status')]);
+				return response()->json(['status' => 'error', 'reason' => 'Incorrect Certificate Status']);
 			}
 			if (!in_array($certificate->product_id, [$product->id, 0]) && in_array($source, [Deal::WEB_SOURCE])) {
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-по-сертификату-не-совпадает-с-выбранным')]);
@@ -931,13 +928,6 @@ class DealController extends Controller
 				return response()->json(['status' => 'error', 'reason' => trans('main.error.срок-действия-сертификата-истек')]);
 			}
 			$certificateId = $certificate->id;
-			/*$certificateProduct = $certificate->product;
-			if ($certificateProduct && $certificateProduct->alias != $product->alias) {
-				$certificateCityProduct = $certificateProduct->cities()->where('cities_products.is_active', true)->find($cityId);
-				if ($certificateCityProduct && $certificateCityProduct->pivot) {
-					$certificateProductAmount = $certificateCityProduct->pivot->price;
-				}
-			}*/
 		}
 		
 		if ($contractorId) {
@@ -1501,6 +1491,8 @@ class DealController extends Controller
 		$amount = $this->request->amount ?? 0;
 		$promoId = $this->request->promo_id ?? 0;
 		$promocodeId = $this->request->promocode_id ?? 0;
+		$certificateNumber = $this->request->certificate ?? '';
+		$certificateUuid = $this->request->certificate_uuid ?? '';
 		$startAt = '';
 		if (!$deal->is_certificate_purchase && $deal->location_id && $this->request->start_at_date && $this->request->start_at_time) {
 			$startAt = Carbon::parse($this->request->start_at_date . ' ' . $this->request->start_at_time)->format('Y-m-d H:i');
@@ -1538,6 +1530,22 @@ class DealController extends Controller
 			}
 		}
 		
+		$certificateId = 0;
+		if ($certificateNumber || $certificateUuid) {
+			// проверка сертификата на валидность
+			if ($certificateNumber) {
+				$certificate = Certificate::whereIn('city_id', [$city->id, 0])
+					->where('number', $certificateNumber)
+					->first();
+			} elseif ($certificateUuid) {
+				$certificate = HelpFunctions::getEntityByUuid(Certificate::class, $certificateUuid);
+			}
+			if (!$certificate) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
+			}
+			$certificateId = $certificate->id;
+		}
+		
 		$data = [];
 		if ($comment) {
 			$data['comment'] = $comment;
@@ -1572,6 +1580,7 @@ class DealController extends Controller
 				$deal->contractor_id = $contractorId;
 			}
 			$deal->product_id = $product->id;
+			$deal->certificate_id = $certificateId;
 			$deal->amount = $amount;
 			$deal->tax = $tax;
 			$deal->total_amount = $totalAmount;
@@ -1582,6 +1591,12 @@ class DealController extends Controller
 			
 			if ($certificate) {
 				$certificate->product_id = $product->id;
+				$certificateCreatedStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);
+				$certificateRegisteredStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::REGISTERED_STATUS);
+				// если сделка на бронирование по сертификату, то регистрируем сертификат
+				if ($certificate->status_id == $certificateCreatedStatus->id) {
+					$certificate->status_id = $certificateRegisteredStatus->id;
+				}
 				$certificate->save();
 			}
 			
