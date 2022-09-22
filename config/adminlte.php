@@ -401,7 +401,7 @@ return [
             ],
         ],
 		[
-			'text'    => env('DOMAIN_SITE'),
+			'text'    => /*env('DOMAIN_SITE')*/'Site',
 			'icon'    => 'far fa-fw fa-file-image',
 			'can'	  => 'is_superadmin',
 			'submenu' => [
