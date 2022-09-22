@@ -7,6 +7,48 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use \Venturecraft\Revisionable\RevisionableTrait;
 
+/**
+ * App\Models\Operation
+ *
+ * @property int $id
+ * @property string|null $type тип операции
+ * @property int $payment_method_id способ оплаты
+ * @property float $amount сумма
+ * @property int $currency_id валюта
+ * @property int $city_id город
+ * @property int $location_id локация
+ * @property \Illuminate\Support\Carbon|null $operated_at дата операции
+ * @property int $user_id пользователь
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\City|null $city
+ * @property-read \App\Models\Currency|null $currency
+ * @property-read \App\Models\Location|null $location
+ * @property-read \App\Models\PaymentMethod|null $paymentMethod
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property-read int|null $revision_history_count
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Operation onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereCityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereCurrencyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereOperatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation wherePaymentMethodId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereUserId($value)
+ * @method static \Illuminate\Database\Query\Builder|Operation withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Operation withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Operation extends Model
 {
 	use HasFactory, SoftDeletes, RevisionableTrait;
@@ -58,9 +100,15 @@ class Operation extends Model
 	
 	const EXPENSE = 'expense';
 	const REFUND = 'refund';
+	const DEAL = 'deal';
+	const TIP = 'tip';
+	const TAX = 'tax';
 	const TYPES = [
+		self::DEAL => 'Deals',
 		self::EXPENSE => 'Expenses',
-		self::REFUND => 'Refund',
+		self::REFUND => 'Refunds',
+		self::TAX => 'Tax',
+		self::TIP => 'Tips',
 	];
 	
 	public function user()

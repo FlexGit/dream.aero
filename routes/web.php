@@ -362,6 +362,9 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('report/contractor-self-made-payed-deals', [ReportController::class, 'contractorSelfMadePayedDealsIndex'])->name('contractorSelfMadePayedDealsIndex');
 		Route::get('report/contractor-self-made-payed-deals/list/ajax', [ReportController::class, 'contractorSelfMadePayedDealsGetListAjax'])->name('contractorSelfMadePayedDealsGetList');
 		
+		Route::get('report/cash-flow', [ReportController::class, 'cashFlowIndex'])->name('cashFlowIndex');
+		Route::get('report/cash-flow/list/ajax', [ReportController::class, 'cashFlowGetListAjax'])->name('cashFlowList');
+		
 		Route::get('report/file/{filepath}', [ReportController::class, 'getExportFile'])->name('getExportFile');
 	});
 });

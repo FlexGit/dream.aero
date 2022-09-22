@@ -10,6 +10,8 @@ use App\Models\Deal;
 use App\Models\Event;
 use App\Models\Operation;
 use App\Models\PaymentMethod;
+use App\Models\ProductType;
+use App\Models\Tip;
 use App\Models\User;
 use App\Repositories\CityRepository;
 use App\Repositories\PaymentRepository;
@@ -394,11 +396,15 @@ class ReportController extends Controller {
 		}
 		
 		$types = Operation::TYPES;
+		$paymentMethods = PaymentMethod::where('is_active', true)
+			->orderBy('name')
+			->get();
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'report-cash-flow');
 		
 		return view('admin.report.cash-flow.index', [
 			'types' => $types,
+			'paymentMethods' => $paymentMethods,
 			'page' => $page,
 		]);
 	}
@@ -426,57 +432,95 @@ class ReportController extends Controller {
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
 		
-		// операции
-		$operations = Operation::orderBy('operated_at')
-			->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-			->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
-			->where('city_id', $city->id)
-			->where('location_id', $location->id);
-		if ($paymentMethodId) {
-			$operations = $operations->where('payment_method_id', $paymentMethodId);
-		}
-		if ($type) {
-			$operations = $operations->where('type', $type);
-		}
-		$operations = $operations->get();
-		
 		$items = [];
-		foreach ($operations as $operation) {
-			$items[$operation->operated_at][] = [
-				'section' => 'cash',
-				'type' => $types[$operation->type],
-				'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
-				'amount' => $operation->amount,
-				'currency' => $operation->currency ? $operation->currency->name : '',
-			];
+		
+		if (!$type || in_array($type, [Operation::EXPENSE, Operation::REFUND])) {
+			// операции
+			$operations = Operation::orderBy('operated_at')
+				->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+				->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+				->where('city_id', $city->id)
+				->where('location_id', $location->id);
+			if ($paymentMethodId) {
+				$operations = $operations->where('payment_method_id', $paymentMethodId);
+			}
+			if ($type) {
+				$operations = $operations->where('type', $type);
+			}
+			$operations = $operations->get();
+			foreach ($operations as $operation) {
+				/** @var Operation $operation */
+				$items[$operation->operated_at][] = [
+					'type' => $types[$operation->type],
+					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
+					'amount' => $operation->amount,
+					'currency' => $operation->currency ? $operation->currency->name : '',
+				];
+			}
 		}
 		
-		// сделки
-		$deals = Deal::orderBy('created_at')
-			->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-			->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
-			->where('city_id', $city->id)
-			->where('location_id', $location->id);
-		if ($paymentMethodId) {
-			$operations = $operations->where('payment_method_id', $paymentMethodId);
+		if (!$type || in_array($type, [Operation::DEAL, Operation::TAX])) {
+			// сделки
+			$deals = Deal::oldest()
+				->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+				->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+				->where('city_id', $city->id)
+				->where('location_id', $location->id);
+			if ($paymentMethodId) {
+				$deals = $deals->whereHas('bills', function ($query) use ($paymentMethodId) {
+					return $query->whereIn('bills.payment_method_id', $paymentMethodId);
+				});
+			}
+			if ($type == Operation::TAX) {
+				$deals = $deals->whereHas('product', function ($query) use ($type) {
+					return $query->whereRelation('productType', 'product_types.alias', '=', $type);
+				});
+			}
+			$deals = $deals->get();
+			foreach ($deals as $deal) {
+				/** @var Deal $deal */
+				if ($deal->balance() < 0) continue;
+				
+				$product = $deal->product;
+				$productType = $product ? $product->productType : null;
+				$bills = $deal->bills;
+				$paymentMethodNames = [];
+				foreach ($bills as $bill) {
+					/** @var Bill $bill */
+					$paymentMethodNames[] = $bill->paymentMethod ? $bill->paymentMethod->name : '';
+				}
+				
+				$items[$deal->created_at][] = [
+					'type' => ($productType && $productType->alias == ProductType::TAX_ALIAS) ? $types[Operation::TAX] : $types[Operation::DEAL],
+					'payment_method' => implode(' / ', $paymentMethodNames),
+					'amount' => $deal->total_amount,
+					'currency' => $deal->currency ? $deal->currency->name : '',
+				];
+			}
 		}
-		if ($type) {
-			$operations = $operations->where('type', $type);
+		
+		if (!$type || $type == Operation::TIP) {
+			// типсы
+			$tips = Tip::orderBy('received_at')
+				->where('received_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+				->where('received_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+				->where('city_id', $city->id)
+				->where('location_id', $location->id);
+			if ($paymentMethodId) {
+				$tips = $tips->where('payment_method_id', $paymentMethodId);
+			}
+			$tips = $tips->get();
+			foreach ($tips as $tip) {
+				/** @var Tip $tip */
+				$items[$tip->received_at][] = [
+					'type' => $types[Operation::TIP],
+					'payment_method' => $tip->paymentMethod ? $tip->paymentMethod->name : '',
+					'amount' => $tip->amount,
+					'currency' => $tip->currency ? $tip->currency->name : '',
+				];
+			}
 		}
-		$operations = $operations->get();
-		
-		$items = [];
-		foreach ($operations as $operation) {
-			$items[$operation->operated_at][] = [
-				'section' => 'cash',
-				'type' => $types[$operation->type],
-				'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
-				'amount' => $operation->amount,
-				'currency' => $operation->currency ? $operation->currency->name : '',
-			];
-		}
-		
-		
+
 		$data = [
 			'items' => $items,
 			'types' => $types,

@@ -58,6 +58,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Content whereMetaTitleEn($value)
  * @property string $version версия
  * @method static \Illuminate\Database\Eloquent\Builder|Content whereVersion($value)
+ * @property \Illuminate\Support\Carbon|null $published_end_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Content wherePublishedEndAt($value)
  */
 class Content extends Model
 {
