@@ -75,7 +75,6 @@
 	})(document, window, "yandex_metrika_callbacks2");
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/49890730" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<script src="//code.jivosite.com/widget.js" data-jv-id="2uzI6QEtpH" async=""></script>
 
 <script src="{{ asset('js/jquery-3.4.1.min.js') }}"></script>
 <script src="{{ asset('js/wow.min.js') }}"></script>
