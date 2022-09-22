@@ -968,100 +968,68 @@ class MainController extends Controller
 	 */
 	public function sitemap()
 	{
-		$cityAlias = $this->request->session()->get('cityAlias');
-		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
+		$cities = City::get();
 
 		$items = [];
 		
-		$newsPage = HelpFunctions::getEntityByAlias(Content::class, 'news_' . $city->alias);
-		if ($newsPage) {
+		foreach ($cities as $city) {
 			$items[] = [
-				'loc' => url($newsPage->alias),
-				'lastmod' => $newsPage->updated_at ? $newsPage->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
+				'loc' => url($city->alias . '/news'),
+				'lastmod' => Carbon::now()->tz('GMT')->toAtomString(),
 				'changefreq' => 'weekly',
 				'priority' => 1,
 			];
-		}
-		
-		$galleryPage = HelpFunctions::getEntityByAlias(Content::class, 'gallery_' . $city->alias);
-		if ($galleryPage) {
 			$items[] = [
-				'loc' => url($galleryPage->alias),
-				'lastmod' => $galleryPage->updated_at ? $galleryPage->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
+				'loc' => url($city->alias . '/gallery'),
+				'lastmod' => Carbon::now()->tz('GMT')->toAtomString(),
 				'changefreq' => 'weekly',
 				'priority' => 1,
 			];
-		}
-		
-		$reviewsPage = HelpFunctions::getEntityByAlias(Content::class, 'reviews_' . $city->alias);
-		if ($reviewsPage) {
 			$items[] = [
-				'loc' => url($reviewsPage->alias),
-				'lastmod' => $reviewsPage->updated_at ? $reviewsPage->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
+				'loc' => url($city->alias . '/reviews'),
+				'lastmod' => Carbon::now()->tz('GMT')->toAtomString(),
 				'changefreq' => 'weekly',
 				'priority' => 1,
 			];
-		}
-		
-		$parentPages = HelpFunctions::getEntityByAlias(Content::class, 'pages_' . $city->alias);
-		if ($parentPages) {
-			$pages = Content::where('parent_id', $parentPages->id)
-				->where('is_active', true)
-				->oldest()
-				->get();
-			foreach ($pages as $page) {
-				if (in_array($page->alias, [Content::GUESTS_TYPE, 'payment'])) continue;
-				if (mb_strpos($page->title, 'Admin') !== false) continue;
-				
-				$url = explode('_', $page->alias);
-				
-				$items[] = [
-					'loc' => url((isset($url[1]) ? $url[1] . '/' : '') . (($url[0] == 'home') ? '' : $url[0])),
-					'lastmod' => $page->updated_at ? $page->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
-					'changefreq' => 'weekly',
-					'priority' => 1,
-				];
+			
+			$parentPages = HelpFunctions::getEntityByAlias(Content::class, 'pages_' . $city->alias);
+			if ($parentPages) {
+				$pages = Content::where('parent_id', $parentPages->id)
+					->where('is_active', true)
+					->oldest()
+					->get();
+				foreach ($pages as $page) {
+					if (in_array($page->alias, [Content::GUESTS_TYPE, 'payment'])) continue;
+					if (mb_strpos($page->title, 'Admin') !== false) continue;
+					
+					$url = explode('_', $page->alias);
+					
+					$items[] = [
+						'loc' => url((isset($url[1]) ? $url[1] . '/' : '') . (($url[0] == 'home') ? '' : $url[0])),
+						'lastmod' => $page->updated_at ? $page->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
+						'changefreq' => 'weekly',
+						'priority' => 1,
+					];
+				}
+			}
+			
+			$parentNews = HelpFunctions::getEntityByAlias(Content::class, 'news_' . $city->alias);
+			if ($parentNews) {
+				$news = Content::where('parent_id', $parentNews->id)
+					->where('is_active', true)
+					->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
+					->latest()
+					->get();
+				foreach ($news as $oneNews) {
+					$items[] = [
+						'loc' => url('news/' . $oneNews->alias),
+						'lastmod' => $oneNews->updated_at ? $oneNews->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
+						'changefreq' => 'weekly',
+						'priority' => 1,
+					];
+				}
 			}
 		}
-		
-		$parentNews = HelpFunctions::getEntityByAlias(Content::class, 'news_' . $city->alias);
-		if ($parentNews) {
-			$news = Content::where('parent_id', $parentNews->id)
-				->where('is_active', true)
-				->where('published_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
-				->latest()
-				->get();
-			foreach ($news as $oneNews) {
-				$items[] = [
-					'loc' => url('news/' . $oneNews->alias),
-					'lastmod' => $oneNews->updated_at ? $oneNews->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
-					'changefreq' => 'weekly',
-					'priority' => 1,
-				];
-			}
-		}
-		
-		/*$date = date('Y-m-d');
-		$promos = Promo::where('is_active', true)
-			->where('is_published', true)
-			->where(function ($query) use ($date) {
-				$query->where('active_from_at', '<=', $date)
-					->orWhereNull('active_from_at');
-			})
-			->where(function ($query) use ($date) {
-				$query->where('active_to_at', '>=', $date)
-					->orWhereNull('active_to_at');
-			})
-			->latest()
-			->get();
-		foreach ($promos as $promo) {
-			$items[] = [
-				'loc' => url('vse-akcii/' . $promo->alias),
-				'lastmod' => $promo->updated_at ? $promo->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
-				'changefreq' => 'weekly',
-				'priority' => 1,
-			];
-		}*/
 		
 		return response()->view('sitemap', [
 			'items' => $items,
