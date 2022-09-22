@@ -1,4 +1,4 @@
-@font-face{font-family:"GothamProBold";src:url("../fonts/GothamProBold/GothamProBold.eot");src:url("../fonts/GothamProBold/GothamProBold.eot?#iefix") format("embedded-opentype"), url("../fonts/GothamProBold/GothamProBold.woff") format("woff"), url("../fonts/GothamProBold/GothamProBold.ttf") format("truetype");font-style:normal;font-weight:normal;}
+@font-face{font-family:"RadioCanada-Bold";src:url("../fonts/RadioCanada/RadioCanada-Bold.ttf") format("truetype");font-style:normal;font-weight:normal;}
 .contacts{overflow:hidden;}
 .contacts .block-title{margin-bottom:58px;}
 .contacts-inner{background-color:#2c2d74;padding-left:48px;min-height:600px;position:relative;display:table;width:46%;float:right;}
@@ -8,12 +8,12 @@
 .contacts-list li:last-child{margin-bottom:0;}
 .contacts-list li.address:before{background-image:url(../img/address.png);width:14px;height:20px;}
 .contacts-list li.schedule:before{background-image:url(../img/schedule.png);width:17px;height:17px;}
-.contacts-list li.phone{font-family:"GothamProBold";}
+.contacts-list li.phone{font-family:"RadioCanada-Bold";}
 .contacts-list li.phone:before{background-image:url(../img/phone.png);width:12px;height:20px;}
 .contacts-list li.email:before{background-image:url(../img/email.png);width:21px;height:25px;}
 .contacts-list li.skype:before{background-image:url(../img/skype.png);width:19px;height:20px;}
 .contacts-list li:before{content:'';display:block;position:absolute;left:0;background-color:transparent;background-position:center center;background-size:contain;background-repeat:no-repeat;}
-.contacts-button{width:220px;color:#e11540;display:block;font-family:"GothamProMedium";font-size:14px;letter-spacing:0.2px;padding:20px 0;text-decoration:none;text-transform:uppercase;transition:all 0.5s ease 0s;vertical-align:top;text-align:center;margin-top:38px;}
+.contacts-button{width:220px;color:#e11540;display:block;font-family:"RadioCanada-Medium";font-size:14px;letter-spacing:0.2px;padding:20px 0;text-decoration:none;text-transform:uppercase;transition:all 0.5s ease 0s;vertical-align:top;text-align:center;margin-top:38px;}
 .map{
     min-height:600px;
     float:left;

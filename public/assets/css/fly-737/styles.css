@@ -10075,30 +10075,28 @@ screen and (max-height:300px) {
 
 @charset "UTF-8";
 @font-face {
-	font-family: "GothamProRegular";
-	src: url("/assets/fonts/GothamProRegular/GothamProRegular.eot");
-	src: url("/assets/fonts/GothamProRegular/GothamProRegular.eot?#iefix") format("embedded-opentype"), url("/assets/fonts/GothamProRegular/GothamProRegular.woff") format("woff"), url("/assets/fonts/GothamProRegular/GothamProRegular.ttf") format("truetype");
+	font-family: "RadioCanada-Regular";
+	src: url("/assets/fonts/RadioCanada/RadioCanada-Regular.ttf") format("truetype");
 	font-style: normal;
 	font-weight: normal
 }
 
 @font-face {
-	font-family: "GothamProMedium";
-	src: url("/assets/fonts/GothamProMedium/GothamProMedium.eot");
-	src: url("/assets/fonts/GothamProMedium/GothamProMedium.eot?#iefix") format("embedded-opentype"), url("/assets/fonts/GothamProMedium/GothamProMedium.woff") format("woff"), url("/assets/fonts/GothamProMedium/GothamProMedium.ttf") format("truetype");
+	font-family: "RadioCanada-Medium";
+	src: url("/assets/fonts/RadioCanada/RadioCanada-Medium.ttf") format("truetype");
 	font-style: normal;
 	font-weight: normal
 }
 
 * {
-	font-family: "GothamProRegular";
+	font-family: "RadioCanada-Regular";
 	outline: 0
 }
 
 .block-title {
 	color: #4d4d51;
 	font-size: 40px;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	text-transform: uppercase;
 	margin: 89px 0 0 2px
 }
@@ -10115,7 +10113,7 @@ screen and (max-height:300px) {
 .article-title {
 	color: #4d4d51;
 	font-size: 30px;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	text-transform: uppercase;
 	margin: 89px 0 0 2px
 }
@@ -10360,7 +10358,7 @@ input:checked+.slider:before,
 	font-size: 12px;
 	letter-spacing: .5px;
 	text-transform: uppercase;
-	font-family: "GothamProRegular";
+	font-family: "RadioCanada-Regular";
 	transition: .2s
 }
 
@@ -10386,7 +10384,7 @@ input:checked+.slider:before,
 	padding-left: 0;
 	color: #e11540;
 	font-size: 15px;
-	font-family: "GothamProRegular"
+	font-family: "RadioCanada-Regular"
 }
 
 .header .nav .nice-select:after {
@@ -10430,7 +10428,7 @@ input:checked+.slider:before,
 .content .main-block-full h1 {
 	color: #fffefe;
 	font-size: 50px;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	padding-top: 194px;
 	text-transform: uppercase;
 	letter-spacing: -.4px;
@@ -10461,7 +10459,7 @@ input:checked+.slider:before,
 .content .main-block-full .fly {
 	color: #fffefe;
 	font-size: 12px;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	margin: 58px 0 0 26px;
 	padding: 22px 0 20px;
 	width: 220px;
@@ -10487,7 +10485,7 @@ input:checked+.slider:before,
 .content .main-block-full .scroll {
 	color: #fffefe;
 	display: block;
-	font-family: "GothamProRegular";
+	font-family: "RadioCanada-Regular";
 	font-size: 14px;
 	position: absolute;
 	right: 0;
@@ -10604,7 +10602,7 @@ input:checked+.slider:before,
 
 .content .obtain h3 {
 	color: #4d4d51;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 25px;
 	letter-spacing: .5px;
 	padding-left: 2px;
@@ -10639,7 +10637,7 @@ input:checked+.slider:before,
 .content .obtain-button {
 	color: #fffefe;
 	display: inline-block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	margin: 25px 0 0 4px;
@@ -10917,7 +10915,7 @@ input:checked+.slider:before,
 .content .stock a {
 	color: #fffefe;
 	display: inline-block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	margin: 29px 0 0 10%;
@@ -10938,7 +10936,7 @@ input:checked+.slider:before,
 	text-transform: uppercase;
 	color: #4d4d51;
 	font-size: 50px;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	margin: 54px 0 0 0
 }
 
@@ -11058,7 +11056,7 @@ input:checked+.slider:before,
 	width: 220px;
 	color: #e11540;
 	display: block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	margin: 50px 0 0 36%;
@@ -11152,7 +11150,7 @@ input:checked+.slider:before,
 	line-height: 22px;
 	letter-spacing: .25px;
 	margin-top: 50px;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	transition: .5s all;
 	text-decoration: none
 }
@@ -11166,7 +11164,7 @@ input:checked+.slider:before,
 	font-size: 12px;
 	font-weight: 600;
 	display: block;
-	font-family: "GothamProMedium"
+	font-family: "RadioCanada-Medium"
 }
 
 .article .article-content .item {
@@ -11182,7 +11180,7 @@ input:checked+.slider:before,
 	border: 3px solid #e11540;
 	color: #e11540;
 	display: inline-block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: 1px;
 	margin-top: 89px;
@@ -11269,7 +11267,7 @@ input:checked+.slider:before,
 .adminonline .button {
 	color: #fffefe;
 	display: inline-block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	padding: 20px 0;
@@ -11288,7 +11286,7 @@ input:checked+.slider:before,
 	margin-left: 10px;
 	color: #fffefe;
 	display: inline-block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	padding: 5px 0;
@@ -11677,7 +11675,7 @@ input:checked+.slider:before,
 	margin: 0;
 	padding: 0;
 	text-align: center;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 25px;
 	color: #4d4d51;
 	text-transform: uppercase
@@ -11728,7 +11726,7 @@ input:checked+.slider:before,
 
 .popup .nice-select-label {
 	display: inline-block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 13px;
 	color: #4d4d51;
 	position: relative
@@ -11767,7 +11765,7 @@ input:checked+.slider:before,
 	text-transform: uppercase;
 	font-style: normal;
 	letter-spacing: 1px;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	transition: all .5s;
 	width: 220px;
 	text-align: center;
@@ -11930,7 +11928,7 @@ a.popup-with-form:hover {
 	width: 200px;
 	color: #e11540;
 	display: block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	margin: 20px 0 0 0;
@@ -12209,7 +12207,7 @@ a.offer {
 	left: 0;
 	color: #fefdfd !important;
 	font-weight: 100 !important;
-	font-family: "GothamProRegular" !important;
+	font-family: "RadioCanada-Regular" !important;
 	font-size: 15px !important;
 	background: rgba(0, 0, 0, .7);
 	transition: all .5s
@@ -12350,7 +12348,7 @@ input[type="radio"]:hover+label::after {
 }
 
 input[type="radio"]+label span {
-	font-family: "GothamProRegular" !important;
+	font-family: "RadioCanada-Regular" !important;
 	font-size: 17px !important;
 	text-transform: uppercase;
 	font-weight: 300 !important;
@@ -12505,7 +12503,7 @@ div.about a {
 	width: 200px;
 	color: #e11540;
 	display: block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	margin: 20px 0 0 0;
@@ -12522,7 +12520,7 @@ div.about a {
 .gallery-button-top .button-free a {
 	width: 200px;
 	padding: 0;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 14px;
 	letter-spacing: .2px;
 	text-align: center;
@@ -12923,7 +12921,7 @@ div.about a {
 .virb .button {
 	color: #fffefe;
 	display: inline-block;
-	font-family: "GothamProMedium";
+	font-family: "RadioCanada-Medium";
 	font-size: 11px;
 	cursor: default;
 	padding: 2px 15px;
