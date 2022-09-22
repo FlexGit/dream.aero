@@ -108,7 +108,7 @@ return [
 	'home.забронировать' => 'book a flight',
 	'home.подарить-полет' => 'purchase a gift certificate',
 	'home.рады-представить-вам-тренажеры-описание' => 'We are pleased to introduce flight simulators of the famous passenger airliner. Designed as a real plane cockpit, this simulator is analogous to the simulators used for training real-life pilots. Test the pilot in you!',
-	'home.подробнее' => 'Learm more',
+	'home.подробнее' => 'Learn more',
 	'home.в-партнерстве-с-авиакомпанией-россия' => 'in partnership with "Россия"',
 	'home.что-вы-получите' => 'WHAT YOU GET:',
 	'home.незабываемые-эмоции-и-впечатления' => 'An unforgettable experience',
