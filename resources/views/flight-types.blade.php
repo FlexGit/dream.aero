@@ -95,7 +95,11 @@
 @endsection
 
 @push('css')
-	<link rel="stylesheet" href="{{ asset('css/simulstyle.css') }}">
+	@if (request()->getHost() == env('DOMAIN_SITE2'))
+		<link rel="stylesheet" href="{{ asset('css/fly-737/simulstyle.css') }}">
+	@else
+		<link rel="stylesheet" href="{{ asset('css/simulstyle.css') }}">
+	@endif
 	<style>
 		@media (min-width: 992px) {
 			.var4fact {

@@ -272,6 +272,22 @@ return [
 			'label'       => '',
 			'label_color' => '',
 		],
+		/*[
+			'text'        => 'Cash',
+			'url'         => '/cash',
+			'icon'        => 'fas fa-fw fa-money-bill-alt',
+			'can'		  => 'is_admin',
+			'label'       => '',
+			'label_color' => '',
+		],*/
+		[
+			'text'        => 'Tips',
+			'url'         => '/tip',
+			'icon'        => 'fas fa-fw fa-coins',
+			'can'	  	  => 'is_admin',
+			'label'       => '',
+			'label_color' => '',
+		],
 		[
 			'text'    => 'Pricing',
 			'icon'    => 'fas fa-fw fa-dollar-sign',
@@ -301,14 +317,6 @@ return [
 					'can'  => 'is_superadmin',
 				],
 			],
-		],
-		[
-			'text'        => 'Tips',
-			'url'         => '/tip',
-			'icon'        => 'fas fa-fw fa-coins',
-			'can'	  	  => 'is_admin',
-			'label'       => '',
-			'label_color' => '',
 		],
 		[
 			'text'    => 'Lists',
@@ -384,10 +392,16 @@ return [
 					'can'  => 'is_superadmin',
 					'icon' => 'far fa-circle nav-icon',
 				],
+				/*[
+					'text' => 'Cash Flow',
+					'url'  => '/report/cash-flow',
+					'can'  => 'is_superadmin',
+					'icon' => 'far fa-circle nav-icon',
+				],*/
             ],
         ],
 		[
-			'text'    => 'Site',
+			'text'    => env('DOMAIN_SITE'),
 			'icon'    => 'far fa-fw fa-file-image',
 			'can'	  => 'is_superadmin',
 			'submenu' => [
@@ -423,6 +437,43 @@ return [
 				],
 			],
 		],
+		/*[
+			'text'    => env('DOMAIN_SITE2'),
+			'icon'    => 'far fa-fw fa-file-image',
+			'can'	  => 'is_superadmin',
+			'submenu' => [
+				[
+					'text' => 'News',
+					'url'  => '/site/' . env('DOMAIN_SITE2') . '/news',
+					'icon' => 'far fa-circle nav-icon',
+					'can'  => 'is_superadmin',
+				],
+				[
+					'text' => 'Gallery',
+					'url'  => '/site/gallery',
+					'icon' => 'far fa-circle nav-icon',
+					'can'  => 'is_superadmin',
+				],
+				[
+					'text' => 'Reviews',
+					'url'  => '/site/reviews',
+					'icon' => 'far fa-circle nav-icon',
+					'can'  => 'is_superadmin',
+				],
+				[
+					'text' => 'Pages',
+					'url'  => '/site/pages',
+					'icon' => 'far fa-circle nav-icon',
+					'can'  => 'is_superadmin',
+				],
+				[
+					'text' => 'Promoboxes',
+					'url'  => '/site/promoboxes',
+					'icon' => 'far fa-circle nav-icon',
+					'can'  => 'is_superadmin',
+				],
+			],
+		],*/
         /*['header' => 'labels'],
         [
             'text'       => 'important',

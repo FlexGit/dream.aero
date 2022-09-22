@@ -3,6 +3,7 @@
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ContentController;
+use App\Http\Controllers\OperationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\PricingController;
@@ -173,6 +174,17 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		
 		Route::get('receipt/{uuid}/file/{print?}', [BillController::class, 'getReceiptFile'])->name('getReceipt');
 		Route::post('receipt/send', [BillController::class, 'sendReceipt'])->name('sendReceipt');
+		
+		// Операции
+		Route::get('operation/add', [OperationController::class, 'add']);
+		Route::get('operation/{id}/edit', [OperationController::class, 'edit']);
+		Route::get('operation/{id}/delete', [OperationController::class, 'confirm']);
+		
+		Route::get('operation/{id?}', [OperationController::class, 'index'])->name('operationIndex');
+		Route::get('operation/list/ajax', [OperationController::class, 'getListAjax'])->name('operationList');
+		Route::post('operation', [OperationController::class, 'store']);
+		Route::put('operation/{id}', [OperationController::class, 'update']);
+		Route::delete('operation/{id}', [OperationController::class, 'delete']);
 
 		// Чаевые
 		Route::get('tip/add', [TipController::class, 'add']);
@@ -355,14 +367,71 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 });
 
 Route::domain(env('DOMAIN_SITE', 'dream.aero'))->group(function () {
-	Route::get('sitemap.xml', function () {
+	/*Route::get('sitemap.xml', function () {
 		header('Content-Type: text/xml; charset=UTF-8');
 		readfile(dirname(__FILE__) . '/../public/sitemap.xml');
-	});
+	});*/
 	Route::get('robots.txt', function () {
 		header('Content-Type: text/plain; charset=UTF-8');
-		readfile(dirname(__FILE__) . '/../public/robots.txt');
+		readfile(dirname(__FILE__) . '/../public/robots_dreamaero.txt');
 	});
+	Route::get('sitemap.xml', [MainController::class, 'sitemap']);
+	
+	Route::group(['middleware' => ['citycheck']], function () {
+		Route::get('{alias?}', [MainController::class, 'home'])->name('home');
+		Route::get('{alias?}/about-simulator', [MainController::class, 'about'])->name('o-trenazhere');
+		Route::get('{alias?}/gift-sertificates', [MainController::class, 'giftFlight'])->name('podarit-polet');
+		Route::get('{alias?}/flight-options', [MainController::class, 'flightTypes'])->name('variantyi-poleta');
+		Route::get('{alias?}/news/{newsAlias?}', [MainController::class, 'getNews'])->name('news');
+		Route::get('{alias?}/private-events', [MainController::class, 'privateEvents'])->name('private-events');
+		Route::get('{alias?}/prices', [MainController::class, 'price']);
+		Route::get('{alias?}/gallery', [MainController::class, 'getGallery'])->name('galereya');
+		Route::get('{alias?}/reviews', [MainController::class, 'getReviews'])->name('reviews');
+		Route::get('{alias?}/contacts', [MainController::class, 'contacts']);
+		Route::get('{alias?}/privacy-policy', [MainController::class, 'privacyPolicy'])->name('privacy-policy');
+		Route::get('{alias?}/flight-briefing', [MainController::class, 'flightBriefing'])->name('flight-briefing');
+		Route::get('{alias?}/impressions', [MainController::class, 'impressions'])->name('impressions');
+		Route::get('{alias?}/prof-assistance', [MainController::class, 'profAssistance'])->name('prof-assistance');
+		Route::get('{alias?}/the-world-of-aviation', [MainController::class, 'worldAviation'])->name('world-aviation');
+		Route::get('{alias?}/treating-aerophobia', [MainController::class, 'flyNoFear'])->name('lechenie-aerofobii');
+		Route::get('{alias?}/rules', [MainController::class, 'rules'])->name('rules');
+	});
+	
+	Route::get('sertbuy', [MainController::class, 'certificateForm'])->name('certificate-form');
+	
+	Route::post('promocode/verify', [MainController::class, 'promocodeVerify']);
+	
+	Route::post('review/create', [MainController::class, 'reviewCreate']);
+	
+	Route::get('city/list/ajax', [MainController::class, 'getCityListAjax']);
+	Route::get('city/change', [MainController::class, 'changeCity']);
+	
+	Route::post('payment', [PaymentController::class, 'paymentProceed'])->name('paymentProceed');
+	Route::get('payment/{uuid}', [PaymentController::class, 'payment'])->name('payment');
+	
+	Route::post('rating', [MainController::class, 'setRating'])->name('set-rating');
+	
+	Route::post('modal/certificate', [MainController::class, 'getCertificateModal']);
+	Route::get('modal/review', [MainController::class, 'getReviewModal']);
+	Route::get('modal/scheme/{location_id}', [MainController::class, 'getSchemeModal']);
+	Route::get('modal/callback', [MainController::class, 'getCallbackModal']);
+	Route::get('modal/vip', [MainController::class, 'getVipFlightModal']);
+	Route::get('modal/info/{alias}', [MainController::class, 'getInfoModal']);
+	
+	Route::post('callback', [MainController::class, 'callback'])->name('callbackRequestStore');
+	Route::post('question', [MainController::class, 'question'])->name('questionStore');
+});
+
+Route::domain(env('DOMAIN_SITE2', 'fly-737.com'))->group(function () {
+	/*Route::get('sitemap.xml', function () {
+		header('Content-Type: text/xml; charset=UTF-8');
+		readfile(dirname(__FILE__) . '/../public/sitemap_fly737.xml');
+	});*/
+	Route::get('robots.txt', function () {
+		header('Content-Type: text/plain; charset=UTF-8');
+		readfile(dirname(__FILE__) . '/../public/robots_fly737.txt');
+	});
+	Route::get('sitemap.xml', [MainController::class, 'sitemap']);
 	
 	Route::group(['middleware' => ['citycheck']], function () {
 		Route::get('{alias?}', [MainController::class, 'home'])->name('home');

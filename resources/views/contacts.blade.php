@@ -78,7 +78,11 @@
 @endsection
 
 @push('css')
-	<link rel="stylesheet" href="{{ asset('css/contactstyle.css') }}">
+	@if (request()->getHost() == env('DOMAIN_SITE2'))
+		<link rel="stylesheet" href="{{ asset('css/fly-737/contactstyle.css') }}">
+	@else
+		<link rel="stylesheet" href="{{ asset('css/contactstyle.css') }}">
+	@endif
 	<style>
 		.popup-map {
 			max-width: 930px;

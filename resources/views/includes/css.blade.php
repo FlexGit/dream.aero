@@ -1,7 +1,11 @@
 <link href="{{ asset('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('css/styles.min.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('css/default.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
-
+@if (request()->getHost() == env('DOMAIN_SITE2'))
+	<link href="{{ asset('css/fly-737/styles.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
+	<link href="{{ asset('css/fly-737/default.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
+@else
+	<link href="{{ asset('css/styles.min.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
+	<link href="{{ asset('css/default.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
+@endif
 <style type="text/css">
 	.modal-header {
 		border-bottom: 0;

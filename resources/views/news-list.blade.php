@@ -47,5 +47,9 @@
 @endsection
 
 @push('css')
-	<link rel="stylesheet" href="{{ asset('css/newsstyle.css') }}">
+	@if (request()->getHost() == env('DOMAIN_SITE2'))
+		<link rel="stylesheet" href="{{ asset('css/fly-737/newsstyle.css') }}">
+	@else
+		<link rel="stylesheet" href="{{ asset('css/newsstyle.css') }}">
+	@endif
 @endpush

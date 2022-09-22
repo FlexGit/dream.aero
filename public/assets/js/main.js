@@ -414,7 +414,7 @@ function calcAmount() {
 				return;
 			}
 
-			$('.js-product-name').html(result.product_public_name ? result.product_public_name + (result.product_type_alias !== 'COURSES' ? ' ' + result.product_type_alias + ' <span style="color: #ff8200;">' + result.product_duration + '</span>' : '') : '');
+			$('.js-product-name').html(result.product_public_name ? result.product_public_name + (result.product_type_alias !== 'COURSES' ? ' ' + result.product_type_alias + ' ' + result.product_duration + '' : '') : '');
 
 			if (result.amount !== result.baseAmount) {
 				amount = '<span class="strikethrough">' + result.currency + result.baseAmount + '</span>' + result.currency + result.amount;

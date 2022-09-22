@@ -317,7 +317,11 @@
 @endsection
 
 @push('css')
-	<link rel="stylesheet" href="{{ asset('css/pricestyle.css?v=' . time()) }}">
+	@if (request()->getHost() == env('DOMAIN_SITE2'))
+		<link rel="stylesheet" href="{{ asset('css/fly-737/pricestyle.css?v=' . time()) }}">
+	@else
+		<link rel="stylesheet" href="{{ asset('css/pricestyle.css?v=' . time()) }}">
+	@endif
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/card.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/scale.css') }}">

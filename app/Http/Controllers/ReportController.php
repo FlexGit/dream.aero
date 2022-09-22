@@ -6,7 +6,9 @@ use App\Exports\ContractorSelfMadePayedDealsReportExport;
 use App\Models\Bill;
 use App\Models\City;
 use App\Models\Content;
+use App\Models\Deal;
 use App\Models\Event;
+use App\Models\Operation;
 use App\Models\PaymentMethod;
 use App\Models\User;
 use App\Repositories\CityRepository;
@@ -380,6 +382,120 @@ class ReportController extends Controller {
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW, 'fileName' => $reportFileName]);
 	}
 	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
+	public function cashFlowIndex()
+	{
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			abort(404);
+		}
+		
+		$types = Operation::TYPES;
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'report-cash-flow');
+		
+		return view('admin.report.cash-flow.index', [
+			'types' => $types,
+			'page' => $page,
+		]);
+	}
+	
+	public function cashFlowGetListAjax()
+	{
+		if (!$this->request->ajax()) {
+			abort(404);
+		}
+		
+		$user = Auth::user();
+		$city = $user->city;
+		$location = $user->location;
+		
+		$types = Operation::TYPES;
+		
+		$dateFromAt = $this->request->filter_date_from_at ?? '';
+		$dateToAt = $this->request->filter_date_to_at ?? '';
+		$paymentMethodId = $this->request->filter_payment_method_id ?? 0;
+		$type = $this->request->filter_type ?? '';
+		$isExport = filter_var($this->request->is_export, FILTER_VALIDATE_BOOLEAN);
+		
+		if (!$dateFromAt && !$dateToAt) {
+			$dateFromAt = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
+			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
+		}
+		
+		// операции
+		$operations = Operation::orderBy('operated_at')
+			->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+			->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+			->where('city_id', $city->id)
+			->where('location_id', $location->id);
+		if ($paymentMethodId) {
+			$operations = $operations->where('payment_method_id', $paymentMethodId);
+		}
+		if ($type) {
+			$operations = $operations->where('type', $type);
+		}
+		$operations = $operations->get();
+		
+		$items = [];
+		foreach ($operations as $operation) {
+			$items[$operation->operated_at][] = [
+				'section' => 'cash',
+				'type' => $types[$operation->type],
+				'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
+				'amount' => $operation->amount,
+				'currency' => $operation->currency ? $operation->currency->name : '',
+			];
+		}
+		
+		// сделки
+		$deals = Deal::orderBy('created_at')
+			->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+			->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+			->where('city_id', $city->id)
+			->where('location_id', $location->id);
+		if ($paymentMethodId) {
+			$operations = $operations->where('payment_method_id', $paymentMethodId);
+		}
+		if ($type) {
+			$operations = $operations->where('type', $type);
+		}
+		$operations = $operations->get();
+		
+		$items = [];
+		foreach ($operations as $operation) {
+			$items[$operation->operated_at][] = [
+				'section' => 'cash',
+				'type' => $types[$operation->type],
+				'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
+				'amount' => $operation->amount,
+				'currency' => $operation->currency ? $operation->currency->name : '',
+			];
+		}
+		
+		
+		$data = [
+			'items' => $items,
+			'types' => $types,
+		];
+		
+		$reportFileName = '';
+		if ($isExport) {
+			$reportFileName = 'report-cash-flow-' . $user->id . '-' . date('YmdHis') . '.xlsx';
+			$exportResult = Excel::store(new CashFlowReportExport($data), 'report/' . $reportFileName);
+			if (!$exportResult) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
+			}
+		}
+
+		$VIEW = view('admin.report.cash-flow.list', $data);
+		
+		return response()->json(['status' => 'success', 'html' => (string)$VIEW, 'fileName' => $reportFileName]);
+	}
+
 	/**
 	 * @param $fileName
 	 * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\StreamedResponse
