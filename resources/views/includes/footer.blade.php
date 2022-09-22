@@ -2,7 +2,11 @@
 	<div class="container">
 		<div class="footer-menu">
 			<a href="{{ url(Request::session()->get('cityAlias') ?? '/') }}" class="logo">
-				<img src="{{ asset('img/logo-eng-footer.png') }}" alt="logo">
+				@if (request()->getHost() == env('DOMAIN_SITE2'))
+					<img src="{{ asset('img/logo-fly-737.webp') }}" alt="logo">
+				@else
+					<img src="{{ asset('img/logo-footer-dreamaero.webp') }}" alt="logo">
+				@endif
 			</a>
 			<div class="social" style="display: block;vertical-align: bottom;margin: 25px 0 0 0;text-align: center;padding-bottom: 5px;">
 				@if (Request::session()->get('cityAlias') == app('\App\Models\City')::DC_ALIAS)
