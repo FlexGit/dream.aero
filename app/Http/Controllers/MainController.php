@@ -1005,7 +1005,7 @@ class MainController extends Controller
 					$url = explode('_', $page->alias);
 					
 					$items[] = [
-						'loc' => url($city->alias . '/' . (isset($url[1]) ? $url[1] . '/' : '') . (($url[0] == 'home') ? '' : $url[0])),
+						'loc' => url((isset($url[1]) ? $url[1] . '/' : '') . (($url[0] == 'home') ? '' : $url[0])),
 						'lastmod' => $page->updated_at ? $page->updated_at->tz('GMT')->toAtomString() : Carbon::now()->tz('GMT')->toAtomString(),
 						'changefreq' => 'weekly',
 						'priority' => 1,
