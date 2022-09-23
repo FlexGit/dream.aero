@@ -15,22 +15,38 @@
 	<meta name="yandex-verification" content="26119517b8383ec4" />
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<!-- CSS -->
-	@include('includes.css')
+	@if(request()->getHost() == env('DOMAIN_SITE2'))
+		@include('fly-737.includes.css')
+	@else
+		@include('dream-aero.includes.css')
+	@endif
 	@stack('css')
 	<!-- END CSS -->
 </head>
 <body>
 	<!-- HEADER -->
-	@include('includes.header')
+	@if(request()->getHost() == env('DOMAIN_SITE2'))
+		@include('fly-737.includes.header')
+	@else
+		@include('dream-aero.includes.header')
+	@endif
 	<!-- END HEADER -->
 	<div class="content">
 		@yield('content')
 	</div>
 	<!-- FOOTER -->
-	@include('includes.footer')
+	@if(request()->getHost() == env('DOMAIN_SITE2'))
+		@include('fly-737.includes.footer')
+	@else
+		@include('dream-aero.includes.footer')
+	@endif
 	<!-- END FOOTER -->
 	<!-- JS -->
-	@include('includes.js')
+	@if(request()->getHost() == env('DOMAIN_SITE2'))
+		@include('fly-737.includes.js')
+	@else
+		@include('dream-aero.includes.js')
+	@endif
 	@stack('scripts')
 	<!-- END JS -->
 </body>

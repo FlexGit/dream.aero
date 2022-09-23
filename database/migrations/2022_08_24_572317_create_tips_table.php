@@ -19,8 +19,9 @@ class CreateTipsTable extends Migration
 			$table->float('amount')->default(0)->comment('сумма');
 			$table->integer('currency_id')->default(0)->index()->comment('валюта');
 			$table->integer('city_id')->default(0)->index()->comment('город');
+			$table->integer('location_id')->default(0)->index()->comment('локация');
+			$table->integer('payment_method_id')->default(0)->index()->comment('способ оплаты');
 			$table->date('received_at')->nullable()->comment('дата получения');
-			$table->string('source', 25)->nullable()->comment('источник');
 			$table->integer('user_id')->default(0)->index()->comment('пользователь');
             $table->timestamps();
 			$table->softDeletes();

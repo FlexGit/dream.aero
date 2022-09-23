@@ -45,11 +45,11 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="source">Source</label>
-			<select class="form-control" id="source" name="source">
+			<label for="payment_method_id">Payment method</label>
+			<select class="form-control" id="payment_method_id" name="payment_method_id">
 				<option></option>
-				@foreach($sources ?? [] as $sourceAlias => $sourceName)
-					<option value="{{ $sourceAlias }}" @if($sourceAlias == $tip->source) selected @endif>{{ $sourceName }}</option>
+				@foreach($paymentMethods as $paymentMethod)
+					<option value="{{ $paymentMethod->id }}" @if($tip->paymentMethod && $tip->paymentMethod->id == $paymentMethod->id) selected @endif>{{ $paymentMethod->name }}</option>
 				@endforeach
 			</select>
 		</div>

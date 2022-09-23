@@ -396,9 +396,7 @@ class ReportController extends Controller {
 		}
 		
 		$types = Operation::TYPES;
-		$paymentMethods = PaymentMethod::where('is_active', true)
-			->orderBy('name')
-			->get();
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(true);
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'report-cash-flow');
 		
@@ -420,6 +418,7 @@ class ReportController extends Controller {
 		$location = $user->location;
 		
 		$types = Operation::TYPES;
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(true);
 		
 		$dateFromAt = $this->request->filter_date_from_at ?? '';
 		$dateToAt = $this->request->filter_date_to_at ?? '';
@@ -434,6 +433,7 @@ class ReportController extends Controller {
 		
 		$items = [];
 		
+		//\DB::connection()->enableQueryLog();
 		if (!$type || in_array($type, [Operation::EXPENSE, Operation::REFUND])) {
 			// операции
 			$operations = Operation::orderBy('operated_at')
@@ -450,7 +450,7 @@ class ReportController extends Controller {
 			$operations = $operations->get();
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
-				$items[$operation->operated_at][] = [
+				$items[Carbon::parse($operation->operated_at)->timestamp][] = [
 					'type' => $types[$operation->type],
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
@@ -468,7 +468,7 @@ class ReportController extends Controller {
 				->where('location_id', $location->id);
 			if ($paymentMethodId) {
 				$deals = $deals->whereHas('bills', function ($query) use ($paymentMethodId) {
-					return $query->whereIn('bills.payment_method_id', $paymentMethodId);
+					return $query->where('bills.payment_method_id', $paymentMethodId);
 				});
 			}
 			if ($type == Operation::TAX) {
@@ -479,6 +479,7 @@ class ReportController extends Controller {
 			$deals = $deals->get();
 			foreach ($deals as $deal) {
 				/** @var Deal $deal */
+				if (!$deal->total_amount) continue;
 				if ($deal->balance() < 0) continue;
 				
 				$product = $deal->product;
@@ -489,8 +490,9 @@ class ReportController extends Controller {
 					/** @var Bill $bill */
 					$paymentMethodNames[] = $bill->paymentMethod ? $bill->paymentMethod->name : '';
 				}
+				$paymentMethodNames = array_unique($paymentMethodNames);
 				
-				$items[$deal->created_at][] = [
+				$items[Carbon::parse($deal->created_at)->timestamp][] = [
 					'type' => ($productType && $productType->alias == ProductType::TAX_ALIAS) ? $types[Operation::TAX] : $types[Operation::DEAL],
 					'payment_method' => implode(' / ', $paymentMethodNames),
 					'amount' => $deal->total_amount,
@@ -512,7 +514,7 @@ class ReportController extends Controller {
 			$tips = $tips->get();
 			foreach ($tips as $tip) {
 				/** @var Tip $tip */
-				$items[$tip->received_at][] = [
+				$items[Carbon::parse($tip->received_at)->timestamp][] = [
 					'type' => $types[Operation::TIP],
 					'payment_method' => $tip->paymentMethod ? $tip->paymentMethod->name : '',
 					'amount' => $tip->amount,
@@ -520,11 +522,27 @@ class ReportController extends Controller {
 				];
 			}
 		}
-
+		
+		$balanceItems = [];
+		foreach ($paymentMethods as $paymentMethod) {
+			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
+			
+			$balanceItems[Carbon::parse($dateFromAt)->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->timestamp, $paymentMethod->alias, $type);
+			$balanceItems[Carbon::parse($dateToAt)->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->timestamp, $paymentMethod->alias, $type);
+		}
+		//\Log::debug(\DB::getQueryLog());
+		
 		$data = [
 			'items' => $items,
 			'types' => $types,
+			'balanceItems' => $balanceItems,
+			'paymentMethods' => $paymentMethods,
+			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->timestamp,
+			'dateToAtTimestamp' => Carbon::parse($dateToAt)->timestamp,
+			'currency' => $city->currency ? $city->currency->name : '',
 		];
+		
+		//\Log::debug($data);
 		
 		$reportFileName = '';
 		if ($isExport) {
@@ -538,6 +556,62 @@ class ReportController extends Controller {
 		$VIEW = view('admin.report.cash-flow.list', $data);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW, 'fileName' => $reportFileName]);
+	}
+	
+	/**
+	 * @param $date
+	 * @param string $paymentMethodAlias
+	 * @return mixed
+	 */
+	public function getBalanceOnDate($timestamp, $paymentMethodAlias, $type)
+	{
+		$user = Auth::user();
+		$city = $user->city;
+		$location = $user->location;
+		
+		$billSum = 0;
+		if (!$type || in_array($type, [Operation::DEAL, Operation::TAX])) {
+			// инвойсы
+			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp)->startOfDay())
+				->where('city_id', $city->id)
+				->where('location_id', $location->id)
+				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
+				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
+				->whereHas('deal', function ($query) {
+					return $query->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
+				});
+			if ($type == Operation::TAX) {
+				$billSum = $billSum->whereHas('product', function ($query) use ($type) {
+					return $query->whereRelation('productType', 'product_types.alias', '=', $type);
+				});
+			}
+			$billSum = $billSum->sum('total_amount');
+		}
+		
+		$operationSum = 0;
+		if (!$type || in_array($type, [Operation::EXPENSE, Operation::REFUND])) {
+			//операции
+			$operationSum = Operation::where('operated_at', '<', Carbon::parse($timestamp)->startOfDay())
+				->where('city_id', $city->id)
+				->where('location_id', $location->id)
+				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias);
+			if ($type) {
+				$operationSum = $operationSum->where('type', $type);
+			}
+			$operationSum = $operationSum->sum('amount');
+		}
+		
+		$tipSum = 0;
+		if (!$type || $type == Operation::TIP) {
+			// типсы
+			$tipSum = Tip::where('received_at', '<', Carbon::parse($timestamp)->startOfDay())
+				->where('city_id', $city->id)
+				->where('location_id', $location->id)
+				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
+				->sum('amount');
+		}
+		
+		return number_format(($billSum + $operationSum + $tipSum), 2, '.', ' ');
 	}
 
 	/**

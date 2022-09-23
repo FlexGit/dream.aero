@@ -1,7 +1,7 @@
 .news-list ul{list-style:none;padding:0;}
 .news-list ul li{margin-top:65px;}
 .news-list ul li .img{transition:0.5s all;position:relative;}
-.news-list ul li .img:after{content:'';width:100%;height:100%;position:absolute;left:80px;top:20px;background:url(../img/dots2.png) no-repeat;z-index:-1;}
+.news-list ul li .img:after{content:'';width:100%;height:100%;position:absolute;left:80px;top:20px;background:url(../img/fly-737/dots2.png) no-repeat;z-index:-1;}
 .news-list ul li .img a{position:absolute;left:0;top:0;display:none;width:100%;height:100%;text-align:center;color:#fff;line-height:14;font-family:"RadioCanada-Medium";background:rgba(255, 255, 255, 0);text-decoration:none;transition:0.5s all;}
 .news-list ul li .img:hover a{display:block;}
 .news-list ul li .img:hover a:hover{background:rgba(0, 0, 0, 0.6);}

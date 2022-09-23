@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Deal;
 use App\Models\Tip;
 use App\Models\User;
+use App\Repositories\PaymentRepository;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,12 +14,14 @@ use Validator;
 class TipController extends Controller
 {
 	private $request;
+	private $paymentRepo;
 	
 	/**
 	 * @param Request $request
 	 */
-	public function __construct(Request $request) {
+	public function __construct(Request $request, PaymentRepository $paymentRepo) {
 		$this->request = $request;
+		$this->paymentRepo = $paymentRepo;
 	}
 	
 	/**
@@ -29,16 +32,15 @@ class TipController extends Controller
 		$user = Auth::user();
 		$city = $user->city;
 		
-		$sources = Tip::SOURCES;
-		
 		$users = User::where('enable', true)
 			->where('city_id', $city->id)
 			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
 			->get();
-
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
+		
 		return view('admin.tip.index', [
-			'sources' => $sources,
 			'users' => $users,
+			'paymentMethods' => $paymentMethods,
 		]);
 	}
 	
@@ -69,11 +71,8 @@ class TipController extends Controller
 		}
 		$tips = $tips->get();
 		
-		$sources = Tip::SOURCES;
-		
 		$VIEW = view('admin.tip.list', [
 			'tips' => $tips,
-			'sources' => $sources,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -99,18 +98,16 @@ class TipController extends Controller
 		$tip = Tip::find($id);
 		if (!$tip) return response()->json(['status' => 'error', 'reason' => 'Tip not found']);
 		
-		$sources = Tip::SOURCES;
-		
 		$users = User::where('enable', true)
 			->where('city_id', $city->id)
 			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
 			->get();
-		
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
 		$VIEW = view('admin.tip.modal.edit', [
 			'tip' => $tip,
-			'sources' => $sources,
 			'users' => $users,
+			'paymentMethods' => $paymentMethods,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -132,16 +129,15 @@ class TipController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 
-		$sources = Tip::SOURCES;
-		
 		$users = User::where('enable', true)
 			->where('city_id', $city->id)
 			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
 			->get();
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
 		$VIEW = view('admin.tip.modal.add', [
-			'sources' => $sources,
 			'users' => $users,
+			'paymentMethods' => $paymentMethods,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -184,13 +180,14 @@ class TipController extends Controller
 		
 		$user = Auth::user();
 		$city = $user->city;
-
+		$location = $user->location;
+		
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
 			'received_at' => 'required|date',
 			'admin_id' => 'required|numeric|min:0|not_in:0',
 			'pilot_id' => 'required|numeric|min:0|not_in:0',
-			'source' => 'required',
+			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
@@ -199,7 +196,7 @@ class TipController extends Controller
 				'received_at' => 'Receiving date',
 				'admin_id' => 'Admin',
 				'pilot_id' => 'Pilot',
-				'source' => 'Source',
+				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -209,8 +206,8 @@ class TipController extends Controller
 		$receivedAt = $this->request->received_at ?? null;
 		$adminId = $this->request->admin_id ?? 0;
 		$pilotId = $this->request->pilot_id ?? 0;
-		$source = $this->request->source ?? null;
 		$dealNumber = $this->request->deal_number ?? '';
+		$paymentMethodId = $this->request->payment_method_id ?? 0;
 		
 		$deal = null;
 		if ($dealNumber) {
@@ -226,10 +223,11 @@ class TipController extends Controller
 		$tip->received_at = Carbon::parse($receivedAt)->format('Y-m-d');
 		$tip->admin_id = $adminId;
 		$tip->pilot_id = $pilotId;
-		$tip->source = $source;
 		$tip->deal_id = $deal ? $deal->id : 0;
 		$tip->currency_id = $currency->id ?? 0;
 		$tip->city_id = $city->id ?? 0;
+		$tip->location_id = $location->id ?? 0;
+		$tip->payment_method_id = $paymentMethodId;
 		$tip->user_id = $user->id ?? 0;
 		if (!$tip->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
@@ -258,7 +256,7 @@ class TipController extends Controller
 			'received_at' => 'required|date',
 			'admin_id' => 'required|numeric|min:0|not_in:0',
 			'pilot_id' => 'required|numeric|min:0|not_in:0',
-			'source' => 'required',
+			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
@@ -267,7 +265,7 @@ class TipController extends Controller
 				'received_at' => 'Receiving date',
 				'admin_id' => 'Admin',
 				'pilot_id' => 'Pilot',
-				'source' => 'Source',
+				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
@@ -277,8 +275,8 @@ class TipController extends Controller
 		$receivedAt = $this->request->received_at ?? null;
 		$adminId = $this->request->admin_id ?? 0;
 		$pilotId = $this->request->pilot_id ?? 0;
-		$source = $this->request->source ?? null;
 		$dealNumber = $this->request->deal_number ?? '';
+		$paymentMethodId = $this->request->payment_method_id ?? 0;
 		
 		$deal = null;
 		if ($dealNumber) {
@@ -291,9 +289,9 @@ class TipController extends Controller
 		$tip->received_at = Carbon::parse($receivedAt)->format('Y-m-d');
 		$tip->admin_id = $adminId;
 		$tip->pilot_id = $pilotId;
-		$tip->source = $source;
 		$tip->deal_id = $deal ? $deal->id : 0;
 		$tip->user_id = $user->id ?? 0;
+		$tip->payment_method_id = $paymentMethodId;
 		if (!$tip->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}

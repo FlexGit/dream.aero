@@ -165,7 +165,7 @@ h1.block-title:after {
 }
 
 .rating__best {
-	background: url(/assets/img/rating/stars.png) no-repeat;
+	background: url(/assets/img/fly-737/rating/stars.png) no-repeat;
 	width: 130px;
 	height: 35px;
 	position: absolute;
@@ -210,7 +210,7 @@ h1.block-title:after {
 }
 
 .rating__star_opacity {
-	background: url(/assets/img/rating/rating_bg.png) repeat scroll 0 0 transparent;
+	background: url(/assets/img/fly-737/rating/rating_bg.png) repeat scroll 0 0 transparent;
 }
 
 .rating__star_hover {
@@ -218,7 +218,7 @@ h1.block-title:after {
 }
 
 .rating__current {
-	background: url(/assets/img/rating/stars.png) 0 -35px no-repeat;
+	background: url(/assets/img/fly-737/rating/stars.png) 0 -35px no-repeat;
 	height: 35px;
 	position: absolute;
 	background-size: 130px 210px;

@@ -59,11 +59,11 @@
 						<thead>
 							<tr>
 								<th class="text-center">Date</th>
+								<th class="text-center">Payment method</th>
+								<th class="text-center">Amount</th>
 								<th class="text-center">Admin</th>
 								<th class="text-center">Pilot</th>
-								<th class="text-center">Source</th>
 								<th class="text-center">Deal #</th>
-								<th class="text-center">Amount</th>
 								<th class="text-center">Action</th>
 							</tr>
 						</thead>

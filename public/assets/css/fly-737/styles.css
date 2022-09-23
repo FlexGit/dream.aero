@@ -10448,7 +10448,7 @@ input:checked+.slider:before,
 .content .main-block-full .fly i:after {
 	content: "";
 	display: inline-block;
-	background: transparent url("/assets/img/fly-ico.png") center center no-repeat;
+	background: transparent url("/assets/img/fly-737/fly-ico.png") center center no-repeat;
 	width: 28px;
 	height: 18px;
 	vertical-align: middle;
@@ -10479,7 +10479,7 @@ input:checked+.slider:before,
 	height: 17px;
 	vertical-align: middle;
 	margin-left: 10px;
-	background: transparent url("/assets/img/gift.png") no-repeat center center
+	background: transparent url("/assets/img/fly-737/gift.png") no-repeat center center
 }
 
 .content .main-block-full .scroll {
@@ -10525,7 +10525,7 @@ input:checked+.slider:before,
 	position: absolute;
 	left: -30px;
 	top: 7px;
-	background: url("/assets/img/arr.png") no-repeat;
+	background: url("/assets/img/fly-737/arr.png") no-repeat;
 	-ms-transform: rotate(90deg);
 	transform: rotate(90deg)
 }
@@ -10618,7 +10618,7 @@ input:checked+.slider:before,
 
 .content .obtain ul li {
 	min-height: 140px;
-	background: url("/assets/img/dots.png") no-repeat 60px top
+	background: url("/assets/img/fly-737/dots.png") no-repeat 60px top
 }
 
 .content .obtain ul li a {
@@ -10648,7 +10648,7 @@ input:checked+.slider:before,
 }
 
 .content .facts {
-	background: url("/assets/img/facts-bg.webp") center center no-repeat fixed;
+	background: url("/assets/img/fly-737/facts-bg.webp") center center no-repeat fixed;
 	background-size: cover;
 	min-height: 795px
 }
@@ -10833,7 +10833,7 @@ input:checked+.slider:before,
 .content .team .owl-nav .owl-prev {
 	width: 19px;
 	height: 36px;
-	background: url("/assets/img/slider-arr.png") no-repeat;
+	background: url("/assets/img/fly-737/slider-arr.png") no-repeat;
 	position: absolute;
 	left: -50px;
 	top: 120px;
@@ -10843,7 +10843,7 @@ input:checked+.slider:before,
 .content .team .owl-nav .owl-next {
 	width: 19px;
 	height: 36px;
-	background: url("/assets/img/slider-arr.png") no-repeat;
+	background: url("/assets/img/fly-737/slider-arr.png") no-repeat;
 	position: absolute;
 	right: -50px;
 	top: 120px;
@@ -10864,7 +10864,7 @@ input:checked+.slider:before,
 }
 
 .content .stock .fop {
-	background: url("/assets/img/URRP-01.png") no-repeat;
+	background: url("/assets/img/fly-737/URRP-01.png") no-repeat;
 	background-size: cover
 }
 
@@ -10929,7 +10929,7 @@ input:checked+.slider:before,
 .content .questions {
 	margin-top: 95px;
 	overflow: hidden;
-	background: url("/assets/img/dots1.png") no-repeat top center
+	background: url("/assets/img/fly-737/dots1.png") no-repeat top center
 }
 
 .content .questions h2 {
@@ -11127,7 +11127,7 @@ input:checked+.slider:before,
 	position: absolute;
 	left: 100px;
 	top: 40px;
-	background: url("/assets/img/dots3.png") no-repeat;
+	background: url("/assets/img/fly-737/dots3.png") no-repeat;
 	z-index: -1
 }
 
@@ -11792,7 +11792,7 @@ input:checked+.slider:before,
 .popup.reservation-popup .popup-submit i:after {
 	content: "";
 	display: inline-block;
-	background: transparent url("/assets/img/fly-ico.png") center center no-repeat;
+	background: transparent url("/assets/img/fly-737/fly-ico.png") center center no-repeat;
 	width: 28px;
 	height: 18px;
 	vertical-align: middle;
@@ -11818,7 +11818,7 @@ input:checked+.slider:before,
 button.mfp-close {
 	transition: .2s;
 	font-size: 0;
-	background: transparent url("/assets/img/close.png") center center no-repeat
+	background: transparent url("/assets/img/fly-737/close.png") center center no-repeat
 }
 
 .mfp-fade.mfp-bg {
@@ -11991,7 +11991,7 @@ div#popup-vegmap img {
 	left: -120px;
 	z-index: -1;
 	top: 130px;
-	background: url("/assets/img/dots4.png") no-repeat
+	background: url("/assets/img/fly-737/dots4.png") no-repeat
 }
 
 .blockgallery {
@@ -12078,7 +12078,7 @@ button.ajax-reset {
 	padding: 35px;
 	min-height: 265px;
 	vertical-align: top;
-	background: url("/assets/img/dots.png") no-repeat 60px 35px
+	background: url("/assets/img/fly-737/dots.png") no-repeat 60px 35px
 }
 
 .offer:hover {
@@ -12114,7 +12114,7 @@ h2.block-title.white {
 }
 
 .pr.facts {
-	background: url("/assets/img/background-price.png") center center no-repeat fixed;
+	background: url("/assets/img/fly-737/background-price.png") center center no-repeat fixed;
 	background-size: cover;
 	min-height: 795px
 }
@@ -12296,11 +12296,11 @@ input[type="radio"]:not(.coltrktab)+label::before {
 }
 
 .first-filtr input[type="radio"]+label::before {
-	background-image: url("/assets/img/icon_photo_or.png")
+	background-image: url("/assets/img/fly-737/icon_photo_or.png")
 }
 
 .second-filtr input[type="radio"]+label::before {
-	background-image: url("/assets/img/icon_video_or.png")
+	background-image: url("/assets/img/fly-737/icon_video_or.png")
 }
 
 input[type="radio"]:checked+label::before {
@@ -12309,11 +12309,11 @@ input[type="radio"]:checked+label::before {
 }
 
 .first-filtr input[type="radio"]:checked+label::before {
-	background-image: url("/assets/img/icon_photo_w.png")
+	background-image: url("/assets/img/fly-737/icon_photo_w.png")
 }
 
 .second-filtr input[type="radio"]:checked+label::before {
-	background-image: url("/assets/img/icon_video_w.png")
+	background-image: url("/assets/img/fly-737/icon_video_w.png")
 }
 
 input[type="radio"]:hover+label::before {
@@ -12322,11 +12322,11 @@ input[type="radio"]:hover+label::before {
 }
 
 .first-filtr input[type="radio"]:hover+label::before {
-	background-image: url("/assets/img/icon_photo_w.png")
+	background-image: url("/assets/img/fly-737/icon_photo_w.png")
 }
 
 .second-filtr input[type="radio"]:hover+label::before {
-	background-image: url("/assets/img/icon_video_w.png")
+	background-image: url("/assets/img/fly-737/icon_video_w.png")
 }
 
 input[type="radio"]+label::after {
@@ -12408,7 +12408,7 @@ input[type="radio"]:checked+label span {
 		left: 177px;
 		z-index: -1;
 		top: -28px;
-		background: url("/assets/img/dots4.png") no-repeat
+		background: url("/assets/img/fly-737/dots4.png") no-repeat
 	}
 }
 
@@ -12459,7 +12459,7 @@ span.city {
 }
 
 .content .obtain .gallery-button li {
-	background: url("/assets/img/dots.png") no-repeat 60px 20px
+	background: url("/assets/img/fly-737/dots.png") no-repeat 60px 20px
 }
 
 .content .obtain .gallery-button li:hover {
@@ -12470,7 +12470,7 @@ span.city {
 	color: #949493;
 	padding: 12px 85px 8px 0;
 	font: 400 12px "Proxima Nova", sans-serif;
-	background: url("/assets/img/web365_logo.png") right no-repeat;
+	background: url("/assets/img/fly-737/web365_logo.png") right no-repeat;
 	line-height: 30px;
 	text-decoration: none
 }
@@ -12936,23 +12936,23 @@ div.about a {
 }
 
 .icon-fb {
-	background-image: url("/assets/img/fb.png")
+	background-image: url("/assets/img/fly-737/fb.png")
 }
 
 .icon-vk {
-	background-image: url("/assets/img/vk.png")
+	background-image: url("/assets/img/fly-737/vk.png")
 }
 
 .icon-telegram {
-	background-image: url("/assets/img/telegram.png")
+	background-image: url("/assets/img/fly-737/telegram.png")
 }
 
 .icon-inst {
-	background-image: url("/assets/img/inst.png")
+	background-image: url("/assets/img/fly-737/inst.png")
 }
 
 .icon-yout {
-	background-image: url("/assets/img/you.png")
+	background-image: url("/assets/img/fly-737/you.png")
 }
 
 .social div {
@@ -13018,7 +13018,7 @@ div.about a {
 .whapp_button_ic {
 	width: 100%;
 	height: 100%;
-	background: url("/assets/img/w_chat_icon.png") 50% no-repeat;
+	background: url("/assets/img/fly-737/w_chat_icon.png") 50% no-repeat;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -13502,7 +13502,7 @@ div.about a {
 
 @media screen and (max-width:767px) {
 	.content .main-block-full.str {
-		background: url("/assets/img/main-bg2.jpg") no-repeat bottom
+		background: url("/assets/img/fly-737/main-bg2.jpg") no-repeat bottom
 	}
 	blockquote p {
 		margin: 0 !important;

@@ -14,7 +14,7 @@
 .left-price .top-inf p.bold{font-weight:600;font-size:21px;}
 .left-price .bottom-inf p.bold, .left-price .ab-inf p.bold{font-weight:600;font-size:21px;}
 .left-price .bottom-inf p, .left-price .ab-inf p{color:white;}
-.left-price:after{content:'';width:100%;height:450px;position:absolute;left:-120px;top:130px;background:url(../img/dots4.png) no-repeat;}
+.left-price:after{content:'';width:100%;height:450px;position:absolute;left:-120px;top:130px;background:url(../img/fly-737/dots4.png) no-repeat;}
 .tabs__content{display:none;}
 .tabs__content.active{display:block;}
 .tabs2__content{display:none;}
@@ -44,11 +44,11 @@ a.bron.button-pipaluk.button-pipaluk-orange.popup-with-form{color:white;text-tra
 .prices .block-price a.bron.button-pipaluk.button-pipaluk-orange.popup-with-form{display:inherit;margin-bottom:7px; width: 94%;}
 .block-price.ather{width:285px;background:#f7f7f9;padding:0 20px 40px;margin:60px auto;display:block;}
 .block-price.ather button{background:#e11540;border:none;color:white;text-transform:uppercase;font-size:14px;letter-spacing:1px;padding:10px 70px;}
-.block-price.ather:after{content:'';width:50%;height:72%;position:absolute;left:287px;top:44px;z-index:-1;background:url(../img/dots4.png) no-repeat;}
+.block-price.ather:after{content:'';width:50%;height:72%;position:absolute;left:287px;top:44px;z-index:-1;background:url(../img/fly-737/dots4.png) no-repeat;}
 .row.free img{width:100%;}
 .row.free .photo{position:relative;}
-.row.free .photo:after{content:'';width:100%;height:100%;position:absolute;left:-120px;z-index:-1;top:40px;background:url(../img/dots-one.png);}
-.row.free .col-md-6:nth-of-type(3n+3) .photo:after{content:'';width:100%;height:100%;position:absolute;left:120px;z-index:-1;top:40px;background:url(../img/dots-one.png);}
+.row.free .photo:after{content:'';width:100%;height:100%;position:absolute;left:-120px;z-index:-1;top:40px;background:url(../img/fly-737/dots-one.png);}
+.row.free .col-md-6:nth-of-type(3n+3) .photo:after{content:'';width:100%;height:100%;position:absolute;left:120px;z-index:-1;top:40px;background:url(../img/fly-737/dots-one.png);}
 .row.free p{font-size:18px;padding:84px 20px;line-height:35px;margin:0;color:#4e4d52;}
 .row.free .col-md-6{margin-bottom:100px;}
 .relax h2.block-title{margin:90px 0 70px;}
@@ -226,22 +226,14 @@ margin:20px 0;
 }
 
 #saletxt {
-    
-   /* background-image: url(/assets/img/plasha.png);
-    background-position: bottom; background-size: cover;*/
     float:right;
-   
     color:#F35D1C;
-        width: 250px;
-    
+    width: 250px;
     height:80px;
- 
 }
 #saletxt p{
     text-transform:uppercase;
     margin: 0;
- /*   padding: 15px 0 0 75px;
-    font-size: 14px;*/
     font-size: 12px;
     text-align: center;
     font-weight:bold;

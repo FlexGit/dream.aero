@@ -118,11 +118,11 @@
 	background-position: center;
 }
 
-.slide1 { background-image: url('/assets/img/NIK_4441.jpg'); }
-.slide2 { background-image: url('/assets/img/2.jpg'); }
-.slide3 { background-image: url('/assets/img/adultparty.jpg'); }
-.slide4 { background-image: url('/assets/img/kidsparty.jpg'); }
-.slide5 { background-image: url('/assets/img/kid.jpg'); }
+.slide1 { background-image: url('/assets/img/fly-737/NIK_4441.jpg'); }
+.slide2 { background-image: url('/assets/img/fly-737/2.jpg'); }
+.slide3 { background-image: url('/assets/img/fly-737/adultparty.jpg'); }
+.slide4 { background-image: url('/assets/img/fly-737/kidsparty.jpg'); }
+.slide5 { background-image: url('/assets/img/fly-737/kid.jpg'); }
 .wrapper .controls,.wrapper1 .controls1 {
 	text-align: center;
 }

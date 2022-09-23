@@ -392,12 +392,12 @@ return [
 					'can'  => 'is_superadmin',
 					'icon' => 'far fa-circle nav-icon',
 				],
-				[
+				/*[
 					'text' => 'Cash Flow',
 					'url'  => '/report/cash-flow',
 					'can'  => 'is_superadmin',
 					'icon' => 'far fa-circle nav-icon',
-				],
+				],*/
             ],
         ],
 		[

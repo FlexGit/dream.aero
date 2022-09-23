@@ -18,7 +18,6 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property \Illuminate\Support\Carbon|null $received_at дата получения
  * @property int $admin_id
  * @property int $pilot_id
- * @property string|null $source источник
  * @property int $user_id пользователь
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -45,12 +44,15 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Tip whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tip wherePilotId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tip whereReceivedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Tip whereSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tip whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Tip whereUserId($value)
  * @method static \Illuminate\Database\Query\Builder|Tip withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Tip withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \App\Models\Location|null $location
+ * @property-read \App\Models\PaymentMethod|null $paymentMethod
+ * @property string|null $source источник
+ * @method static \Illuminate\Database\Eloquent\Builder|Tip whereSource($value)
  */
 class Tip extends Model
 {
@@ -61,10 +63,11 @@ class Tip extends Model
 		'amount' => 'Amount',
 		'currency_id' => 'Currency',
 		'city_id' => 'City',
+		'location_id' => 'Location',
+		'payment_method_id' => 'Payment method',
 		'received_at' => 'Received',
 		'admin_id' => 'Admin',
 		'pilot_id' => 'Pilot',
-		'source' => 'Source',
 		'user_id' => 'User',
 		'created_at' => 'Created',
 		'updated_at' => 'Updated',
@@ -84,10 +87,11 @@ class Tip extends Model
 		'amount',
 		'currency_id',
 		'city_id',
+		'location_id',
+		'payment_method_id',
 		'received_at',
 		'admin_id',
 		'pilot_id',
-		'source',
 		'user_id',
 	];
 	
@@ -101,17 +105,6 @@ class Tip extends Model
 		'created_at' => 'datetime:Y-m-d H:i:s',
 		'updated_at' => 'datetime:Y-m-d H:i:s',
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
-	];
-	
-	const CARD = 'card';
-	const CASH = 'cash';
-	const VENMO = 'venmo';
-	const ETIP = 'etip';
-	const SOURCES = [
-		self::CARD => 'Credit card',
-		self::CASH => 'Cash',
-		self::VENMO => 'Venmo',
-		self::ETIP => 'eTip',
 	];
 	
 	public function deal()
@@ -134,6 +127,16 @@ class Tip extends Model
 		return $this->belongsTo(City::class);
 	}
 	
+	public function location()
+	{
+		return $this->belongsTo(Location::class);
+	}
+	
+	public function paymentMethod()
+	{
+		return $this->belongsTo(PaymentMethod::class);
+	}
+
 	public function admin()
 	{
 		return $this->belongsTo(User::class);

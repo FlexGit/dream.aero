@@ -38,6 +38,7 @@ class PaymentMethod extends Model
     use HasFactory, SoftDeletes;
 
 	const ONLINE_ALIAS = 'online';
+	const CASH_ALIAS = 'cash';
 
 	/**
 	 * The attributes that are mass assignable.
