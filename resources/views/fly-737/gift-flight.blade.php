@@ -28,7 +28,7 @@
 				<div class="row">
 					<div class="col-md-12 about-simulator">
 						<h2>@lang('main.gift-certificates.что-мы-предлагаем')</h2>
-						<a href="{{ url('#popup-offer-1') }}" class="popup-with-form offer" style="background-image: url({{ asset('img/' . Session::get('domain') . '/blok_1.png') }});background-position: top; background-size: cover;" data-popup-type="info" data-alias="offer-5">
+						<a href="{{ url('#popup-offer-1') }}" class="popup-with-form offer" style="background-image: url({{ asset('img/' . Session::get('domain') . '/Blok_1.png') }});background-position: top; background-size: cover;" data-popup-type="info" data-alias="offer-5">
 							<img src="{{ asset('img/' . Session::get('domain') . '/facts-ico3.png') }}" alt="">
 							<p class="bold">100% AUTHENTIC COCKPIT</p>
 							<p>Feel the flight controls reverberate in your hands and the might of the aircraft as it pierces through the air. Learn the complexities of flying a plane aboard a simulator that provides a very lifelike experience. Our cockpit simulator is an exact copy of a real cockpit, and all equipment found on board is identical to the instruments found on a real aircraft.</p>

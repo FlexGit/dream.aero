@@ -36,7 +36,7 @@
 
 						<h2>@lang('main.o-trenazhere.что-мы-предлагаем')</h2>
 
-						<a href="{{ url('#popup-offer-1') }}" class="popup-with-form offer" style="background-image: url({{ asset('img/' . Session::get('domain') . '/blok_1.png') }});background-position: top; background-size: cover;" data-popup-type="info" data-alias="offer-1">
+						<a href="{{ url('#popup-offer-1') }}" class="popup-with-form offer" style="background-image: url({{ asset('img/' . Session::get('domain') . '/Blok_1.png') }});background-position: top; background-size: cover;" data-popup-type="info" data-alias="offer-1">
 							<img src="{{ asset('img/' . Session::get('domain') . '/facts-ico3.png') }}" alt="">
 							<p class="bold">SUPPORT OF AN EXPERIENCED PILOT INSTRUCTOR</p>
 							<p></p>
