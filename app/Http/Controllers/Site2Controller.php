@@ -979,7 +979,7 @@ class Site2Controller extends Controller
 				->oldest()
 				->get();
 			foreach ($pages as $page) {
-				if (in_array($page->alias, [Content::GUESTS_TYPE, 'payment'])) continue;
+				if (in_array($page->alias, [Content::GUESTS_TYPE, 'payment', 'treating-aerophobia_dc', 'world-of-aviation_dc', 'flight-briefing_dc', 'prof-assistance_dc', 'impressions_dc', 'rules_dc', 'privacy-policy_dc', 'private-events_dc'])) continue;
 				if (mb_strpos($page->title, 'Admin') !== false) continue;
 				
 				$url = explode('_', $page->alias);
