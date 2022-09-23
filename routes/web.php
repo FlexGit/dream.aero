@@ -438,6 +438,9 @@ Route::domain(env('DOMAIN_SITE2', 'fly-737.com'))->group(function () {
 		Route::get('contacts', [Site2Controller::class, 'contacts']);
 	});
 	
+	Route::get('modal/callback', [Site2Controller::class, 'getCallbackModal']);
+	Route::get('modal/info/{alias}', [Site2Controller::class, 'getInfoModal']);
+	
 	Route::post('callback', [Site2Controller::class, 'callback'])->name('callbackRequestStore');
 	Route::post('question', [Site2Controller::class, 'question'])->name('questionStore');
 });
