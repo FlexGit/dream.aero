@@ -25,7 +25,7 @@
 		<td class="align-top text-center font-weight-bold">Type</td>
 		<td class="align-top text-center font-weight-bold">Payment method</td>
 		<td class="align-top text-center font-weight-bold">Amount</td>
-		<td class="align-top text-center font-weight-bold">Details</td>
+		<td class="align-top text-center font-weight-bold">Extra</td>
 	</tr>
 	@if(count($items))
 		@foreach($items as $date => $dateItems)
@@ -44,7 +44,7 @@
 						{{ $dateItem['currency'] }}{{ number_format($dateItem['amount'], 2, '.', ' ') }}
 					</td>
 					<td class="align-top text-center">
-						{{ $dateItem['details'] }}
+						{{ $dateItem['extra'] }}
 					</td>
 				</tr>
 			@endforeach

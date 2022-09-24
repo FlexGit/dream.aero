@@ -53,6 +53,10 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @property-read \App\Models\PaymentMethod|null $paymentMethod
  * @property string|null $source источник
  * @method static \Illuminate\Database\Eloquent\Builder|Tip whereSource($value)
+ * @property int $location_id
+ * @property int $payment_method_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Tip whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tip wherePaymentMethodId($value)
  */
 class Tip extends Model
 {

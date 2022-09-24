@@ -48,6 +48,8 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Query\Builder|Operation withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Operation withoutTrashed()
  * @mixin \Eloquent
+ * @property array|null $data_json
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereDataJson($value)
  */
 class Operation extends Model
 {
@@ -62,6 +64,7 @@ class Operation extends Model
 		'location_id' => 'Location',
 		'operated_at' => 'Operation date',
 		'user_id' => 'User',
+		'data_json' => 'Extra info',
 		'created_at' => 'Created',
 		'updated_at' => 'Updated',
 		'deleted_at' => 'Deleted',
@@ -69,6 +72,7 @@ class Operation extends Model
 
 	protected $revisionForceDeleteEnabled = true;
 	protected $revisionCreationsEnabled = true;
+	protected $dontKeepRevisionOf = ['data_json'];
 	
 	/**
 	 * The attributes that are mass assignable.
@@ -84,6 +88,7 @@ class Operation extends Model
 		'location_id',
 		'operated_at',
 		'user_id',
+		'data_json'
 	];
 	
 	/**
@@ -96,6 +101,7 @@ class Operation extends Model
 		'created_at' => 'datetime:Y-m-d H:i:s',
 		'updated_at' => 'datetime:Y-m-d H:i:s',
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
+		'data_json' => 'array',
 	];
 	
 	const EXPENSE = 'expense';

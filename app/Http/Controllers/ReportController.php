@@ -455,6 +455,7 @@ class ReportController extends Controller {
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
 					'currency' => $operation->currency ? $operation->currency->name : '',
+					'extra' => $operation->data_json['comment'],
 				];
 			}
 		}
@@ -484,7 +485,17 @@ class ReportController extends Controller {
 				
 				$product = $deal->product;
 				$productType = $product ? $product->productType : null;
+				$promo = $deal->promo;
+				$promocode = $deal->promocode;
 				$bills = $deal->bills;
+				
+				$extra = [];
+				$extra[] = $deal->is_certificate_purchase ? 'Voucher' : ($deal->certificate ? 'Flight by Voucher' : 'Flight');
+				$extra[] = $deal->certificate ? $deal->certificate->number : '';
+				$extra[] = $product->name;
+				$extra[] = $promo ? $promo->name : '';
+				$extra[] = $promocode ? $promocode->number : '';
+				
 				$paymentMethodNames = [];
 				foreach ($bills as $bill) {
 					/** @var Bill $bill */
@@ -497,6 +508,7 @@ class ReportController extends Controller {
 					'payment_method' => implode(' / ', $paymentMethodNames),
 					'amount' => $deal->total_amount,
 					'currency' => $deal->currency ? $deal->currency->name : '',
+					'extra' => implode(', ', array_filter($extra)),
 				];
 			}
 		}
@@ -519,6 +531,7 @@ class ReportController extends Controller {
 					'payment_method' => $tip->paymentMethod ? $tip->paymentMethod->name : '',
 					'amount' => $tip->amount,
 					'currency' => $tip->currency ? $tip->currency->name : '',
+					'extra' => '',
 				];
 			}
 		}

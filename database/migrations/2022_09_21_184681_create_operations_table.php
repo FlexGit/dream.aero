@@ -23,6 +23,7 @@ class CreateOperationsTable extends Migration
 			$table->integer('location_id')->default(0)->index()->comment('локация');
 			$table->date('operated_at')->nullable()->comment('дата операции');
 			$table->integer('user_id')->default(0)->index()->comment('пользователь');
+			$table->text('data_json')->nullable()->comment('дополнительная информация');
             $table->timestamps();
 			$table->softDeletes();
         });
