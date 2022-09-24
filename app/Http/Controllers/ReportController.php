@@ -494,8 +494,8 @@ class ReportController extends Controller {
 				$extra[] = $deal->is_certificate_purchase ? 'Voucher' : ($deal->certificate ? 'Flight by Voucher' : 'Flight');
 				$extra[] = $deal->certificate ? $deal->certificate->number : '';
 				$extra[] = $product->name;
-				$extra[] = $promo ? ($promo->name . ($promo->discount ? $promo->discount->valueFormatted() : '')) : '';
-				$extra[] = $promocode ? ($promocode->number . ($promocode->discount ? $promocode->discount->valueFormatted() : '')) : '';
+				$extra[] = $promo ? ($promo->name . ($promo->discount ? ' ' . $promo->discount->valueFormatted() : '')) : '';
+				$extra[] = $promocode ? ($promocode->number . ($promocode->discount ? ' ' . $promocode->discount->valueFormatted() : '')) : '';
 				
 				$paymentMethodNames = [];
 				foreach ($bills as $bill) {
