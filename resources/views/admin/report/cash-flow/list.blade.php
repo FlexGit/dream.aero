@@ -44,7 +44,7 @@
 						{{ $dateItem['currency'] }}{{ number_format($dateItem['amount'], 2, '.', ' ') }}
 					</td>
 					<td class="align-top text-center">
-						{{ $dateItem['extra'] }}
+						{!! $dateItem['extra'] !!}
 					</td>
 				</tr>
 			@endforeach
