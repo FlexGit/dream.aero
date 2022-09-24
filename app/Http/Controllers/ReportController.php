@@ -490,6 +490,7 @@ class ReportController extends Controller {
 				$bills = $deal->bills;
 				
 				$extra = [];
+				$extra[] = $deal->number;
 				$extra[] = $deal->is_certificate_purchase ? 'Voucher' : ($deal->certificate ? 'Flight by Voucher' : 'Flight');
 				$extra[] = $deal->certificate ? $deal->certificate->number : '';
 				$extra[] = $product->name;
