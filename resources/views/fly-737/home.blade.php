@@ -32,7 +32,7 @@
 			<div class="text-block">
 				<p>
 					We are pleased to introduce Full Motion flight simulators of the famous passenger airliner in the US. Designed as a real plane cockpit, this simulator is analogous to the simulators used for training real-life pilots. Test the pilot in you!
-					<a href="{{ url('about-simulator') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main.home.подробнее')</i></a>
+					<a href="{{ url('about-simulator') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main-fly737.home.подробнее')</i></a>
 				</p>
 			</div>
 		</div>
@@ -43,7 +43,7 @@
 
 	<div class="obtain">
 		<div class="container">
-			<h3>@lang('main.home.что-вы-получите')</h3>
+			<h3>@lang('main-fly737.home.что-вы-получите')</h3>
 			<ul class="row">
 				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
 					<a href="{{ url('impressions') }}">
@@ -76,15 +76,15 @@
 
 	<div class="facts pages" id="home" data-type="background" data-speed="20">
 		<div class="container">
-			<h2 class="block-title">@lang('main.home.несколько-фактов-о-нас')</h2>
+			<h2 class="block-title">@lang('main-fly737.home.несколько-фактов-о-нас')</h2>
 			<ul class="row">
 				<li class="col-md-3 wow">
 					<div class="ico">
 						<img src="{{ asset('img/' . Session::get('domain') . '/facts-ico1.webp') }}" alt="" width="41" height="">
 					</div>
 					<div class="wow fadeInUp" data-wow-delay="0" data-wow-duration="2s">
-						<span>@lang('main.home.динамическая-платформа')</span>
-						<p>@lang('main.home.устройство-представляет-собой-подвижную-систему')</p>
+						<span>@lang('main-fly737.home.динамическая-платформа')</span>
+						<p>@lang('main-fly737.home.устройство-представляет-собой-подвижную-систему')</p>
 					</div>
 				</li>
 				<li class="col-md-3 wow">
@@ -92,8 +92,8 @@
 						<img src="{{ asset('img/' . Session::get('domain') . '/facts-ico4.webp') }}" alt="" width="40" height="">
 					</div>
 					<div class="wow fadeInUp" data-wow-delay="0" data-wow-duration="2s">
-						<span>@lang('main.home.визуализация-и-ощущения')</span>
-						<p>@lang('main.home.панорамное-остекление-кабины')</p>
+						<span>@lang('main-fly737.home.визуализация-и-ощущения')</span>
+						<p>@lang('main-fly737.home.панорамное-остекление-кабины')</p>
 					</div>
 				</li>
 				<li class="col-md-3 wow">
@@ -101,8 +101,8 @@
 						<img src="{{ asset('img/' . Session::get('domain') . '/facts-ico3.webp') }}" alt="" width="42" height="">
 					</div>
 					<div class="wow fadeInUp" data-wow-delay="0" data-wow-duration="2s">
-						<span>@lang('main.home.оборудование-и-приборы')</span>
-						<p>@lang('main.home.все-приборы-настоящие')</p>
+						<span>@lang('main-fly737.home.оборудование-и-приборы')</span>
+						<p>@lang('main-fly737.home.все-приборы-настоящие')</p>
 					</div>
 				</li>
 				<li class="col-md-3 wow">
@@ -110,8 +110,8 @@
 						<img src="{{ asset('img/' . Session::get('domain') . '/facts-ico2.webp') }}" alt="" width="40" height="">
 					</div>
 					<div class="wow fadeInUp" data-wow-delay="0" data-wow-duration="2s">
-						<span>@lang('main.home.индивидуальный-подход')</span>
-						<p>@lang('main.home.сотрудник-компании-быстро-реагирует')</p>
+						<span>@lang('main-fly737.home.индивидуальный-подход')</span>
+						<p>@lang('main-fly737.home.сотрудник-компании-быстро-реагирует')</p>
 					</div>
 				</li>
 			</ul>
@@ -120,13 +120,13 @@
 
 	<div class="variants" id="variants">
 		<div class="container">
-			<h2 class="block-title">@lang('main.home.варианты-полета')</h2>
+			<h2 class="block-title">@lang('main-fly737.home.варианты-полета')</h2>
 		</div>
 		<div class="items">
 			<div class="text">
 				<p>
-					@lang('main.home.команда-может-предложить-любой-вариант-полёта')
-					<a href="{{ url('flight-options') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main.home.подробнее2')</i></a>
+					@lang('main-fly737.home.команда-может-предложить-любой-вариант-полёта')
+					<a href="{{ url('flight-options') }}" class="button-pipaluk button-pipaluk-white"><i>@lang('main-fly737.home.подробнее2')</i></a>
 				</p>
 			</div>
 			<div class="item-left" id="varsL">
@@ -158,7 +158,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8">
-					<h2 class="block-title">@lang('main.home.акции')</h2>
+					<h2 class="block-title">@lang('main-fly737.home.акции')</h2>
 					<div class="text">
 						<ul style="color: #fff;">
 							<li>

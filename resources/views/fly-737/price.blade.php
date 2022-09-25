@@ -6,11 +6,11 @@
 @section('description', $page->meta_description)
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main.home.title')</a> <span>@lang('main.price.title')</span></div>
+	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main-fly737.home.title')</a> <span>@lang('main-fly737.price.title')</span></div>
 
 	<article class="article">
 		<div class="container">
-			<h1 class="block-title">@lang('main.price.title')</h1>
+			<h1 class="block-title">@lang('main-fly737.price.title')</h1>
 			<div class="article-content">
 				<div class="row">
 					<div class="col-md-12 price">

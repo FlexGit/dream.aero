@@ -2,8 +2,8 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-7">
-				<h2>@lang('main.question.у-вас-остались-вопросы')</h2>
-				<span>@lang('main.question.напишите-менеджеру-компании')</span>
+				<h2>@lang('main-fly737.question.у-вас-остались-вопросы')</h2>
+				<span>@lang('main-fly737.question.напишите-менеджеру-компании')</span>
 				<img src="{{ asset('img/' . Session::get('domain') . '/bplane.webp') }}" alt="" width="100%" height="auto">
 			</div>
 			<div class="col-md-5">
@@ -23,7 +23,7 @@
 
 						<div>
 							<div class="alert alert-success hidden" style="background-color: transparent;border-color: transparent;color: #fff;" role="alert">
-								@lang('main.question.сообщение-успешно-отправлено')
+								@lang('main-fly737.question.сообщение-успешно-отправлено')
 							</div>
 							<div class="alert alert-danger hidden" style="background-color: transparent;border-color: transparent;color: #fff;" role="alert"></div>
 						</div>

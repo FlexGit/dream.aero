@@ -6,7 +6,7 @@
 @section('description', $page->meta_description)
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main.home.title')</a> <span>@lang('main.o-trenazhere.title')</span></div>
+	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main-fly737.home.title')</a> <span>@lang('main-fly737.o-trenazhere.title')</span></div>
 
 	<article class="article">
 		<div class="container">

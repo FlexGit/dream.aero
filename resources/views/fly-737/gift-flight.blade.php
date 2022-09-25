@@ -6,7 +6,7 @@
 @section('description', $page->meta_description)
 
 @section('content')
-	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main.home.title')</a> <span>Gift vouchers</span></div>
+	<div class="breadcrumbs container"><a href="{{ url('/') }}">@lang('main-fly737.home.title')</a> <span>Gift vouchers</span></div>
 
 	<div class="about simul" id="about">
 		<div class="container">
@@ -14,7 +14,7 @@
 
 			<div class="text-block wow fadeInRight simul" data-wow-delay="0.5s" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-delay: 0.5s; animation-name: fadeInRight; margin-top: 0;">
 				{{--<p><a href="{{ url('#popup') }}" class="button-pipaluk button-pipaluk-white popup-with-form form_open" data-modal="certificate"><span style="color: #f35d1c;">Buy Now</span></a></p>--}}
-				<p>@lang('main.gift-certificates.кто-не-мечтал-в-детстве-стать-лётчиком')</p>
+				<p>@lang('main-fly737.gift-certificates.кто-не-мечтал-в-детстве-стать-лётчиком')</p>
 			</div>
 		</div>
 		<div class="image wow fadeInLeft" data-wow-delay="1s" data-wow-duration="2s" style="visibility: visible; animation-duration: 2s; animation-delay: 1s; animation-name: fadeInLeft;">
@@ -27,7 +27,7 @@
 			<div class="article-content">
 				<div class="row">
 					<div class="col-md-12 about-simulator">
-						<h2>@lang('main.gift-certificates.что-мы-предлагаем')</h2>
+						<h2>@lang('main-fly737.gift-certificates.что-мы-предлагаем')</h2>
 						<a href="{{ url('#popup-offer-1') }}" class="popup-with-form offer" style="background-image: url({{ asset('img/' . Session::get('domain') . '/Blok_1.png') }});background-position: top; background-size: cover;" data-popup-type="info" data-alias="offer-5">
 							<img src="{{ asset('img/' . Session::get('domain') . '/facts-ico3.png') }}" alt="">
 							<p class="bold">100% AUTHENTIC COCKPIT</p>
