@@ -207,12 +207,12 @@ class OperationController extends Controller
 		$operatedAt = $this->request->operated_at ?? null;
 		$type = $this->request->type ?? null;
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
-		$comments = $this->request->comments ?? null;
+		$comment = $this->request->comment ?? null;
 		
 		$currency = $city->currency;
 		
 		$data = [];
-		$data['comments'] = $comments;
+		$data['comment'] = $comment;
 		
 		$operation = new Operation();
 		$operation->amount = $amount;
@@ -268,10 +268,10 @@ class OperationController extends Controller
 		$operatedAt = $this->request->operated_at ?? null;
 		$type = $this->request->type ?? null;
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
-		$comments = $this->request->comments ?? null;
+		$comment = $this->request->comment ?? null;
 		
 		$data = $operation->data_json;
-		$data['comments'] = $comments;
+		$data['comment'] = $comment;
 		
 		$operation->amount = $amount;
 		$operation->operated_at = Carbon::parse($operatedAt)->format('Y-m-d');

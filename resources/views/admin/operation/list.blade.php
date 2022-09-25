@@ -4,7 +4,7 @@
 		<td class="text-center">{{ isset($types[$operation->type]) ? $types[$operation->type] : $operation->type }}</td>
 		<td class="text-center">{{ $operation->paymentMethod ? $operation->paymentMethod->name : '' }}</td>
 		<td class="text-right">{{ number_format($operation->amount, 2, '.', ' ') }}</td>
-		<td class="text-center">{{ isset($operation->data_json['comments']) ? $operation->data_json['comments'] : '' }}</td>
+		<td class="text-center">{{ isset($operation->data_json['comment']) ? $operation->data_json['comment'] : '' }}</td>
 		<td class="text-center">
 			<a href="javascript:void(0)" data-toggle="modal" data-url="/operation/{{ $operation->id }}/edit" data-action="/operation/{{ $operation->id }}" data-method="PUT" data-title="Edit Operation">
 				<i class="fa fa-edit" aria-hidden="true"></i>

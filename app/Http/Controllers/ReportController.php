@@ -480,7 +480,7 @@ class ReportController extends Controller {
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
 					'currency' => $operation->currency ? $operation->currency->name : '',
-					'extra' => $operation->data_json['comment'],
+					'extra' => isset($operation->data_json['comment']) ? $operation->data_json['comment'] : '',
 				];
 			}
 		}

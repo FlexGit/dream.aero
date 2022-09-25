@@ -42,8 +42,8 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="comments">Comments</label>
-			<textarea class="form-control" id="comments" name="comments"></textarea>
+			<label for="comment">Comment</label>
+			<textarea class="form-control" id="comment" name="comment"></textarea>
 		</div>
 	</div>
 </div>
