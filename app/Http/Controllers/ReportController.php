@@ -475,7 +475,7 @@ class ReportController extends Controller {
 			$operations = $operations->get();
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
-				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->timestamp][] = [
+				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
 					'type' => $types[$operation->type],
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
@@ -529,7 +529,7 @@ class ReportController extends Controller {
 				}
 				$paymentMethodNames = array_unique($paymentMethodNames);
 				
-				$items[Carbon::parse($deal->created_at)->format('Ym')][Carbon::parse($deal->created_at)->timestamp][] = [
+				$items[Carbon::parse($deal->created_at)->format('Ym')][Carbon::parse($deal->created_at)->endOfDay()->timestamp][] = [
 					'type' => ($productType && $productType->alias == ProductType::TAX_ALIAS) ? $types[Operation::TAX] : $types[Operation::DEAL],
 					'payment_method' => implode(' / ', $paymentMethodNames),
 					'amount' => $deal->total_amount,
@@ -552,7 +552,7 @@ class ReportController extends Controller {
 			$tips = $tips->get();
 			foreach ($tips as $tip) {
 				/** @var Tip $tip */
-				$items[Carbon::parse($tip->received_at)->format('Ym')][Carbon::parse($tip->received_at)->timestamp][] = [
+				$items[Carbon::parse($tip->received_at)->format('Ym')][Carbon::parse($tip->received_at)->endOfDay()->timestamp][] = [
 					'type' => $types[Operation::TIP],
 					'payment_method' => $tip->paymentMethod ? $tip->paymentMethod->name : '',
 					'amount' => $tip->amount,
@@ -561,6 +561,9 @@ class ReportController extends Controller {
 				];
 			}
 		}
+		
+		ksort($items);
+		array_walk($items, 'ksort');
 		
 		$balanceItems = [];
 		foreach ($paymentMethods as $paymentMethod) {
