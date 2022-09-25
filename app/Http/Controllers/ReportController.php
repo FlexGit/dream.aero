@@ -17,6 +17,7 @@ use App\Repositories\CityRepository;
 use App\Repositories\PaymentRepository;
 use Auth;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Services\HelpFunctions;
 use Illuminate\Support\Facades\Storage;
@@ -431,6 +432,30 @@ class ReportController extends Controller {
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
 		
+		$carbonDays = CarbonPeriod::create($dateFromAt, $dateToAt)->toArray();
+		
+		$days = $periods = [];
+		foreach ($carbonDays as $carbonDay) {
+			$days[] = $carbonDay->format('Y-m-d');
+			$periods[] = $carbonDay->format('Y') . '-' . $carbonDay->format('m');
+		}
+		$periods = array_unique($periods);
+		
+		$months = [
+			'01' => 'Jan',
+			'02' => 'Feb',
+			'03' => 'Mar',
+			'04' => 'Apr',
+			'05' => 'May',
+			'06' => 'Jun',
+			'07' => 'Jul',
+			'08' => 'Aug',
+			'09' => 'Sep',
+			'10' => 'Oct',
+			'11' => 'Nov',
+			'12' => 'Dec',
+		];
+		
 		$items = [];
 		
 		//\DB::connection()->enableQueryLog();
@@ -450,7 +475,7 @@ class ReportController extends Controller {
 			$operations = $operations->get();
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
-				$items[Carbon::parse($operation->operated_at)->timestamp][] = [
+				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->timestamp][] = [
 					'type' => $types[$operation->type],
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
@@ -504,7 +529,7 @@ class ReportController extends Controller {
 				}
 				$paymentMethodNames = array_unique($paymentMethodNames);
 				
-				$items[Carbon::parse($deal->created_at)->timestamp][] = [
+				$items[Carbon::parse($deal->created_at)->format('Ym')][Carbon::parse($deal->created_at)->timestamp][] = [
 					'type' => ($productType && $productType->alias == ProductType::TAX_ALIAS) ? $types[Operation::TAX] : $types[Operation::DEAL],
 					'payment_method' => implode(' / ', $paymentMethodNames),
 					'amount' => $deal->total_amount,
@@ -527,7 +552,7 @@ class ReportController extends Controller {
 			$tips = $tips->get();
 			foreach ($tips as $tip) {
 				/** @var Tip $tip */
-				$items[Carbon::parse($tip->received_at)->timestamp][] = [
+				$items[Carbon::parse($tip->received_at)->format('Ym')][Carbon::parse($tip->received_at)->timestamp][] = [
 					'type' => $types[Operation::TIP],
 					'payment_method' => $tip->paymentMethod ? $tip->paymentMethod->name : '',
 					'amount' => $tip->amount,
@@ -554,6 +579,9 @@ class ReportController extends Controller {
 			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->timestamp,
 			'dateToAtTimestamp' => Carbon::parse($dateToAt)->timestamp,
 			'currency' => $city->currency ? $city->currency->name : '',
+			'days' => $days,
+			'months' => $months,
+			'periods' => $periods,
 		];
 		
 		//\Log::debug($data);

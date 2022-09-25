@@ -1,16 +1,15 @@
-@foreach ($tips as $tip)
+@foreach ($operations as $operation)
 	<tr class="odd">
-		<td class="text-center">{{ $tip->received_at->format('m/d/Y') }}</td>
-		<td class="text-center">{{ $tip->admin ? $tip->admin->fio() : '' }}</td>
-		<td class="text-center">{{ $tip->pilot ? $tip->pilot->fio() : '' }}</td>
-		<td class="text-center">{{ isset($sources[$tip->source]) ? $sources[$tip->source] : $tip->source }}</td>
-		<td class="text-center">{{ $tip->deal ? $tip->deal->number : '' }}</td>
-		<td class="text-right">{{ number_format($tip->amount, 2, '.', ' ') }}</td>
+		<td class="text-center">{{ $operation->operated_at->format('m/d/Y') }}</td>
+		<td class="text-center">{{ isset($types[$operation->type]) ? $types[$operation->type] : $operation->type }}</td>
+		<td class="text-center">{{ $operation->paymentMethod ? $operation->paymentMethod : '' }}</td>
+		<td class="text-right">{{ number_format($operation->amount, 2, '.', ' ') }}</td>
+		<td class="text-center">{{ isset($operation->data_json['comments']) ? $operation->data_json['comments'] : '' }}</td>
 		<td class="text-center">
-			<a href="javascript:void(0)" data-toggle="modal" data-url="/tip/{{ $tip->id }}/edit" data-action="/tip/{{ $tip->id }}" data-method="PUT" data-title="Edit Tips">
+			<a href="javascript:void(0)" data-toggle="modal" data-url="/operation/{{ $operation->id }}/edit" data-action="/operation/{{ $operation->id }}" data-method="PUT" data-title="Edit Operation">
 				<i class="fa fa-edit" aria-hidden="true"></i>
 			</a>
-			<a href="javascript:void(0)" data-toggle="modal" data-target="#modal" data-url="/tip/{{ $tip->id }}/delete" data-action="/tip/{{ $tip->id }}" data-method="DELETE" data-title="Delete Tips">
+			<a href="javascript:void(0)" data-toggle="modal" data-target="#modal" data-url="/operation/{{ $operation->id }}/delete" data-action="/operation/{{ $operation->id }}" data-method="DELETE" data-title="Delete Operation">
 				<i class="fa fa-trash" aria-hidden="true"></i>
 			</a>
 		</td>

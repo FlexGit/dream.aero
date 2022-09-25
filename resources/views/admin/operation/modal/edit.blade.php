@@ -2,62 +2,37 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="amount">Amount</label>
-			<input type="text" class="form-control" id="amount" name="amount" value="{{ $tip->amount }}" placeholder="Amount">
+			<input type="text" class="form-control" id="amount" name="amount" value="{{ $operation->amount }}" placeholder="Amount">
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
 			<label for="received_at">Date</label>
-			<input type="date" class="form-control" id="received_at" name="received_at" value="{{ $tip->received_at->format('Y-m-d') }}">
+			<input type="date" class="form-control" id="received_at" name="received_at" value="{{ $operation->operated_at->format('Y-m-d') }}">
 		</div>
 	</div>
 </div>
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="admin_id">Admin</label>
-			<select class="form-control" id="admin_id" name="admin_id">
+			<label for="type">Type</label>
+			<select class="form-control" id="type" name="type">
 				<option></option>
-				@foreach($users as $user)
-					@if($user->role != app('\App\Models\User')::ROLE_ADMIN)
-						@continue
-					@endif
-					<option value="{{ $user->id }}" @if($user->id == $tip->admin_id) selected @endif>{{ $user->fio() }}</option>
+				@foreach($types as $k => $v)
+					<option value="{{ $k }}" @if($operation->type == $k) selected @endif>{{ $v }}</option>
 				@endforeach
 			</select>
 		</div>
 	</div>
 	<div class="col">
 		<div class="form-group">
-			<label for="pilot_id">Pilot</label>
-			<select class="form-control" id="pilot_id" name="pilot_id">
+			<label for="payment_method_id">Payment method</label>
+			<select class="form-control" id="payment_method_id" name="payment_method_id">
 				<option></option>
-				@foreach($users as $user)
-					@if($user->role != app('\App\Models\User')::ROLE_PILOT)
-						@continue
-					@endif
-					<option value="{{ $user->id }}" @if($user->id == $tip->pilot_id) selected @endif>{{ $user->fio() }}</option>
+				@foreach($paymentMethods as $paymentMethod)
+					<option value="{{ $paymentMethod->id }}" @if($operation->paymentMethod && $operation->paymentMethod->id == $paymentMethod->id) selected @endif>{{ $paymentMethod->name }}</option>
 				@endforeach
 			</select>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col">
-		<div class="form-group">
-			<label for="source">Source</label>
-			<select class="form-control" id="source" name="source">
-				<option></option>
-				@foreach($sources ?? [] as $sourceAlias => $sourceName)
-					<option value="{{ $sourceAlias }}" @if($sourceAlias == $tip->source) selected @endif>{{ $sourceName }}</option>
-				@endforeach
-			</select>
-		</div>
-	</div>
-	<div class="col">
-		<div class="form-group">
-			<label for="deal_number">Deal #</label>
-			<input type="text" class="form-control" id="deal_number" name="deal_number" value="{{ $tip->deal ? $tip->deal->number : '' }}" placeholder="Deal #">
 		</div>
 	</div>
 </div>

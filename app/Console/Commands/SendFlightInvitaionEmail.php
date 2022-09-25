@@ -59,7 +59,7 @@ class SendFlightInvitationEmail extends Command
 			if ($deal->balance() < 0) continue;
    
 			try {
-				$job = new \App\Jobs\SendFlightInvitationEmail($event);
+				$job = new \App\Jobs\SendFlightInvitation($event);
 				$job->handle();
 			} catch (Throwable $e) {
 				\Log::debug('500 - ' . $e->getMessage());

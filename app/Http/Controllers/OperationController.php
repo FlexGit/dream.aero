@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Content;
 use App\Models\Deal;
 use App\Models\Operation;
-use App\Models\User;
+use App\Repositories\PaymentRepository;
+use App\Services\HelpFunctions;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,12 +15,14 @@ use Validator;
 class OperationController extends Controller
 {
 	private $request;
+	private $paymentRepo;
 	
 	/**
 	 * @param Request $request
 	 */
-	public function __construct(Request $request) {
+	public function __construct(Request $request, PaymentRepository $paymentRepo) {
 		$this->request = $request;
+		$this->paymentRepo = $paymentRepo;
 	}
 	
 	/**
@@ -26,10 +30,21 @@ class OperationController extends Controller
 	 */
 	public function index()
 	{
-		$types = Operation::TYPES;
+		$user = Auth::user();
 		
+		if (!$user->isAdminOrHigher()) {
+			abort(404);
+		}
+
+		$types = Operation::TYPES;
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'operation');
+
 		return view('admin.operation.index', [
 			'types' => $types,
+			'paymentMethods' => $paymentMethods,
+			'page' => $page,
 		]);
 	}
 	
@@ -44,8 +59,8 @@ class OperationController extends Controller
 		
 		$filterOperatedAtFrom = $this->request->filter_operated_at_from ?? '';
 		$filterOperatedAtTo = $this->request->filter_operated_at_to ?? '';
-		$filterPaymentMethodId = $this->request->filter_payment_method_id ?? 0;
 		$filterType = $this->request->filter_type ?? '';
+		$filterPaymentMethodId = $this->request->filter_payment_method_id ?? 0;
 		
 		if (!$filterOperatedAtFrom && !$filterOperatedAtTo) {
 			$filterOperatedAtFrom = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
@@ -90,21 +105,16 @@ class OperationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$tip = Tip::find($id);
-		if (!$tip) return response()->json(['status' => 'error', 'reason' => 'Tip not found']);
+		$operation = Operation::find($id);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
 		
-		$sources = Tip::SOURCES;
+		$types = Operation::TYPES;
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
-		$users = User::where('enable', true)
-			->where('city_id', $city->id)
-			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
-			->get();
-		
-		
-		$VIEW = view('admin.tip.modal.edit', [
-			'tip' => $tip,
-			'sources' => $sources,
-			'users' => $users,
+		$VIEW = view('admin.operation.modal.edit', [
+			'operation' => $operation,
+			'types' => $types,
+			'paymentMethods' => $paymentMethods,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -125,17 +135,13 @@ class OperationController extends Controller
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
-
-		$sources = Tip::SOURCES;
 		
-		$users = User::where('enable', true)
-			->where('city_id', $city->id)
-			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
-			->get();
+		$types = Operation::TYPES;
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
-		$VIEW = view('admin.tip.modal.add', [
-			'sources' => $sources,
-			'users' => $users,
+		$VIEW = view('admin.operation.modal.add', [
+			'types' => $types,
+			'paymentMethods' => $paymentMethods,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -157,11 +163,11 @@ class OperationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$tip = Tip::find($id);
-		if (!$tip) return response()->json(['status' => 'error', 'reason' => 'Tips not found']);
+		$operation = Operation::find($id);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
 		
-		$VIEW = view('admin.tip.modal.delete', [
-			'tip' => $tip,
+		$VIEW = view('admin.operation.modal.delete', [
+			'operation' => $operation,
 		]);
 		
 		return response()->json(['status' => 'success', 'html' => (string)$VIEW]);
@@ -181,47 +187,34 @@ class OperationController extends Controller
 
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
-			'received_at' => 'required|date',
-			'admin_id' => 'required|numeric|min:0|not_in:0',
-			'pilot_id' => 'required|numeric|min:0|not_in:0',
-			'source' => 'required',
+			'operated_at' => 'required|date',
+			'type' => 'required',
+			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'amount' => 'Amount',
-				'received_at' => 'Receiving date',
-				'admin_id' => 'Admin',
-				'pilot_id' => 'Pilot',
-				'source' => 'Source',
+				'operated_at' => 'Operation date',
+				'type' => 'Type',
+				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 
 		$amount = $this->request->amount ?? 0;
-		$receivedAt = $this->request->received_at ?? null;
-		$adminId = $this->request->admin_id ?? 0;
-		$pilotId = $this->request->pilot_id ?? 0;
-		$source = $this->request->source ?? null;
-		$dealNumber = $this->request->deal_number ?? '';
-		
-		$deal = null;
-		if ($dealNumber) {
-			$deal = Deal::where('number', $dealNumber)
-				->first();
-			if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
-		}
+		$operatedAt = $this->request->operated_at ?? null;
+		$type = $this->request->type ?? null;
+		$paymentMethodId = $this->request->payment_method_id ?? 0;
 		
 		$currency = $city->currency;
 		
-		$tip = new Tip();
-		$tip->amount = $amount;
-		$tip->received_at = Carbon::parse($receivedAt)->format('Y-m-d');
-		$tip->admin_id = $adminId;
-		$tip->pilot_id = $pilotId;
-		$tip->source = $source;
-		$tip->deal_id = $deal ? $deal->id : 0;
+		$operation = new Operation();
+		$operation->amount = $amount;
+		$operation->operated_at = Carbon::parse($operatedAt)->format('Y-m-d');
+		$operation->type = $type;
+		$operation->payment_method_id = $paymentMethodId;
 		$tip->currency_id = $currency->id ?? 0;
 		$tip->city_id = $city->id ?? 0;
 		$tip->user_id = $user->id ?? 0;

@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Tips
+				Cash
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
 				<li class="breadcrumb-item"><a href="/">Home</a></li>
-				<li class="breadcrumb-item active">Tips</li>
+				<li class="breadcrumb-item active">Cash</li>
 			</ol>
 		</div>
 	</div>
@@ -24,46 +24,58 @@
 					<div class="table-filter d-sm-flex">
 						<div class="form-group">
 							<div>
-								<label for="filter_received_at_from">Receiving Date start</label>
+								<label for="filter_operated_at_from">Operation Date start</label>
 							</div>
 							<div>
-								<input type="date" class="form-control" id="filter_received_at_from" name="filter_received_at_from" placeholder="" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" style="width: 200px;">
-							</div>
-						</div>
-						<div class="form-group ml-3">
-							<div>
-								<label for="filter_received_at_to">Receiving Date end</label>
-							</div>
-							<div>
-								<input type="date" class="form-control" id="filter_received_at_to" name="filter_received_at_to" placeholder="" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
+								<input type="date" class="form-control" id="filter_operated_at_from" name="filter_operated_at_from" placeholder="" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" style="width: 200px;">
 							</div>
 						</div>
 						<div class="form-group ml-3">
 							<div>
-								<label for="filter_user_id">Employee</label>
+								<label for="filter_operated_at_to">Operation Date end</label>
 							</div>
 							<div>
-								<select class="form-control" id="filter_user_id" name="filter_user_id">
+								<input type="date" class="form-control" id="filter_operated_at_to" name="filter_operated_at_to" placeholder="" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
+							</div>
+						</div>
+						<div class="form-group ml-3">
+							<div>
+								<label for="filter_type">Type</label>
+							</div>
+							<div>
+								<select class="form-control" id="filter_type" name="filter_type">
 									<option value=""></option>
-									@foreach($users as $user)
-										<option value="{{ $user->id }}">{{ $user->fio() }}</option>
+									@foreach($types as $k => $v)
+										<option value="{{ $k }}">{{ $v }}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
+						<div class="form-group ml-3">
+							<div>
+								<label for="filter_payment_method_id">Payment method</label>
+							</div>
+							<div>
+								<select class="form-control" id="filter_payment_method_id" name="filter_payment_method_id">
+									<option value=""></option>
+									@foreach($paymentMethods as $paymentMethod)
+										<option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
 									@endforeach
 								</select>
 							</div>
 						</div>
 						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/tip/add" data-action="/tip" data-method="POST" data-title="Add Tips" class="btn btn-secondary btn-sm" title="Add">Add</a>
+							<a href="javascript:void(0)" data-toggle="modal" data-url="/operation/add" data-action="/operation" data-method="POST" data-title="Add Operation" class="btn btn-secondary btn-sm" title="Add">Add</a>
 						</div>
 					</div>
-					<table id="tipTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
+					<table id="operationTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
 							<tr>
 								<th class="text-center">Date</th>
-								<th class="text-center">Admin</th>
-								<th class="text-center">Pilot</th>
-								<th class="text-center">Source</th>
-								<th class="text-center">Deal #</th>
+								<th class="text-center">Type</th>
+								<th class="text-center">Payment method</th>
 								<th class="text-center">Amount</th>
+								<th class="text-center">Extra</th>
 								<th class="text-center">Action</th>
 							</tr>
 						</thead>
@@ -84,7 +96,7 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form id="tip">
+				<form id="operation">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -107,16 +119,17 @@
 	<script>
 		$(function() {
 			function getList() {
-				var $selector = $('#tipTable tbody');
+				var $selector = $('#operationTable tbody');
 
 				$.ajax({
-					url: "{{ route('tipList') }}",
+					url: "{{ route('operationList') }}",
 					type: 'GET',
 					dataType: 'json',
 					data: {
-						"filter_received_at_from": $('#filter_received_at_from').val(),
-						"filter_received_at_to": $('#filter_received_at_to').val(),
-						"filter_user_id": $('#filter_user_id').val(),
+						"filter_operated_at_from": $('#filter_operated_at_from').val(),
+						"filter_operated_at_to": $('#filter_operated_at_to').val(),
+						"filter_type": $('#filter_type').val(),
+						"filter_payment_method_id": $('#filter_payment_method_id').val(),
 					},
 					success: function(result) {
 						if (result.status !== 'success') {
@@ -173,7 +186,7 @@
 				});
 			});
 
-			$(document).on('submit', '#tip', function(e) {
+			$(document).on('submit', '#operation', function(e) {
 				e.preventDefault();
 
 				var action = $(this).attr('action'),
@@ -197,7 +210,7 @@
 				});
 			});
 
-			$(document).on('change', '#filter_received_at_from, #filter_received_at_to, #filter_user_id', function(e) {
+			$(document).on('change', '#filter_operated_at_from, #filter_operated_at_to, #filter_type, #filter_payment_method_id', function(e) {
 				getList();
 			});
 		});
