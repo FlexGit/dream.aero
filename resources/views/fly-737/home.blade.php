@@ -191,5 +191,5 @@
 @endpush
 
 @push('scripts')
-	<script src="{{ asset('js/mainonly.js?' . time()) }}"></script>
+	<script src="{{ asset('js/fly-737/mainonly.js') }}"></script>
 @endpush
