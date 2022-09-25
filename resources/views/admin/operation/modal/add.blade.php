@@ -19,6 +19,9 @@
 			<select class="form-control" id="type" name="type">
 				<option></option>
 				@foreach($types as $k => $v)
+					@if(!in_array($k, ['expense', 'refund']))
+						@continue
+					@endif
 					<option value="{{ $k }}">{{ $v }}</option>
 				@endforeach
 			</select>
@@ -33,6 +36,14 @@
 					<option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
 				@endforeach
 			</select>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		<div class="form-group">
+			<label for="comments">Comments</label>
+			<textarea class="form-control" id="comments" name="comments"></textarea>
 		</div>
 	</div>
 </div>

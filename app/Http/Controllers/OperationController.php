@@ -130,7 +130,6 @@ class OperationController extends Controller
 		}
 		
 		$user = Auth::user();
-		$city = $user->city;
 
 		if (!$user->isAdminOrHigher()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
@@ -184,6 +183,7 @@ class OperationController extends Controller
 		
 		$user = Auth::user();
 		$city = $user->city;
+		$location = $user->location;
 
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
@@ -207,22 +207,28 @@ class OperationController extends Controller
 		$operatedAt = $this->request->operated_at ?? null;
 		$type = $this->request->type ?? null;
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
+		$comments = $this->request->comments ?? null;
 		
 		$currency = $city->currency;
+		
+		$data = [];
+		$data['comments'] = $comments;
 		
 		$operation = new Operation();
 		$operation->amount = $amount;
 		$operation->operated_at = Carbon::parse($operatedAt)->format('Y-m-d');
 		$operation->type = $type;
 		$operation->payment_method_id = $paymentMethodId;
-		$tip->currency_id = $currency->id ?? 0;
-		$tip->city_id = $city->id ?? 0;
-		$tip->user_id = $user->id ?? 0;
-		if (!$tip->save()) {
+		$operation->currency_id = $currency->id ?? 0;
+		$operation->city_id = $city->id ?? 0;
+		$operation->location_id = $location->id ?? 0;
+		$operation->data_json = $data;
+		$operation->user_id = $user->id ?? 0;
+		if (!$operation->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'message' => 'Tips was successfully added']);
+		return response()->json(['status' => 'success', 'message' => 'Operation was successfully added']);
 	}
 	
 	/**
@@ -235,57 +241,49 @@ class OperationController extends Controller
 			abort(404);
 		}
 
-		$tip = Tip::find($id);
-		if (!$tip) return response()->json(['status' => 'error', 'reason' => 'Tips not found']);
+		$operation = Operation::find($id);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
 		
 		$user = Auth::user();
 		
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
-			'received_at' => 'required|date',
-			'admin_id' => 'required|numeric|min:0|not_in:0',
-			'pilot_id' => 'required|numeric|min:0|not_in:0',
-			'source' => 'required',
+			'operated_at' => 'required|date',
+			'type' => 'required',
+			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'amount' => 'Amount',
-				'received_at' => 'Receiving date',
-				'admin_id' => 'Admin',
-				'pilot_id' => 'Pilot',
-				'source' => 'Source',
+				'operated_at' => 'Operation date',
+				'type' => 'Type',
+				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
 			return response()->json(['status' => 'error', 'reason' => $validator->errors()->all()]);
 		}
 		
 		$amount = $this->request->amount ?? 0;
-		$receivedAt = $this->request->received_at ?? null;
-		$adminId = $this->request->admin_id ?? 0;
-		$pilotId = $this->request->pilot_id ?? 0;
-		$source = $this->request->source ?? null;
-		$dealNumber = $this->request->deal_number ?? '';
+		$operatedAt = $this->request->operated_at ?? null;
+		$type = $this->request->type ?? null;
+		$paymentMethodId = $this->request->payment_method_id ?? 0;
+		$comments = $this->request->comments ?? null;
 		
-		$deal = null;
-		if ($dealNumber) {
-			$deal = Deal::where('number', $dealNumber)
-				->first();
-			if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
-		}
+		$data = $operation->data_json;
+		$data['comments'] = $comments;
 		
-		$tip->amount = $amount;
-		$tip->received_at = Carbon::parse($receivedAt)->format('Y-m-d');
-		$tip->admin_id = $adminId;
-		$tip->pilot_id = $pilotId;
-		$tip->source = $source;
-		$tip->deal_id = $deal ? $deal->id : 0;
-		$tip->user_id = $user->id ?? 0;
-		if (!$tip->save()) {
+		$operation->amount = $amount;
+		$operation->operated_at = Carbon::parse($operatedAt)->format('Y-m-d');
+		$operation->type = $type;
+		$operation->payment_method_id = $paymentMethodId;
+		$operation->data_json = $data;
+		$operation->user_id = $user->id ?? 0;
+		if (!$operation->save()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'message' => 'Tips was successfully saved']);
+		return response()->json(['status' => 'success', 'message' => 'Operation was successfully saved']);
 	}
 
 	/**
@@ -299,13 +297,13 @@ class OperationController extends Controller
 			abort(404);
 		}
 
-		$tip = Tip::find($id);
-		if (!$tip) return response()->json(['status' => 'error', 'reason' => 'Tips not found']);
+		$operation = Operation::find($id);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
 		
-		if (!$tip->delete()) {
+		if (!$operation->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'message' => 'Tips was successfully deleted']);
+		return response()->json(['status' => 'success', 'message' => 'Operation was successfully deleted']);
 	}
 }

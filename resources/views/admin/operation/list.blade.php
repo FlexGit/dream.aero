@@ -2,7 +2,7 @@
 	<tr class="odd">
 		<td class="text-center">{{ $operation->operated_at->format('m/d/Y') }}</td>
 		<td class="text-center">{{ isset($types[$operation->type]) ? $types[$operation->type] : $operation->type }}</td>
-		<td class="text-center">{{ $operation->paymentMethod ? $operation->paymentMethod : '' }}</td>
+		<td class="text-center">{{ $operation->paymentMethod ? $operation->paymentMethod->name : '' }}</td>
 		<td class="text-right">{{ number_format($operation->amount, 2, '.', ' ') }}</td>
 		<td class="text-center">{{ isset($operation->data_json['comments']) ? $operation->data_json['comments'] : '' }}</td>
 		<td class="text-center">

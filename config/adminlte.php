@@ -272,14 +272,14 @@ return [
 			'label'       => '',
 			'label_color' => '',
 		],
-		/*[
-			'text'        => 'Cash',
-			'url'         => '/cash',
+		[
+			'text'        => 'Operation',
+			'url'         => '/operation',
 			'icon'        => 'fas fa-fw fa-money-bill-alt',
 			'can'		  => 'is_admin',
 			'label'       => '',
 			'label_color' => '',
-		],*/
+		],
 		[
 			'text'        => 'Tips',
 			'url'         => '/tip',
@@ -392,12 +392,12 @@ return [
 					'can'  => 'is_superadmin',
 					'icon' => 'far fa-circle nav-icon',
 				],
-				/*[
+				[
 					'text' => 'Cash Flow',
 					'url'  => '/report/cash-flow',
 					'can'  => 'is_superadmin',
 					'icon' => 'far fa-circle nav-icon',
-				],*/
+				],
             ],
         ],
 		[
