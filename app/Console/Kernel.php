@@ -50,12 +50,12 @@ class Kernel extends ConsoleKernel
 			->emailOutputOnFailure(env('DEV_EMAIL'));
 		
 		// отправка контрагенту приглашения на полет
-		$filePath = storage_path('logs/commands/flight_invitation_email.log');
+		/*$filePath = storage_path('logs/commands/flight_invitation_email.log');
 		$schedule->command('flight_invitation_email:send')
 			->everyMinute()
 			->runInBackground()
 			->appendOutputTo($filePath)
-			->emailOutputOnFailure(env('DEV_EMAIL'));
+			->emailOutputOnFailure(env('DEV_EMAIL'));*/
 	}
 
 	/**
