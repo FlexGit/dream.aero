@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
 	 */
 	protected $commands = [
 		Commands\SendCertificateEmail::class,
-		Commands\SendFlightInvitationCommand::class,
+		//Commands\SendFlightInvitationEmail::class,
 	];
 
 	/**
