@@ -30,6 +30,8 @@ class CashFlowReportExport implements WithMultipleSheets
 	public function sheets(): array
 	{
 		$sheets = [];
+
+		$sheets[] = new CashFlowBalanceReportExport($this->data);
 		foreach($this->data['periods'] as $period) {
 			$sheets[] = new CashFlowPeriodReportExport($this->data, $period, $this->data['months']);
 		}

@@ -657,7 +657,7 @@ class ReportController extends Controller {
 				->sum('amount');
 		}
 		
-		return number_format(($billSum + $operationSum + $tipSum), 2, '.', ' ');
+		return $billSum + $operationSum + $tipSum;
 	}
 
 	/**

@@ -11,8 +11,8 @@
 		@endif
 		<tr>
 			<td class="align-top text-center">{{ $paymentMethod->name }}</td>
-			<td class="align-top text-right">{{ $currency }}{{ $balanceItems[$dateFromAtTimestamp][$paymentMethod->alias] }}</td>
-			<td class="align-top text-right">{{ $currency }}{{ $balanceItems[$dateToAtTimestamp][$paymentMethod->alias] }}</td>
+			<td class="align-top text-right">{{ $currency }}{{ number_format($balanceItems[$dateFromAtTimestamp][$paymentMethod->alias], 2, '.', ' ') }}</td>
+			<td class="align-top text-right">{{ $currency }}{{ number_format($balanceItems[$dateToAtTimestamp][$paymentMethod->alias], 2, '.', ' ') }}</td>
 		</tr>
 	@endforeach
 	</tbody>
