@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CashFlowReportExport;
 use App\Exports\ContractorSelfMadePayedDealsReportExport;
 use App\Models\Bill;
 use App\Models\City;
@@ -515,7 +516,7 @@ class ReportController extends Controller {
 				$bills = $deal->bills;
 				
 				$extra = [];
-				$extra[] = '<a href="' . url('deal/' . $deal->id) . '" target="_blank">' . $deal->number . '</a>';
+				$extra[] = $isExport ? $deal->number : '<a href="' . url('deal/' . $deal->id) . '" target="_blank">' . $deal->number . '</a>';
 				$extra[] = $deal->is_certificate_purchase ? 'Voucher' : ($deal->certificate ? 'Flight by Voucher' : 'Flight');
 				$extra[] = $deal->certificate ? $deal->certificate->number : '';
 				$extra[] = $product->name;
