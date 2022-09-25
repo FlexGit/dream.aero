@@ -370,6 +370,29 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 	});
 });
 
+Route::domain(env('DOMAIN_SITE2', 'fly-737.com'))->group(function () {
+	Route::get('robots.txt', function () {
+		header('Content-Type: text/plain; charset=UTF-8');
+		readfile(dirname(__FILE__) . '/../public/robots_fly737.txt');
+	});
+	Route::get('sitemap.xml', [Site2Controller::class, 'sitemap']);
+	
+	Route::group(['middleware' => ['domaincheck']], function () {
+		Route::get('', [Site2Controller::class, 'home'])->name('home');
+		Route::get('about-simulator', [Site2Controller::class, 'about'])->name('o-trenazhere');
+		Route::get('gift-sertificates', [Site2Controller::class, 'giftFlight'])->name('podarit-polet');
+		Route::get('flight-options', [Site2Controller::class, 'flightTypes'])->name('variantyi-poleta');
+		Route::get('prices', [Site2Controller::class, 'price']);
+		Route::get('contacts', [Site2Controller::class, 'contacts']);
+	});
+	
+	Route::get('modal/callback', [Site2Controller::class, 'getCallbackModal']);
+	Route::get('modal/info/{alias}', [Site2Controller::class, 'getInfoModal']);
+	
+	Route::post('callback', [Site2Controller::class, 'callback'])->name('callbackRequestStore');
+	Route::post('question', [Site2Controller::class, 'question'])->name('questionStore');
+});
+
 Route::domain(env('DOMAIN_SITE', 'dream.aero'))->group(function () {
 	Route::get('robots.txt', function () {
 		header('Content-Type: text/plain; charset=UTF-8');
@@ -420,29 +443,6 @@ Route::domain(env('DOMAIN_SITE', 'dream.aero'))->group(function () {
 	
 	Route::post('callback', [SiteController::class, 'callback'])->name('callbackRequestStore');
 	Route::post('question', [SiteController::class, 'question'])->name('questionStore');
-});
-
-Route::domain(env('DOMAIN_SITE2', 'fly-737.com'))->group(function () {
-	Route::get('robots.txt', function () {
-		header('Content-Type: text/plain; charset=UTF-8');
-		readfile(dirname(__FILE__) . '/../public/robots_fly737.txt');
-	});
-	Route::get('sitemap.xml', [Site2Controller::class, 'sitemap']);
-	
-	Route::group(['middleware' => ['domaincheck']], function () {
-		Route::get('', [Site2Controller::class, 'home'])->name('home');
-		Route::get('about-simulator', [Site2Controller::class, 'about'])->name('o-trenazhere');
-		Route::get('gift-sertificates', [Site2Controller::class, 'giftFlight'])->name('podarit-polet');
-		Route::get('flight-options', [Site2Controller::class, 'flightTypes'])->name('variantyi-poleta');
-		Route::get('prices', [Site2Controller::class, 'price']);
-		Route::get('contacts', [Site2Controller::class, 'contacts']);
-	});
-	
-	Route::get('modal/callback', [Site2Controller::class, 'getCallbackModal']);
-	Route::get('modal/info/{alias}', [Site2Controller::class, 'getInfoModal']);
-	
-	Route::post('callback', [Site2Controller::class, 'callback'])->name('callbackRequestStore');
-	Route::post('question', [Site2Controller::class, 'question'])->name('questionStore');
 });
 
 Route::get('deal/product/calc', [DealController::class, 'calcProductAmount'])->name('calcProductAmount');
