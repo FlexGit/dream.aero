@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Throwable;
 
-class SendFlightInvitationEmail extends Command
+class SendFlightInvitationCommand extends Command
 {
     /**
      * The name and signature of the console command.
