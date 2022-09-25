@@ -570,8 +570,8 @@ class ReportController extends Controller {
 		foreach ($paymentMethods as $paymentMethod) {
 			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
 			
-			$balanceItems[Carbon::parse($dateFromAt)->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->timestamp, $paymentMethod->alias, $type);
-			$balanceItems[Carbon::parse($dateToAt)->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->timestamp, $paymentMethod->alias, $type);
+			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $type);
+			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $type);
 		}
 		//\Log::debug(\DB::getQueryLog());
 		
@@ -580,8 +580,8 @@ class ReportController extends Controller {
 			'types' => $types,
 			'balanceItems' => $balanceItems,
 			'paymentMethods' => $paymentMethods,
-			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->timestamp,
-			'dateToAtTimestamp' => Carbon::parse($dateToAt)->timestamp,
+			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->endOfDay()->timestamp,
+			'dateToAtTimestamp' => Carbon::parse($dateToAt)->endOfDay()->timestamp,
 			'currency' => $city->currency ? $city->currency->name : '',
 			'days' => $days,
 			'months' => $months,
