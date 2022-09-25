@@ -14,6 +14,8 @@ class CityCheck
 	{
 		if ($request->ajax()) return $next($request);
 		
+		if ($request->getHost() != env('DOMAIN_SITE')) return $next($request);
+		
 		$cityAliases = City::ALIASES;
 		
 		if (in_array($request->segment(1), $cityAliases) && (($request->session()->get('cityAlias') && ($request->segment(1) != $request->session()->get('cityAlias'))) || !$request->session()->get('cityAlias'))) {
