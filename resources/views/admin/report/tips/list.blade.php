@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-data" style="width: 300px;">
+<table class="table table-sm table-bordered table-data" style="width: 500px;">
 	<tbody>
 	<tr>
 		<td class="align-top text-center font-weight-bold">Employee</td>
