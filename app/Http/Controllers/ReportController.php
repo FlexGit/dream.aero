@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\CashFlowReportExport;
 use App\Exports\ContractorSelfMadePayedDealsReportExport;
+use App\Exports\TipsReportExport;
 use App\Models\Bill;
 use App\Models\City;
 use App\Models\Content;
@@ -409,6 +410,11 @@ class ReportController extends Controller {
 		]);
 	}
 	
+	/**
+	 * @return \Illuminate\Http\JsonResponse
+	 * @throws \PhpOffice\PhpSpreadsheet\Exception
+	 * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+	 */
 	public function cashFlowGetListAjax()
 	{
 		if (!$this->request->ajax()) {
@@ -658,6 +664,96 @@ class ReportController extends Controller {
 		}
 		
 		return $billSum + $operationSum + $tipSum;
+	}
+	
+	/**
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
+	public function tipsIndex()
+	{
+		$user = Auth::user();
+		
+		if (!$user->isSuperAdmin()) {
+			abort(404);
+		}
+		
+		$city = $user->city;
+		$users = User::where('enable', true)
+			->where('city_id', $city->id)
+			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
+			->get();
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(true);
+		
+		$page = HelpFunctions::getEntityByAlias(Content::class, 'report-tips');
+		
+		return view('admin.report.tips.index', [
+			'users' => $users,
+			'paymentMethods' => $paymentMethods,
+			'page' => $page,
+		]);
+	}
+	
+	public function tipsGetListAjax()
+	{
+		if (!$this->request->ajax()) {
+			abort(404);
+		}
+		
+		$user = Auth::user();
+		$city = $user->city;
+		$location = $user->location;
+		$currency = $city ? $city->currency : null;
+		
+		$dateFromAt = $this->request->filter_date_from_at ?? '';
+		$dateToAt = $this->request->filter_date_to_at ?? '';
+		$isExport = filter_var($this->request->is_export, FILTER_VALIDATE_BOOLEAN);
+		
+		if (!$dateFromAt && !$dateToAt) {
+			$dateFromAt = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
+			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
+		}
+		
+		$items = [];
+		$tips = Tip::orderBy('received_at')
+			->where('received_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+			->where('received_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+			->where('city_id', $city->id)
+			->where('location_id', $location->id)
+			->get();
+		foreach ($tips as $tip) {
+			/** @var Tip $tip */
+			if (!isset($items[$tip->admin_id])) $items[$tip->admin_id] = 0;
+			if (!isset($items[$tip->pilot_id])) $items[$tip->pilot_id] = 0;
+			$items[$tip->admin_id] += $tip->amount / 2;
+			$items[$tip->pilot_id] += $tip->amount / 2;
+		}
+		
+		$users = User::where('city_id', $city->id)
+			->whereIn('role', [User::ROLE_ADMIN, User::ROLE_PILOT])
+			->get();
+		$userItems = [];
+		foreach ($users as $user) {
+			$userItems[$user->id] = $user->fio();
+		}
+		
+		$data = [
+			'items' => $items,
+			'userItems' => $userItems,
+			'currency' => $currency,
+		];
+		
+		$reportFileName = '';
+		if ($isExport) {
+			$reportFileName = 'report-tips-' . $user->id . '-' . date('YmdHis') . '.xlsx';
+			$exportResult = Excel::store(new TipsReportExport($data), 'report/' . $reportFileName);
+			if (!$exportResult) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
+			}
+		}
+		
+		$VIEW = view('admin.report.tips.list', $data);
+		
+		return response()->json(['status' => 'success', 'html' => (string)$VIEW, 'fileName' => $reportFileName]);
 	}
 
 	/**

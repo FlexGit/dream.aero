@@ -4,14 +4,14 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Tips
+				Tips Report
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
 				<li class="breadcrumb-item"><a href="/">Home</a></li>
 				<li class="breadcrumb-item"><a href="/report">Reports</a></li>
-				<li class="breadcrumb-item active">Tips</li>
+				<li class="breadcrumb-item active">Tips Report</li>
 			</ol>
 		</div>
 	</div>
@@ -33,19 +33,6 @@
 							<label for="filter_date_to_at">Period end</label>
 							<div>
 								<input type="date" class="form-control" id="filter_date_to_at" name="filter_date_to_at" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
-							</div>
-						</div>
-						<div class="form-group ml-3">
-							<div>
-								<label for="filter_user_id">Employee</label>
-							</div>
-							<div>
-								<select class="form-control" id="filter_user_id" name="filter_user_id">
-									<option value=""></option>
-									@foreach($users as $user)
-										<option value="{{ $user->id }}">{{ $user->fio() }}</option>
-									@endforeach
-								</select>
 							</div>
 						</div>
 						<div class="form-group ml-3" style="padding-top: 31px;">
@@ -81,13 +68,12 @@
 				}
 
 				$.ajax({
-					url: '{{ route('tipsReportList') }}',
+					url: '{{ route('tipsList') }}',
 					type: 'GET',
 					dataType: 'json',
 					data: {
 						'filter_date_from_at': $('#filter_date_from_at').val(),
 						'filter_date_to_at': $('#filter_date_to_at').val(),
-						'filter_user_id': $('#filter_user_id').val(),
 						'is_export': isExport,
 					},
 					success: function(result) {

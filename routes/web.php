@@ -366,6 +366,9 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('report/cash-flow', [ReportController::class, 'cashFlowIndex'])->name('cashFlowIndex');
 		Route::get('report/cash-flow/list/ajax', [ReportController::class, 'cashFlowGetListAjax'])->name('cashFlowList');
 		
+		Route::get('report/tips', [ReportController::class, 'tipsIndex'])->name('tipsIndex');
+		Route::get('report/tips/list/ajax', [ReportController::class, 'tipsGetListAjax'])->name('tipsList');
+
 		Route::get('report/file/{filepath}', [ReportController::class, 'getExportFile'])->name('getExportFile');
 	});
 });

@@ -375,7 +375,7 @@ return [
 			'can'	  => 'is_admin',
             'submenu' => [
 				[
-					'text' => 'Personal selling',
+					'text' => 'Personal Selling',
 					'url'  => '/report/personal-selling',
 					'can'  => 'is_admin',
 					'icon' => 'far fa-circle nav-icon',
@@ -395,6 +395,12 @@ return [
 				[
 					'text' => 'Cash Flow',
 					'url'  => '/report/cash-flow',
+					'can'  => 'is_superadmin',
+					'icon' => 'far fa-circle nav-icon',
+				],
+				[
+					'text' => 'Tips',
+					'url'  => '/report/tips',
 					'can'  => 'is_superadmin',
 					'icon' => 'far fa-circle nav-icon',
 				],
