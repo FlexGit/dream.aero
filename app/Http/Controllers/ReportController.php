@@ -733,7 +733,8 @@ class ReportController extends Controller {
 			->get();
 		$userItems = [];
 		foreach ($users as $user) {
-			$userItems[$user->id] = $user->fio();
+			$userItems[$user->id]['fio'] = $user->fio();
+			$userItems[$user->id]['role'] = isset(User::ROLES[$user->role]) ? User::ROLES[$user->role] : '';
 		}
 		
 		$data = [
