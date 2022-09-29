@@ -519,7 +519,7 @@ class ReportController extends Controller {
 			}
 			if ($operationType) {
 				if ($operationType == 'taxes') {
-					$deals = $deals->whereHas('product', function ($query) {
+					$deals = $deals->whereHas('product', function ($query) use ($operationType) {
 						return $query->whereRelation('productType', 'product_types.alias', '=', 'tax');
 					});
 				} elseif ($operationType == 'deals') {
