@@ -475,7 +475,7 @@ class ReportController extends Controller {
 		$items = [];
 		
 		//\DB::connection()->enableQueryLog();
-		if (!$operationType || $operationType == 'expenses') {
+		/*if (!$operationType || $operationType == 'expenses') {
 			// операции
 			$operations = Operation::orderBy('operated_at')
 				->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
@@ -495,7 +495,7 @@ class ReportController extends Controller {
 			$operations = $operations->get();
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
-				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
+				/*$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
 					'type' => $operation->operationType ? $operation->operationType->name : '',
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
@@ -503,7 +503,7 @@ class ReportController extends Controller {
 					'extra' => isset($operation->data_json['comment']) ? $operation->data_json['comment'] : '',
 				];
 			}
-		}
+		}*/
 		
 		if (!$operationType || in_array($operationType, ['deals', 'taxes'])) {
 			// сделки
