@@ -50,6 +50,9 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @mixin \Eloquent
  * @property array|null $data_json
  * @method static \Illuminate\Database\Eloquent\Builder|Operation whereDataJson($value)
+ * @property int $operation_type_id тип операции
+ * @property-read \App\Models\OperationType|null $operationType
+ * @method static \Illuminate\Database\Eloquent\Builder|Operation whereOperationTypeId($value)
  */
 class Operation extends Model
 {
@@ -103,20 +106,7 @@ class Operation extends Model
 		'deleted_at' => 'datetime:Y-m-d H:i:s',
 		'data_json' => 'array',
 	];
-	
-	const EXPENSE = 'expense';
-	const REFUND = 'refund';
-	const DEAL = 'deal';
-	const TIP = 'tip';
-	const TAX = 'tax';
-	const TYPES = [
-		self::DEAL => 'Deals',
-		self::EXPENSE => 'Expenses',
-		self::REFUND => 'Refunds',
-		self::TAX => 'Tax',
-		self::TIP => 'Tips',
-	];
-	
+
 	public function user()
 	{
 		return $this->belongsTo(User::class);
@@ -140,5 +130,10 @@ class Operation extends Model
 	public function paymentMethod()
 	{
 		return $this->belongsTo(paymentMethod::class);
+	}
+	
+	public function operationType()
+	{
+		return $this->belongsTo(operationType::class);
 	}
 }

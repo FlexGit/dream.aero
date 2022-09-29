@@ -4,6 +4,7 @@ use App\Http\Controllers\BillController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\OperationController;
+use App\Http\Controllers\OperationTypeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\PricingController;
@@ -176,6 +177,19 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::get('receipt/{uuid}/file/{print?}', [BillController::class, 'getReceiptFile'])->name('getReceipt');
 		Route::post('receipt/send', [BillController::class, 'sendReceipt'])->name('sendReceipt');
 		
+		// Типы операций
+		Route::get('operation_type', [OperationTypeController::class, 'index'])->name('operationTypeIndex');
+		Route::get('operation_type/list/ajax', [OperationTypeController::class, 'getListAjax'])->name('operationTypeList');
+		
+		Route::post('operation_type', [OperationTypeController::class, 'store']);
+		Route::put('operation_type/{id}', [OperationTypeController::class, 'update']);
+		Route::delete('operation_type/{id}', [OperationTypeController::class, 'delete']);
+		
+		Route::get('operation_type/add', [OperationTypeController::class, 'add']);
+		Route::get('operation_type/{id}/edit', [OperationTypeController::class, 'edit']);
+		Route::get('operation_type/{id}/delete', [OperationTypeController::class, 'confirm']);
+		Route::get('operation_type/{id}/show', [OperationTypeController::class, 'show']);
+		
 		// Операции
 		Route::get('operation/add', [OperationController::class, 'add']);
 		Route::get('operation/{id}/edit', [OperationController::class, 'edit']);
@@ -186,7 +200,7 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::post('operation', [OperationController::class, 'store']);
 		Route::put('operation/{id}', [OperationController::class, 'update']);
 		Route::delete('operation/{id}', [OperationController::class, 'delete']);
-
+		
 		// Чаевые
 		Route::get('tip/add', [TipController::class, 'add']);
 		Route::get('tip/{id}/edit', [TipController::class, 'edit']);

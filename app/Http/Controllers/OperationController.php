@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Content;
 use App\Models\Deal;
 use App\Models\Operation;
+use App\Models\OperationType;
 use App\Repositories\PaymentRepository;
 use App\Services\HelpFunctions;
 use Auth;
@@ -36,7 +37,9 @@ class OperationController extends Controller
 			abort(404);
 		}
 
-		$types = Operation::TYPES;
+		$types = OperationType::where('is_active', true)
+			->orderBy('name')
+			->get();
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'operation');
@@ -59,7 +62,7 @@ class OperationController extends Controller
 		
 		$filterOperatedAtFrom = $this->request->filter_operated_at_from ?? '';
 		$filterOperatedAtTo = $this->request->filter_operated_at_to ?? '';
-		$filterType = $this->request->filter_type ?? '';
+		$filterOperationTypeId = $this->request->filter_operation_type_id ?? 0;
 		$filterPaymentMethodId = $this->request->filter_payment_method_id ?? 0;
 		
 		if (!$filterOperatedAtFrom && !$filterOperatedAtTo) {
@@ -73,12 +76,14 @@ class OperationController extends Controller
 		if ($filterPaymentMethodId) {
 			$operations = $operations->where('payment_method_id', $filterPaymentMethodId);
 		}
-		if ($filterType) {
-			$operations = $operations->where('type', $filterType);
+		if ($filterOperationTypeId) {
+			$operations = $operations->where('operation_type_id', $filterOperationTypeId);
 		}
 		$operations = $operations->get();
 		
-		$types = Operation::TYPES;
+		$types = OperationType::where('is_active', true)
+			->orderBy('name')
+			->get();
 		
 		$VIEW = view('admin.operation.list', [
 			'operations' => $operations,
@@ -108,7 +113,9 @@ class OperationController extends Controller
 		$operation = Operation::find($id);
 		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
 		
-		$types = Operation::TYPES;
+		$types = OperationType::where('is_active', true)
+			->orderBy('name')
+			->get();
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
 		$VIEW = view('admin.operation.modal.edit', [
@@ -135,7 +142,9 @@ class OperationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$types = Operation::TYPES;
+		$types = OperationType::where('is_active', true)
+			->orderBy('name')
+			->get();
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList(false);
 		
 		$VIEW = view('admin.operation.modal.add', [
@@ -188,7 +197,7 @@ class OperationController extends Controller
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
 			'operated_at' => 'required|date',
-			'type' => 'required',
+			'operation_type_id' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
@@ -196,7 +205,7 @@ class OperationController extends Controller
 			->setAttributeNames([
 				'amount' => 'Amount',
 				'operated_at' => 'Operation date',
-				'type' => 'Type',
+				'operation_type_id' => 'Type',
 				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
@@ -205,7 +214,7 @@ class OperationController extends Controller
 
 		$amount = $this->request->amount ?? 0;
 		$operatedAt = $this->request->operated_at ?? null;
-		$type = $this->request->type ?? null;
+		$operationTypeId = $this->request->operation_type_id ?? 0;
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
 		$comment = $this->request->comment ?? null;
 		
@@ -217,7 +226,7 @@ class OperationController extends Controller
 		$operation = new Operation();
 		$operation->amount = $amount;
 		$operation->operated_at = Carbon::parse($operatedAt)->format('Y-m-d');
-		$operation->type = $type;
+		$operation->operation_type_id = $operationTypeId;
 		$operation->payment_method_id = $paymentMethodId;
 		$operation->currency_id = $currency->id ?? 0;
 		$operation->city_id = $city->id ?? 0;
@@ -249,7 +258,7 @@ class OperationController extends Controller
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
 			'operated_at' => 'required|date',
-			'type' => 'required',
+			'operation_type_id' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
@@ -257,7 +266,7 @@ class OperationController extends Controller
 			->setAttributeNames([
 				'amount' => 'Amount',
 				'operated_at' => 'Operation date',
-				'type' => 'Type',
+				'operation_type_id' => 'Type',
 				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
@@ -266,7 +275,7 @@ class OperationController extends Controller
 		
 		$amount = $this->request->amount ?? 0;
 		$operatedAt = $this->request->operated_at ?? null;
-		$type = $this->request->type ?? null;
+		$operationTypeId = $this->request->operation_type_id ?? 0;
 		$paymentMethodId = $this->request->payment_method_id ?? 0;
 		$comment = $this->request->comment ?? null;
 		
@@ -275,7 +284,7 @@ class OperationController extends Controller
 		
 		$operation->amount = $amount;
 		$operation->operated_at = Carbon::parse($operatedAt)->format('Y-m-d');
-		$operation->type = $type;
+		$operation->operation_type_id = $operationTypeId;
 		$operation->payment_method_id = $paymentMethodId;
 		$operation->data_json = $data;
 		$operation->user_id = $user->id ?? 0;

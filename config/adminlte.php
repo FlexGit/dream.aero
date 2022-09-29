@@ -273,7 +273,7 @@ return [
 			'label_color' => '',
 		],
 		[
-			'text'        => 'Operation',
+			'text'        => 'Expenses',
 			'url'         => '/operation',
 			'icon'        => 'fas fa-fw fa-money-bill-alt',
 			'can'		  => 'is_admin',
@@ -351,6 +351,12 @@ return [
 					'text' => 'Payment methods',
 					'url'  => '/payment_method',
 					'icon' => 'fab fa-fw fa-cc-visa',
+					'can'  => 'is_superadmin',
+				],
+				[
+					'text' => 'Expenses types',
+					'url'  => '/operation_type',
+					'icon' => 'fas fa-fw fa-wallet',
 					'can'  => 'is_superadmin',
 				],
 				[

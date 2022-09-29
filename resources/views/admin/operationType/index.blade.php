@@ -4,13 +4,13 @@
 	<div class="row mb-2">
 		<div class="col-sm-6">
 			<h1 class="m-0 text-dark">
-				Operation
+				Expenses types
 			</h1>
 		</div>
 		<div class="col-sm-6">
 			<ol class="breadcrumb float-sm-right">
 				<li class="breadcrumb-item"><a href="/">Home</a></li>
-				<li class="breadcrumb-item active">Operation</li>
+				<li class="breadcrumb-item active">Expenses types</li>
 			</ol>
 		</div>
 	</div>
@@ -22,62 +22,18 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="table-filter d-sm-flex">
-						<div class="form-group">
-							<div>
-								<label for="filter_operated_at_from">Operation Date start</label>
-							</div>
-							<div>
-								<input type="date" class="form-control" id="filter_operated_at_from" name="filter_operated_at_from" placeholder="" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" style="width: 200px;">
-							</div>
-						</div>
-						<div class="form-group ml-3">
-							<div>
-								<label for="filter_operated_at_to">Operation Date end</label>
-							</div>
-							<div>
-								<input type="date" class="form-control" id="filter_operated_at_to" name="filter_operated_at_to" placeholder="" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
-							</div>
-						</div>
-						<div class="form-group ml-3">
-							<div>
-								<label for="filter_operation_type_id">Type</label>
-							</div>
-							<div>
-								<select class="form-control" id="filter_operation_type_id" name="filter_operation_type_id">
-									<option value=""></option>
-									@foreach($types as $type)
-										<option value="{{ $type->id }}">{{ $type->name }}</option>
-									@endforeach
-								</select>
-							</div>
-						</div>
-						<div class="form-group ml-3">
-							<div>
-								<label for="filter_payment_method_id">Payment method</label>
-							</div>
-							<div>
-								<select class="form-control" id="filter_payment_method_id" name="filter_payment_method_id">
-									<option value=""></option>
-									@foreach($paymentMethods as $paymentMethod)
-										<option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
-									@endforeach
-								</select>
-							</div>
-						</div>
 						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/operation/add" data-action="/operation" data-method="POST" data-title="Add Operation" class="btn btn-secondary btn-sm" title="Add">Add</a>
+							<a href="javascript:void(0)" data-toggle="modal" data-url="/operation_type/add" data-action="/operation_type" data-method="POST" data-title="Add" class="btn btn-secondary btn-sm" title="Добавить">Add</a>
 						</div>
 					</div>
-					<table id="operationTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
+					<table id="operationTypeTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
 						<thead>
-							<tr>
-								<th class="text-center">Date</th>
-								<th class="text-center">Type</th>
-								<th class="text-center">Payment method</th>
-								<th class="text-center">Amount</th>
-								<th class="text-center">Extra</th>
-								<th class="text-center">Action</th>
-							</tr>
+						<tr>
+							<th class="text-center">Name</th>
+							<th class="text-center">Alias</th>
+							<th class="text-center">Is active</th>
+							<th class="text-center">Action</th>
+						</tr>
 						</thead>
 						<tbody>
 						</tbody>
@@ -96,7 +52,7 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form id="operation">
+				<form id="operationType">
 					<div class="modal-body"></div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -110,7 +66,7 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
 @stop
 
 @section('js')
@@ -119,18 +75,14 @@
 	<script>
 		$(function() {
 			function getList() {
-				var $selector = $('#operationTable tbody');
+				var $selector = $('#operationTypeTable tbody');
+
+				$selector.html('<tr><td colspan="30" class="text-center">Loading data...</td></tr>');
 
 				$.ajax({
-					url: "{{ route('operationList') }}",
+					url: "{{ route('operationTypeList') }}",
 					type: 'GET',
 					dataType: 'json',
-					data: {
-						"filter_operated_at_from": $('#filter_operated_at_from').val(),
-						"filter_operated_at_to": $('#filter_operated_at_to').val(),
-						"filter_operation_type_id": $('#filter_operation_type_id').val(),
-						"filter_payment_method_id": $('#filter_payment_method_id').val(),
-					},
 					success: function(result) {
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
@@ -186,7 +138,7 @@
 				});
 			});
 
-			$(document).on('submit', '#operation', function(e) {
+			$(document).on('submit', '#operationType', function(e) {
 				e.preventDefault();
 
 				var action = $(this).attr('action'),
@@ -208,10 +160,6 @@
 						toastr.success(result.message);
 					}
 				});
-			});
-
-			$(document).on('change', '#filter_operated_at_from, #filter_operated_at_to, #filter_operation_type_id, #filter_payment_method_id', function(e) {
-				getList();
 			});
 		});
 	</script>

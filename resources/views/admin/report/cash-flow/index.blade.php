@@ -37,13 +37,43 @@
 						</div>
 						<div class="form-group ml-3">
 							<div>
-								<label for="filter_type">Type</label>
+								<label for="filter_operation_type">Type</label>
 							</div>
 							<div>
-								<select class="form-control" id="filter_type" name="filter_type">
+								<select class="form-control" id="filter_operation_type" name="filter_operation_type">
 									<option value=""></option>
-									@foreach($types as $k => $v)
-										<option value="{{ $k }}">{{ $v }}</option>
+									<option value="expenses">Expenses</option>
+									<option value="deals">Deals</option>
+									<option value="taxes">Taxes</option>
+									<option value="tips">Tips</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group ml-3 filter_product_container hidden">
+							<div>
+								<label for="filter_product_id">Product</label>
+							</div>
+							<div>
+								<select class="form-control" id="filter_product_id" name="filter_product_id">
+									<option value=""></option>
+									@foreach($products ?? [] as $productTypeName => $productItem)
+										<optgroup label="{{ $productTypeName }}"></optgroup>
+										@foreach($productItem as $productId => $product)
+											<option value="{{ $product->id }}">{{ $product->name }}</option>
+										@endforeach
+									@endforeach
+								</select>
+							</div>
+						</div>
+						<div class="form-group ml-3 filter_operation_type_container hidden">
+							<div>
+								<label for="filter_operation_type_id">Expenses</label>
+							</div>
+							<div>
+								<select class="form-control" id="filter_operation_type_id" name="filter_operation_type_id">
+									<option value=""></option>
+									@foreach($types as $type)
+										<option value="{{ $type->id }}">{{ $type->name }}</option>
 									@endforeach
 								</select>
 							</div>
@@ -101,7 +131,9 @@
 						'filter_date_from_at': $('#filter_date_from_at').val(),
 						'filter_date_to_at': $('#filter_date_to_at').val(),
 						'filter_payment_method_id': $('#filter_payment_method_id').val(),
-						'filter_type': $('#filter_type').val(),
+						'filter_operation_type': $('#filter_operation_type').val(),
+						'filter_operation_type_id': $('#filter_operation_type_id').val(),
+						'filter_product_id': $('#filter_product_id').val(),
 						'is_export': isExport,
 					},
 					success: function(result) {
@@ -135,6 +167,18 @@
 
 			$(document).on('click', '#export_btn', function(e) {
 				getList(true);
+			});
+
+			$(document).on('change', '#filter_operation_type', function(e) {
+				if ($(this).val() === 'deals') {
+					$('.filter_product_container').removeClass('hidden');
+					$('.filter_operation_type_container').addClass('hidden');
+				} else if ($(this).val() === 'expenses') {
+					$('.filter_operation_type_container').removeClass('hidden');
+					$('.filter_product_container').addClass('hidden');
+				} else {
+					$('.filter_operation_type_container, .filter_product_container').addClass('hidden');
+				}
 			});
 		});
 	</script>

@@ -15,14 +15,11 @@
 <div class="row">
 	<div class="col">
 		<div class="form-group">
-			<label for="type">Type</label>
-			<select class="form-control" id="type" name="type">
+			<label for="operation_type_id">Type</label>
+			<select class="form-control" id="operation_type_id" name="operation_type_id">
 				<option></option>
-				@foreach($types as $k => $v)
-					@if(!in_array($k, ['expense', 'refund']))
-						@continue
-					@endif
-					<option value="{{ $k }}">{{ $v }}</option>
+				@foreach($types as $type)
+					<option value="{{ $type->id }}">{{ $type->name }}</option>
 				@endforeach
 			</select>
 		</div>

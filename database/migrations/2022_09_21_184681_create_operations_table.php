@@ -15,7 +15,7 @@ class CreateOperationsTable extends Migration
     {
         Schema::create('operations', function (Blueprint $table) {
             $table->id();
-			$table->string('type', 25)->nullable()->comment('тип операции');
+			$table->integer('operation_type_id')->->default(0)->comment('тип операции');
 			$table->integer('payment_method_id')->default(0)->comment('способ оплаты');
 			$table->float('amount')->default(0)->comment('сумма');
 			$table->integer('currency_id')->default(0)->index()->comment('валюта');
