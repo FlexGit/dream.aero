@@ -595,12 +595,12 @@ class ReportController extends Controller {
 		array_walk($items, 'ksort');
 		
 		$balanceItems = [];
-		foreach ($paymentMethods as $paymentMethod) {
+		/*foreach ($paymentMethods as $paymentMethod) {
 			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
 			
 			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId);
 			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId);
-		}
+		}*/
 		//\Log::debug(\DB::getQueryLog());
 		
 		$data = [
