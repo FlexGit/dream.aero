@@ -489,7 +489,7 @@ class ReportController extends Controller {
 				if ($operationTypeId) {
 					$operations = $operations->where('operation_type_id', $operationTypeId);
 				} else {
-					$operations = $operations->has('operationType');
+					$operations = $operations->has('OperationType');
 				}
 			}
 			$operations = $operations->get();
@@ -687,7 +687,7 @@ class ReportController extends Controller {
 				if ($operationTypeId) {
 					$operationSum = $operationSum->where('operation_type_id', $operationTypeId);
 				} else {
-					$operationSum = $operationSum->has('operationType');
+					$operationSum = $operationSum->has('OperationType');
 				}
 			}
 			$operationSum = $operationSum->sum('amount');
