@@ -159,7 +159,7 @@
 				})
 			}
 
-			getList(false);
+			//getList(false);
 
 			$(document).on('click', '#show_btn', function(e) {
 				getList(false);
