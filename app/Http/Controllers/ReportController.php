@@ -496,11 +496,11 @@ class ReportController extends Controller {
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
 				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
-					'type' => $operation->operationType ? $operation->operationType->name : '',
+					'type' => 'Expenses',
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
 					'currency' => $operation->currency ? $operation->currency->name : '',
-					'extra' => isset($operation->data_json['comment']) ? $operation->data_json['comment'] : '',
+					'extra' => $operation->operationType ? $operation->operationType->name : '' . isset($operation->data_json['comment']) ? ' ' . $operation->data_json['comment'] : '',
 				];
 			}
 		}
@@ -519,8 +519,8 @@ class ReportController extends Controller {
 			}
 			if ($operationType) {
 				if ($operationType == 'taxes') {
-					$deals = $deals->whereHas('product', function ($query) use ($operationTypeId) {
-						return $query->whereRelation('productType', 'product_types.alias', '=', $operationTypeId);
+					$deals = $deals->whereHas('product', function ($query) use ($operationType) {
+						return $query->whereRelation('productType', 'product_types.alias', '=', $operationType);
 					});
 				} elseif ($operationType == 'deals') {
 					if ($productId) {
