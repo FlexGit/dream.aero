@@ -46,6 +46,9 @@
 								<select class="form-control" id="filter_type" name="filter_type">
 									<option value=""></option>
 									@foreach($types as $k => $v)
+										@if(!in_array($k, ['expense', 'refund']))
+											@continue
+										@endif
 										<option value="{{ $k }}">{{ $v }}</option>
 									@endforeach
 								</select>
