@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Content;
-use App\Models\Deal;
 use App\Models\Operation;
 use App\Models\OperationType;
 use App\Repositories\PaymentRepository;
@@ -111,7 +110,7 @@ class OperationController extends Controller
 		}
 		
 		$operation = Operation::find($id);
-		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Expenses not found']);
 		
 		$types = OperationType::where('is_active', true)
 			->orderBy('name')
@@ -172,7 +171,7 @@ class OperationController extends Controller
 		}
 		
 		$operation = Operation::find($id);
-		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Expenses not found']);
 		
 		$VIEW = view('admin.operation.modal.delete', [
 			'operation' => $operation,
@@ -204,7 +203,7 @@ class OperationController extends Controller
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'amount' => 'Amount',
-				'operated_at' => 'Operation date',
+				'operated_at' => 'Date',
 				'operation_type_id' => 'Type',
 				'payment_method_id' => 'Payment method',
 			]);
@@ -237,7 +236,7 @@ class OperationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'message' => 'Operation was successfully added']);
+		return response()->json(['status' => 'success', 'message' => 'Expenses was successfully added']);
 	}
 	
 	/**
@@ -251,7 +250,7 @@ class OperationController extends Controller
 		}
 
 		$operation = Operation::find($id);
-		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Expenses not found']);
 		
 		$user = Auth::user();
 		
@@ -265,7 +264,7 @@ class OperationController extends Controller
 		$validator = Validator::make($this->request->all(), $rules)
 			->setAttributeNames([
 				'amount' => 'Amount',
-				'operated_at' => 'Operation date',
+				'operated_at' => 'Date',
 				'operation_type_id' => 'Type',
 				'payment_method_id' => 'Payment method',
 			]);
@@ -292,7 +291,7 @@ class OperationController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'message' => 'Operation was successfully saved']);
+		return response()->json(['status' => 'success', 'message' => 'Expenses was successfully saved']);
 	}
 
 	/**
@@ -307,12 +306,12 @@ class OperationController extends Controller
 		}
 
 		$operation = Operation::find($id);
-		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Operation not found']);
+		if (!$operation) return response()->json(['status' => 'error', 'reason' => 'Expenses not found']);
 		
 		if (!$operation->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		return response()->json(['status' => 'success', 'message' => 'Operation was successfully deleted']);
+		return response()->json(['status' => 'success', 'message' => 'Expenses was successfully deleted']);
 	}
 }
