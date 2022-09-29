@@ -24,7 +24,7 @@
 					<div class="table-filter d-sm-flex">
 						<div class="form-group">
 							<div>
-								<label for="filter_operated_at_from">Operation Date start</label>
+								<label for="filter_operated_at_from">Date start</label>
 							</div>
 							<div>
 								<input type="date" class="form-control" id="filter_operated_at_from" name="filter_operated_at_from" placeholder="" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" style="width: 200px;">
@@ -32,7 +32,7 @@
 						</div>
 						<div class="form-group ml-3">
 							<div>
-								<label for="filter_operated_at_to">Operation Date end</label>
+								<label for="filter_operated_at_to">Date end</label>
 							</div>
 							<div>
 								<input type="date" class="form-control" id="filter_operated_at_to" name="filter_operated_at_to" placeholder="" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
@@ -65,7 +65,7 @@
 							</div>
 						</div>
 						<div class="form-group align-self-end text-right ml-auto">
-							<a href="javascript:void(0)" data-toggle="modal" data-url="/operation/add" data-action="/operation" data-method="POST" data-title="Add Operation" class="btn btn-secondary btn-sm" title="Add">Add</a>
+							<a href="javascript:void(0)" data-toggle="modal" data-url="/operation/add" data-action="/operation" data-method="POST" data-title="Add Expenses" class="btn btn-secondary btn-sm" title="Add">Add</a>
 						</div>
 					</div>
 					<table id="operationTable" class="table table-hover table-sm table-bordered table-striped table-data table-no-filter">
