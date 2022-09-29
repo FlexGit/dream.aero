@@ -482,7 +482,7 @@ class ReportController extends Controller {
 				->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
 				->where('city_id', $city->id)
 				->where('location_id', $location->id);
-			/*if ($paymentMethodId) {
+			if ($paymentMethodId) {
 				$operations = $operations->where('payment_method_id', $paymentMethodId);
 			}
 			if ($operationType) {
@@ -491,12 +491,12 @@ class ReportController extends Controller {
 				} else {
 					$operations = $operations->has('operationType');
 				}
-			}*/
+			}
 			$operations = $operations->get();
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
 				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
-					'type' => /*$operation->operationType ? $operation->operationType->name : */'',
+					'type' => $operation->operationType ? $operation->operationType->name : '',
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
 					'currency' => $operation->currency ? $operation->currency->name : '',

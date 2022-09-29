@@ -134,6 +134,7 @@ class Operation extends Model
 	
 	public function operationType()
 	{
-		return $this->belongsTo(operationType::class);
+		//return $this->belongsTo(operationType::class);
+		return $this->hasOne(operationType::class, 'id', 'operation_type_id');
 	}
 }
