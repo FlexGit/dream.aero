@@ -475,14 +475,14 @@ class ReportController extends Controller {
 		$items = [];
 		
 		//\DB::connection()->enableQueryLog();
-		/*if (!$operationType || $operationType == 'expenses') {
+		if (!$operationType || $operationType == 'expenses') {
 			// операции
 			$operations = Operation::orderBy('operated_at')
 				->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 				->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
 				->where('city_id', $city->id)
 				->where('location_id', $location->id);
-			if ($paymentMethodId) {
+			/*if ($paymentMethodId) {
 				$operations = $operations->where('payment_method_id', $paymentMethodId);
 			}
 			if ($operationType) {
@@ -491,11 +491,11 @@ class ReportController extends Controller {
 				} else {
 					$operations = $operations->has('operationType');
 				}
-			}
+			}*/
 			$operations = $operations->get();
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
-				/*$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
+				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
 					'type' => $operation->operationType ? $operation->operationType->name : '',
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
@@ -503,7 +503,7 @@ class ReportController extends Controller {
 					'extra' => isset($operation->data_json['comment']) ? $operation->data_json['comment'] : '',
 				];
 			}
-		}*/
+		}
 		
 		if (!$operationType || in_array($operationType, ['deals', 'taxes'])) {
 			// сделки
@@ -595,12 +595,12 @@ class ReportController extends Controller {
 		array_walk($items, 'ksort');
 		
 		$balanceItems = [];
-		/*foreach ($paymentMethods as $paymentMethod) {
+		foreach ($paymentMethods as $paymentMethod) {
 			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
 			
 			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId);
 			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId);
-		}*/
+		}
 		//\Log::debug(\DB::getQueryLog());
 		
 		$data = [
