@@ -500,7 +500,7 @@ class ReportController extends Controller {
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
 					'currency' => $operation->currency ? $operation->currency->name : '',
-					'extra' => $operation->operationType ? $operation->operationType->name : '' . isset($operation->data_json['comment']) ? ' ' . $operation->data_json['comment'] : '',
+					'extra' => ($operation->operationType ? $operation->operationType->name : '') . (isset($operation->data_json['comment']) ? ' ' . $operation->data_json['comment'] : ''),
 				];
 			}
 		}
@@ -519,7 +519,7 @@ class ReportController extends Controller {
 			}
 			if ($operationType) {
 				if ($operationType == 'taxes') {
-					$deals = $deals->whereHas('product', function ($query) use ($operationType) {
+					$deals = $deals->whereHas('product', function ($query) {
 						return $query->whereRelation('productType', 'product_types.alias', '=', 'tax');
 					});
 				} elseif ($operationType == 'deals') {
