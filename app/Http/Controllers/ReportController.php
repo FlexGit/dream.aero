@@ -495,7 +495,7 @@ class ReportController extends Controller {
 		
 		$items = [];
 		
-		\DB::connection()->enableQueryLog();
+		//\DB::connection()->enableQueryLog();
 		if (!$operationType || $operationType == 'expenses') {
 			// операции
 			$operations = Operation::orderBy('operated_at')
@@ -550,10 +550,12 @@ class ReportController extends Controller {
 						$deals = $deals->has('product');
 					}*/
 					if ($discountValue) {
-						$deals = $deals->whereHas('promo', function ($query) use ($discountValue) {
-							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-						})->whereHas('promocode', function ($query) use ($discountValue) {
-							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+						$deals = $deals->where(function ($query) use ($discountValue) {
+							$query->whereHas('promo', function ($query) use ($discountValue) {
+								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+							})->orWhereHas('promocode', function ($query) use ($discountValue) {
+								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+							});
 						});
 					}
 				}
@@ -628,7 +630,7 @@ class ReportController extends Controller {
 			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
 			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
 		}
-		\Log::debug(\DB::getQueryLog());
+		//\Log::debug(\DB::getQueryLog());
 		
 		$data = [
 			'items' => $items,
@@ -699,10 +701,12 @@ class ReportController extends Controller {
 					}*/
 					if ($discountValue) {
 						$billSum = $billSum->whereHas('deal', function ($query) use ($discountValue) {
-							return $query->whereHas('promo', function ($query) use ($discountValue) {
-								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-							})->whereHas('promocode', function ($query) use ($discountValue) {
-								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+							$query->where(function ($query) use ($discountValue) {
+								return $query->whereHas('promo', function ($query) use ($discountValue) {
+									return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+								})->orWhereHas('promocode', function ($query) use ($discountValue) {
+									return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+								});
 							});
 						});
 					}
