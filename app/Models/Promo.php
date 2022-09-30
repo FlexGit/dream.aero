@@ -100,12 +100,12 @@ class Promo extends Model
 
 	public function city()
 	{
-		return $this->hasOne('App\Models\City', 'id', 'city_id');
+		return $this->hasOne(City::class, 'id', 'city_id');
 	}
 	
 	public function discount()
 	{
-		return $this->hasOne('App\Models\Discount', 'id', 'discount_id');
+		return $this->hasOne(Discount::class, 'id', 'discount_id');
 	}
 	
 	public function valueFormatted() {

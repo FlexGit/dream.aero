@@ -65,6 +65,19 @@
 								</select>
 							</div>
 						</div>
+						<div class="form-group ml-3 filter_discount_container hidden">
+							<div>
+								<label for="filter_discount">Discount</label>
+							</div>
+							<div>
+								<select class="form-control" id="filter_discount" name="filter_discount">
+									<option value=""></option>
+									@foreach($discountItems ?? [] as $discountKey => $discountValue)
+										<option value="{{ $discountKey }}">{{ $discountValue }}</option>
+									@endforeach
+								</select>
+							</div>
+						</div>
 						<div class="form-group ml-3 filter_operation_type_container hidden">
 							<div>
 								<label for="filter_operation_type_id">Expenses</label>
@@ -134,6 +147,7 @@
 						'filter_operation_type': $('#filter_operation_type').val(),
 						'filter_operation_type_id': $('#filter_operation_type_id').val(),
 						'filter_product_id': $('#filter_product_id').val(),
+						'filter_discount': $('#filter_discount').val(),
 						'is_export': isExport,
 					},
 					success: function(result) {
@@ -171,13 +185,13 @@
 
 			$(document).on('change', '#filter_operation_type', function(e) {
 				if ($(this).val() === 'deals') {
-					$('.filter_product_container').removeClass('hidden');
+					$('.filter_product_container, .filter_discount_container').removeClass('hidden');
 					$('.filter_operation_type_container').addClass('hidden');
 				} else if ($(this).val() === 'expenses') {
 					$('.filter_operation_type_container').removeClass('hidden');
-					$('.filter_product_container').addClass('hidden');
+					$('.filter_product_container, .filter_discount_container').addClass('hidden');
 				} else {
-					$('.filter_operation_type_container, .filter_product_container').addClass('hidden');
+					$('.filter_operation_type_container, .filter_product_container, .filter_discount_container').addClass('hidden');
 				}
 			});
 		});

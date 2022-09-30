@@ -9,6 +9,7 @@ use App\Models\Bill;
 use App\Models\City;
 use App\Models\Content;
 use App\Models\Deal;
+use App\Models\Discount;
 use App\Models\Event;
 use App\Models\Operation;
 use App\Models\OperationType;
@@ -19,6 +20,8 @@ use App\Models\User;
 use App\Repositories\CityRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\ProductTypeRepository;
+use App\Repositories\PromocodeRepository;
+use App\Repositories\PromoRepository;
 use Auth;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -32,15 +35,19 @@ class ReportController extends Controller {
 	private $cityRepo;
 	private $paymentRepo;
 	private $productTypeRepo;
+	private $promoRepo;
+	private $promocodeRepo;
 	
 	/**
 	 * @param Request $request
 	 */
-	public function __construct(Request $request, CityRepository $cityRepo, PaymentRepository $paymentRepo, ProductTypeRepository $productTypeRepo) {
+	public function __construct(Request $request, CityRepository $cityRepo, PaymentRepository $paymentRepo, ProductTypeRepository $productTypeRepo, PromoRepository $promoRepo, PromocodeRepository $promocodeRepo) {
 		$this->request = $request;
 		$this->cityRepo = $cityRepo;
 		$this->paymentRepo = $paymentRepo;
 		$this->productTypeRepo = $productTypeRepo;
+		$this->promoRepo = $promoRepo;
+		$this->promocodeRepo = $promocodeRepo;
 	}
 	
 	public function personalSellingIndex()
@@ -397,6 +404,7 @@ class ReportController extends Controller {
 	public function cashFlowIndex()
 	{
 		$user = Auth::user();
+		$city = $user->city;
 		
 		if (!$user->isSuperAdmin()) {
 			abort(404);
@@ -407,6 +415,17 @@ class ReportController extends Controller {
 			->get();
 		$products = $this->productTypeRepo->getActualProductList($user, true);
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList(true);
+		$promos = $this->promoRepo->getList($user, false, true);
+		$promocodes = $this->promocodeRepo->getList($city);
+		
+		$discountItems = [];
+		foreach ($promos as $promo) {
+			$discountItems[$promo->discount->value] = $promo->discount->valueFormatted();
+		}
+		foreach ($promocodes as $promocode) {
+			$discountItems[$promocode->discount->value] = $promocode->discount->valueFormatted();
+		}
+		array_unique($discountItems);
 		
 		$page = HelpFunctions::getEntityByAlias(Content::class, 'report-cash-flow');
 		
@@ -414,6 +433,7 @@ class ReportController extends Controller {
 			'types' => $types,
 			'products' => $products,
 			'paymentMethods' => $paymentMethods,
+			'discountItems' => $discountItems,
 			'page' => $page,
 		]);
 	}
@@ -441,6 +461,7 @@ class ReportController extends Controller {
 		$operationType = $this->request->filter_operation_type ?? '';
 		$productId = $this->request->filter_product_id ?? 0;
 		$operationTypeId = $this->request->filter_operation_type_id ?? 0;
+		$discountValue = $this->request->filter_discount ?? '';
 		$isExport = filter_var($this->request->is_export, FILTER_VALIDATE_BOOLEAN);
 		
 		if (!$dateFromAt && !$dateToAt) {
@@ -504,7 +525,7 @@ class ReportController extends Controller {
 				];
 			}
 		}
-		
+
 		if (!$operationType || in_array($operationType, ['deals', 'taxes'])) {
 			// сделки
 			$deals = Deal::oldest()
@@ -525,9 +546,15 @@ class ReportController extends Controller {
 				} elseif ($operationType == 'deals') {
 					if ($productId) {
 						$deals = $deals->where('product_id', $productId);
-					}
-					else {
+					} else {
 						$deals = $deals->has('product');
+					}
+					if ($discountValue) {
+						$deals = $deals->whereHas('promo', function ($query) use ($discountValue) {
+							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+						})->orWhereHas('promocode', function ($query) use ($discountValue) {
+							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+						});
 					}
 				}
 			}
@@ -598,8 +625,8 @@ class ReportController extends Controller {
 		foreach ($paymentMethods as $paymentMethod) {
 			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
 			
-			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId);
-			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId);
+			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
+			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
 		}
 		//\Log::debug(\DB::getQueryLog());
 		
@@ -636,7 +663,7 @@ class ReportController extends Controller {
 	 * @param string $paymentMethodAlias
 	 * @return mixed
 	 */
-	public function getBalanceOnDate($timestamp, $paymentMethodAlias, $operationType, $operationTypeId = 0, $productId = 0)
+	public function getBalanceOnDate($timestamp, $paymentMethodAlias, $operationType, $operationTypeId = 0, $productId = 0, $discountValue = '')
 	{
 		$user = Auth::user();
 		$city = $user->city;
@@ -665,10 +692,18 @@ class ReportController extends Controller {
 						$billSum = $billSum->whereHas('deal', function ($query) use ($productId) {
 							return $query->where('product_id', $productId);
 						});
-					}
-					else {
+					} else {
 						$billSum = $billSum->whereHas('deal', function ($query) {
 							return $query->has('product');
+						});
+					}
+					if ($discountValue) {
+						$billSum = $billSum->whereHas('deal', function ($query) use ($discountValue) {
+							return $query->whereHas('promo', function ($query) use ($discountValue) {
+								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+							})->orWhereHas('promocode', function ($query) use ($discountValue) {
+								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+							});
 						});
 					}
 				}
