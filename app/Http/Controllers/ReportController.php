@@ -495,7 +495,7 @@ class ReportController extends Controller {
 		
 		$items = [];
 		
-		//\DB::connection()->enableQueryLog();
+		\DB::connection()->enableQueryLog();
 		if (!$operationType || $operationType == 'expenses') {
 			// операции
 			$operations = Operation::orderBy('operated_at')
@@ -628,7 +628,7 @@ class ReportController extends Controller {
 			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
 			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
 		}
-		//\Log::debug(\DB::getQueryLog());
+		\Log::debug(\DB::getQueryLog());
 		
 		$data = [
 			'items' => $items,
