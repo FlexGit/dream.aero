@@ -552,9 +552,9 @@ class ReportController extends Controller {
 					if ($discountValue) {
 						$deals = $deals->whereHas('promo', function ($query) use ($discountValue) {
 							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-						})/*->orWhereHas('promocode', function ($query) use ($discountValue) {
+						})->whereHas('promocode', function ($query) use ($discountValue) {
 							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-						})*/;
+						});
 					}
 				}
 			}
@@ -701,9 +701,9 @@ class ReportController extends Controller {
 						$billSum = $billSum->whereHas('deal', function ($query) use ($discountValue) {
 							return $query->whereHas('promo', function ($query) use ($discountValue) {
 								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-							})/*->orWhereHas('promocode', function ($query) use ($discountValue) {
+							})->whereHas('promocode', function ($query) use ($discountValue) {
 								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-							})*/;
+							});
 						});
 					}
 				}
