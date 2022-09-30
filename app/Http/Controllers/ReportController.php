@@ -413,7 +413,7 @@ class ReportController extends Controller {
 		$types = OperationType::where('is_active', true)
 			->orderBy('name')
 			->get();
-		$products = $this->productTypeRepo->getActualProductList($user, true);
+		$products = $this->productTypeRepo->getActualProductList($user, true, false);
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList(true);
 		$promos = $this->promoRepo->getList($user, false, true);
 		$promocodes = $this->promocodeRepo->getList($city);
