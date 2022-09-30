@@ -546,15 +546,15 @@ class ReportController extends Controller {
 				} elseif ($operationType == 'deals') {
 					if ($productId) {
 						$deals = $deals->where('product_id', $productId);
-					} else {
+					} /*else {
 						$deals = $deals->has('product');
-					}
+					}*/
 					if ($discountValue) {
 						$deals = $deals->whereHas('promo', function ($query) use ($discountValue) {
 							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-						})->orWhereHas('promocode', function ($query) use ($discountValue) {
+						})/*->orWhereHas('promocode', function ($query) use ($discountValue) {
 							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-						});
+						})*/;
 					}
 				}
 			}
@@ -692,18 +692,18 @@ class ReportController extends Controller {
 						$billSum = $billSum->whereHas('deal', function ($query) use ($productId) {
 							return $query->where('product_id', $productId);
 						});
-					} else {
+					} /*else {
 						$billSum = $billSum->whereHas('deal', function ($query) {
 							return $query->has('product');
 						});
-					}
+					}*/
 					if ($discountValue) {
 						$billSum = $billSum->whereHas('deal', function ($query) use ($discountValue) {
 							return $query->whereHas('promo', function ($query) use ($discountValue) {
 								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-							})->orWhereHas('promocode', function ($query) use ($discountValue) {
+							})/*->orWhereHas('promocode', function ($query) use ($discountValue) {
 								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-							});
+							})*/;
 						});
 					}
 				}
