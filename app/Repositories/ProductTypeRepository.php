@@ -23,7 +23,7 @@ class ProductTypeRepository {
 	 */
 	public function getActualProductList(User $user, $onlyActive = true, $onlyTariff = true, $onlyNotTariff = false, $onlyTax = false)
 	{
-		$productTypes = $this->model->orderBy('name')
+		$productTypes = $this->model->orderBy('sort')
 			->get();
 		if ($onlyTariff) {
 			$productTypes = $productTypes->where('is_tariff', true);
