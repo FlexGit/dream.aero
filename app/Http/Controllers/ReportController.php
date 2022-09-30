@@ -459,7 +459,7 @@ class ReportController extends Controller {
 		$dateToAt = $this->request->filter_date_to_at ?? '';
 		$paymentMethodId = $this->request->filter_payment_method_id ?? 0;
 		$operationType = $this->request->filter_operation_type ?? '';
-		$productId = $this->request->filter_product_id ?? 0;
+		$productIds = $this->request->filter_product_id ?? [];
 		$operationTypeId = $this->request->filter_operation_type_id ?? 0;
 		$discountValue = $this->request->filter_discount ?? '';
 		$isExport = filter_var($this->request->is_export, FILTER_VALIDATE_BOOLEAN);
@@ -539,8 +539,8 @@ class ReportController extends Controller {
 				});
 			}
 			if ($operationType) {
-				if ($productId) {
-					$deals = $deals->where('product_id', $productId);
+				if ($productIds) {
+					$deals = $deals->whereIn('product_id', $productIds);
 				}
 				if ($discountValue) {
 					$deals = $deals->where(function ($query) use ($discountValue) {
@@ -619,8 +619,8 @@ class ReportController extends Controller {
 		foreach ($paymentMethods as $paymentMethod) {
 			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
 			
-			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
-			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
+			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
+			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
 		}
 		//\Log::debug(\DB::getQueryLog());
 		
@@ -657,7 +657,7 @@ class ReportController extends Controller {
 	 * @param string $paymentMethodAlias
 	 * @return mixed
 	 */
-	public function getBalanceOnDate($timestamp, $startYear, $paymentMethodAlias, $operationType, $operationTypeId = 0, $productId = 0, $discountValue = '')
+	public function getBalanceOnDate($timestamp, $startYear, $paymentMethodAlias, $operationType, $operationTypeId = 0, $productIds = [], $discountValue = '')
 	{
 		$user = Auth::user();
 		$city = $user->city;
@@ -676,9 +676,9 @@ class ReportController extends Controller {
 					return $query->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
 				});
 			if ($operationType) {
-				if ($productId) {
-					$billSum = $billSum->whereHas('deal', function ($query) use ($productId) {
-						return $query->where('product_id', $productId);
+				if ($productIds) {
+					$billSum = $billSum->whereHas('deal', function ($query) use ($productIds) {
+						return $query->whereIn('product_id', $productIds);
 					});
 				}
 				if ($discountValue) {

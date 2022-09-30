@@ -53,8 +53,8 @@
 								<label for="filter_product_id">Product</label>
 							</div>
 							<div>
-								<select class="form-control" id="filter_product_id" name="filter_product_id">
-									<option value=""></option>
+								<select class="form-control" id="filter_product_id" name="filter_product_id[]" multiple="multiple">
+									{{--<option value=""></option>--}}
 									@foreach($products ?? [] as $productTypeName => $productItem)
 										<optgroup label="{{ $productTypeName }}"></optgroup>
 										@foreach($productItem as $productId => $product)
@@ -117,11 +117,13 @@
 
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
 @stop
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
+	<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>
 	<script src="{{ asset('js/admin/common.js') }}"></script>
 	<script>
 		$(function() {
@@ -180,6 +182,30 @@
 
 			$(document).on('click', '#export_btn', function(e) {
 				getList(true);
+			});
+
+			$('#filter_product_id').multiselect({
+				includeSelectAllOption: true,
+				selectAllText: 'All',
+				buttonWidth: '200px',
+				selectAllValue: 0,
+				buttonTextAlignment: 'left',
+				maxHeight: 300,
+				buttonText: function (options, select) {
+					if (options.length === 0) {
+						return 'All';
+					} else {
+						var labels = [];
+						options.each(function () {
+							if ($(this).attr('label') !== undefined) {
+								labels.push($(this).attr('label'));
+							} else {
+								labels.push($(this).html());
+							}
+						});
+						return labels.join(', ') + '';
+					}
+				},
 			});
 
 			$(document).on('change', '#filter_operation_type', function(e) {
