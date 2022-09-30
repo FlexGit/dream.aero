@@ -44,7 +44,6 @@
 									<option value=""></option>
 									<option value="expenses">Expenses</option>
 									<option value="deals">Deals</option>
-									<option value="taxes">Taxes</option>
 									<option value="tips">Tips</option>
 								</select>
 							</div>

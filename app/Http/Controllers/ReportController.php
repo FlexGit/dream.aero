@@ -526,7 +526,7 @@ class ReportController extends Controller {
 			}
 		}
 
-		if (!$operationType || in_array($operationType, ['deals', 'taxes'])) {
+		if (!$operationType || $operationType == 'deals') {
 			// сделки
 			$deals = Deal::oldest()
 				->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
@@ -539,25 +539,17 @@ class ReportController extends Controller {
 				});
 			}
 			if ($operationType) {
-				if ($operationType == 'taxes') {
-					$deals = $deals->whereHas('product', function ($query) {
-						return $query->whereRelation('productType', 'product_types.alias', '=', 'tax');
-					});
-				} elseif ($operationType == 'deals') {
-					if ($productId) {
-						$deals = $deals->where('product_id', $productId);
-					} /*else {
-						$deals = $deals->has('product');
-					}*/
-					if ($discountValue) {
-						$deals = $deals->where(function ($query) use ($discountValue) {
-							$query->whereHas('promo', function ($query) use ($discountValue) {
-								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-							})->orWhereHas('promocode', function ($query) use ($discountValue) {
-								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-							});
+				if ($productId) {
+					$deals = $deals->where('product_id', $productId);
+				}
+				if ($discountValue) {
+					$deals = $deals->where(function ($query) use ($discountValue) {
+						$query->whereHas('promo', function ($query) use ($discountValue) {
+							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+						})->orWhereHas('promocode', function ($query) use ($discountValue) {
+							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
 						});
-					}
+					});
 				}
 			}
 			$deals = $deals->get();
@@ -672,7 +664,7 @@ class ReportController extends Controller {
 		$location = $user->location;
 		
 		$billSum = 0;
-		if (!$operationType || in_array($operationType, ['deals', 'taxes'])) {
+		if (!$operationType || $operationType == 'deals') {
 			// инвойсы
 			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp)->startOfDay())
 				->where('payed_at', '>=', $startYear)
@@ -684,33 +676,21 @@ class ReportController extends Controller {
 					return $query->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
 				});
 			if ($operationType) {
-				if ($operationType == 'taxes') {
-					$billSum = $billSum->whereHas('deal', function ($query) use ($operationType) {
-						return $query->whereHas('product', function ($query) use ($operationType) {
-							return $query->whereRelation('productType', 'product_types.alias', '=', $operationType);
-						});
+				if ($productId) {
+					$billSum = $billSum->whereHas('deal', function ($query) use ($productId) {
+						return $query->where('product_id', $productId);
 					});
-				} else if ($operationType == 'deals') {
-					if ($productId) {
-						$billSum = $billSum->whereHas('deal', function ($query) use ($productId) {
-							return $query->where('product_id', $productId);
-						});
-					} /*else {
-						$billSum = $billSum->whereHas('deal', function ($query) {
-							return $query->has('product');
-						});
-					}*/
-					if ($discountValue) {
-						$billSum = $billSum->whereHas('deal', function ($query) use ($discountValue) {
-							$query->where(function ($query) use ($discountValue) {
-								return $query->whereHas('promo', function ($query) use ($discountValue) {
-									return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-								})->orWhereHas('promocode', function ($query) use ($discountValue) {
-									return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
-								});
+				}
+				if ($discountValue) {
+					$billSum = $billSum->whereHas('deal', function ($query) use ($discountValue) {
+						$query->where(function ($query) use ($discountValue) {
+							return $query->whereHas('promo', function ($query) use ($discountValue) {
+								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
+							})->orWhereHas('promocode', function ($query) use ($discountValue) {
+								return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
 							});
 						});
-					}
+					});
 				}
 			}
 			$billSum = $billSum->sum('total_amount');
