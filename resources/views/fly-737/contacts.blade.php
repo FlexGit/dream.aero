@@ -15,7 +15,7 @@
 				<div class="row">
 					<div class="col-md-12 price">
 						<div class="prices">
-							<h3>Coming soon...</h3>
+							<h3>600 Brickell Ave, Miami, FL 33131, United States, (202) 913-8453</h3>
 						</div>
 					</div>
 				</div>
