@@ -627,8 +627,8 @@ class ReportController extends Controller {
 		foreach ($paymentMethods as $paymentMethod) {
 			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
 			
-			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
-			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
+			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
+			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productId, $discountValue);
 		}
 		//\Log::debug(\DB::getQueryLog());
 		
@@ -665,7 +665,7 @@ class ReportController extends Controller {
 	 * @param string $paymentMethodAlias
 	 * @return mixed
 	 */
-	public function getBalanceOnDate($timestamp, $paymentMethodAlias, $operationType, $operationTypeId = 0, $productId = 0, $discountValue = '')
+	public function getBalanceOnDate($timestamp, $startYear, $paymentMethodAlias, $operationType, $operationTypeId = 0, $productId = 0, $discountValue = '')
 	{
 		$user = Auth::user();
 		$city = $user->city;
@@ -675,6 +675,7 @@ class ReportController extends Controller {
 		if (!$operationType || in_array($operationType, ['deals', 'taxes'])) {
 			// инвойсы
 			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp)->startOfDay())
+				->where('payed_at', '>=', $startYear)
 				->where('city_id', $city->id)
 				->where('location_id', $location->id)
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
@@ -719,6 +720,7 @@ class ReportController extends Controller {
 		if (!$operationType || $operationType == 'expenses') {
 			//операции
 			$operationSum = Operation::where('operated_at', '<', Carbon::parse($timestamp)->startOfDay())
+				->where('operated_at', '>=', $startYear)
 				->where('city_id', $city->id)
 				->where('location_id', $location->id)
 				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias);
@@ -736,6 +738,7 @@ class ReportController extends Controller {
 		if (!$operationType || $operationType == 'tips') {
 			// типсы
 			$tipSum = Tip::where('received_at', '<', Carbon::parse($timestamp)->startOfDay())
+				->where('received_at', '>=', $startYear)
 				->where('city_id', $city->id)
 				->where('location_id', $location->id)
 				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
