@@ -580,7 +580,7 @@ class ReportController extends Controller {
 				$paymentMethodNames = array_unique($paymentMethodNames);
 				
 				$items[Carbon::parse($deal->created_at)->format('Ym')][Carbon::parse($deal->created_at)->endOfDay()->timestamp][] = [
-					'type' => ($productType && $productType->alias == ProductType::TAX_ALIAS) ? 'Tax' : 'Deal',
+					'type' => 'Deal',
 					'payment_method' => implode(' / ', $paymentMethodNames),
 					'amount' => $deal->total_amount,
 					'currency' => $deal->currency ? $deal->currency->name : '',
