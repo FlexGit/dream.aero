@@ -185,8 +185,6 @@ class TipController extends Controller
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
 			'received_at' => 'required|date',
-			'admin_id' => 'required|numeric|min:0|not_in:0',
-			'pilot_id' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
@@ -194,8 +192,6 @@ class TipController extends Controller
 			->setAttributeNames([
 				'amount' => 'Amount',
 				'received_at' => 'Receiving date',
-				'admin_id' => 'Admin',
-				'pilot_id' => 'Pilot',
 				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
@@ -254,8 +250,6 @@ class TipController extends Controller
 		$rules = [
 			'amount' => 'required|numeric|min:0|not_in:0',
 			'received_at' => 'required|date',
-			'admin_id' => 'required|numeric|min:0|not_in:0',
-			'pilot_id' => 'required|numeric|min:0|not_in:0',
 			'payment_method_id' => 'required|numeric|min:0|not_in:0',
 		];
 		
@@ -263,8 +257,6 @@ class TipController extends Controller
 			->setAttributeNames([
 				'amount' => 'Amount',
 				'received_at' => 'Receiving date',
-				'admin_id' => 'Admin',
-				'pilot_id' => 'Pilot',
 				'payment_method_id' => 'Payment method',
 			]);
 		if (!$validator->passes()) {
