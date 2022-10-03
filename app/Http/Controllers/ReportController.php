@@ -674,7 +674,7 @@ class ReportController extends Controller {
 				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
 				->whereHas('deal', function ($query) use ($city, $location) {
 					return $query->where('city_id', $city->id)
-						->where('location', $location->id)
+						->where('location_id', $location->id)
 						->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
 				});
 			if ($operationType) {
