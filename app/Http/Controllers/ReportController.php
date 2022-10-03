@@ -527,7 +527,7 @@ class ReportController extends Controller {
 
 		if (!$operationType || $operationType == 'deals') {
 			// сделки
-			\DB::connection()->enableQueryLog();
+			//\DB::connection()->enableQueryLog();
 			$deals = Deal::oldest()
 				->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 				->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
@@ -553,7 +553,7 @@ class ReportController extends Controller {
 				}
 			}
 			$deals = $deals->get();
-			\Log::debug(\DB::getQueryLog());
+			//\Log::debug(\DB::getQueryLog());
 			foreach ($deals as $deal) {
 				/** @var Deal $deal */
 				if (!$deal->total_amount) continue;
@@ -672,8 +672,10 @@ class ReportController extends Controller {
 				->where('location_id', $location->id)
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
 				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
-				->whereHas('deal', function ($query) {
-					return $query->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
+				->whereHas('deal', function ($query) use ($city, $location) {
+					return $query->where('city_id', $city->id)
+						->where('location', $location->id)
+						->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
 				});
 			if ($operationType) {
 				if ($productIds) {
