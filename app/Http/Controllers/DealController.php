@@ -1270,6 +1270,7 @@ class DealController extends Controller
 		
 		$user = Auth::user();
 		$city = $user->city;
+		$location = $user->location;
 		
 		if ($user) {
 			if (!$user->isAdminOrHigher()) {
@@ -1367,6 +1368,7 @@ class DealController extends Controller
 			$deal->status_id = $dealStatus ? $dealStatus->id : 0;
 			$deal->contractor_id = $contractor ? $contractor->id : 0;
 			$deal->city_id = $city ? $city->id : 0;
+			$deal->location_id = $location->id;
 			$deal->name = $name;
 			$deal->phone = $phone;
 			$deal->email = $email;
@@ -1388,7 +1390,7 @@ class DealController extends Controller
 				$bill->contractor_id = $contractor->id;
 				$bill->deal_id = $deal->id;
 				$bill->city_id = $city ? $city->id : 0;
-				$bill->location_id = $user->location_id ?? 0;
+				$bill->location_id = $location ? $location->id : 0;
 				$bill->payment_method_id = ($source == Deal::WEB_SOURCE) ? 0 : $paymentMethodId;
 				$bill->status_id = $isPaid ? $billPayedStatus->id : $billStatus->id;
 				$bill->payed_at = $isPaid ? Carbon::now()->format('Y-m-d H:i:s') : null;
