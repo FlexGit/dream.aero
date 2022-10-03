@@ -74,14 +74,8 @@ class DealController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
 		}
 		
-		$productTypes = ProductType::where('alias', '!=', 'services')
-			->orderBy('name')
-			->get();
-		
-		$paymentMethods = PaymentMethod::where('is_active', true)
-			->orderBy('name')
-			->get();
-		
+		$products = $this->productTypeRepo->getActualProductList($user, true, false);
+		$paymentMethods = $this->paymentRepo->getPaymentMethodList(true);
 		$statuses = Status::whereNotIn('type', [Status::STATUS_TYPE_CONTRACTOR])
 			->orderby('type')
 			->orderBy('sort')
@@ -103,7 +97,7 @@ class DealController extends Controller
 		
 		return view(	'admin.deal.index', [
 			'user' => $user,
-			'productTypes' => $productTypes,
+			'products' => $products,
 			'paymentMethods' => $paymentMethods,
 			'statusData' => $statusData,
 			'deal' => $deal ?? null,

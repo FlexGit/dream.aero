@@ -48,12 +48,11 @@
 									<label for="filter_product_id">Product</label>
 								</div>
 								<select class="form-control" id="filter_product_id" name="filter_product_id[]" multiple="multiple">
-									@foreach($productTypes ?? [] as $productType)
-										<optgroup label="{{ mb_strtoupper($productType->name) }}">
-											@foreach($productType->products ?? [] as $product)
-												<option value="{{ $product->id }}" data-product_type_id="{{ $product->product_type_id }}">{{ $product->name }}</option>
-											@endforeach
-										</optgroup>
+									@foreach($products ?? [] as $productTypeName => $productItem)
+										<optgroup label="{{ $productTypeName }}"></optgroup>
+										@foreach($productItem as $productId => $product)
+											<option value="{{ $product->id }}" data-product_type_id="{{ $product->product_type_id }}">{{ $product->name }}</option>
+										@endforeach
 									@endforeach
 								</select>
 							</div>
