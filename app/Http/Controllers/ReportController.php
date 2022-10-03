@@ -495,7 +495,6 @@ class ReportController extends Controller {
 		
 		$items = [];
 		
-		//\DB::connection()->enableQueryLog();
 		if (!$operationType || $operationType == 'expenses') {
 			// операции
 			$operations = Operation::orderBy('operated_at')
@@ -528,6 +527,7 @@ class ReportController extends Controller {
 
 		if (!$operationType || $operationType == 'deals') {
 			// сделки
+			\DB::connection()->enableQueryLog();
 			$deals = Deal::oldest()
 				->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 				->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
@@ -553,13 +553,14 @@ class ReportController extends Controller {
 				}
 			}
 			$deals = $deals->get();
+			\Log::debug(\DB::getQueryLog());
 			foreach ($deals as $deal) {
 				/** @var Deal $deal */
 				if (!$deal->total_amount) continue;
 				if ($deal->balance() < 0) continue;
 				
 				$product = $deal->product;
-				$productType = $product ? $product->productType : null;
+				/*$productType = $product ? $product->productType : null;*/
 				$promo = $deal->promo;
 				$promocode = $deal->promocode;
 				$bills = $deal->bills;
@@ -622,7 +623,6 @@ class ReportController extends Controller {
 			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
 			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
 		}
-		//\Log::debug(\DB::getQueryLog());
 		
 		$data = [
 			'items' => $items,
