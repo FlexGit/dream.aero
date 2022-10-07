@@ -557,7 +557,7 @@ class ReportController extends Controller {
 			//\Log::debug(\DB::getQueryLog());
 			foreach ($deals as $deal) {
 				/** @var Deal $deal */
-				if (!$deal->total_amount) continue;
+				/*if (!$deal->total_amount) continue;*/
 				if ($deal->balance() < 0) continue;
 				
 				$product = $deal->product;
