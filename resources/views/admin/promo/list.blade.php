@@ -5,6 +5,7 @@
 	</td>
 	<td class="text-center">{{ $promo->alias }}</td>
 	<td class="text-center">{{ $promo->discount ? $promo->discount->valueFormatted() : '' }}</td>
+	<td class="text-center">{{ $promo->is_published ? 'Yes' : 'No' }}</td>
 	<td class="text-center">{{ $promo->is_active ? 'Yes' : 'No' }}</td>
 	<td class="text-center">{{ $promo->active_from_at ? \Carbon\Carbon::parse($promo->active_from_at)->format('m/d/Y') : '' }}</td>
 	<td class="text-center">{{ $promo->active_to_at ? \Carbon\Carbon::parse($promo->active_to_at)->format('m/d/Y') : '' }}</td>

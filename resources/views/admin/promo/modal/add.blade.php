@@ -20,6 +20,15 @@
 	</div>
 	<div class="col">
 		<div class="form-group">
+			<label for="is_published">For publication</label>
+			<select class="form-control" id="is_published" name="is_published">
+				<option value="1" selected>Yes</option>
+				<option value="0">No</option>
+			</select>
+		</div>
+	</div>
+	<div class="col">
+		<div class="form-group">
 			<label for="is_active">Is active</label>
 			<select class="form-control" id="is_active" name="is_active">
 				<option value="1" selected>Yes</option>

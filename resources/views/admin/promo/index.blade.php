@@ -32,6 +32,7 @@
 							<th class="text-center align-middle">Name</th>
 							<th class="text-center align-middle">Alias</th>
 							<th class="text-center align-middle">Discount</th>
+							<th class="text-center align-middle">For publication</th>
 							<th class="text-center align-middle">Is active</th>
 							<th class="text-center align-middle">Activity start date</th>
 							<th class="text-center align-middle">Activity end date</th>
