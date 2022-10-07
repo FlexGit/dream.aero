@@ -533,7 +533,7 @@ class ReportController extends Controller {
 				->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 				->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
 				->where('city_id', $city->id)
-				->where('location_id', $location->id);
+				/*->where('location_id', $location->id)*/;
 			if ($paymentMethodId) {
 				$deals = $deals->whereHas('bills', function ($query) use ($paymentMethodId) {
 					return $query->where('bills.payment_method_id', $paymentMethodId);
@@ -672,7 +672,7 @@ class ReportController extends Controller {
 			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp)->startOfDay())
 				->where('payed_at', '>=', $startYear)
 				->where('city_id', $city->id)
-				->where('location_id', $location->id)
+				/*->where('location_id', $location->id)*/
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
 				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
 				->whereHas('deal', function ($query) use ($city, $location) {
