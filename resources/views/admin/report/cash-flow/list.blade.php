@@ -46,7 +46,7 @@
 							{{ $dateItem['type'] }}
 						</td>
 						<td class="align-top text-center">
-							{{ $dateItem['epxenses'] }}
+							{{ $dateItem['expenses'] }}
 						</td>
 						<td class="align-top text-center">
 							{{ $dateItem['payment_method'] }}
