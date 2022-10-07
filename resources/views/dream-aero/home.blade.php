@@ -49,25 +49,25 @@
 			<ul class="row">
 				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
 					<a href="{{ url($cityAlias . '/impressions') }}">
-						<img src="{{ asset('img/' . Session::get('domain') . '/airplane-shape.webp') }}" alt="" width="56" height="auto">
+						<img src="{{ asset('img/airplane-shape.webp') }}" alt="" width="56" height="auto">
 						<span>An unforgettable experience</span>
 					</a>
 				</li>
 				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
 					<a href="{{ url($cityAlias . '/prof-assistance') }}">
-						<img src="{{ asset('img/' . Session::get('domain') . '/pilot-hat.webp') }}" alt="" width="66" height="auto">
+						<img src="{{ asset('img/pilot-hat.webp') }}" alt="" width="66" height="auto">
 						<span>The guidance of a pilot instructor</span>
 					</a>
 				</li>
 				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
 					<a href="{{ url($cityAlias . '/the-world-of-aviation') }}">
-						<img src="{{ asset('img/' . Session::get('domain') . '/pilot.webp') }}" alt="" width="61" height="auto">
+						<img src="{{ asset('img/pilot.webp') }}" alt="" width="61" height="auto">
 						<span>Immersion in the world of aviation</span>
 					</a>
 				</li>
 				<li class="col-md-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s" data-wow-duration="2s">
 					<a href="{{ url($cityAlias . '/treating-aerophobia') }}">
-						<img src="{{ asset('img/' . Session::get('domain') . '/cloud.webp') }}" alt="" width="61" height="auto">
+						<img src="{{ asset('img/cloud.webp') }}" alt="" width="61" height="auto">
 						<span>Treating aerophobia</span>
 					</a>
 				</li>
