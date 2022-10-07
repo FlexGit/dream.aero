@@ -237,7 +237,7 @@ class Product extends Model
 			// активные акции для публикации со скидкой
 			//\DB::connection()->enableQueryLog();
 			$promos = Promo::where('is_active', true)
-				/*->where('is_published', true)*/
+				->where('is_published', true)
 				->where('discount_id', '!=', 0)
 				->where('alias', '!=', Promo::BIRTHDAY_ALIAS)
 				->whereIn('city_id', [$cityId, 0])
