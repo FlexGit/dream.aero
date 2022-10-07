@@ -30,6 +30,7 @@
 		<tr>
 			<td class="col-1 align-top text-center font-weight-bold">Date</td>
 			<td class="col-1 align-top text-center font-weight-bold">Type</td>
+			<td class="col-1 align-top text-center font-weight-bold">Expenses</td>
 			<td class="col-2 align-top text-center font-weight-bold">Payment method</td>
 			<td class="col-2 align-top text-center font-weight-bold">Amount</td>
 			<td class="col-6 align-top text-center font-weight-bold">Extra</td>
@@ -43,6 +44,9 @@
 						</td>
 						<td class="align-top text-center">
 							{{ $dateItem['type'] }}
+						</td>
+						<td class="align-top text-center">
+							{{ $dateItem['epxenses'] }}
 						</td>
 						<td class="align-top text-center">
 							{{ $dateItem['payment_method'] }}

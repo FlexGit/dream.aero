@@ -8,6 +8,7 @@
 	<tr>
 		<td style="text-align: center;font-weight: bold;">Date</td>
 		<td style="text-align: center;font-weight: bold;">Type</td>
+		<td style="text-align: center;font-weight: bold;">Expenses</td>
 		<td style="text-align: center;font-weight: bold;">Payment method</td>
 		<td style="text-align: center;font-weight: bold;">Amount</td>
 		<td style="text-align: center;font-weight: bold;">Extra</td>
@@ -23,13 +24,16 @@
 						{{ $dateItem['type'] }}
 					</td>
 					<td style="text-align: center;">
+						{{ $dateItem['expenses'] }}
+					</td>
+					<td style="text-align: center;">
 						{{ $dateItem['payment_method'] }}
 					</td>
 					<td style="text-align: right;">
 						{{ number_format($dateItem['amount'], 2, '.', '') }}
 					</td>
 					<td style="text-align: center;">
-						{!! $dateItem['extra'] !!}
+						{{ $dateItem['extra'] }}
 					</td>
 				</tr>
 			@endforeach

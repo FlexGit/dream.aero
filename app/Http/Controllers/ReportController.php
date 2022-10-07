@@ -517,10 +517,11 @@ class ReportController extends Controller {
 				/** @var Operation $operation */
 				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
 					'type' => 'Expenses',
+					'expenses' => $operation->operationType ? $operation->operationType->name : '',
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
 					'amount' => $operation->amount,
 					'currency' => $operation->currency ? $operation->currency->name : '',
-					'extra' => ($operation->operationType ? $operation->operationType->name : '') . (isset($operation->data_json['comment']) ? ' ' . $operation->data_json['comment'] : ''),
+					'extra' => isset($operation->data_json['comment']) ? ' ' . $operation->data_json['comment'] : '',
 				];
 			}
 		}
@@ -582,6 +583,7 @@ class ReportController extends Controller {
 				
 				$items[Carbon::parse($deal->created_at)->format('Ym')][Carbon::parse($deal->created_at)->endOfDay()->timestamp][] = [
 					'type' => 'Deal',
+					'expenses' => '',
 					'payment_method' => implode(' / ', $paymentMethodNames),
 					'amount' => $deal->total_amount,
 					'currency' => $deal->currency ? $deal->currency->name : '',
@@ -605,6 +607,7 @@ class ReportController extends Controller {
 				/** @var Tip $tip */
 				$items[Carbon::parse($tip->received_at)->format('Ym')][Carbon::parse($tip->received_at)->endOfDay()->timestamp][] = [
 					'type' => 'Tips',
+					'expenses' => '',
 					'payment_method' => $tip->paymentMethod ? $tip->paymentMethod->name : '',
 					'amount' => $tip->amount,
 					'currency' => $tip->currency ? $tip->currency->name : '',
