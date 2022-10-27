@@ -14,7 +14,7 @@ class CityCheck
 	{
 		if ($request->ajax()) return $next($request);
 		
-		\Log::debug($request->getHost() . ' - ' . env('DOMAIN_SITE'));
+		//\Log::debug($request->getHost() . ' - ' . env('DOMAIN_SITE'));
 		
 		if ($request->getHost() != env('DOMAIN_SITE')) return $next($request);
 		
