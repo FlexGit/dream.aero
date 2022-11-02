@@ -756,7 +756,7 @@
 				todayHighlight: true,
 				daysOfWeekHighlighted: [0,6],
 				beforeShowDay: function(date) {
-					if ($.inArray(date.toLocaleDateString(), holidays) !== -1) {
+					if ($.inArray(moment(date).format('DD.MM.YYYY'), holidays) !== -1) {
 						return {classes: 'highlighted'};
 					}
 				},
