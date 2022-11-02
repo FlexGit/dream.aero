@@ -61,7 +61,7 @@ class PaymentController extends Controller
 
 		$billStatus = $bill->status;
 		if (!$billStatus || $billStatus->alias != Bill::NOT_PAYED_STATUS || $bill->payed_at != null) {
-			return view('payment', [
+			return view('dream-aero.payment', [
 				'bill' => $bill,
 				'deal' => $deal,
 				'page' => $page ?? new Content,
@@ -74,7 +74,7 @@ class PaymentController extends Controller
 		
 		$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, PaymentMethod::ONLINE_ALIAS);
 		if ($bill->paymentMethod->alias != $onlinePaymentMethod->alias) {
-			return view('payment', [
+			return view('dream-aero.payment', [
 				'bill' => $bill,
 				'deal' => $deal,
 				'page' => $page ?? new Content,
@@ -85,7 +85,7 @@ class PaymentController extends Controller
 			]);
 		}
 
-		return view('payment', [
+		return view('dream-aero.payment', [
 			'bill' => $bill,
 			'deal' => $deal,
 			'page' => $page ?? new Content,
