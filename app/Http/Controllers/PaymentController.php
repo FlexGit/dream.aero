@@ -20,6 +20,7 @@ use Validator;
 class PaymentController extends Controller
 {
 	private $request;
+	private $site;
 	
 	/**
 	 * @param Request $request
@@ -27,6 +28,7 @@ class PaymentController extends Controller
 	public function __construct(Request $request)
 	{
 		$this->request = $request;
+		$this->site = 'dream-aero';
 	}
 	
 	/**
@@ -61,7 +63,7 @@ class PaymentController extends Controller
 
 		$billStatus = $bill->status;
 		if (!$billStatus || $billStatus->alias != Bill::NOT_PAYED_STATUS || $bill->payed_at != null) {
-			return view('dream-aero.payment', [
+			return view($this->site . '.payment', [
 				'bill' => $bill,
 				'deal' => $deal,
 				'page' => $page ?? new Content,
@@ -74,7 +76,7 @@ class PaymentController extends Controller
 		
 		$onlinePaymentMethod = HelpFunctions::getEntityByAlias(PaymentMethod::class, PaymentMethod::ONLINE_ALIAS);
 		if ($bill->paymentMethod->alias != $onlinePaymentMethod->alias) {
-			return view('dream-aero.payment', [
+			return view($this->site . '.payment', [
 				'bill' => $bill,
 				'deal' => $deal,
 				'page' => $page ?? new Content,
@@ -85,7 +87,7 @@ class PaymentController extends Controller
 			]);
 		}
 
-		return view('dream-aero.payment', [
+		return view($this->site . '.payment', [
 			'bill' => $bill,
 			'deal' => $deal,
 			'page' => $page ?? new Content,
