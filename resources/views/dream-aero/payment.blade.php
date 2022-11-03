@@ -234,7 +234,7 @@
 					},
 					dataType: 'json',
 					success: function (result) {
-						console.log(result);
+						//console.log(result);
 
 						$btn.prop('disabled', false);
 
@@ -259,6 +259,8 @@
 
 						$popup.find('#card_number, #card_name, #expiration_date, #card_code').val('');
 						$alertSuccess.html(result.message).removeClass('hidden');
+
+						ym(49890730,'reachGoal','BookDC');
 					}
 				});
 			});
