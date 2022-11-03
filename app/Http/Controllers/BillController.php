@@ -333,6 +333,8 @@ class BillController extends Controller
 					$certificate->expire_at = Carbon::now()->addMonths($certificatePeriod)->format('Y-m-d H:i:s');
 					$certificate->save();
 				}
+			} elseif ($status->alias == Bill::NOT_PAYED_STATUS && $bill->payed_at) {
+				$bill->payed_at = null;
 			}
 			$bill->save();
 			
