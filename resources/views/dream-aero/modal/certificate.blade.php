@@ -81,7 +81,7 @@
 							<label class="switch">
 								<input type="checkbox" id="weekends" name="weekends" class="edit_field" value="1">
 								<span class="slider round"></span>
-							</label><span>Weekends</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="Option to fly on any day, including Saturday-Sunday" alt="help" width="20">
+							</label><span>Weekends & Holidays</span><img src="{{ asset('img/circle-question-regular.svg') }}" class="help" data-tippy-content="Option to fly on  any day, including federal holidays, Saturday and Sunday" alt="help" width="20">
 						</div>
 					</div>
 				</div>
