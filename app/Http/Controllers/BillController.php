@@ -256,10 +256,10 @@ class BillController extends Controller
 		$bill = Bill::find($id);
 		if (!$bill) return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-не-найден')]);
 		
-		$billStatus = $bill->status;
-		if ($billStatus && in_array($billStatus->alias, [Bill::PAYED_STATUS, Bill::CANCELED_STATUS])/* && !$user->isSuperAdmin()*/) {
+		/*$billStatus = $bill->status;
+		if ($billStatus && in_array($billStatus->alias, [Bill::PAYED_STATUS, Bill::CANCELED_STATUS])) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.счет-в-текущем-статусе-недоступен-для-редактирования')]);
-		}
+		}*/
 		
 		$deal = $bill->deal;
 		if (!$deal) return response()->json(['status' => 'error', 'reason' => trans('main.error.сделка-не-найдена')]);
@@ -289,9 +289,9 @@ class BillController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.статус-не-найден')]);
 		}
 		
-		if (in_array($bill->status->alias, [Bill::PAYED_STATUS, Bill::PAYED_PROCESSING_STATUS]) && in_array($bill->paymentMethod->alias, [PaymentMethod::ONLINE_ALIAS]) /*&& !$user->isSuperAdmin()*/) {
+		/*if (in_array($bill->status->alias, [Bill::PAYED_STATUS, Bill::PAYED_PROCESSING_STATUS]) && in_array($bill->paymentMethod->alias, [PaymentMethod::ONLINE_ALIAS])) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.оплаченный-счет-со-способом-оплаты-онлайн-недоступен-для-редактирования')]);
-		}
+		}*/
 		
 		$product = $deal->product;
 		if (!$product) {
