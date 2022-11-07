@@ -15,6 +15,15 @@
 
 	gtag('config', 'AW-11002510393');
 </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-246120572-1">
+</script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'UA-246120572-1');
+</script>
 <!-- Facebook Pixel Code -->
 <script>
 	!function(f,b,e,v,n,t,s)
