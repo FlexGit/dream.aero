@@ -581,6 +581,9 @@ class ReportController extends Controller {
 				foreach ($bills as $bill) {
 					/** @var Bill $bill */
 					$paymentMethodNames[] = $bill->paymentMethod ? $bill->paymentMethod->name : '';
+					if ($bill->data_json) {
+						$extra[] = $bill->data_json;
+					}
 				}
 				$paymentMethodNames = array_unique($paymentMethodNames);
 				
