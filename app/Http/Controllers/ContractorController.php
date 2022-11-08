@@ -274,14 +274,14 @@ class ContractorController extends Controller
 		foreach ($contractors as $contractor) {
 			$discount = $contractor->discount();
 			$suggestions[] = [
-				'value' => $contractor->name . ($contractor->lastname ? ' ' . $contractor->lastname : '') . ' [' . $contractor->email . ($contractor->phone ? ', ' . $contractor->phone : '') . ($discount->value ? ', ' . $discount->valueFormatted() : '') . ']',
+				'value' => $contractor->name . ($contractor->lastname ? ' ' . $contractor->lastname : '') . ' [' . $contractor->email . ($contractor->phone ? ', ' . $contractor->phone : '') . (($discount && $discount->value) ? ', ' . $discount->valueFormatted() : '') . ']',
 				'id' => $contractor->id,
 				'data' => [
 					'name' => $contractor->name,
 					'lastname' => $contractor->lastname ?? '',
 					'email' => $contractor->email ?? '',
 					'phone' => $contractor->phone ?? '',
-					'discount' => $discount->value ? $discount->valueFormatted() : '',
+					'discount' => ($discount && $discount->value) ? $discount->valueFormatted() : '',
 				],
 			];
 		}
