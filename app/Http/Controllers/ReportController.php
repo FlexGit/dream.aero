@@ -578,12 +578,14 @@ class ReportController extends Controller {
 				$extra[] = $promocode ? ($promocode->number . ($promocode->discount ? ' ' . $promocode->discount->valueFormatted() : '')) : '';
 				
 				$paymentMethodNames = [];
+				$isPaymentAuthorized = false;
 				foreach ($bills as $bill) {
 					/** @var Bill $bill */
 					$paymentMethodNames[] = $bill->paymentMethod ? $bill->paymentMethod->name : '';
 					if ($bill->data_json && isset($bill->data_json['payment'])) {
 						$extra[] = 'Payment status: ' . $bill->data_json['payment']['status'];
 						$extra[] = 'Transaction #: ' . isset($bill->data_json['payment']['transaction_id']) ? $bill->data_json['payment']['transaction_id'] : '-';
+						$isPaymentAuthorized = true;
 					}
 				}
 				$paymentMethodNames = array_unique($paymentMethodNames);
@@ -595,6 +597,7 @@ class ReportController extends Controller {
 					'amount' => $deal->total_amount,
 					'currency' => $deal->currency ? $deal->currency->name : '',
 					'extra' => implode(' ', array_filter($extra)),
+					'is_payment_authorized' => $isPaymentAuthorized,
 				];
 			}
 		}
