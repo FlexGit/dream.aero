@@ -596,7 +596,7 @@ class ReportController extends Controller {
 					'payment_method' => implode(' / ', $paymentMethodNames),
 					'amount' => $deal->total_amount,
 					'currency' => $deal->currency ? $deal->currency->name : '',
-					'extra' => implode(' ', array_filter($extra)),
+					'extra' => implode(', ', array_filter($extra)),
 					'is_payment_authorized' => $isPaymentAuthorized,
 				];
 			}
