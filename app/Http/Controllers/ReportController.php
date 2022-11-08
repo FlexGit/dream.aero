@@ -568,9 +568,9 @@ class ReportController extends Controller {
 				$bills = $deal->bills;
 				
 				$extra = [];
-				if ($user->email == env('DEV_EMAIL')) {
+				/*if ($user->email == env('DEV_EMAIL')) {*/
 					$extra[] = $isExport ? $deal->number : '<a href="' . url('deal/' . $deal->id) . '" target="_blank">' . $deal->number . '</a>';
-				}
+				/*}*/
 				$extra[] = $deal->is_certificate_purchase ? 'Voucher' : ($deal->certificate ? 'Flight by Voucher' : 'Flight');
 				$extra[] = $deal->certificate ? $deal->certificate->number : '';
 				$extra[] = $product->name;
