@@ -583,8 +583,8 @@ class ReportController extends Controller {
 					/** @var Bill $bill */
 					$paymentMethodNames[] = $bill->paymentMethod ? $bill->paymentMethod->name : '';
 					if ($bill->data_json && isset($bill->data_json['payment'])) {
-						$extra[] = 'Payment status: ' . $bill->data_json['payment']['status'];
-						$extra[] = 'Transaction #: ' . isset($bill->data_json['payment']['transaction_id']) ? $bill->data_json['payment']['transaction_id'] : '-';
+						$extra[] = '<br>Payment status: ' . $bill->data_json['payment']['status'];
+						$extra[] = 'Transaction #: ' . (isset($bill->data_json['payment']['transaction_id']) ? $bill->data_json['payment']['transaction_id'] : '-');
 						$isPaymentAuthorized = true;
 					}
 				}
