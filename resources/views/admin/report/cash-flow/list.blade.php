@@ -38,7 +38,7 @@
 		@if(isset($items[$periodYear . $periodMonth]))
 			@foreach($items[$periodYear . $periodMonth] as $date => $dateItems)
 				@foreach($dateItems as $dateItem)
-					<tr @if(isset($dateItem['is_payment_authorized']) && !$dateItem['is_payment_authorized']) class="bg-warning" @endif>
+					<tr @if(isset($dateItem['is_online']) && $dateItem['is_online'] && isset($dateItem['is_payment_authorized']) && !$dateItem['is_payment_authorized']) class="bg-warning" @endif>
 						<td class="align-top text-center">
 							{{ \Carbon\Carbon::parse($date)->format('m/d/Y') }}
 						</td>
