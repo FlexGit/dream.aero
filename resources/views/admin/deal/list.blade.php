@@ -220,8 +220,8 @@
 												<div class="text-nowrap">
 													<div class="d-inline-block" title="Flight date and time">
 														<i class="far fa-calendar-alt"></i>
-														{{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $deal->event->start_at, 'Europe/Moscow')->setTimezone('America/New_York')->format('m/d/Y g:i A') }}
-														{{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $deal->event->start_at, 'Europe/Moscow')->setTimezone('America/New_York')->format('g:i A') }} - {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $deal->event->stop_at, 'Europe/Moscow')->setTimezone('America/New_York')->format('g:i A') }}
+														{{ \Carbon\Carbon::parse($deal->event->start_at)->format('m/d/Y') }}
+														{{ \Carbon\Carbon::parse($deal->event->start_at)->format('g:i A') }} - {{ \Carbon\Carbon::parse($deal->event->stop_at)->format('g:i A') }}
 														@if($deal->event->extra_time)
 															<small class="text-danger">+{{ $deal->event->extra_time }} min</small>
 														@endif
