@@ -2,9 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Bill;
-use App\Models\Certificate;
-use App\Models\Deal;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Console\Command;
@@ -43,7 +40,7 @@ class ConvertTimezone extends Command
      */
     public function handle()
     {
-		try {
+		/*try {
 			DB::beginTransaction();
 			
 			$this->info(Carbon::now()->format('Y-m-d H:i:s') . ' - timezone:convert - START');
@@ -237,7 +234,7 @@ class ConvertTimezone extends Command
 			return 0;
 		}
 		
-		$this->info(Carbon::now()->format('Y-m-d H:i:s') . ' - timezone:convert - OK');
+		$this->info(Carbon::now()->format('Y-m-d H:i:s') . ' - timezone:convert - OK');*/
     	
         return 0;
     }
