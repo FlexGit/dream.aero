@@ -68,7 +68,7 @@
 								</a>
 							</div>
 							<div style="line-height: 0.9em;" title="Create date">
-								{{--{{ $deal->created_at ? \Carbon\Carbon::createFromFormat('m/d/Y g:i A', $deal->created_at, 'America/New_York') : '' }}--}}
+								{{ $deal->created_at }} - {{ $deal->created_at ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $deal->created_at, 'Europe/Moscow')->setTimezone('America/New_York')->format('m/d/Y g:i A') : '' }}
 							</div>
 							@if($deal->status)
 								<div title="Deal status">
