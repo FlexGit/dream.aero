@@ -532,7 +532,10 @@ class ReportController extends Controller {
 			$bills = Bill::oldest()
 				->where('payed_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 				->where('payed_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
-				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS);
+				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
+				->whereHas('deal', function ($query) {
+					return $query->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
+				});
 			if ($paymentMethodId) {
 				$bills = $bills->where('payment_method_id', $paymentMethodId);
 			}
@@ -638,8 +641,6 @@ class ReportController extends Controller {
 			'periods' => $periods,
 		];
 		
-		//\Log::debug($data);
-		
 		$reportFileName = '';
 		if ($isExport) {
 			$reportFileName = 'report-cash-flow-' . $user->id . '-' . date('YmdHis') . '.xlsx';
@@ -668,16 +669,13 @@ class ReportController extends Controller {
 		$billSum = 0;
 		if (!$operationType || $operationType == 'deals') {
 			// инвойсы
+			\DB::connection()->enableQueryLog();
 			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp)->startOfDay())
 				->where('payed_at', '>=', $startYear)
-				->where('city_id', $city->id)
-				/*->where('location_id', $location->id)*/
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
 				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
-				->whereHas('deal', function ($query) use ($city, $location) {
-					return $query->where('city_id', $city->id)
-						/*->where('location_id', $location->id)*/
-						->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
+				->whereHas('deal', function ($query) {
+					return $query->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
 				});
 			if ($operationType) {
 				if ($productIds) {
@@ -699,6 +697,7 @@ class ReportController extends Controller {
 			}
 			$billSum = $billSum->sum('total_amount');
 		}
+		\Log::debug(\DB::getQueryLog());
 		
 		$operationSum = 0;
 		if (!$operationType || $operationType == 'expenses') {
