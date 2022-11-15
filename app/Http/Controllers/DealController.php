@@ -1584,6 +1584,7 @@ class DealController extends Controller
 			$deal->promocode_id = $promocodeId ? $promocode->id : 0;
 			$deal->data_json = !empty($data) ? $data : null;
 			$deal->save();
+			$deal = $deal->fresh();
 			
 			if ($certificate) {
 				$certificate->product_id = $product->id;
@@ -1614,8 +1615,22 @@ class DealController extends Controller
 				$event->save();
 			}
 			
+			$bills = $deal->bills;
+			
+			if ($deal->status && $deal->status->alias == Deal::RETURNED_STATUS) {
+				foreach ($bills as $bill) {
+					$billReturnedStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::REFUNDED_STATUS);
+					$bill->status_id = $billReturnedStatus->id;
+					$bill->save();
+				}
+				if ($deal->is_certificate_purchase && $deal->certificate) {
+					$certificateReturnedStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::RETURNED_STATUS);
+					$certificate->status_id = $certificateReturnedStatus->id;
+					$certificate->save();
+				}
+			}
+			
 			if ($contractorId) {
-				$bills = $deal->bills;
 				foreach ($bills as $bill) {
 					$bill->contractor_id = $contractorId;
 					$bill->save();

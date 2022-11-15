@@ -529,23 +529,21 @@ class ReportController extends Controller {
 		if (!$operationType || $operationType == 'deals') {
 			// сделки
 			//\DB::connection()->enableQueryLog();
-			$deals = Deal::oldest()
-				->where('created_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-				->where('created_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
-				->where('city_id', $city->id)
-				->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
-				/*->where('location_id', $location->id)*/;
+			$bills = Bill::oldest()
+				->where('payed_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
+				->where('payed_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS);
 			if ($paymentMethodId) {
-				$deals = $deals->whereHas('bills', function ($query) use ($paymentMethodId) {
-					return $query->where('bills.payment_method_id', $paymentMethodId);
-				});
+				$bills = $bills->where('payment_method_id', $paymentMethodId);
 			}
 			if ($operationType) {
 				if ($productIds) {
-					$deals = $deals->whereIn('product_id', $productIds);
+					$bills = $bills->whereHas('deal', function ($query) use ($productIds) {
+						return $query->whereIn('product_id', $productIds);
+					});
 				}
 				if ($discountValue) {
-					$deals = $deals->where(function ($query) use ($discountValue) {
+					$bills = $bills->whereHas('deal', function ($query) use ($discountValue) {
 						$query->whereHas('promo', function ($query) use ($discountValue) {
 							return $query->whereRelation('discount', 'discounts.value', '=', $discountValue);
 						})->orWhereHas('promocode', function ($query) use ($discountValue) {
@@ -554,51 +552,38 @@ class ReportController extends Controller {
 					});
 				}
 			}
-			$deals = $deals->get();
+			$bills = $bills->get();
 			//\Log::debug(\DB::getQueryLog());
-			foreach ($deals as $deal) {
-				/** @var Deal $deal */
-				/*if (!$deal->total_amount) continue;*/
-				if ($deal->balance() < 0) continue;
-				
+			foreach ($bills as $bill) {
+				$deal = $bill->deal;
 				$product = $deal->product;
-				/*$productType = $product ? $product->productType : null;*/
 				$promo = $deal->promo;
 				$promocode = $deal->promocode;
-				$bills = $deal->bills;
 				
 				$extra = [];
-				/*if ($user->email == env('DEV_EMAIL')) {*/
-					$extra[] = $isExport ? $deal->number : '<a href="' . url('deal/' . $deal->id) . '" target="_blank">' . $deal->number . '</a>';
-				/*}*/
+				$extra[] = $isExport ? $deal->number : '<a href="' . url('deal/' . $deal->id) . '" target="_blank">' . $deal->number . '</a>';
 				$extra[] = $deal->is_certificate_purchase ? 'Voucher' : ($deal->certificate ? 'Flight by Voucher' : 'Flight');
 				$extra[] = $deal->certificate ? $deal->certificate->number : '';
 				$extra[] = $product->name;
 				$extra[] = $promo ? ($promo->name . ($promo->discount ? ' ' . $promo->discount->valueFormatted() : '')) : '';
 				$extra[] = $promocode ? ($promocode->number . ($promocode->discount ? ' ' . $promocode->discount->valueFormatted() : '')) : '';
 				
-				$paymentMethodNames = [];
 				$isOnline = $isPaymentAuthorized = false;
-				foreach ($bills as $bill) {
-					/** @var Bill $bill */
-					$paymentMethodNames[] = $bill->paymentMethod ? $bill->paymentMethod->name : '';
-					if ($bill->paymentMethod && $bill->paymentMethod->alias == PaymentMethod::ONLINE_ALIAS) {
-						$isOnline = true;
-						if ($bill->data_json && isset($bill->data_json['payment'])) {
-							$extra[] = '<br>Payment status: ' . $bill->data_json['payment']['status'];
-							$extra[] = 'Transaction #: ' . (isset($bill->data_json['payment']['transaction_id']) ? $bill->data_json['payment']['transaction_id'] : '-');
-							$isPaymentAuthorized = true;
-						}
+				if ($bill->paymentMethod && $bill->paymentMethod->alias == PaymentMethod::ONLINE_ALIAS) {
+					$isOnline = true;
+					if ($bill->data_json && isset($bill->data_json['payment'])) {
+						$extra[] = '<br>Payment status: ' . $bill->data_json['payment']['status'];
+						$extra[] = 'Transaction #: ' . (isset($bill->data_json['payment']['transaction_id']) ? $bill->data_json['payment']['transaction_id'] : '-');
+						$isPaymentAuthorized = true;
 					}
 				}
-				$paymentMethodNames = array_unique($paymentMethodNames);
 				
-				$items[Carbon::parse($deal->created_at)->format('Ym')][Carbon::parse($deal->created_at)->endOfDay()->timestamp][] = [
+				$items[Carbon::parse($bill->payed_at)->format('Ym')][Carbon::parse($bill->payed_at)->endOfDay()->timestamp][] = [
 					'type' => 'Deal',
 					'expenses' => '',
-					'payment_method' => implode(' / ', $paymentMethodNames),
-					'amount' => $deal->total_amount,
-					'currency' => $deal->currency ? $deal->currency->name : '',
+					'payment_method' => $bill->paymentMethod ? $bill->paymentMethod->name : '',
+					'amount' => $bill->total_amount,
+					'currency' => $bill->currency ? $bill->currency->name : '',
 					'extra' => implode(', ', array_filter($extra)),
 					'is_online' => $isOnline,
 					'is_payment_authorized' => $isPaymentAuthorized,

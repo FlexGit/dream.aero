@@ -115,10 +115,12 @@ class Bill extends Model
 	const PAYED_PROCESSING_STATUS = 'bill_payed_processing';
 	const PAYED_STATUS = 'bill_payed';
 	const CANCELED_STATUS = 'bill_canceled';
+	const REFUNDED_STATUS = 'bill_refunded';
 	const STATUSES = [
 		self::NOT_PAYED_STATUS,
 		self::PAYED_PROCESSING_STATUS,
 		self::PAYED_STATUS,
+		self::REFUNDED_STATUS,
 		self::CANCELED_STATUS,
 	];
 	
