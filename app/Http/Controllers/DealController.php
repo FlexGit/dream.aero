@@ -1597,6 +1597,8 @@ class DealController extends Controller
 				$certificate->save();
 			}
 			
+			$bills = $deal->bills;
+			
 			if (!$deal->is_certificate_purchase && $deal->location_id && $startAt) {
 				$event = $deal->event;
 				if (!$event) {
@@ -1613,9 +1615,16 @@ class DealController extends Controller
 				$event->is_repeated_flight = $isRepeatedFlight;
 				$event->is_unexpected_flight = $isUnexpectedFlight;
 				$event->save();
+
+				// если полет по сертификату, отменяем все счета
+				if ($certificate && !$deal->amount) {
+					foreach ($bills as $bill) {
+						$billCanceledStatus = HelpFunctions::getEntityByAlias(Status::class, Bill::CANCELED_STATUS);
+						$bill->status_id = $billCanceledStatus->id;
+						$bill->save();
+					}
+				}
 			}
-			
-			$bills = $deal->bills;
 			
 			if ($deal->status && $deal->status->alias == Deal::RETURNED_STATUS) {
 				foreach ($bills as $bill) {
