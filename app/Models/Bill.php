@@ -89,11 +89,11 @@ class Bill extends Model
 	use HasFactory, SoftDeletes, RevisionableTrait;
 	
 	const ATTRIBUTES = [
-		'number' => 'Bill number',
+		'number' => 'Invoice number',
 		'contractor_id' => 'Contractor',
 		'deal_id' => 'Deal',
 		'payment_method_id' => 'Payment method',
-		'status_id' => 'Bill status',
+		'status_id' => 'Invoice status',
 		'amount' => 'Amount',
 		'tax' => 'Tax',
 		'total_amount' => 'Totla amount',
