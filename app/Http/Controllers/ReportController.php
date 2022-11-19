@@ -515,7 +515,7 @@ class ReportController extends Controller {
 			$operations = $operations->get();
 			foreach ($operations as $operation) {
 				/** @var Operation $operation */
-				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->endOfDay()->timestamp][] = [
+				$items[Carbon::parse($operation->operated_at)->format('Ym')][Carbon::parse($operation->operated_at)->startOfDay()->timestamp][] = [
 					'type' => 'Expenses',
 					'expenses' => $operation->operationType ? $operation->operationType->name : '',
 					'payment_method' => $operation->paymentMethod ? $operation->paymentMethod->name : '',
@@ -581,7 +581,7 @@ class ReportController extends Controller {
 					}
 				}
 				
-				$items[Carbon::parse($bill->payed_at)->format('Ym')][Carbon::parse($bill->payed_at)->endOfDay()->timestamp][] = [
+				$items[Carbon::parse($bill->payed_at)->format('Ym')][Carbon::parse($bill->payed_at)->startOfDay()->timestamp][] = [
 					'type' => 'Deal',
 					'expenses' => '',
 					'payment_method' => $bill->paymentMethod ? $bill->paymentMethod->name : '',
