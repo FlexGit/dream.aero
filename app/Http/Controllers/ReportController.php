@@ -669,7 +669,7 @@ class ReportController extends Controller {
 		$billSum = 0;
 		if (!$operationType || $operationType == 'deals') {
 			// инвойсы
-			\DB::connection()->enableQueryLog();
+			//\DB::connection()->enableQueryLog();
 			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp)->startOfDay())
 				->where('payed_at', '>=', $startYear)
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
@@ -697,7 +697,7 @@ class ReportController extends Controller {
 			}
 			$billSum = $billSum->sum('total_amount');
 		}
-		\Log::debug(\DB::getQueryLog());
+		//\Log::debug(\DB::getQueryLog());
 		
 		$operationSum = 0;
 		if (!$operationType || $operationType == 'expenses') {
@@ -728,7 +728,7 @@ class ReportController extends Controller {
 				->sum('amount');
 		}
 		
-		return $billSum + $operationSum + $tipSum;
+		return $billSum + $tipSum - $operationSum;
 	}
 	
 	/**
