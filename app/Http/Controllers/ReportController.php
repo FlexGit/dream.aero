@@ -607,7 +607,7 @@ class ReportController extends Controller {
 			$tips = $tips->get();
 			foreach ($tips as $tip) {
 				/** @var Tip $tip */
-				$items[Carbon::parse($tip->received_at)->format('Ym')][Carbon::parse($tip->received_at)->endOfDay()->timestamp][] = [
+				$items[Carbon::parse($tip->received_at)->format('Ym')][Carbon::parse($tip->received_at)->startOfDay()->timestamp][] = [
 					'type' => 'Tips',
 					'expenses' => '',
 					'payment_method' => $tip->paymentMethod ? $tip->paymentMethod->name : '',
