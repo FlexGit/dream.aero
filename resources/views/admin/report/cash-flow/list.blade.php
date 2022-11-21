@@ -2,17 +2,17 @@
 	<tbody>
 	<tr>
 		<td class="align-top text-center font-weight-bold"></td>
-		<td class="align-top text-center font-weight-bold">{{ \Carbon\Carbon::parse($dateFromAtTimestamp)->format('m/d/Y') }}</td>
-		<td class="align-top text-center font-weight-bold">{{ \Carbon\Carbon::parse($dateToAtTimestamp)->format('m/d/Y') }}</td>
+		<td class="align-top text-center font-weight-bold">{{ \Carbon\Carbon::parse($dateFromAt)->format('m/d/Y g:i A') }}</td>
+		<td class="align-top text-center font-weight-bold">{{ \Carbon\Carbon::parse($dateToAt)->format('m/d/Y g:i A') }}</td>
 	</tr>
 	@foreach($paymentMethods as $paymentMethod)
-		@if(!isset($balanceItems[$dateFromAtTimestamp][$paymentMethod->alias]))
+		@if(!isset($balanceItems[$dateFromAt][$paymentMethod->alias]))
 			@continue
 		@endif
 		<tr>
 			<td class="align-top text-center">{{ $paymentMethod->name }}</td>
-			<td class="align-top text-right">{{ $currency }}{{ number_format($balanceItems[$dateFromAtTimestamp][$paymentMethod->alias], 2, '.', ' ') }}</td>
-			<td class="align-top text-right">{{ $currency }}{{ number_format($balanceItems[$dateToAtTimestamp][$paymentMethod->alias], 2, '.', ' ') }}</td>
+			<td class="align-top text-right">{{ $currency }}{{ number_format($balanceItems[$dateFromAt][$paymentMethod->alias], 2, '.', ' ') }}</td>
+			<td class="align-top text-right">{{ $currency }}{{ number_format($balanceItems[$dateToAt][$paymentMethod->alias], 2, '.', ' ') }}</td>
 		</tr>
 	@endforeach
 	</tbody>
