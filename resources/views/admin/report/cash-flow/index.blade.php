@@ -26,13 +26,13 @@
 						<div class="form-group">
 							<label for="filter_date_from_at">Period start</label>
 							<div>
-								<input type="date" class="form-control" id="filter_date_from_at" name="filter_date_from_at" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" style="width: 200px;">
+								<input type="date" class="form-control" id="filter_date_from_at" name="filter_date_from_at" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" style="width: 150px;">
 							</div>
 						</div>
 						<div class="form-group ml-3">
 							<label for="filter_date_to_at">Period end</label>
 							<div>
-								<input type="date" class="form-control" id="filter_date_to_at" name="filter_date_to_at" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 200px;">
+								<input type="date" class="form-control" id="filter_date_to_at" name="filter_date_to_at" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" style="width: 150px;">
 							</div>
 						</div>
 						<div class="form-group ml-3">
@@ -95,7 +95,7 @@
 								<label for="filter_payment_method_id">Payment method</label>
 							</div>
 							<div>
-								<select class="form-control" id="filter_payment_method_id" name="filter_payment_method_id">
+								<select class="form-control" id="filter_payment_method_id" name="filter_payment_method_id" style="width: 150px;">
 									<option value=""></option>
 									@foreach($paymentMethods as $paymentMethod)
 										<option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
