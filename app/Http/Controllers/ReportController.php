@@ -455,8 +455,8 @@ class ReportController extends Controller {
 		
 		$paymentMethods = $this->paymentRepo->getPaymentMethodList(true);
 		
-		$dateFromAt = $this->request->filter_date_from_at ?? '';
-		$dateToAt = $this->request->filter_date_to_at ?? '';
+		$dateFromAt = $this->request->filter_date_from_at ? $this->request->filter_date_from_at . ' 00:00:00' : '';
+		$dateToAt = $this->request->filter_date_to_at ? $this->request->filter_date_to_at . ' 23:59:59' : '';
 		$paymentMethodId = $this->request->filter_payment_method_id ?? 0;
 		$operationType = $this->request->filter_operation_type ?? '';
 		$productIds = $this->request->filter_product_id ?? [];
@@ -464,10 +464,10 @@ class ReportController extends Controller {
 		$discountValue = $this->request->filter_discount ?? '';
 		$isExport = filter_var($this->request->is_export, FILTER_VALIDATE_BOOLEAN);
 		
-		if (!$dateFromAt && !$dateToAt) {
+		/*if (!$dateFromAt && !$dateToAt) {
 			$dateFromAt = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
-		}
+		}*/
 		
 		$carbonDays = CarbonPeriod::create($dateFromAt, $dateToAt)->toArray();
 		
@@ -498,8 +498,8 @@ class ReportController extends Controller {
 		if (!$operationType || $operationType == 'expenses') {
 			// операции
 			$operations = Operation::orderBy('operated_at')
-				->where('operated_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-				->where('operated_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+				->where('operated_at', '>=', Carbon::parse($dateFromAt)->format('Y-m-d H:i:s'))
+				->where('operated_at', '<=', Carbon::parse($dateToAt)->format('Y-m-d H:i:s'))
 				->where('city_id', $city->id)
 				->where('location_id', $location->id);
 			if ($paymentMethodId) {
@@ -530,8 +530,8 @@ class ReportController extends Controller {
 			// сделки
 			//\DB::connection()->enableQueryLog();
 			$bills = Bill::oldest()
-				->where('payed_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-				->where('payed_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+				->where('payed_at', '>=', Carbon::parse($dateFromAt)->format('Y-m-d H:i:s'))
+				->where('payed_at', '<=', Carbon::parse($dateToAt)->format('Y-m-d H:i:s'))
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
 				->whereHas('deal', function ($query) {
 					return $query->whereRelation('status', 'statuses.alias', '=', Deal::CONFIRMED_STATUS);
@@ -597,8 +597,8 @@ class ReportController extends Controller {
 		if (!$operationType || $operationType == 'tips') {
 			// типсы
 			$tips = Tip::orderBy('received_at')
-				->where('received_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
-				->where('received_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
+				->where('received_at', '>=', Carbon::parse($dateFromAt)->format('Y-m-d H:i:s'))
+				->where('received_at', '<=', Carbon::parse($dateToAt)->format('Y-m-d H:i:s'))
 				->where('city_id', $city->id)
 				->where('location_id', $location->id);
 			if ($paymentMethodId) {
@@ -625,16 +625,16 @@ class ReportController extends Controller {
 		foreach ($paymentMethods as $paymentMethod) {
 			if ($paymentMethodId && $paymentMethodId != $paymentMethod->id) continue;
 			
-			$balanceItems[Carbon::parse($dateFromAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
-			$balanceItems[Carbon::parse($dateToAt)->endOfDay()->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->endOfDay()->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
+			$balanceItems[Carbon::parse($dateFromAt)->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateFromAt)->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
+			$balanceItems[Carbon::parse($dateToAt)->timestamp][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->timestamp, Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
 		}
 		
 		$data = [
 			'items' => $items,
 			'balanceItems' => $balanceItems,
 			'paymentMethods' => $paymentMethods,
-			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->endOfDay()->timestamp,
-			'dateToAtTimestamp' => Carbon::parse($dateToAt)->endOfDay()->timestamp,
+			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->timestamp,
+			'dateToAtTimestamp' => Carbon::parse($dateToAt)->timestamp,
 			'currency' => $city->currency ? $city->currency->name : '',
 			'days' => $days,
 			'months' => $months,
@@ -670,7 +670,7 @@ class ReportController extends Controller {
 		if (!$operationType || $operationType == 'deals') {
 			// инвойсы
 			//\DB::connection()->enableQueryLog();
-			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp)->startOfDay())
+			$billSum = Bill::where('payed_at', '<', Carbon::parse($timestamp))
 				->where('payed_at', '>=', $startYear)
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
 				->whereRelation('paymentMethod', 'payment_methods.alias', '=', $paymentMethodAlias)
@@ -702,7 +702,7 @@ class ReportController extends Controller {
 		$operationSum = 0;
 		if (!$operationType || $operationType == 'expenses') {
 			//операции
-			$operationSum = Operation::where('operated_at', '<', Carbon::parse($timestamp)->startOfDay())
+			$operationSum = Operation::where('operated_at', '<', Carbon::parse($timestamp))
 				->where('operated_at', '>=', $startYear)
 				->where('city_id', $city->id)
 				->where('location_id', $location->id)
@@ -720,7 +720,7 @@ class ReportController extends Controller {
 		$tipSum = 0;
 		if (!$operationType || $operationType == 'tips') {
 			// типсы
-			$tipSum = Tip::where('received_at', '<', Carbon::parse($timestamp)->startOfDay())
+			$tipSum = Tip::where('received_at', '<', Carbon::parse($timestamp))
 				->where('received_at', '>=', $startYear)
 				->where('city_id', $city->id)
 				->where('location_id', $location->id)
