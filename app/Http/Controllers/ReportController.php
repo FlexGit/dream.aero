@@ -633,7 +633,7 @@ class ReportController extends Controller {
 			'items' => $items,
 			'balanceItems' => $balanceItems,
 			'paymentMethods' => $paymentMethods,
-			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->startOfDay()->timestamp,
+			'dateFromAtTimestamp' => Carbon::parse($dateFromAt)->endOfDay()->timestamp,
 			'dateToAtTimestamp' => Carbon::parse($dateToAt)->endOfDay()->timestamp,
 			'currency' => $city->currency ? $city->currency->name : '',
 			'days' => $days,
