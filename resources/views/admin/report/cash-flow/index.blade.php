@@ -187,7 +187,7 @@
 			$('#filter_product_id').multiselect({
 				includeSelectAllOption: true,
 				selectAllText: 'All',
-				buttonWidth: '200px',
+				buttonWidth: '150px',
 				selectAllValue: 0,
 				buttonTextAlignment: 'left',
 				maxHeight: 300,
