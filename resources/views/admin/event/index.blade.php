@@ -535,6 +535,7 @@
 
 					$('#contractor_search').autocomplete({
 						serviceUrl: '{{ route('contractorSearch') }}',
+						noCache: true,
 						minChars: 1,
 						width: 'flex',
 						showNoSuggestionNotice: true,
@@ -570,6 +571,7 @@
 
 					$('#certificate_number').autocomplete({
 						serviceUrl: '{{ route('certificateSearch') }}',
+						noCache: true,
 						minChars: 3,
 						width: 'flex',
 						showNoSuggestionNotice: true,
