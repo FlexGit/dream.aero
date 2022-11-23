@@ -252,6 +252,7 @@ class ContractorController extends Controller
 	}
 	
 	public function search() {
+		\Log::debug($this->request);
 		$q = $this->request->post('query');
 		if (!$q) return response()->json(['status' => 'error', 'reason' => trans('main.error.нет-данных')]);
 		

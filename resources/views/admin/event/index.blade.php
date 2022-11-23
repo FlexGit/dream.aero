@@ -243,11 +243,6 @@
 						minute: '2-digit',
 						meridiem: 'short',
 					},
-					/*eventTimeFormat: {
-						hour: 'numeric',
-						minute: '2-digit',
-						meridiem: 'short',
-					},*/
 					eventTextColor: '#000',
 					events: {
 						url: '{{ route('eventList') }}',
@@ -260,7 +255,6 @@
 							};
 						},
 						failure: function (e) {
-							//console.log(e);
 							//toastr.error('Ошибка при загрузке событий!');
 						}
 					},
@@ -279,7 +273,6 @@
 						tippy.hideAll();
 
 						$modalDialog.find('form').attr('id', type);
-						//$modalDialog.addClass('modal-lg');
 
 						$('.modal .modal-title, .modal .modal-body').empty();
 
@@ -450,13 +443,6 @@
 								'<div class="comment-sign">' + value['wasUpdated'] + ': ' + value['user'] + ', ' + value['date'] + '</div>'
 						});
 
-						/*$(info.el).tooltip({
-							title: data,
-							placement: 'top',
-							trigger: 'hover',
-							container: 'body',
-							html: true
-						});*/
 						if (data) {
 							tippy(info.el, {
 								content: data,
@@ -466,21 +452,11 @@
 						}
 					},
 					eventMouseLeave: function (info) {
-						//$(info.el).tooltip('hide');
 						tippy.hideAll();
 					},
 					eventDataTransform: function (event) {
-						if (event.allDay) {
-							//event.end = moment(event.end).utc().add(1, 'days')
-						}
 						return event;
 					},
-					/*selectAllow: function(info) {
-						return !moment(info.start).utc().isBefore(moment());
-					},*/
-					/*select: function(startDate, endDate) {
-						console.log(startDate.format() + ' - ' + endDate.format());
-					}*/
 				});
 				calendar.render();
 				if (typeof calendarArr[$(calendarEl).data('location_id')] === 'undefined') {
@@ -505,11 +481,8 @@
 					$docFile = $('#doc_file');
 
 				var formData = new FormData($(this)[0]);
-				//console.log(formData);
 
 				if ($docFile.val()) {
-					//console.log($docFile.val());
-					//console.log($docFile.prop('files')[0]);
 					formData.append('doc_file', $docFile.prop('files')[0]);
 				}
 
@@ -518,8 +491,6 @@
 					formData.append('_method', 'PUT');
 					realMethod = 'POST';
 				}
-
-				//console.log(formData);
 
 				$.ajax({
 					url: action,
@@ -553,11 +524,15 @@
 			});
 
 			$(document).on('show.bs.modal', '#modal', function(e) {
+				console.log('show.bs.modal init');
+
 				var $form = $(this).find('form'),
 					$contractorId = $form.find('#contractor_id'),
 					isContractorExists = $contractorId.length ? $contractorId.val().length : '';
 
 				if ($form.attr('id') === 'deal') {
+					console.log('show.bs.modal deal');
+
 					$('#contractor_search').autocomplete({
 						serviceUrl: '{{ route('contractorSearch') }}',
 						minChars: 1,
@@ -617,9 +592,12 @@
 			});
 
 			$(document).on('shown.bs.modal', '#modal', function() {
+				console.log('shown.bs.modal init');
+
 				var $form = $(this).find('form');
 
 				if ($form.attr('id') === 'deal') {
+					console.log('shown.bs.modal deal');
 					$('#contractor_search').focus();
 				}
 			});
