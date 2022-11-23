@@ -523,24 +523,13 @@
 				$('#flight_simulator_id').val($(this).find(':selected').data('simulator_id'));
 			});
 
-			/*$(document).on('show.bs.modal', '#modal', function(e) {
+			$(document).on('show.bs.modal', '#modal', function(e) {
 				var $form = $(this).find('form'),
 					$contractorId = $form.find('#contractor_id'),
 					isContractorExists = $contractorId.length ? $contractorId.val().length : '';
 
 				if ($form.attr('id') === 'deal') {
-				}
-			});*/
-
-			$(document).on('shown.bs.modal', '#modal', function() {
-				var $form = $(this).find('form'),
-					$contractorId = $form.find('#contractor_id'),
-					isContractorExists = $contractorId.length ? $contractorId.val().length : '';
-
-				if ($form.attr('id') === 'deal') {
-					$('#contractor_search').focus();
-
-					$('#contractor_search').autocomplete({
+					$('#contractor_search').devbridgeAutocomplete({
 						serviceUrl: '{{ route('contractorSearch') }}',
 						noCache: true,
 						minChars: 1,
@@ -576,7 +565,7 @@
 						}
 					});
 
-					$('#certificate_number').autocomplete({
+					$('#certificate_number').devbridgeAutocomplete({
 						serviceUrl: '{{ route('certificateSearch') }}',
 						noCache: true,
 						minChars: 3,
@@ -597,6 +586,14 @@
 							}
 						}
 					});
+				}
+			});
+
+			$(document).on('shown.bs.modal', '#modal', function() {
+				var $form = $(this).find('form');
+
+				if ($form.attr('id') === 'deal') {
+					$('#contractor_search').focus();
 				}
 			});
 
