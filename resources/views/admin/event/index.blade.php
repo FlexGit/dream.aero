@@ -523,15 +523,22 @@
 				$('#flight_simulator_id').val($(this).find(':selected').data('simulator_id'));
 			});
 
-			$(document).on('show.bs.modal', '#modal', function(e) {
-				console.log('show.bs.modal init');
-
+			/*$(document).on('show.bs.modal', '#modal', function(e) {
 				var $form = $(this).find('form'),
 					$contractorId = $form.find('#contractor_id'),
 					isContractorExists = $contractorId.length ? $contractorId.val().length : '';
 
 				if ($form.attr('id') === 'deal') {
-					console.log('show.bs.modal deal');
+				}
+			});*/
+
+			$(document).on('shown.bs.modal', '#modal', function() {
+				var $form = $(this).find('form'),
+					$contractorId = $form.find('#contractor_id'),
+					isContractorExists = $contractorId.length ? $contractorId.val().length : '';
+
+				if ($form.attr('id') === 'deal') {
+					$('#contractor_search').focus();
 
 					$('#contractor_search').autocomplete({
 						serviceUrl: '{{ route('contractorSearch') }}',
@@ -590,17 +597,6 @@
 							}
 						}
 					});
-				}
-			});
-
-			$(document).on('shown.bs.modal', '#modal', function() {
-				console.log('shown.bs.modal init');
-
-				var $form = $(this).find('form');
-
-				if ($form.attr('id') === 'deal') {
-					console.log('shown.bs.modal deal');
-					$('#contractor_search').focus();
 				}
 			});
 
@@ -668,7 +664,6 @@
 						'contractor_id': $('#contractor_id').val(),
 						'promo_id': $('#promo_id').val(),
 						'promocode_id': $('#promocode_id').val(),
-						/*'payment_method_id': $('#payment_method_id').val(),*/
 						'city_id': $('#city_id').val(),
 						'location_id': $('#location_id').val(),
 						'certificate_uuid': $('#certificate_uuid').val(),
@@ -676,7 +671,7 @@
 						'is_certificate_purchase': $('#is_certificate_purchase').val(),
 					},
 					success: function(result) {
-						console.log(result);
+						//console.log(result);
 
 						$('#amount').val(result.productAmount);
 						$('#amount-text span').text(result.amount);
@@ -685,7 +680,6 @@
 
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
-							//return;
 						}
 					}
 				});
