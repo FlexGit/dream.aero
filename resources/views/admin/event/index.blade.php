@@ -597,6 +597,11 @@
 				}
 			});
 
+			$(document).on('hidden.bs.modal', '#modal', function() {
+				$('#contractor_search').autocomplete().dispose();
+				$('#certificate_number').autocomplete().dispose();
+			});
+
 			$(document).on('click', '.js-contractor-delete', function() {
 				$('.js-contractor').text('').closest('.js-contractor-container').addClass('hidden');
 				$('#contractor_search').val('').attr('disabled', false).focus();
