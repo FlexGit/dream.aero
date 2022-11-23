@@ -538,6 +538,14 @@
 						noSuggestionNotice: 'Nothing found',
 						type: 'POST',
 						dataType: 'json',
+						onSearchStart: function (params) {
+							console.log(params);
+						},
+						onSearchError: function (query, jqXHR, textStatus, errorThrown) {
+							console.log(query);
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
 						onSelect: function (suggestion) {
 							if (suggestion.id) {
 								$('#contractor_id').val(suggestion.id);
