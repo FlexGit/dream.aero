@@ -78,7 +78,6 @@ class RevisionController extends Controller
 				$field = 'name';
 		}
 
-		//DB::connection()->enableQueryLog();
 		$revisions = DB::table('revisions')
 			->leftJoin('users as u', 'revisions.user_id', '=', 'u.id')
 			->select('revisions.*', 'u.name as user')
@@ -92,13 +91,10 @@ class RevisionController extends Controller
 			$revisions = $revisions->where($table . '.' . $field, 'like', '%' . $this->request->search_object . '%');
 		}
 		$revisions = $revisions->limit(20)->get();
-		//$queries = DB::getQueryLog();
-		//\Log::debug($queries);
 
 		$revisionData = [];
 		foreach ($revisions as $revision) {
 			$model = $revision->revisionable_type::find($revision->revisionable_id);
-			//if (!$model) continue;
 			
 			$object = $linkedObject = '';
 

@@ -266,9 +266,6 @@ class CertificateController extends Controller
 		$certificate = Certificate::find($this->request->certificate_id);
 		if (!$certificate) return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
 		
-		/*$job = new \App\Jobs\SendCertificateEmail($certificate);
-		$job->handle();*/
-		
 		$certificateFilePath = isset($certificate->data_json['certificate_file_path']) ? $certificate->data_json['certificate_file_path'] : '';
 		$certificateFileExists = Storage::disk('private')->exists($certificateFilePath);
 		

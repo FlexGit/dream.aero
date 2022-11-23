@@ -11,7 +11,6 @@ use App\Services\HelpFunctions;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Mail;
 use Storage;
 use Validator;
@@ -233,7 +232,7 @@ class BillController extends Controller
 		} catch (Throwable $e) {
 			\DB::rollback();
 			
-			Log::debug('500 - Bill Create: ' . $e->getMessage());
+			\Log::debug('500 - Bill Create: ' . $e->getMessage());
 			
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
@@ -348,7 +347,7 @@ class BillController extends Controller
 		} catch (Throwable $e) {
 			\DB::rollback();
 			
-			Log::debug('500 - Bill Update: ' . $e->getMessage());
+			\Log::debug('500 - Bill Update: ' . $e->getMessage());
 			
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}

@@ -75,8 +75,8 @@ class SendCertificateEmail extends Command
 				return 0;
 			}
 		}
-			
-		$this->info(Carbon::now()->format('Y-m-d H:i:s') . ' - certificate_email:send - OK');
+	
+		$this->info(Carbon::now()->format('Y-m-d H:i:s') . ' - ' . get_class($this) . ': OK');
     	
         return 0;
     }

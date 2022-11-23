@@ -7,12 +7,10 @@ use App\Models\Bill;
 use net\authorize\api\contract\v1 as AnetAPI;
 use net\authorize\api\controller as AnetController;
 
-//define("AUTHORIZENET_LOG_FILE", "phplog");
-
 class AuthorizeNetService {
 
-	const MERCHANT_LOGIN_ID = '5mq44GLqW'; //59WuQWQpc4Cd - test
-	const MERCHANT_TRANSACTION_KEY = '732Czn387zUKh472'; //72Yr9Jx9P62DynDT - test
+	const MERCHANT_LOGIN_ID = '5mq44GLqW';
+	const MERCHANT_TRANSACTION_KEY = '732Czn387zUKh472';
 	
 	public static function payment(Bill $bill, $cardNumber, $expirationDate, $cardCode, $email = '', $description = '')
 	{

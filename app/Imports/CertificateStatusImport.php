@@ -5,12 +5,10 @@ namespace App\Imports;
 use App\Models\Certificate;
 use App\Models\Status;
 use App\Services\HelpFunctions;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithProgressBar;
 use Maatwebsite\Excel\Row;
-use Throwable;
 
 class CertificateStatusImport implements OnEachRow, WithProgressBar
 {

@@ -116,14 +116,8 @@ class Product extends Model
 
 		$flightAt = Carbon::parse($flightAt)->format('d.m.Y');
 		
-		//$weekDay = date('N', strtotime($flightAt));
-
 		// Regular доступен для заказа только в будни
-		//if (in_array($weekDay, [1, 2, 3, 4, 5]) && $alias == ProductType::REGULAR_ALIAS) return true;
-		if ($alias == ProductType::REGULAR_ALIAS
-			&& (in_array(date('w', strtotime($flightAt)), [0, 6])
-				|| in_array($flightAt, Deal::HOLIDAYS))
-		) return false;
+		if ($alias == ProductType::REGULAR_ALIAS && (in_array(date('w', strtotime($flightAt)), [0, 6]) || in_array($flightAt, Deal::HOLIDAYS))) return false;
 		
 		return true;
 	}
@@ -151,10 +145,8 @@ class Product extends Model
 		$certificateProductAmount = 0;
 		if (!$isCertificatePurchase && $certificateId) {
 			$date = date('Y-m-d');
-			/*$certificateStatus = HelpFunctions::getEntityByAlias(Status::class, Certificate::CREATED_STATUS);*/
 			// проверка сертификата на валидность
 			$certificate = Certificate::whereIn('city_id', [$cityId, 0])
-				/*->whereIn('status_id', [$certificateStatus->id, 0])*/
 				->whereIn('product_id', [$this->id, 0])
 				->where(function ($query) use ($date) {
 					$query->where('expire_at', '>=', $date)
@@ -175,8 +167,6 @@ class Product extends Model
 		$contractor = $contractorId ? Contractor::whereIsActive(true)->find($contractorId) : null;
 
 		$promo = $promoId ? Promo::whereIsActive(true)->find($promoId) : null;
-
-		/*$paymentMethod = $paymentMethodId ? PaymentMethod::whereIsActive(true)->find($paymentMethodId) : null;*/
 
 		$promocode = $promocodeId ? Promocode::find($promocodeId) : null;
 		if ($promocode) {
@@ -224,7 +214,6 @@ class Product extends Model
 				$discount = $promo->discount ?? null;
 				if ($discount) {
 					$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
-					//\Log::debug($amount . ' - ' . $discount->is_fixed . ' - ' . $discount->value);
 					
 					return ($amount > 0) ? round($amount, 2) : 0;
 				}
@@ -235,7 +224,6 @@ class Product extends Model
 			$amounts = [];
 
 			// активные акции для публикации со скидкой
-			//\DB::connection()->enableQueryLog();
 			$promos = Promo::where('is_active', true)
 				->where('is_published', true)
 				->where('discount_id', '!=', 0)
@@ -251,17 +239,13 @@ class Product extends Model
 				})
 				->orderByDesc('active_from_at')
 				->get();
-			//\Log::debug(\DB::getQueryLog());
 			foreach ($promos as $promo) {
 				$discount = $promo->discount ?? null;
 				if ($discount) {
 					$amount = $discount->is_fixed ? ($amount - $discount->value) : ($amount - $amount * $discount->value / 100);
-
 					$amounts[] = ($amount > 0) ? round($amount, 2) : 0;
 				}
 			}
-			
-			//\Log::debug($amounts);
 			
 			if ($amounts) {
 				// применяем с наибольшей скидкой

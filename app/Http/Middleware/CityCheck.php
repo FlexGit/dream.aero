@@ -6,15 +6,12 @@ use App\Models\City;
 use App\Services\HelpFunctions;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 class CityCheck
 {
 	public function handle(Request $request, Closure $next)
 	{
 		if ($request->ajax()) return $next($request);
-		
-		//\Log::debug($request->getHost() . ' - ' . env('DOMAIN_SITE'));
 		
 		if ($request->getHost() != env('DOMAIN_SITE')) return $next($request);
 		
@@ -28,7 +25,6 @@ class CityCheck
 				$request->session()->put('cityName', $city->name);
 				$request->session()->put('cityPhone', $city->phone ? $city->phoneFormatted() : '');
 				
-				//return redirect($city->alias . ($request->segment(1) ? '/' . $request->segment(2) : ''), 301);
 				return $next($request);
 			}
 		}

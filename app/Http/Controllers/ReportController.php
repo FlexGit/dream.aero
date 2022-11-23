@@ -83,7 +83,6 @@ class ReportController extends Controller {
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
 		
-		//\DB::connection()->enableQueryLog();
 		$bills = Bill::where('user_id', '!=', 0)
 			->where('city_id', $city->id)
 			->where(function ($query) use ($dateFromAt, $dateToAt) {
@@ -100,7 +99,6 @@ class ReportController extends Controller {
 		if ($user->isAdmin()) {
 			$bills = $bills->where('user_id', $user->id);
 		}
-		//\Log::debug(\DB::getQueryLog());
 		
 		$totalItems = $billItems = $paymentMethodSumItems = $dealIds = [];
 		$totalSum = $i = 0;
@@ -109,8 +107,6 @@ class ReportController extends Controller {
 				continue;
 			}
 			
-			//\Log::debug($bill->number . ' - ' . $bill->user_id);
-			
 			$deal = $bill->deal;
 			
 			$billItems[$bill->user_id][$i] = [
@@ -118,7 +114,6 @@ class ReportController extends Controller {
 				'bill_status' => $bill->status ? $bill->status->name : '-',
 				'bill_amount' => $bill->total_amount,
 				'bill_payed_at' => $bill->payed_at ? $bill->payed_at->format('m/d/Y g:i A') : '-',
-				/*'bill_location' => $bill->location ? $bill->location->name : '-',*/
 				'deal_number' => $deal->number,
 				'deal_status' => $deal->status ? $deal->status->name : '-',
 				'bill_payment_method' => $bill->paymentMethod ? $bill->paymentMethod->name : '-',
@@ -162,8 +157,6 @@ class ReportController extends Controller {
 			
 			++$i;
 		}
-		
-		//\Log::debug($billItems);
 		
 		$shiftItems = [];
 		$shifts = Event::where('event_type', Event::EVENT_TYPE_SHIFT_ADMIN)
@@ -350,14 +343,12 @@ class ReportController extends Controller {
 			$dateFromAt = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
 			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
 		}
-		//\DB::connection()->enableQueryLog();
 		$bills = Bill::where('user_id', 0)
 			->whereRelation('paymentMethod', 'payment_methods.alias', '=', PaymentMethod::ONLINE_ALIAS)
 			->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
 			->where('payed_at', '>=', Carbon::parse($dateFromAt)->startOfDay()->format('Y-m-d H:i:s'))
 			->where('payed_at', '<=', Carbon::parse($dateToAt)->endOfDay()->format('Y-m-d H:i:s'))
 			->get();
-		//\Log::debug(\DB::getQueryLog());
 		$items = [];
 		foreach ($bills as $bill) {
 			$deal = $bill->deal;
@@ -464,11 +455,6 @@ class ReportController extends Controller {
 		$discountValue = $this->request->filter_discount ?? '';
 		$isExport = filter_var($this->request->is_export, FILTER_VALIDATE_BOOLEAN);
 		
-		/*if (!$dateFromAt && !$dateToAt) {
-			$dateFromAt = Carbon::now()->startOfMonth()->format('Y-m-d H:i:s');
-			$dateToAt = Carbon::now()->endOfMonth()->format('Y-m-d H:i:s');
-		}*/
-		
 		$carbonDays = CarbonPeriod::create($dateFromAt, $dateToAt)->toArray();
 		
 		$days = $periods = [];
@@ -528,7 +514,6 @@ class ReportController extends Controller {
 
 		if (!$operationType || $operationType == 'deals') {
 			// сделки
-			//\DB::connection()->enableQueryLog();
 			$bills = Bill::oldest()
 				->where('payed_at', '>=', Carbon::parse($dateFromAt)->format('Y-m-d H:i:s'))
 				->where('payed_at', '<=', Carbon::parse($dateToAt)->format('Y-m-d H:i:s'))
@@ -556,7 +541,6 @@ class ReportController extends Controller {
 				}
 			}
 			$bills = $bills->get();
-			//\Log::debug(\DB::getQueryLog());
 			foreach ($bills as $bill) {
 				$deal = $bill->deal;
 				$product = $deal->product;
@@ -629,8 +613,6 @@ class ReportController extends Controller {
 			$balanceItems[Carbon::parse($dateToAt)->format('Y-m-d H:i:s')][$paymentMethod->alias] = $this->getBalanceOnDate(Carbon::parse($dateToAt)->format('Y-m-d H:i:s'), Carbon::parse($dateFromAt)->startOfYear(), $paymentMethod->alias, $operationType, $operationTypeId, $productIds, $discountValue);
 		}
 		
-		\Log::debug($dateToAt . ' - ' . Carbon::parse($dateToAt)->format('Y-m-d H:i:s') . ' - ' . Carbon::parse(Carbon::parse($dateToAt)->format('Y-m-d H:i:s'))->format('m/d/Y'));
-		
 		$data = [
 			'items' => $items,
 			'balanceItems' => $balanceItems,
@@ -676,7 +658,6 @@ class ReportController extends Controller {
 		$billSum = 0;
 		if (!$operationType || $operationType == 'deals') {
 			// инвойсы
-			//\DB::connection()->enableQueryLog();
 			$billSum = Bill::where('payed_at', '<', $datetime)
 				->where('payed_at', '>=', $startYear)
 				->whereRelation('status', 'statuses.alias', '=', Bill::PAYED_STATUS)
@@ -704,7 +685,6 @@ class ReportController extends Controller {
 			}
 			$billSum = $billSum->sum('total_amount');
 		}
-		//\Log::debug(\DB::getQueryLog());
 		
 		$operationSum = 0;
 		if (!$operationType || $operationType == 'expenses') {

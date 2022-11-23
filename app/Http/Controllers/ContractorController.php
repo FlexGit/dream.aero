@@ -258,7 +258,6 @@ class ContractorController extends Controller
 		$user = Auth::user();
 		$city = $user->city;
 		
-		//\DB::connection()->enableQueryLog();
 		$contractors = Contractor::where('is_active', true)
 			->where(function($query) use ($q) {
 				$query->where("name", "LIKE", "%{$q}%")
@@ -270,7 +269,6 @@ class ContractorController extends Controller
 			->orderBy('name')
 			->orderBy('lastname')
 			->get();
-		//\Log::debug(\DB::getQueryLog());
 		$suggestions = [];
 		foreach ($contractors as $contractor) {
 			$discount = $contractor->discount();

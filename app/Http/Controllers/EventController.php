@@ -497,7 +497,6 @@ class EventController extends Controller
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.время-окончания-смены-должно-быть-больше-времени-начала')]);
 				}
 				
-				//\DB::connection()->enableQueryLog();
 				$existingEvent = Event::where('event_type', $shiftUser)
 					->where('city_id', $cityId)
 					->where('location_id', $locationId)
@@ -505,7 +504,6 @@ class EventController extends Controller
 					->where('start_at', '<', Carbon::parse($stopAt)->format('Y-m-d H:i'))
 					->where('stop_at', '>', Carbon::parse($startAt)->format('Y-m-d H:i'))
 					->first();
-				//\Log::debug(\DB::getQueryLog());
 				if ($existingEvent) {
 					return response()->json(['status' => 'error', 'reason' => 'Intersection with shift ' . $existingEvent->user->fio()]);
 				}
@@ -693,7 +691,6 @@ class EventController extends Controller
 					return response()->json(['status' => 'error', 'reason' => trans('main.error.время-окончания-смены-должно-быть-больше-времени-начала')]);
 				}
 			
-				//\DB::connection()->enableQueryLog();
 				$existingEvent = Event::where('event_type', $shiftUser)
 					->where('start_at', '<', Carbon::parse($stopAt)->format('Y-m-d H:i'))
 					->where('stop_at', '>', Carbon::parse($startAt)->format('Y-m-d H:i'))
@@ -701,7 +698,6 @@ class EventController extends Controller
 					->where('flight_simulator_id', $event->flight_simulator_id)
 					->where('id', '!=', $event->id)
 					->first();
-				//\Log::debug(\DB::getQueryLog());
 				if ($existingEvent) {
 					return response()->json(['status' => 'error', 'reason' => 'Intersection with shift ' . $existingEvent->user->fio()]);
 				}

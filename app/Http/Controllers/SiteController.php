@@ -140,7 +140,6 @@ class SiteController extends Controller
 
 		$date = date('Y-m-d H:i:s');
 
-		//\DB::connection()->enableQueryLog();
 		$promocode = Promocode::whereRaw('lower(number) = "' . mb_strtolower($number) . '"')
 			->whereRelation('cities', 'cities.id', '=', $city->id)
 			->where('is_active', true)
@@ -159,7 +158,6 @@ class SiteController extends Controller
 			$promocode = $promocode->whereIn('flight_simulator_id', [$simulatorId, 0]);
 		}
 		$promocode = $promocode->first();
-		//\Log::debug(\DB::getQueryLog());
 		if (!$promocode) {
 			return response()->json(['status' => 'error', 'reason' => 'Please enter a valid promo code']);
 		}
@@ -428,7 +426,6 @@ class SiteController extends Controller
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}
 		
-		//dispatch(new \App\Jobs\SendReviewEmail($name, $body));
 		$job = new \App\Jobs\SendReviewEmail($name, $body);
 		$job->handle();
 		
@@ -941,7 +938,6 @@ class SiteController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
-		//dispatch(new \App\Jobs\SendQuestionEmail($name, $email, $body));
 		$job = new \App\Jobs\SendQuestionEmail($name, $email, $body, $city);
 		$job->handle();
 		

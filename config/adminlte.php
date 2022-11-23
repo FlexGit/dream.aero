@@ -413,7 +413,7 @@ return [
             ],
         ],
 		[
-			'text'    => /*env('DOMAIN_SITE')*/'Site',
+			'text'    => 'Site',
 			'icon'    => 'far fa-fw fa-file-image',
 			'can'	  => 'is_superadmin',
 			'submenu' => [
@@ -449,59 +449,6 @@ return [
 				],
 			],
 		],
-		/*[
-			'text'    => env('DOMAIN_SITE2'),
-			'icon'    => 'far fa-fw fa-file-image',
-			'can'	  => 'is_superadmin',
-			'submenu' => [
-				[
-					'text' => 'News',
-					'url'  => '/site/' . env('DOMAIN_SITE2') . '/news',
-					'icon' => 'far fa-circle nav-icon',
-					'can'  => 'is_superadmin',
-				],
-				[
-					'text' => 'Gallery',
-					'url'  => '/site/gallery',
-					'icon' => 'far fa-circle nav-icon',
-					'can'  => 'is_superadmin',
-				],
-				[
-					'text' => 'Reviews',
-					'url'  => '/site/reviews',
-					'icon' => 'far fa-circle nav-icon',
-					'can'  => 'is_superadmin',
-				],
-				[
-					'text' => 'Pages',
-					'url'  => '/site/pages',
-					'icon' => 'far fa-circle nav-icon',
-					'can'  => 'is_superadmin',
-				],
-				[
-					'text' => 'Promoboxes',
-					'url'  => '/site/promoboxes',
-					'icon' => 'far fa-circle nav-icon',
-					'can'  => 'is_superadmin',
-				],
-			],
-		],*/
-        /*['header' => 'labels'],
-        [
-            'text'       => 'important',
-            'icon_color' => 'red',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'warning',
-            'icon_color' => 'yellow',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'information',
-            'icon_color' => 'cyan',
-            'url'        => '#',
-        ],*/
     ],
 
     /*

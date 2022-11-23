@@ -29,7 +29,6 @@ class Kernel extends ConsoleKernel
 		$filePath = storage_path('logs/queue_worker.log');
 		$schedule->command('queue:work --daemon')
 			->everyMinute()
-			/*->withoutOverlapping()*/
 			->runInBackground()
 			->appendOutputTo($filePath)
 			->emailOutputOnFailure(env('DEV_EMAIL'));
