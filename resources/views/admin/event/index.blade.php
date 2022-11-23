@@ -172,14 +172,14 @@
 	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-datepicker3.min.css') }}">
 	{{--<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">--}}
 	<link rel="stylesheet" href="{{ asset('css/admin/material-icons.css') }}">
-	{{--<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
-	<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css">--}}
+	<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
+	<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css">
 	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/calendar.css?v=' . time()) }}">
 @stop
 
 @section('js')
-	{{--<script src="{{ asset('js/admin/jquery-ui/jquery-ui.min.js') }}"></script>--}}
+	<script src="{{ asset('js/admin/jquery-ui/jquery-ui.min.js') }}"></script>
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
 	<script src="{{ asset('js/admin/moment.min.js') }}"></script>
 	<script src="{{ asset('js/admin/moment-timezone-with-data.min.js') }}"></script>
@@ -187,15 +187,15 @@
 	<script src="{{ asset('js/admin/bootstrap-datepicker.ru.min.js') }}"></script>
 	<script src="{{ asset('js/admin/jquery.autocomplete.min.js') }}" defer></script>
 	{{--<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>--}}
-	{{--<script src="https://unpkg.com/@popperjs/core@2"></script>
-	<script src="https://unpkg.com/tippy.js@6"></script>--}}
-	<script src="{{ asset('js/admin/common.js') }}"></script>
+	<script src="https://unpkg.com/@popperjs/core@2"></script>
+	<script src="https://unpkg.com/tippy.js@6"></script>
+	<script src="{{ asset('js/admin/common.js?v=' . time()) }}"></script>
 	<script>
 		$(function(){
-			/*$('.modal>.modal-dialog').draggable({
+			$('.modal>.modal-dialog').draggable({
 				cursor: 'move',
 				handle: '.modal-header'
-			});*/
+			});
 
 			$('.modal>.modal-dialog>.modal-content>.modal-header').css('cursor', 'move');
 
@@ -270,7 +270,7 @@
 							url = info.allDay ? '/event/0/add/shift' : '/deal/booking/add',
 							$modalDialog = $('.modal').find('.modal-dialog');
 
-						/*tippy.hideAll();*/
+						tippy.hideAll();
 
 						$modalDialog.find('form').attr('id', type);
 
@@ -306,7 +306,7 @@
 						});
 					},
 					eventClick: function (info) {
-						/*tippy.hideAll();*/
+						tippy.hideAll();
 
 						if ($(info.jsEvent.target).hasClass('event-close-btn')) {
 							return;
@@ -357,7 +357,7 @@
 							start = $(info.event)[0]._instance.range.start,
 							end = $(info.event)[0]._instance.range.end;
 
-						/*tippy.hideAll();*/
+						tippy.hideAll();
 
 						$.ajax({
 							url: '/event/drag_drop/' + id,
@@ -391,7 +391,7 @@
 							start = $(info.event)[0]._instance.range.start,
 							end = $(info.event)[0]._instance.range.end;
 
-						/*tippy.hideAll();*/
+						tippy.hideAll();
 
 						$.ajax({
 							url: '/event/' + id,
@@ -443,16 +443,16 @@
 								'<div class="comment-sign">' + value['wasUpdated'] + ': ' + value['user'] + ', ' + value['date'] + '</div>'
 						});
 
-						/*if (data) {
+						if (data) {
 							tippy(info.el, {
 								content: data,
 								theme: 'light-border',
 								allowHTML: true,
 							});
-						}*/
+						}
 					},
 					eventMouseLeave: function (info) {
-						/*tippy.hideAll();*/
+						tippy.hideAll();
 					},
 					eventDataTransform: function (event) {
 						return event;
