@@ -14,7 +14,7 @@ return [
 	'error.акция-не-найдена' => 'Promo not found',
 	'error.материал-не-найден' => 'Content not found',
 	'error.контрагент-не-найден' => 'Client not found',
-	'error.контрагент-с-таким-e-mail-уже-существует' => 'A client with this E-mail already exists',
+	'error.контрагент-с-таким-e-mail-уже-существует' => 'A client with this E-mail already exists. Link him to the Deal',
 	'error.город-не-найден' => 'City not found',
 	'error.e-mail-не-найден' => 'E-mail not found',
 	'error.авиатренажер-не-найден' => 'Simulator not found',

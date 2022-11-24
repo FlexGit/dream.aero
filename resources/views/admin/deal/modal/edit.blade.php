@@ -12,7 +12,10 @@
 			<div class="form-group">
 				@if($deal->contractor->email == app('\App\Models\Contractor')::ANONYM_EMAIL || $user->isSuperAdmin())
 					<label for="contractor_search">Client search</label>
-					<input type="email" class="form-control" id="contractor_search" value="{{ $deal->contractor ? $deal->contractor->email : '' }}" placeholder="Search by full name, e-mail, phone" {{ $deal->contractor ? 'disabled' : '' }}>
+					<div class="d-flex">
+						<input type="email" class="form-control" id="contractor_search" name="email" value="{{ $deal->contractor ? $deal->contractor->email : '' }}" placeholder="Email or Phone number" {{ $deal->contractor ? 'disabled' : '' }}>
+						<button type="button" class="btn btn-secondary btn-sm js-contractor-search" {{ $deal->contractor ? 'disabled' : '' }}>Link</button>
+					</div>
 					<div class="js-contractor-container {{ $deal->contractor ? '' : 'hidden' }}">
 						<span class="js-contractor">Linked client: {{ $deal->contractor->fio() . ' [' . ($deal->contractor->email ? $deal->contractor->email . ', ' : '') . ($deal->contractor->phone ? $deal->contractor->phone . ', ' : '') . ']' }}</span> <i class="fas fa-times js-contractor-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 					</div>
@@ -112,8 +115,11 @@
 	<div class="row">
 		<div class="col">
 			<div class="form-group">
-				<label for="certificate_number">Flight with Voucher</label>
-				<input type="text" class="form-control" id="certificate_number" name="certificate_number" value="{{ $deal->certificate ? $deal->certificate->number : '' }}" placeholder="" @if($deal->certificate) disabled @endif>
+				<label for="certificate_number">Voucher</label>
+				<div class="d-flex">
+					<input type="text" class="form-control" id="certificate_number" name="certificate_number" value="{{ $deal->certificate ? $deal->certificate->number : '' }}" placeholder="Voucher number" @if($deal->certificate) disabled @endif>
+					<button type="button" class="btn btn-secondary btn-sm js-certificate-search" @if($deal->certificate) disabled @endif>Link</button>
+				</div>
 				<div class="js-certificate-container @if(!$deal->certificate) hidden @endif">
 					<span class="js-certificate">@if($deal->certificate)Linked Voucher: {{ $deal->certificate->number }}@endif</span> <i class="fas fa-times js-certificate-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 					<div class="custom-control custom-switch custom-control js-is-indefinitely hidden">

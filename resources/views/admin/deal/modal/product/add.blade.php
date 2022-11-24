@@ -6,7 +6,10 @@
 	<div class="col-6">
 		<div class="form-group">
 			<label for="contractor_search">Client search</label>
-			<input type="email" class="form-control" id="contractor_search" name="email" placeholder="Search by Lastname, e-mail, phone">
+			<div class="d-flex">
+				<input type="email" class="form-control" id="contractor_search" name="email" placeholder="Email or Phone number">
+				<button type="button" class="btn btn-secondary btn-sm js-contractor-search">Link</button>
+			</div>
 			<div class="js-contractor-container hidden">
 				<span class="js-contractor"></span> <i class="fas fa-times js-contractor-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 			</div>

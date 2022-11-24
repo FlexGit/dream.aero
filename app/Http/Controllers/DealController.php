@@ -1526,6 +1526,20 @@ class DealController extends Controller
 			}
 		}
 		
+		$contractor = null;
+		if ($contractorId) {
+			$contractor = Contractor::find($contractorId);
+			if (!$contractor) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
+			}
+		} elseif ($contractorEmail = $this->request->email ?? '') {
+			$contractor = Contractor::whereRaw('LOWER(email) = (?)', [mb_strtolower($contractorEmail)])
+				->first();
+			if ($contractor) {
+				return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-с-таким-e-mail-уже-существует')]);
+			}
+		}
+		
 		$certificateId = 0;
 		if ($certificateNumber || $certificateUuid) {
 			// проверка сертификата на валидность
