@@ -139,7 +139,8 @@ class SiteController extends Controller
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 
 		$date = Carbon::now()->format('Y-m-d H:i:s');
-
+		
+		\DB::connection()->enableQueryLog();
 		$promocode = Promocode::whereRaw('lower(number) = "' . mb_strtolower($number) . '"')
 			->whereRelation('cities', 'cities.id', '=', $city->id)
 			->where('is_active', true)
@@ -158,6 +159,7 @@ class SiteController extends Controller
 			$promocode = $promocode->whereIn('flight_simulator_id', [$simulatorId, 0]);
 		}
 		$promocode = $promocode->first();
+		\Log::debug(\DB::getQueryLog());
 		if (!$promocode) {
 			return response()->json(['status' => 'error', 'reason' => 'Please enter a valid promo code']);
 		}

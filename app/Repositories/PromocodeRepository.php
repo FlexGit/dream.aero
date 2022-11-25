@@ -22,11 +22,11 @@ class PromocodeRepository {
 	 */
 	public function getList(City $city, $onlyActive = true, $onlyNoPersonal = true, $contractorId = 0)
 	{
+		\DB::connection()->enableQueryLog();
 		$promocodes = $this->model->whereRelation('cities', 'cities.id', '=', $city->id)
 			->orderBy('number');
 		if ($onlyActive) {
 			$date = Carbon::now()->format('Y-m-d');
-			\DB::connection()->enableQueryLog();
 			$promocodes = $promocodes->where('is_active', true)
 				->where(function ($query) use ($date) {
 					$query->where('active_from_at', '<=', $date)
