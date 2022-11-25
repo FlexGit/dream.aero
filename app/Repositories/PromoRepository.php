@@ -7,6 +7,7 @@ use App\Models\Content;
 use App\Models\Promo;
 use App\Models\User;
 use App\Services\HelpFunctions;
+use Carbon\Carbon;
 
 class PromoRepository {
 	
@@ -59,12 +60,13 @@ class PromoRepository {
 	 */
 	public function getActivePromobox(City $city)
 	{
-		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE);
+		$promoboxParentContent = HelpFunctions::getEntityByAlias(Content::class, Content::PROMOBOX_TYPE . '_' . $city->alias);
 		if (!$promoboxParentContent) return null;
 		
-		$date = date('Y-m-d');
+		$date = Carbon::now()->format('Y-m-d');
 		
-		return Content::where('parent_id', $promoboxParentContent->id)
+		//\DB::connection()->enableQueryLog();
+		$content = Content::where('parent_id', $promoboxParentContent->id)
 			->where('is_active', true)
 			->where('published_at', '<=', $date)
 			->where(function ($query) use ($date) {
@@ -74,5 +76,8 @@ class PromoRepository {
 			->where('city_id', $city->id)
 			->orderByDesc('published_at')
 			->first();
+		//\Log::debug(\DB::getQueryLog());
+		
+		return $content;
 	}
 }

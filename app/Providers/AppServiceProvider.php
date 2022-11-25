@@ -32,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(Dispatcher $events)
     {
 		error_reporting(E_ALL ^ E_NOTICE);
+	
+		date_default_timezone_set('America/New_York');
 		
 		Password::defaults(function () {
 			return Password::min(8)
@@ -107,36 +109,5 @@ class AppServiceProvider extends ServiceProvider
 		
 			return true;
 		});
-		
-		/*$this->commonContent();*/
     }
-    
-    /*protected function commonContent()
-	{
-		$this->app->singleton('cityAlias', function() {
-			return session('cityAlias');
-		});
-		view()->share('cityAlias', app('cityAlias'));
-		
-		$this->app->singleton('city', function() {
-			$cityAlias = session('cityAlias');
-			$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::MSK_ALIAS);
-			
-			return $city ?? new City();
-		});
-		view()->share('city', app('city'));
-		
-		$this->app->singleton('promobox', function() {
-			$parentPromobox = HelpFunctions::getEntityByAlias(Content::class, 'promobox');
-			if (!$parentPromobox) return new Content();
-			
-			$promobox = Content::where('parent_id', $parentPromobox->id)
-				->where('is_active', true)
-				->latest()
-				->first();
-			
-			return $promobox ?? new Content();
-		});
-		view()->share('promobox', app('promobox'));
-	}*/
 }
