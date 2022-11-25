@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\City;
 use App\Models\Promocode;
+use Carbon\Carbon;
 
 class PromocodeRepository {
 	
@@ -24,7 +25,8 @@ class PromocodeRepository {
 		$promocodes = $this->model->whereRelation('cities', 'cities.id', '=', $city->id)
 			->orderBy('number');
 		if ($onlyActive) {
-			$date = date('Y-m-d H:i:s');
+			$date = Carbon::now()->format('Y-m-d');
+			\DB::connection()->enableQueryLog();
 			$promocodes = $promocodes->where('is_active', true)
 				->where(function ($query) use ($date) {
 					$query->where('active_from_at', '<=', $date)
@@ -42,6 +44,7 @@ class PromocodeRepository {
 			$promocodes = $promocodes->whereIn('contractor_id', [$contractorId, 0]);
 		}
 		$promocodes = $promocodes->get();
+		\Log::debug(\DB::getQueryLog());
 		
 		return $promocodes;
 	}
