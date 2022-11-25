@@ -138,7 +138,7 @@ class SiteController extends Controller
 		$cityAlias = $this->request->session()->get('cityAlias');
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 
-		$date = date('Y-m-d H:i:s');
+		$date = Carbon::now()->format('Y-m-d H:i:s');
 
 		$promocode = Promocode::whereRaw('lower(number) = "' . mb_strtolower($number) . '"')
 			->whereRelation('cities', 'cities.id', '=', $city->id)
