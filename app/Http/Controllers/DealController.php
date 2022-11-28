@@ -1830,4 +1830,39 @@ class DealController extends Controller
 			'product_type_alias' => mb_strtoupper($productType->alias),
 		]);
 	}
+	
+	/**
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	/*public function contractorLink() {
+		$email = $this->request->email ?? '';
+		if (!$email) return response()->json(['status' => 'error', 'reason' => trans('main.error.нет-данных')]);
+		
+		$user = Auth::user();
+		$city = $user->city;
+		
+		$contractor = Contractor::where('is_active', true)
+			->where('email', $email)
+			->whereIn('city_id', [$city->id, 0])
+			->first();
+		if (!$contractor) {
+			return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
+		}
+		
+		$discount = $contractor->discount();
+		
+		$contractorItem = [
+			'value' => $contractor->name . ($contractor->lastname ? ' ' . $contractor->lastname : '') . ' [' . $contractor->email . ($contractor->phone ? ', ' . $contractor->phone : '') . (($discount && $discount->value) ? ', ' . $discount->valueFormatted() : '') . ']',
+			'id' => $contractor->id,
+			'data' => [
+				'name' => $contractor->name,
+				'lastname' => $contractor->lastname ?? '',
+				'email' => $contractor->email ?? '',
+				'phone' => $contractor->phone ?? '',
+				'discount' => ($discount && $discount->value) ? $discount->valueFormatted() : '',
+			],
+		];
+		
+		return response()->json(['status' => 'success', 'message' => 'Contractor was successfully linked', 'item' => $contractorItem]);
+	}*/
 }

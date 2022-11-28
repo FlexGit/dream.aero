@@ -71,7 +71,7 @@
 					</button>
 				</div>
 				<form id="event">
-					<div class="modal-body"></div>
+					<div class="modal-body ui-front"></div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Submit</button>
@@ -168,6 +168,7 @@
 @section('plugins.Fullcalendar', true)
 
 @section('css')
+	<link rel="stylesheet" href="{{ asset('js/admin/jquery-ui/jquery-ui.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-datepicker3.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/material-icons.css') }}">
@@ -178,7 +179,7 @@
 @stop
 
 @section('js')
-	<script src="{{ asset('js/admin/jquery-ui/jquery-ui.min.js') }}"></script>
+	<script src="{{ asset('js/admin/jquery-ui/jquery-ui.min.js?v=1') }}"></script>
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
 	<script src="{{ asset('js/admin/moment.min.js') }}"></script>
 	<script src="{{ asset('js/admin/moment-timezone-with-data.min.js') }}"></script>
@@ -520,53 +521,6 @@
 				$('#flight_simulator_id').val($(this).find(':selected').data('simulator_id'));
 			});
 
-			$(document).on('click', '.js-contractor-search', function(e) {
-				var $form = $(this).find('form'),
-					$contractorId = $form.find('#contractor_id'),
-					isContractorExists = $contractorId.length ? $contractorId.val().length : '';
-
-				$.ajax({
-					url: '/contractor/search',
-					type: 'POST',
-					dataType: 'json',
-					data: {
-						'query': $('#contractor_search').val(),
-					},
-					success: function(result) {
-						console.log(result);
-
-						if (result.status !== 'success') {
-							toastr.error(result.reason);
-						}
-
-						if (result.item.id) {
-							$('#contractor_id').val(result.item.id);
-						}
-						if (result.item.data.city_id) {
-							$('#city_id').val(result.item.data.city_id);
-						}
-						if (!isContractorExists) {
-							if (result.item.data.name) {
-								$('#name').val(result.item.data.name);
-							}
-							if (result.item.data.lastname) {
-								$('#lastname').val(result.item.data.lastname);
-							}
-							if (result.item.data.email) {
-								$('#email').val(result.item.data.email);
-							}
-							if (result.item.data.phone) {
-								$('#phone').val(result.item.data.phone);
-							}
-							calcProductAmount();
-						}
-						$('#contractor_search, .js-contractor-search').attr('disabled', true);
-						$('.js-contractor').text('Linked client: ' + result.item.data.name + ' ' + result.item.data.lastname + ' ' + result.item.data.discount).closest('.js-contractor-container').removeClass('hidden');
-						toastr.success(result.message);
-					}
-				});
-			});
-
 			$(document).on('click', '.js-certificate-search', function(e) {
 				$.ajax({
 					url: '/certificate/search',
@@ -596,6 +550,62 @@
 				});
 			});
 
+			$(document).on('show.bs.modal', '#modal', function() {
+				var $form = $(this).find('form'),
+					$contractorId = $form.find('#contractor_id'),
+					isContractorExists = $contractorId.length ? $contractorId.val().length : '';
+
+				if ($form.attr('id') === 'deal') {
+					$('#contractor_search').autocomplete({
+						source: '/contractor/search',
+						minLength: 2,
+						select: function(event, result) {
+							//console.log(result);
+							if (result.item.id) {
+								$('#contractor_id').val(result.item.id);
+							}
+							if (result.item.data.city_id) {
+								$('#city_id').val(result.item.data.city_id);
+							}
+							if (!isContractorExists) {
+								if (result.item.data.name) {
+									$('#name').val(result.item.data.name);
+								}
+								if (result.item.data.lastname) {
+									$('#lastname').val(result.item.data.lastname);
+								}
+								if (result.item.data.email) {
+									$('#email').val(result.item.data.email);
+								}
+								if (result.item.data.phone) {
+									$('#phone').val(result.item.data.phone);
+								}
+								calcProductAmount();
+							}
+							$('#contractor_search').attr('disabled', true);
+							$('.js-contractor').text('Linked client: ' + result.item.data.name + ' ' + result.item.data.lastname + ' ' + result.item.data.discount).closest('.js-contractor-container').removeClass('hidden');
+						},
+					});
+
+					$('#certificate_number').autocomplete({
+						source: '/certificate/search',
+						minLength: 2,
+						select: function(event, result) {
+							//console.log(result);
+							if (result.item.id) {
+								$('#certificate_uuid').val(result.item.id);
+							}
+							calcProductAmount();
+							$('#certificate_number').attr('disabled', true);
+							$('.js-certificate').text('Linked Voucher: ' + result.item.data.number).closest('.js-certificate-container').removeClass('hidden');
+							if (result.item.data.is_overdue) {
+								$('.js-is-indefinitely').removeClass('hidden');
+							}
+						},
+					});
+				}
+			});
+
 			$(document).on('shown.bs.modal', '#modal', function() {
 				var $form = $(this).find('form');
 
@@ -607,7 +617,6 @@
 			$(document).on('click', '.js-contractor-delete', function() {
 				$('.js-contractor').text('').closest('.js-contractor-container').addClass('hidden');
 				$('#contractor_search').val('').attr('disabled', false).focus();
-				$('.js-contractor-search').attr('disabled', false);
 				$('#contractor_id, #city_id').val('');
 				calcProductAmount();
 			});

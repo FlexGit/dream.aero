@@ -101,16 +101,15 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		->middleware('auth')
 		->name('logout');
 	
-	Route::group(['middleware' => [/*'auth',*/ 'usercheck']], function () {
+	Route::group(['middleware' => ['usercheck']], function () {
 		// Контрагенты
 		Route::get('contractor/add', [ContractorController::class, 'add']);
 		Route::get('contractor/{id}/edit', [ContractorController::class, 'edit']);
-		/*Route::get('contractor/{id}/show', [ContractorController::class, 'show']);*/
-
+		
+		Route::get('contractor/search', [ContractorController::class, 'search'])->name('contractorSearch');
 		Route::get('contractor/{id?}', [ContractorController::class, 'index'])->name('contractorIndex');
 		Route::get('contractor/list/ajax', [ContractorController::class, 'getListAjax'])->name('contractorList');
 		Route::post('contractor', [ContractorController::class, 'store']);
-		Route::post('contractor/search', [ContractorController::class, 'search'])->name('contractorSearch');
 		Route::put('contractor/{id}', [ContractorController::class, 'update']);
 
 		Route::get('contractor/{id}/score', [ContractorController::class, 'addScore']);
@@ -142,6 +141,7 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		Route::post('deal/product', [DealController::class, 'storeProduct']);
 		Route::post('deal/tax', [DealController::class, 'storeTax']);
 		Route::put('deal/{id}', [DealController::class, 'update']);
+		/*Route::post('deal/contractor_link', [DealController::class, 'contractorLink'])->name('contractorLink');*/
 
 		Route::get('deal/certificate/add', [DealController::class, 'addCertificate']);
 		Route::get('deal/booking/add', [DealController::class, 'addBooking']);
@@ -152,8 +152,8 @@ Route::domain(env('DOMAIN_ADMIN', 'admin.dream.aero'))->group(function () {
 		// Сертификаты
 		Route::put('certificate/{id}', [CertificateController::class, 'update']);
 		
+		Route::get('certificate/search', [CertificateController::class, 'search'])->name('certificateSearch');
 		Route::get('certificate/{id}/edit', [CertificateController::class, 'edit']);
-		Route::post('certificate/search', [CertificateController::class, 'search'])->name('certificateSearch');
 		
 		Route::get('certificate/{uuid}/file', [CertificateController::class, 'getCertificateFile'])->name('getCertificate');
 		Route::post('certificate/send', [CertificateController::class, 'sendCertificate'])->name('sendCertificate');

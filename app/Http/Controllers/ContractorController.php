@@ -252,37 +252,38 @@ class ContractorController extends Controller
 	}
 	
 	public function search() {
-		$q = $this->request->post('query');
-		if (!$q) return response()->json(['status' => 'error', 'reason' => trans('main.error.нет-данных')]);
+		$q = $this->request->term ?? '';
 		
 		$user = Auth::user();
 		$city = $user->city;
 		
-		$contractor = Contractor::where('is_active', true)
+		$contractors = Contractor::where('is_active', true)
 			->where(function($query) use ($q) {
-				$query->where("email", $q)
-					->orWhere("phone", $q);
+				$query->where('email', 'like', '%' . $q . '%')
+					->orWhere('phone', 'like', '%' . $q . '%')
+					->orWhere('name', 'like', '%' . $q . '%')
+					->orWhere('lastname', 'like', '%' . $q . '%');
 			})
 			->whereIn('city_id', [$city->id, 0])
-			->first();
-		if (!$contractor) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.контрагент-не-найден')]);
+			->limit(10)
+			->get();
+		$contractorItems = [];
+		foreach ($contractors as $contractor) {
+			$discount = $contractor->discount();
+			
+			$contractorItems[] = [
+				'value' => $contractor->name . ($contractor->lastname ? ' ' . $contractor->lastname : '') . ' [' . $contractor->email . ($contractor->phone ? ', ' . $contractor->phone : '') . (($discount && $discount->value) ? ', ' . $discount->valueFormatted() : '') . ']',
+				'id' => $contractor->id,
+				'data' => [
+					'name' => $contractor->name,
+					'lastname' => $contractor->lastname ?? '',
+					'email' => $contractor->email ?? '',
+					'phone' => $contractor->phone ?? '',
+					'discount' => ($discount && $discount->value) ? $discount->valueFormatted() : '',
+				],
+			];
 		}
 		
-		$discount = $contractor->discount();
-		
-		$contractorItem = [
-			'value' => $contractor->name . ($contractor->lastname ? ' ' . $contractor->lastname : '') . ' [' . $contractor->email . ($contractor->phone ? ', ' . $contractor->phone : '') . (($discount && $discount->value) ? ', ' . $discount->valueFormatted() : '') . ']',
-			'id' => $contractor->id,
-			'data' => [
-				'name' => $contractor->name,
-				'lastname' => $contractor->lastname ?? '',
-				'email' => $contractor->email ?? '',
-				'phone' => $contractor->phone ?? '',
-				'discount' => ($discount && $discount->value) ? $discount->valueFormatted() : '',
-			],
-		];
-		
-		return response()->json(['status' => 'success', 'message' => 'Contractor was successfully linked', 'item' => $contractorItem]);
+		return response()->json($contractorItems);
 	}
 }

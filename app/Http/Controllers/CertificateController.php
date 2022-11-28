@@ -356,32 +356,34 @@ class CertificateController extends Controller
 	 * @return \Illuminate\Http\JsonResponse
 	 */
 	public function search() {
-		$q = $this->request->post('query');
-		if (!$q) return response()->json(['status' => 'error', 'reason' => trans('main.error.нет-данных')]);
+		$q = $this->request->term ?? '';
 		
-		$certificate = Certificate::where('number', $q)
-			->first();
-		if (!$certificate) {
-			return response()->json(['status' => 'error', 'reason' => trans('main.error.сертификат-не-найден')]);
+		$certificates = Certificate::where('number', 'like', '%' . $q . '%')
+			->whereHas('status', function ($query) {
+				return $query->whereNotIn('statuses.alias', [Certificate::CANCELED_STATUS, Certificate::RETURNED_STATUS]);
+			})
+			->limit(10)
+			->get();
+		$certificateItems = [];
+		foreach ($certificates as $certificate) {
+			$product = $certificate->product;
+			$city = $certificate->city;
+			$status = $certificate->status;
+			
+			$certificateInfo = $certificate->created_at->format('m/d/Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('m/d/Y') : ' - termless') . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
+			
+			$date = date('Y-m-d');
+			
+			$certificateItems[] = [
+				'value' => $certificate->number . ' [' . $certificateInfo . ']',
+				'id' => $certificate->uuid,
+				'data' => [
+					'number' => $certificate->number,
+					'is_overdue' => ($certificate->expire_at && Carbon::parse($certificate->expire_at)->lt($date)) ? true : false,
+				],
+			];
 		}
 		
-		$product = $certificate->product;
-		$city = $certificate->city;
-		$status = $certificate->status;
-		
-		$certificateInfo = $certificate->created_at->format('m/d/Y') . ($certificate->expire_at ? ' till ' . $certificate->expire_at->format('m/d/Y') : ' - termless') . ($product ? ' - ' . $product->duration . ' min (' . $product->name . ')' : '') . ($city ? '. ' . $city->name : '') . ($status ? '. ' . $status->name : '');
-		
-		$date = date('Y-m-d');
-			
-		$certificateItem = [
-			'value' => $certificate->number . ' [' . $certificateInfo . ']',
-			'id' => $certificate->uuid,
-			'data' => [
-				'number' => $certificate->number,
-				'is_overdue' => ($certificate->expire_at && Carbon::parse($certificate->expire_at)->lt($date)) ? true : false,
-			],
-		];
-		
-		return response()->json(['status' => 'success', 'message' => 'Voucher was successfully linked', 'item' => $certificateItem]);
+		return response()->json($certificateItems);
 	}
 }

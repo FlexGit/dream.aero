@@ -57,10 +57,10 @@
 	<div class="col-6">
 		<div class="form-group">
 			<label for="contractor_search">Client search</label>
-			<div class="d-flex">
-				<input type="email" class="form-control" id="contractor_search" name="email" placeholder="Email or Phone number">
-				<button type="button" class="btn btn-secondary btn-sm js-contractor-search">Link</button>
-			</div>
+			{{--<div class="d-flex">--}}
+				<input type="text" class="form-control" id="contractor_search" name="email" placeholder="{{--Email or Phone number--}}">
+				{{--<button type="button" class="btn btn-secondary btn-sm js-contractor-search">Link</button>
+			</div>--}}
 			<div class="js-contractor-container hidden">
 				<span class="js-contractor"></span> <i class="fas fa-times js-contractor-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 			</div>
@@ -157,10 +157,10 @@
 	<div class="col">
 		<div class="form-group">
 			<label for="certificate_number">Voucher</label>
-			<div class="d-flex">
-				<input type="text" class="form-control" id="certificate_number" name="certificate_number" placeholder="Voucher number">
-				<button type="button" class="btn btn-secondary btn-sm js-certificate-search">Link</button>
-			</div>
+			{{--<div class="d-flex">--}}
+				<input type="text" class="form-control" id="certificate_number" name="certificate_number" placeholder="{{--Voucher number--}}">
+				{{--<button type="button" class="btn btn-secondary btn-sm js-certificate-search">Link</button>
+			</div>--}}
 			<div class="js-certificate-container hidden">
 				<span class="js-certificate"></span> <i class="fas fa-times js-certificate-delete" title="Delete" style="cursor: pointer;color: red;"></i>
 				<div class="custom-control custom-switch custom-control js-is-indefinitely hidden">

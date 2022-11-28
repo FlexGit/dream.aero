@@ -725,8 +725,8 @@ class SiteController extends Controller
 		$city = HelpFunctions::getEntityByAlias(City::class, $cityAlias ?: City::DC_ALIAS);
 		
 		$promobox = $this->promoRepo->getActivePromobox($city);
-
-		$date = date('Y-m-d');
+		
+		$date = Carbon::now()->format('Y-m-d');
 		
 		if ($alias) {
 			$promo = Promo::where('alias', $alias)
