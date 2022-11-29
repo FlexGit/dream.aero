@@ -50,6 +50,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Location whereNameEn($value)
  * @property string|null $pay_account_number номер счета в платежной системе
  * @method static \Illuminate\Database\Eloquent\Builder|Location wherePayAccountNumber($value)
+ * @property int $legal_entity_id юр.лицо, на которое оформлена локация
+ * @method static \Illuminate\Database\Eloquent\Builder|Location whereLegalEntityId($value)
  */
 class Location extends Model
 {

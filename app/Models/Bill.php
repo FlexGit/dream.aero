@@ -83,6 +83,8 @@ use \Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereTotalAmount($value)
  * @property \Illuminate\Support\Carbon|null $receipt_sent_at
  * @method static \Illuminate\Database\Eloquent\Builder|Bill whereReceiptSentAt($value)
+ * @property int $deal_position_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Bill whereDealPositionId($value)
  */
 class Bill extends Model
 {
