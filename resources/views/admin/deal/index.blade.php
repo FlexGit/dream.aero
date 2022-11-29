@@ -23,11 +23,23 @@
 				<div class="card-body">
 					<div class="table-filter mb-2">
 						<div class="d-sm-flex">
-							<div class="form-group" style="width: 300px;">
+							<div class="form-group" style="width: 250px;">
 								<div>
 									<label for="search_doc">Search</label>
 								</div>
 								<input type="text" class="form-control" id="search_doc" name="search_doc" placeholder="">
+							</div>
+							<div class="form-group ml-2">
+								<label for="filter_date_from_at">Period start</label>
+								<div>
+									<input type="date" class="form-control" id="filter_date_from_at" name="filter_date_from_at" style="width: 130px;">
+								</div>
+							</div>
+							<div class="form-group ml-2">
+								<label for="filter_date_to_at">Period end</label>
+								<div>
+									<input type="date" class="form-control" id="filter_date_to_at" name="filter_date_to_at" style="width: 130px;">
+								</div>
 							</div>
 							<div class="form-group ml-2">
 								<div>
@@ -66,7 +78,7 @@
 									@endforeach
 								</select>
 							</div>
-							<div class="form-group ml-2 text-nowrap">
+							{{--<div class="form-group ml-2 text-nowrap">
 								<div>
 									<label for="filter_advanced">Advanced</label>
 								</div>
@@ -74,7 +86,7 @@
 									<option value="with_promo">Applied Promo</option>
 									<option value="with_promocode">Applied Promocode</option>
 								</select>
-							</div>
+							</div>--}}
 							<div class="form-group align-self-end ml-auto pl-2 text-nowrap">
 								<div class="btn-group dropleft">
 									<a href="javascript:void(0)" class="btn btn-secondary btn-sm dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Create deal">Create Deal</a>
@@ -158,6 +170,8 @@
 						"filter_product_id": $('#filter_product_id').val(),
 						"filter_payment_method_id": $('#filter_payment_method_id').val(),
 						"filter_advanced": $('#filter_advanced').val(),
+						"filter_date_from_at": $('#filter_date_from_at').val(),
+						"filter_date_to_at": $('#filter_date_to_at').val(),
 						"search_contractor": $('#search_contractor').val(),
 						"search_doc": $('#search_doc').val(),
 						"id": id
@@ -452,7 +466,7 @@
 				});
 			}
 
-			$(document).on('change', '#filter_status_id, #filter_product_id, #filter_payment_method_id, #filter_advanced, #filter_location_id', function(e) {
+			$(document).on('change', '#filter_status_id, #filter_product_id, #filter_payment_method_id, #filter_advanced, #filter_location_id, #filter_date_from_at, #filter_date_to_at', function(e) {
 				getList(false);
 			});
 

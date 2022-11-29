@@ -148,6 +148,12 @@ class DealController extends Controller
 				return $query->whereIn('bills.payment_method_id', $this->request->filter_payment_method_id);
 			});
 		}
+		if ($this->request->filter_date_from_at) {
+			$deals = $deals->whereDate('created_at', '>=', Carbon::parse($this->request->filter_date_from_at)->startOfDay()->format('Y-m-d H:i:s'));
+		}
+		if ($this->request->filter_date_to_at) {
+			$deals = $deals->whereDate('created_at', '<=', Carbon::parse($this->request->filter_date_to_at)->endOfDay()->format('Y-m-d H:i:s'));
+		}
 		if ($this->request->filter_advanced) {
 			if (in_array('with_promo', $this->request->filter_advanced)) {
 				$deals = $deals->has('promo');
