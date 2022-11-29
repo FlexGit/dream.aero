@@ -157,5 +157,5 @@
 	<script src="{{ asset('js/jquery.card.js') }}"></script>
 	<script src="{{ asset('js/popper.min.js') }}"></script>
 	<script src="{{ asset('js/tippy-bundle.umd.min.js') }}"></script>
-	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
+	<script src="{{ asset('js/deal.js?v=10') }}"></script>
 @endpush

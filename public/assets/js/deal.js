@@ -176,9 +176,6 @@ $(function() {
 				nameInput: 'input#card_name'
 			}
 		});
-		/*$('html, body').animate({
-			scrollTop: $('.js-certificate-btn').offset().top
-		}, 500);*/
 		$(this).addClass('hidden');
 	});
 
@@ -229,8 +226,6 @@ $(function() {
 			data: data,
 			dataType: 'json',
 			success: function (result) {
-				//console.log(result);
-
 				if (result.status !== 'success') {
 					if (result.reason) {
 						$alertError.text(result.reason).removeClass('hidden');
@@ -251,8 +246,6 @@ $(function() {
 				}
 
 				$popup.find('#name, #email, #phone, #card_number, #card_name, #expiration_date, #card_code').val('');
-				//$('#product_id').niceSelect('update');
-				//$popup.find('.js-amount, .js-tax, .js-total-amount').text(0);
 				$alertSuccess.html(result.message).removeClass('hidden');
 
 				fbq('track', 'Purchase', {value: result.totalAmount, currency: result.currencyAlias});

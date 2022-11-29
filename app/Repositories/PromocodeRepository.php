@@ -22,7 +22,6 @@ class PromocodeRepository {
 	 */
 	public function getList(City $city, $onlyActive = true, $onlyNoPersonal = true, $contractorId = 0)
 	{
-		\DB::connection()->enableQueryLog();
 		$promocodes = $this->model->whereRelation('cities', 'cities.id', '=', $city->id)
 			->orderBy('number');
 		if ($onlyActive) {
@@ -44,7 +43,6 @@ class PromocodeRepository {
 			$promocodes = $promocodes->whereIn('contractor_id', [$contractorId, 0]);
 		}
 		$promocodes = $promocodes->get();
-		\Log::debug(\DB::getQueryLog());
 		
 		return $promocodes;
 	}

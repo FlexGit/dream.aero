@@ -1,6 +1,6 @@
 <link href="{{ asset('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('css/styles.min.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('css/default.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('css/styles.min.css?v=10') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('css/default.css?v=10') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
 	.modal-header {
 		border-bottom: 0;
@@ -32,9 +32,6 @@
 		color: #828285 !important;;
 		padding-left: 8px;
 		padding-right: 20px;
-		/*overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;*/
 		line-height: 28px;
 		border: 0 !important;
 		border-radius: 0 !important;
@@ -126,7 +123,6 @@
 	.popup-promo h2 {
 		margin-top: 0;
 		color: #333;
-		/*font-family: Tahoma, Arial, sans-serif;*/
 	}
 	.popup-promo .close {
 		position: absolute;

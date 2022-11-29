@@ -317,7 +317,7 @@
 @endsection
 
 @push('css')
-	<link rel="stylesheet" href="{{ asset('css/pricestyle.css?v=' . time()) }}">
+	<link rel="stylesheet" href="{{ asset('css/pricestyle.css?v=3') }}">
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/card.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/scale.css') }}">
@@ -372,5 +372,5 @@
 	<script src="{{ asset('js/jquery.card.js') }}"></script>
 	<script src="{{ asset('js/popper.min.js') }}"></script>
 	<script src="{{ asset('js/tippy-bundle.umd.min.js') }}"></script>
-	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
+	<script src="{{ asset('js/deal.js?v=10') }}"></script>
 @endpush

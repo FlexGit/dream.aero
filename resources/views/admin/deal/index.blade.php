@@ -137,7 +137,7 @@
 	<link rel="stylesheet" href="{{ asset('js/admin/jquery-ui/jquery-ui.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/common.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=1') }}">
 @stop
 
 @section('js')
@@ -146,7 +146,7 @@
 	<script src="{{ asset('js/admin/moment.min.js') }}"></script>
 	<script src="{{ asset('js/admin/moment-timezone-with-data.min.js') }}"></script>
 	<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>
-	<script src="{{ asset('js/admin/common.js') }}"></script>
+	<script src="{{ asset('js/admin/common.js?v=1') }}"></script>
 	<script>
 		$(function() {
 			@if($deal)
@@ -215,12 +215,6 @@
 					return null;
 				}
 
-				/*if ($.inArray(type, ['event']) !== -1) {
-					$modalDialog.addClass('modal-xl');
-				} else {
-					$modalDialog.removeClass('modal-xl');
-				}*/
-
 				$modalDialog.find('form').attr('id', type);
 
 				var $submit = $('button[type="submit"]');
@@ -288,7 +282,6 @@
 						source: '/contractor/search',
 						minLength: 2,
 						select: function(event, result) {
-							//console.log(result);
 							if (result.item.id) {
 								$('#contractor_id').val(result.item.id);
 							}
@@ -319,7 +312,6 @@
 						source: '/certificate/search',
 						minLength: 2,
 						select: function(event, result) {
-							//console.log(result);
 							if (result.item.id) {
 								$('#certificate_uuid').val(result.item.id);
 							}
@@ -460,8 +452,6 @@
 						$('#amount-text span').text(result.amount);
 						$('#tax-text span').text(result.tax);
 						$('#total-amount-text span').text(result.totalAmount);
-
-						//$('#product_amount').val(result.baseAmount);
 					}
 				});
 			}
@@ -475,15 +465,6 @@
 
 				getList(false);
 			});
-
-			/*$(document).on('change', '#payment_method_id', function(e) {
-				var $isPaid = $('#is_paid');
-				if ($(this).find(':selected').data('alias') === 'online') {
-					$isPaid.prop('checked', false).prop('disabled', true);
-				} else {
-					$isPaid.prop('disabled', false);
-				}
-			});*/
 
 			$(document).on('click', '.js-remove-position', function() {
 				if (!confirm('Are you sure you want to delete the position?')) return;
@@ -582,7 +563,6 @@
 						'bill_id': $(this).data('id'),
 					},
 					success: function(result) {
-						//console.log(result);
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
 							return;

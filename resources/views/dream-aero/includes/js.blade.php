@@ -82,7 +82,7 @@
 <script src="{{ asset('js/wow.min.js') }}"></script>
 <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
 <script src="{{ asset('js/jquery.nice-select.js') }}"></script>
-<script src="{{ asset('js/main.js?v=' . time()) }}"></script>
+<script src="{{ asset('js/main.js?v=20') }}"></script>
 <script src="{{ asset('js/moment-with-locales.min.js') }}"></script>
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
@@ -147,7 +147,6 @@
 			var pathname = window.location.pathname,
 				currentCityAlias = $(this).closest('.uk-modal-dialog').find('[data-current-alias]').data('current-alias');
 
-			//console.log(currentCityAlias);
 			$.ajax({
 				url: '/city/change',
 				type: 'GET',
@@ -156,7 +155,6 @@
 					alias: $(this).data('alias'),
 				},
 				success: function(result) {
-					//console.log(result);
 					if (result.status === 'success') {
 						$('#city_modal').modal('hide');
 						window.location.href = pathname.replace(currentCityAlias, result.cityAlias);

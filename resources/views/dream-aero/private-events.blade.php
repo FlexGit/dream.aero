@@ -131,10 +131,10 @@
 @push('css')
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="{{ asset('css/jquery.datetimepicker.min.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/private_events.css?v=' . time()) }}">
+	<link rel="stylesheet" href="{{ asset('css/private_events.css?v=1') }}">
 @endpush
 
 @push('scripts')
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
-	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
+	<script src="{{ asset('js/deal.js?v=10' }}"></script>
 @endpush

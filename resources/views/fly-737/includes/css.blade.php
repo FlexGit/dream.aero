@@ -1,6 +1,6 @@
 <link href="{{ asset('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('css/fly-737/styles.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('css/fly-737/default.css?v=' . time()) }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('css/fly-737/styles.css?v=10') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('css/fly-737/default.css?v=10') }}" rel="stylesheet" type="text/css" />
 <style type="text/css">
 	.modal-header {
 		border-bottom: 0;

@@ -65,8 +65,7 @@ class PromoRepository {
 		
 		$date = Carbon::now()->format('Y-m-d');
 		
-		//\DB::connection()->enableQueryLog();
-		$content = Content::where('parent_id', $promoboxParentContent->id)
+		return Content::where('parent_id', $promoboxParentContent->id)
 			->where('is_active', true)
 			->where('published_at', '<=', $date)
 			->where(function ($query) use ($date) {
@@ -76,8 +75,5 @@ class PromoRepository {
 			->where('city_id', $city->id)
 			->orderByDesc('published_at')
 			->first();
-		//\Log::debug(\DB::getQueryLog());
-		
-		return $content;
 	}
 }

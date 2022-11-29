@@ -119,53 +119,6 @@
 			</div>
 		</div>
 	</article>
-
-	{{--<article class="article">
-		<div class="container">
-			<h1 class="article-title">Payment</h1>
-			<div class="article-content">
-				<div class="row">
-					<div class="item">
-						<fieldset>
-							@if($error)
-								<p>{{ $error }}</p>
-							@else
-								<div class="popup popup-newreservation" id="popup">
-									{!! $html !!}
-									<label for="name">Name</label>
-									<input type="text" id="name" value="{{ $deal->name }}" class="popup-input" readonly style="font-size: 14px;">
-									<label for="amount">Amount</label>
-									<input type="text" id="amount" value="{{ $bill->amount }}" class="popup-input" readonly style="font-size: 14px;">
-
-									<div class="consent-container" style="display: flex; justify-content: center;">
-										<div class="col-md-12 text-left">
-											<label class="cont text-nowrap">
-												I agree with <a href="{{ url(($city ? $city->alias : '') . '/rules') }}" target="_blank">the rules</a> for using the flight simulator
-												<input type="checkbox" id="rules-consent" name="rules-consent" value="1">
-												<span class="checkmark" style="top: 5px;"></span>
-											</label>
-											<label class="cont">
-												I have read <a href="{{ url(($city ? $city->alias : '') . '/privacy-policy') }}" target="_blank">the privacy and cookie policy</a>
-												<input type="checkbox" id="policy-consent" name="policy-consent" value="1">
-												<span class="checkmark" style="top: 5px;"></span>
-											</label>
-										</div>
-									</div>
-
-									<div style="margin-top: 10px;">
-										<div class="alert alert-success text-center hidden" role="alert"></div>
-										<div class="alert alert-danger text-center hidden" role="alert"></div>
-									</div>
-
-									<button type="button" class="popup-submit button-pipaluk button-pipaluk-grey js-pay-btn" data-uuid="{{ $bill->uuid }}" style="margin-top: 20px;" disabled><i>@lang('main.common.оплатить')</i></button>
-								</div>
-							@endif
-						</fieldset>
-					</div>
-				</div>
-			</div>
-		</div>
-	</article>--}}
 @endsection
 
 @push('css')
@@ -176,7 +129,7 @@
 @push('scripts')
 	<script src="{{ asset('js/jquery.datetimepicker.full.min.js') }}"></script>
 	<script src="{{ asset('js/jquery.card.js') }}"></script>
-	<script src="{{ asset('js/deal.js?v=' . time()) }}"></script>
+	<script src="{{ asset('js/deal.js?v=10') }}"></script>
 
 	<script>
 		$(function() {
@@ -234,8 +187,6 @@
 					},
 					dataType: 'json',
 					success: function (result) {
-						//console.log(result);
-
 						$btn.prop('disabled', false);
 
 						if (result.status !== 'success') {

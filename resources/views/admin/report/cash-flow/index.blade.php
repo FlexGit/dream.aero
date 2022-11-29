@@ -54,7 +54,6 @@
 							</div>
 							<div>
 								<select class="form-control" id="filter_product_id" name="filter_product_id[]" multiple="multiple">
-									{{--<option value=""></option>--}}
 									@foreach($products ?? [] as $productTypeName => $productItem)
 										<optgroup label="{{ $productTypeName }}"></optgroup>
 										@foreach($productItem as $productId => $product)
@@ -118,13 +117,13 @@
 @section('css')
 	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('css/admin/bootstrap-multiselect.css') }}">
-	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=' . time()) }}">
+	<link rel="stylesheet" href="{{ asset('css/admin/common.css?v=1') }}">
 @stop
 
 @section('js')
 	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
 	<script src="{{ asset('js/admin/bootstrap-multiselect.min.js') }}"></script>
-	<script src="{{ asset('js/admin/common.js') }}"></script>
+	<script src="{{ asset('js/admin/common.js?v=1') }}"></script>
 	<script>
 		$(function() {
 			function getList(isExport) {
@@ -152,7 +151,6 @@
 						'is_export': isExport,
 					},
 					success: function(result) {
-						//console.log(result);
 						if (result.status !== 'success') {
 							toastr.error(result.reason);
 							return;
