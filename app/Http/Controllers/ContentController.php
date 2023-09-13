@@ -278,7 +278,11 @@ class ContentController extends Controller
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
 		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
-
+		
+		if (HelpFunctions::isDemo($content->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'title' => ['required', 'min:3', 'max:250'],
 			'alias' => ['required', 'min:3', 'max:250', 'regex:/([A-Za-z0-9\-]+)/'],
@@ -356,7 +360,11 @@ class ContentController extends Controller
 		$content = Content::where('parent_id', $parentContent->id)
 			->find($id);
 		if (!$content) return response()->json(['status' => 'error', 'reason' => trans('main.error.материал-не-найден')]);
-
+		
+		if (HelpFunctions::isDemo($content->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
+		
 		if (!$content->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}

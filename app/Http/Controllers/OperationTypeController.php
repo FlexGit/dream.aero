@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\HelpFunctions;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\OperationType;
@@ -184,7 +185,11 @@ class OperationTypeController extends Controller
 		
 		$operationType = OperationType::find($id);
 		if (!$operationType) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
-
+		
+		if (HelpFunctions::isDemo($operationType->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'name' => ['required', 'max:255'],
 			'alias' => ['required', 'min:3', 'max:50', 'unique:payment_methods,alias,' . $id],
@@ -225,6 +230,10 @@ class OperationTypeController extends Controller
 		
 		$operationType = OperationType::find($id);
 		if (!$operationType) return response()->json(['status' => 'error', 'reason' => 'Operation type not found']);
+		
+		if (HelpFunctions::isDemo($operationType->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
 		
 		if (!$operationType->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);

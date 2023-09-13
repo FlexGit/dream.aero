@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use App\Models\User;
+use App\Services\HelpFunctions;
 use Auth;
 use Illuminate\Http\Request;
 use Validator;
@@ -231,6 +232,10 @@ class UserController extends Controller
 		
 		if (!$user->isSuperAdmin()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.недостаточно-прав-доступа')]);
+		}
+		
+		if (HelpFunctions::isDemo($user->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
 		}
 		
 		$rules = [

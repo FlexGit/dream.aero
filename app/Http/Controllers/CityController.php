@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\HelpFunctions;
 use Auth;
 use Illuminate\Http\Request;
 use Validator;
@@ -196,7 +197,11 @@ class CityController extends Controller
 
 		$city = City::find($id);
 		if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
-
+		
+		if (HelpFunctions::isDemo($city->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'name' => 'required|max:255|unique:cities,name,' . $id,
 			'alias' => 'required|min:2|max:3|unique:cities,alias,' . $id,
@@ -244,6 +249,9 @@ class CityController extends Controller
 		$city = City::find($id);
 		if (!$city) return response()->json(['status' => 'error', 'reason' => trans('main.error.город-не-найден')]);
 		
+		if (HelpFunctions::isDemo($city->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
 		if (!$city->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
 		}

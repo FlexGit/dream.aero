@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Discount;
+use App\Services\HelpFunctions;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Validator;
 
 use App\Models\Status;
@@ -115,6 +115,10 @@ class StatusController extends Controller
 		
 		$status = Status::find($id);
 		if (!$status) return response()->json(['status' => 'error', 'reason' => 'Статус не найден']);
+		
+		if (HelpFunctions::isDemo($status->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
 		
 		$rules = [
 			'name' => 'required|max:255|unique:statuses,name,' . $id,

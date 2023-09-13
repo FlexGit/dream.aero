@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\Discount;
+use App\Services\HelpFunctions;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -236,7 +237,11 @@ class PromoController extends Controller
 
 		$promo = Promo::find($id);
 		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
-
+		
+		if (HelpFunctions::isDemo($promo->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'name' => ['required', 'max:255'],
 			'alias' => ['required', 'max:255'],
@@ -302,7 +307,11 @@ class PromoController extends Controller
 
 		$promo = Promo::find($id);
 		if (!$promo) return response()->json(['status' => 'error', 'reason' => trans('main.error.акция-не-найдена')]);
-
+		
+		if (HelpFunctions::isDemo($promo->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
+		
 		// удаляем файл изображения
 		if ($promo->data_json && isset($promo->data_json['image_file_path']) && is_file(public_path('upload/' . $promo->data_json['image_file_path']))) {
 			unlink(public_path('upload/' . $promo->data_json['image_file_path']));

@@ -9,6 +9,8 @@ use App\Models\Status;
 use Carbon\Carbon;
 
 class HelpFunctions {
+
+	CONST DEMO_DATA_DATE = '2023-09-12';
 	
 	/**
 	 * @param $entity
@@ -372,5 +374,10 @@ class HelpFunctions {
 		}
 		
 		return $outStr;
+	}
+	
+	public static function isDemo($createdAt)
+	{
+		return Carbon::parse($createdAt)->lt(self::DEMO_DATA_DATE);
 	}
 }

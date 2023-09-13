@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\Discount;
+use App\Services\HelpFunctions;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -241,6 +242,10 @@ class PromocodeController extends Controller
 		$promocode = Promocode::find($id);
 		if (!$promocode) return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
 		
+		if (HelpFunctions::isDemo($promocode->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'number' => [
 				'required',
@@ -303,6 +308,10 @@ class PromocodeController extends Controller
 
 		$promocode = Promocode::find($id);
 		if (!$promocode) return response()->json(['status' => 'error', 'reason' => trans('main.error.промокод-не-найден')]);
+		
+		if (HelpFunctions::isDemo($promocode->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
 		
 		if (!$promocode->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);

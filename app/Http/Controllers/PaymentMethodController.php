@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\HelpFunctions;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\PaymentMethod;
@@ -183,7 +184,11 @@ class PaymentMethodController extends Controller
 		
 		$paymentMethod = PaymentMethod::find($id);
 		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
-
+		
+		if (HelpFunctions::isDemo($paymentMethod->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'name' => ['required', 'max:255', 'unique:payment_methods,name,' . $id],
 			'alias' => ['required', 'min:3', 'max:50', 'unique:payment_methods,alias,' . $id],
@@ -224,6 +229,10 @@ class PaymentMethodController extends Controller
 		
 		$paymentMethod = PaymentMethod::find($id);
 		if (!$paymentMethod) return response()->json(['status' => 'error', 'reason' => trans('main.error.способ-оплаты-не-найден')]);
+		
+		if (HelpFunctions::isDemo($paymentMethod->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
 		
 		if (!$paymentMethod->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);

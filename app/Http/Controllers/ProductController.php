@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductType;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\HelpFunctions;
 use Auth;
 use Illuminate\Http\Request;
 use Validator;
@@ -260,6 +261,10 @@ class ProductController extends Controller
 		$product = Product::find($id);
 		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
 		
+		if (HelpFunctions::isDemo($product->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'name' => 'required|max:255|unique:products,name,' . $id,
 			'public_name' => 'required|max:255',
@@ -323,6 +328,10 @@ class ProductController extends Controller
 
 		$product = Product::find($id);
 		if (!$product) return response()->json(['status' => 'error', 'reason' => trans('main.error.продукт-не-найден')]);
+		
+		if (HelpFunctions::isDemo($product->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
 		
 		if (!$product->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);

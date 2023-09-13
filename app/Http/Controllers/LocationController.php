@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FlightSimulator;
+use App\Services\HelpFunctions;
 use Auth;
 use Illuminate\Http\Request;
 use Validator;
@@ -225,6 +226,10 @@ class LocationController extends Controller
 		$location = Location::find($id);
 		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Location not found']);
 		
+		if (HelpFunctions::isDemo($location->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be updated']);
+		}
+		
 		$rules = [
 			'name' => 'required|max:255|unique:locations,name,' . $id,
 			'alias' => 'required|min:2|max:25|unique:locations,alias,' . $id,
@@ -312,6 +317,10 @@ class LocationController extends Controller
 
 		$location = Location::find($id);
 		if (!$location) return response()->json(['status' => 'error', 'reason' => 'Location not found']);
+		
+		if (HelpFunctions::isDemo($location->created_at)) {
+			return response()->json(['status' => 'error', 'reason' => 'Demo data cannot be deleted']);
+		}
 		
 		if (!$location->delete()) {
 			return response()->json(['status' => 'error', 'reason' => trans('main.error.повторите-позже')]);
